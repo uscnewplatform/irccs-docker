@@ -1,0 +1,1 @@
+docker build -f Dockerfile -t irccs/httpd:2.4.46 .

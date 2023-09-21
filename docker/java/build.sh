@@ -1,0 +1,1 @@
+docker build -f Dockerfile -t irccs/17-jdk .
