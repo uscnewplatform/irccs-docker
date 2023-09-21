@@ -1,1 +1,1 @@
-docker build -f Dockerfile -t irccs/httpd:2.4.46 .
+docker build -f Dockerfile --no-cache -t irccs/httpd:2.4.46 .
