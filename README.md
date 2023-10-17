@@ -23,3 +23,10 @@ Tale folder deve essere rinominata e spostata sotto `services` come riportato:
         │   └───main
         └───quarkus    
 ```
+
+# Build delle immagini
+
+Navigando le soluzioni nella folder `docker` httpd e java eseguire i relativi script di build: `build.sh`
+Per il server fhir l'immagine è separata poiché include tutta la soluzione java, è quindi necessario
+eseguire un checkout del **master** del seguente repository `git@github.com:infocube-it/irccs-fhir-r4-server.git`
+eseguire lo script `build.sh`
