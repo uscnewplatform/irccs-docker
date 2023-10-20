@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   hapi-fhir-jpaserver-start:
-    image: irccs/fhir-server:1.0.0
+    image: irccs/fhir-server:1.0.1
     restart: on-failure
     environment:
       hapi.fhir.allow_external_references: "true"
