@@ -34,6 +34,12 @@ services:
     volumes:
     - ./services/:/home
 
+  cache:
+    image: redis:7.0-rc
+    ports:
+      - 6379:6379
+    command: >
+      --requirepass password
 
   httpd:
     image: irccs/httpd:2.4.46
