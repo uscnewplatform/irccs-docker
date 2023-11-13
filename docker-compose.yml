@@ -8,27 +8,6 @@ services:
       hapi.fhir.allow_external_references: "true"
     ports:
       - "8080:8080"
-  #fhir-api:
-  #  image: "mcr.microsoft.com/healthcareapis/r4-fhir-server"
-  #  restart: on-failure
-  #  environment:
-  #    FHIRServer__Security__Enabled: "false"
-  #    SqlServer__ConnectionString: "Server=tcp:sql,1433;Initial Catalog=dbo;Persist Security Info=False;User ID=sa;Password=yourStrong(!)Password;MultipleActiveResultSets=False;Connection Timeout=30;TrustServerCertificate=false;Encrypt=False;"
-  #    SqlServer__AllowDatabaseCreation: "true"
-  #    SqlServer__Initialize: "true"
-  #    SqlServer__SchemaOptions__AutomaticUpdatesEnabled: "true"
-  #    DataStore: "SqlServer"
-  #  ports:
-  #    - "8080:8080"
-
-  #sql:
-  #  image: "mcr.microsoft.com/mssql/server:2019-latest"
-  #  environment:
-  #    MSSQL_SA_PASSWORD: "yourStrong(!)Password"
-  #    ACCEPT_EULA: "Y"
-  #  ports:
-  #    - "1433:1433"
-
   java-env:
     image: "irccs/17-jdk"
     volumes:

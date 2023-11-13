@@ -1,8 +1,8 @@
 # Cluster Docker Network
-- sql server 2019
-- r4-fhir-server
+- r5-fhir-server
 - httpd 2.4.46
-
+- redis:7.0-rc
+- java-env
 
 # Struttura Progetto
 
@@ -28,5 +28,5 @@ Tale folder deve essere rinominata e spostata sotto `services` come riportato:
 
 Navigando le soluzioni nella folder `docker` httpd e java eseguire i relativi script di build: `build.sh`
 Per il server fhir l'immagine è separata poiché include tutta la soluzione java, è quindi necessario
-eseguire un checkout del **master** del seguente repository `git@github.com:infocube-it/irccs-fhir-r4-server.git`
+eseguire un checkout del **master** del seguente repository `git@github.com:infocube-it/irccs-fhir-server.git`
 eseguire lo script `build.sh`
