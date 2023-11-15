@@ -1,6 +1,11 @@
 version: '3.1'
 
 services:
+  java-env:
+    image: "irccs/17-jdk"
+    volumes:
+      - ./services/:/home
+
   fhir-server:
     image: irccs/fhir-server:1.0.1
     restart: on-failure
@@ -8,11 +13,6 @@ services:
       hapi.fhir.allow_external_references: "true"
     ports:
       - "8080:8080"
-  java-env:
-    image: "irccs/17-jdk"
-    volumes:
-    - ./services/:/home
-
   cache:
     image: redis:7.0-rc
     ports:
