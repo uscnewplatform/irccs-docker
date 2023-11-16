@@ -37,8 +37,6 @@ I micro-servizi associati al progetto sono:
 
 Da ritenere aggiornato il branch `origin/develop`  
 Ogni micro-servizio ha versione di jdk e maven usata per la build,
-
-
 Il progetto è strutturato in modo tale che i micro-servizi sono montati come volume dalla cartella services.
 Quarkus una volta buildato la soluzione con `mvn package` NON bisogna copiare il jar posizionato nella root della folder target
 ma la sub-directory `quarkus-app`.
