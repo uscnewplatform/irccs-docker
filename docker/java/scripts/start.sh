@@ -6,7 +6,17 @@ PATIENTPATH=/home/irccs-microservice-anagrafica-pazienti/quarkus-run.jar
 CENTRORICERCAPATH=/home/irccs-microservice-centro-ricerca/quarkus-run.jar
 STUDIOCLINICOPATH=/home/irccs-microservice-studio-clinico/quarkus-run.jar
 
-while ! ping -c1 fhir-server &>/dev/null; do echo "I'm waiting for the FHIR Server is up..."; done
+
+
+until [ \
+  "$(curl -s -w '%{http_code}' -o /dev/null "http://fhir-server:8080/fhir/metadata")" \
+  -eq 200 ]
+do
+  echo "I'm waiting for the FHIR Server is up...";
+  sleep 5
+done
+
+
 
 if [ -f "$AUTHPATH" ]; then
     echo "Starting auth service"
