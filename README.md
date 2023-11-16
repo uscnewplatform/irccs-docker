@@ -1,5 +1,5 @@
 # Cluster Docker Network
-- r5-fhir-server
+- R5-fhir-server
 - httpd 2.4.46
 - redis:7.0-rc
 - java-env
