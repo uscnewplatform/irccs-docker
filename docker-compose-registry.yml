@@ -1,0 +1,47 @@
+version: '3.1'
+
+services:
+  auth:
+    image: "nexus.infocube.it:8089/i3/irccs/irccs-auth-service:latest"
+  ctcae:
+    image: "nexus.infocube.it:8089/i3/irccs/irccs-ctcae-service:latest"
+    ports:
+      - 8999:8999
+  anagrafica-pazienti:
+    image: "nexus.infocube.it:8089/i3/irccs/irccs-microservice-anagrafica-pazienti:latest"
+    ports:
+      - 8282:8282
+  centro-ricerca:
+    image: "nexus.infocube.it:8089/i3/irccs/irccs-microservice-centro-ricerca:latest"
+    ports:
+      - 8181:8181
+  practitioner:
+    image: "nexus.infocube.it:8089/i3/irccs/irccs-microservice-practitioner:latest"
+    ports:
+      - 8485:8485
+  studio-clinico:
+    image: "nexus.infocube.it:8089/i3/irccs/irccs-microservice-studio-clinico:latest"
+    ports:
+      - 8384:8384
+
+
+  fhir-server:
+    image: irccs/fhir-server:1.0.1
+    restart: on-failure
+    environment:
+      hapi.fhir.allow_external_references: "true"
+    ports:
+      - "8080:8080"
+  cache:
+    image: redis:7.0-rc
+    ports:
+      - 6379:6379
+    command: >
+      --requirepass password
+
+  #httpd:
+  #  image: irccs/httpd:2.4.46
+  #  volumes:
+  #    - ./html/:/usr/local/apache2/htdocs
+  #  ports:
+  #    - 80:80
