@@ -1,1 +1,1 @@
-docker build -f Dockerfile -t irccs/17-jdk .
+docker build -f Dockerfile -t irccs/19-jdk-slim .

@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   java-env:
-    image: "irccs/17-jdk"
+    image: "irccs/19-jdk-slim"
     volumes:
       - ./services/:/home
 

@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:19-jdk-slim
 MAINTAINER Salvatore Turboli (salvatore.turboli@infocube.it)
 RUN apt-get update && apt-get install -y dos2unix iputils-ping curl
 COPY scripts/start.sh /start.sh
