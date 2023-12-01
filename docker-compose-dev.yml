@@ -2,23 +2,21 @@ version: '3.1'
 
 services:
   hapi-fhir-jpaserver-start:
-    image: irccs/fhir-server:1.0.1
+    image: irccs/fhir-server:1.0.2
     restart: on-failure
     environment:
       hapi.fhir.allow_external_references: "true"
     ports:
       - "8080:8080"
 
-
-  auth-db:
-    image: postgres:13-alpine
-    restart: always
-    environment:
-      POSTGRES_DB: "irccs"
-      POSTGRES_USER: "auth"
-      POSTGRES_PASSWORD: "auth"
+  db:
+    image: irccs/postgres:alpine3.18
+    restart: unless-stopped
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: example
 
   mysql:
     image: "mysql:5.6"

@@ -1,0 +1,1 @@
+docker build -f Dockerfile --no-cache -t irccs/postgres:alpine3.18 .
