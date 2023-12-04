@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.7'
 
 services:
   java-env:
@@ -6,13 +6,32 @@ services:
     volumes:
       - ./services/:/home
 
-  fhir-server:
-    image: irccs/fhir-server:1.0.1
-    restart: on-failure
+  fhir:
+    container_name: fhir
+    image: "irccs/fhir-server:1.0.2"
     environment:
       hapi.fhir.allow_external_references: "true"
     ports:
       - "8080:8080"
+    configs:
+      - source: hapi
+        target: /app/config/application.yaml
+    depends_on:
+      - db
+
+  db:
+    image: postgres:alpine3.18
+    restart: always
+    volumes:
+      - ./hapi.postgress.data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: hapi
+    ports:
+      - "5432:5432"
+
+
   cache:
     image: redis:7.0-rc
     ports:
@@ -26,3 +45,8 @@ services:
       - ./html/:/usr/local/apache2/htdocs
     ports:
       - 80:80
+
+
+configs:
+  hapi:
+    file: ./hapi.application.yaml

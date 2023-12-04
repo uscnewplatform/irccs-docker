@@ -1,22 +1,28 @@
-version: '3.1'
+version: '3.7'
 
 services:
-  hapi-fhir-jpaserver-start:
-    image: irccs/fhir-server:1.0.2
-    restart: on-failure
+  fhir:
+    container_name: fhir
+    image: "irccs/fhir-server:1.0.2"
     environment:
       hapi.fhir.allow_external_references: "true"
     ports:
       - "8080:8080"
+    configs:
+      - source: hapi
+        target: /app/config/application.yaml
+    depends_on:
+      - db
 
   db:
-    image: irccs/postgres:alpine3.18
-    restart: unless-stopped
+    image: postgres:alpine3.18
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: hapi
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: example
 
   mysql:
     image: "mysql:5.6"
@@ -35,3 +41,8 @@ services:
       - 6379:6379
     command: >
       --requirepass password
+
+
+configs:
+  hapi:
+    file: ./hapi.application.yaml
