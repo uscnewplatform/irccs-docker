@@ -23,6 +23,18 @@ Il front-end usato è il seguente:
 Da ritenere aggiornato il branch `origin/develop` versioni e istruzioni per le build sono contenute nella root del progetto,
 una volta buildata la soluzione, spostare il contenuto sotto `html/` eliminando la `index.html` se presente.
 
+# Creazione Stack docker
+
+## Create/Start
+```
+    docker config create hapi hapi.application.yaml
+    docker stack deploy -c docker-compose.yml irccs
+```
+
+## Rimozione
+```
+    docker stack rm irccs
+```
 
 # Struttura Progetto E Deploy micro-servizi
 I micro-servizi associati al progetto sono:
