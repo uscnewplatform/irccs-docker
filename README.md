@@ -25,13 +25,17 @@ una volta buildata la soluzione, spostare il contenuto sotto `html/` eliminando 
 
 # Creazione Stack docker
 
-## Create/Start
+## Create
 ```
     docker config create hapi hapi.application.yaml
+```
+
+## Start
+```
     docker stack deploy -c docker-compose.yml irccs
 ```
 
-## Rimozione
+## Stop/Rimozione
 ```
     docker stack rm irccs
 ```
