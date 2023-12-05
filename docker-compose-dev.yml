@@ -1,21 +1,18 @@
-version: '3.7'
+version: '3.1'
 
 services:
   fhir:
     container_name: fhir
-    image: "irccs/fhir-server:1.0.2"
+    image: "irccs/fhir-server:1.0.3"
     environment:
       hapi.fhir.allow_external_references: "true"
     ports:
       - "8080:8080"
-    configs:
-      - source: hapi
-        target: /app/config/application.yaml
     depends_on:
       - db
 
   db:
-    image: postgres:alpine3.18
+    image: postgres:16-bullseye
     restart: always
     environment:
       POSTGRES_PASSWORD: admin
@@ -41,8 +38,3 @@ services:
       - 6379:6379
     command: >
       --requirepass password
-
-
-configs:
-  hapi:
-    file: ./hapi.application.yaml
