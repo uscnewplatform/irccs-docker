@@ -15,20 +15,20 @@ services:
       - "8080:8080"
     depends_on:
       - db
-      - elasticsearch
+      #- elasticsearch
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
-    container_name: elasticsearch
-    ports:
-      - "9200:9200"
-    environment:
-      ELASTIC_PASSWORD: "123456"
-      discovery.type: single-node
-      xpack.security.enabled: true
-      path.data: /usr/share/elasticsearch/data
-      bootstrap.memory_lock: true
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+  #elasticsearch:
+  #  image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+  #  container_name: elasticsearch
+  #  ports:
+  #    - "9200:9200"
+  #  environment:
+  #    ELASTIC_PASSWORD: "123456"
+  #    discovery.type: single-node
+  #    xpack.security.enabled: true
+  #    path.data: /usr/share/elasticsearch/data
+  #    bootstrap.memory_lock: true
+  #    ES_JAVA_OPTS: "-Xms512m -Xmx512m"
 
   db:
     image: postgres:16-bullseye
