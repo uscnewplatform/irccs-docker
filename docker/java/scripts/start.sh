@@ -7,6 +7,7 @@ PATIENTPATH=/home/irccs-microservice-anagrafica-pazienti/quarkus-run.jar
 CENTRORICERCAPATH=/home/irccs-microservice-centro-ricerca/quarkus-run.jar
 STUDIOCLINICOPATH=/home/irccs-microservice-studio-clinico/quarkus-run.jar
 PRACTITIONERPATH=/home/irccs-microservice-practitioner/quarkus-run.jar
+CONSENTPATH=/home/irccs-consensi/quarkus-run.jar
 
 
 until [ \
@@ -48,6 +49,11 @@ fi
 if [ -f "$PRACTITIONERPATH" ]; then
   echo "Starting Practitioner"
   nohup java -jar $PRACTITIONERPATH &
+fi
+
+if [ -f "$CONSENTPATH" ]; then
+  echo "Starting Consent"
+  nohup java -jar $CONSENTPATH &
 fi
 
 tail -f /dev/null
