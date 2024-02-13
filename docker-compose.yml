@@ -42,6 +42,14 @@ services:
     ports:
       - "5432:5432"
 
+  # graph-db:
+  #   image: neo4j:4.0.4
+  #   restart: always
+  #   environment:
+  #     NEO4J_AUTH: neo4j/test
+  #   ports:
+  #     - "7474:7474"
+  #     - "7687:7687"
 
   cache:
     image: redis:7.0-rc
@@ -56,3 +64,65 @@ services:
       - ./html/:/usr/local/apache2/htdocs
     ports:
       - 80:80
+  
+  postgres:
+    image: postgres
+    hostname: postgres
+    container_name: postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak_owner
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    container_name: KEYCLOAK
+    restart: always
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "cd /opt/keycloak/conf && test -f server.keystore && echo \"server.keystore exists.\" || keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname \"CN=server\" -alias server -ext \"SAN:c=DNS:localhost,IP:127.0.0.1\" -keystore server.keystore
+        && /opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --import-realm",
+      ]
+    ports:
+      - 9445:8080
+      - 8443:8443
+    environment:
+      KEYCLOAK_ADMIN: keycloak
+      KEYCLOAK_ADMIN_PASSWORD: keycloak
+      KC_DB_KIND: other
+      KC_DB_DIALECT: org.hibernate.dialect.PostgreSQL10Dialect
+      # KC_DB_DRIVER: org.postgresql.Driver
+      KEYCLOAKCLI_ADMIN: keycloak
+      KEYCLOAKCLI_PASSWORD: keycloak
+      KC_HTTPS_PROTOCOLS: TLSv1.3,TLSv1.2
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+      KC_DB_USERNAME: keycloak_owner
+      KC_DB_PASSWORD: password
+      KC_HTTPS_PORT: 8443
+      KC_HOSTNAME_STRICT: 'false'  
+      # KC_HOSTNAME: 10.99.88.227
+      KC_FEATURES_TOKEN_EXCHANGE: 'enabled'
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: 'true'
+      KC_PROXY: edge
+      KC_HEALTH_ENABLED: 'true'
+    volumes:
+      - keycloak:/opt/keycloak/conf
+      - ./realm-export/pascale-realm.json:/opt/keycloak/data/import/pascale-realm.json
+      - ./realm-export:/export #opt/keycloak/bin/kc.sh export --realm pascale --users realm_file --dir /export
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local
+  keycloak:
+    driver: local
