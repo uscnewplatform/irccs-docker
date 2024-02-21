@@ -71,7 +71,7 @@ services:
     container_name: postgres
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./keycloak.postgres.data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak_owner
@@ -115,14 +115,8 @@ services:
       KC_PROXY: edge
       KC_HEALTH_ENABLED: 'true'
     volumes:
-      - keycloak:/opt/keycloak/conf
+      - ./keycloak:/opt/keycloak/conf
       - ./realm-export/pascale-realm.json:/opt/keycloak/data/import/pascale-realm.json
       - ./realm-export:/export #opt/keycloak/bin/kc.sh export --realm pascale --users realm_file --dir /export
     depends_on:
       - postgres
-
-volumes:
-  postgres_data:
-    driver: local
-  keycloak:
-    driver: local
