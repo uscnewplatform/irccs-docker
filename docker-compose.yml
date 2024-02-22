@@ -33,6 +33,7 @@ services:
   db:
     image: postgres:16-bullseye
     restart: always
+    container_name: fhir_db
     volumes:
       - ./hapi.postgress.data:/var/lib/postgresql/data
     environment:
@@ -68,7 +69,7 @@ services:
   postgres:
     image: postgres
     hostname: postgres
-    container_name: postgres
+    container_name: keycloak_db
     restart: always
     volumes:
       - ./keycloak.postgres.data:/var/lib/postgresql/data
