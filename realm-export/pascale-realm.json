@@ -245,22 +245,6 @@
         "attributes" : { }
       } ],
       "irccs" : [ {
-        "id" : "ad9422f0-2cf2-46c2-8779-7d3d33adb819",
-        "name" : "search",
-        "description" : "",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
-        "attributes" : { }
-      }, {
-        "id" : "dcaf9fa6-981f-4e71-a316-2a09098d9f32",
-        "name" : "read",
-        "description" : "",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
-        "attributes" : { }
-      }, {
         "id" : "154ae61d-2a97-4459-a28c-ccd117936d4d",
         "name" : "uma_protection",
         "composite" : false,
@@ -268,39 +252,7 @@
         "containerId" : "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
         "attributes" : { }
       }, {
-        "id" : "9722a196-9013-4f27-8338-d81a282f903c",
-        "name" : "create",
-        "description" : "",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
-        "attributes" : { }
-      }, {
-        "id" : "d725aebf-7429-405e-8d29-b5a1a7346e00",
-        "name" : "history",
-        "description" : "",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
-        "attributes" : { }
-      }, {
-        "id" : "66850f39-717e-4e3c-86c0-497ce52bbc51",
-        "name" : "delete",
-        "description" : "",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
-        "attributes" : { }
-      }, {
-        "id" : "3c66c03a-1ba3-4df3-9bd6-387808e76951",
-        "name" : "update",
-        "description" : "",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
-        "attributes" : { }
-      }, {
-        "id" : "4475a084-18af-4c2e-b9e5-8d907651b5fa",
+        "id" : "e381a3fe-3e5b-4082-a71f-7aba9934a06d",
         "name" : "admin",
         "description" : "",
         "composite" : false,
@@ -406,7 +358,7 @@
     "realmRoles" : [ "default-roles-pascale", "offline_access", "uma_authorization" ],
     "clientRoles" : {
       "realm-management" : [ "view-events", "create-client", "manage-realm", "query-users", "manage-authorization", "query-clients", "manage-events", "view-realm", "view-authorization", "manage-identity-providers", "query-groups", "view-users", "view-identity-providers", "query-realms", "manage-clients", "impersonation", "manage-users", "view-clients", "realm-admin" ],
-      "irccs" : [ "uma_protection", "search", "read", "admin", "history" ],
+      "irccs" : [ "uma_protection", "admin" ],
       "broker" : [ "read-token" ],
       "account" : [ "manage-consent", "view-profile", "view-groups", "view-consent", "manage-account-links", "view-applications", "delete-account", "manage-account" ]
     }
@@ -761,44 +713,11 @@
       "allowRemoteResourceManagement" : true,
       "policyEnforcementMode" : "ENFORCING",
       "resources" : [ {
-        "name" : "Admin Resources",
+        "name" : "Admin Resource",
         "ownerManagedAccess" : false,
         "displayName" : "",
         "attributes" : { },
-        "_id" : "c16ad032-1782-4c58-a862-3cbf7f9ca720",
-        "uris" : [ "/*" ],
-        "scopes" : [ {
-          "name" : "admin"
-        } ],
-        "icon_uri" : ""
-      }, {
-        "name" : "Search Resource",
-        "ownerManagedAccess" : false,
-        "displayName" : "Search Resource",
-        "attributes" : { },
-        "_id" : "b9d29c18-25f1-48d8-88fe-a91ac7618ab4",
-        "uris" : [ "/{resourceType}/_search" ],
-        "scopes" : [ {
-          "name" : "GET"
-        } ],
-        "icon_uri" : ""
-      }, {
-        "name" : "History Resource",
-        "ownerManagedAccess" : false,
-        "displayName" : "History Resource",
-        "attributes" : { },
-        "_id" : "39034ecc-eea1-4d18-8ee9-5bf908f6d82c",
-        "uris" : [ "/{resourceType}/{id}/_history/{versionId}", "/{resourceType}/{id}/_history", "/{resourceType}/_history" ],
-        "scopes" : [ {
-          "name" : "GET"
-        } ],
-        "icon_uri" : ""
-      }, {
-        "name" : "Generic Resource",
-        "ownerManagedAccess" : false,
-        "displayName" : "Generic Resource",
-        "attributes" : { },
-        "_id" : "81883785-590e-4465-97d2-cf149c4270c7",
+        "_id" : "1ff4a78b-4e1c-42ac-9191-fa3ebec49fad",
         "uris" : [ "/*" ],
         "scopes" : [ {
           "name" : "DELETE"
@@ -807,12 +726,12 @@
         }, {
           "name" : "POST"
         }, {
-          "name" : "PUT"
+          "name" : "UPDATE"
         } ],
         "icon_uri" : ""
       } ],
       "policies" : [ {
-        "id" : "3bfd2819-0658-4f07-9c1a-c6d30255ba9d",
+        "id" : "9d2a90e5-d9d2-4bf9-9cb5-024cc3a94747",
         "name" : "Admin Policy",
         "description" : "",
         "type" : "role",
@@ -822,169 +741,32 @@
           "roles" : "[{\"id\":\"irccs/admin\",\"required\":false}]"
         }
       }, {
-        "id" : "6b1b68d6-36d2-419a-aec4-b35437d1782a",
-        "name" : "Search Policy",
+        "id" : "51d69e05-92f4-45f9-a606-bb7a8f9d89f7",
+        "name" : "Admin Permission",
         "description" : "",
-        "type" : "role",
+        "type" : "resource",
         "logic" : "POSITIVE",
         "decisionStrategy" : "UNANIMOUS",
         "config" : {
-          "roles" : "[{\"id\":\"irccs/search\",\"required\":false}]"
-        }
-      }, {
-        "id" : "6ab2cf63-29c4-4f44-bf7d-b3235447dd10",
-        "name" : "History Policy",
-        "description" : "",
-        "type" : "role",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "roles" : "[{\"id\":\"irccs/history\",\"required\":false}]"
-        }
-      }, {
-        "id" : "48086d2c-580d-443a-b5ca-ad723167b5f8",
-        "name" : "Create Policy",
-        "description" : "",
-        "type" : "role",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "roles" : "[{\"id\":\"irccs/create\",\"required\":false}]"
-        }
-      }, {
-        "id" : "65a7d2fe-4023-40a3-a576-23f0b5436272",
-        "name" : "Update Policy",
-        "description" : "",
-        "type" : "role",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "roles" : "[{\"id\":\"irccs/update\",\"required\":false}]"
-        }
-      }, {
-        "id" : "d4019a98-6142-482a-87d6-a511c9ffca42",
-        "name" : "Delete Policy",
-        "description" : "",
-        "type" : "role",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "roles" : "[{\"id\":\"irccs/delete\",\"required\":false}]"
-        }
-      }, {
-        "id" : "6f267395-b32e-4c97-90c6-fab7c4173f58",
-        "name" : "Read Policy",
-        "description" : "",
-        "type" : "role",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "roles" : "[{\"id\":\"irccs/read\",\"required\":false}]"
-        }
-      }, {
-        "id" : "2b428639-b1b0-43d9-ba34-c927bdb08a8e",
-        "name" : "Admin Scope Permission",
-        "description" : "",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "resources" : "[\"Admin Resources\"]",
-          "scopes" : "[\"admin\"]",
+          "resources" : "[\"Admin Resource\"]",
           "applyPolicies" : "[\"Admin Policy\"]"
-        }
-      }, {
-        "id" : "4946d0af-c4e1-4998-91c5-1c2bc2589ee5",
-        "name" : "Read Scope Permission",
-        "description" : "",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "resources" : "[\"Generic Resource\"]",
-          "scopes" : "[\"GET\"]",
-          "applyPolicies" : "[\"Read Policy\"]"
-        }
-      }, {
-        "id" : "9d258f2d-5bb5-49ac-8b1f-216a12f4fad9",
-        "name" : "Update Scope Permission",
-        "description" : "",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "resources" : "[\"Generic Resource\"]",
-          "scopes" : "[\"PUT\"]",
-          "applyPolicies" : "[\"Update Policy\"]"
-        }
-      }, {
-        "id" : "9508b88d-2a59-4ceb-aac7-a9eaa9e959ce",
-        "name" : "Create Scope Permission",
-        "description" : "",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "resources" : "[\"Generic Resource\"]",
-          "scopes" : "[\"POST\"]",
-          "applyPolicies" : "[\"Create Policy\"]"
-        }
-      }, {
-        "id" : "8cb49811-3fa0-4abb-aa13-2926e46e4b87",
-        "name" : "Delete Scope Permission",
-        "description" : "",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "resources" : "[\"Generic Resource\"]",
-          "scopes" : "[\"DELETE\"]",
-          "applyPolicies" : "[\"Delete Policy\"]"
-        }
-      }, {
-        "id" : "24aab3b1-8da2-4135-8dde-0bff5c6eef32",
-        "name" : "History Scope Permission",
-        "description" : "",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "resources" : "[\"History Resource\"]",
-          "scopes" : "[\"GET\"]",
-          "applyPolicies" : "[\"History Policy\"]"
-        }
-      }, {
-        "id" : "d57569cb-955b-41ca-80e1-818d1a6903dc",
-        "name" : "Search Scope Permission",
-        "description" : "",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "resources" : "[\"Search Resource\"]",
-          "scopes" : "[\"GET\"]",
-          "applyPolicies" : "[\"Search Policy\"]"
         }
       } ],
       "scopes" : [ {
-        "id" : "38504e7a-52d1-46cd-bdd0-e7f886d34bba",
-        "name" : "admin",
-        "iconUri" : ""
-      }, {
-        "id" : "b12ee8f0-748d-4ff8-8ea0-40a6ee96cda4",
+        "id" : "c62455a4-b37c-4b50-a783-bd1216024a66",
         "name" : "GET",
         "iconUri" : ""
       }, {
-        "id" : "d6076aa2-3d9d-4fc7-8e3c-7d1b3130e539",
+        "id" : "9c1afe71-c6c5-408b-89ab-eddf506dcff5",
         "name" : "POST",
         "iconUri" : ""
       }, {
-        "id" : "9932d19f-9026-4678-9010-a4cafca8b83f",
+        "id" : "d7173850-4349-4f4f-8e0f-6aa764973b83",
         "name" : "DELETE",
         "iconUri" : ""
       }, {
-        "id" : "a550c857-1a8d-471a-ae7a-a7e7ef91b6cc",
-        "name" : "PUT",
+        "id" : "1f9918fc-cec0-47d2-8821-eefd68670055",
+        "name" : "UPDATE",
         "iconUri" : ""
       } ],
       "decisionStrategy" : "UNANIMOUS"
@@ -1609,7 +1391,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper" ]
       }
     }, {
       "id" : "9ecfc219-aab7-4fc3-8cb2-a3786d9192f8",
@@ -1618,7 +1400,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "saml-user-attribute-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "saml-role-list-mapper", "saml-user-property-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-address-mapper", "saml-user-property-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     }, {
       "id" : "221dcd54-3967-4f49-9708-5371c1a50912",
@@ -2236,7 +2018,7 @@
     "cibaInterval" : "5",
     "realmReusableOtpCode" : "false"
   },
-  "keycloakVersion" : "23.0.5",
+  "keycloakVersion" : "23.0.6",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : [ ]
