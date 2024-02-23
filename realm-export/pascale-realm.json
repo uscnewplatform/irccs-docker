@@ -715,9 +715,9 @@
       "resources" : [ {
         "name" : "Admin Resource",
         "ownerManagedAccess" : false,
-        "displayName" : "",
+        "displayName" : "Admin Resource",
         "attributes" : { },
-        "_id" : "1ff4a78b-4e1c-42ac-9191-fa3ebec49fad",
+        "_id" : "fe22362e-4d3f-4622-8baa-f0585214c14e",
         "uris" : [ "/*" ],
         "scopes" : [ {
           "name" : "DELETE"
@@ -726,12 +726,12 @@
         }, {
           "name" : "POST"
         }, {
-          "name" : "UPDATE"
+          "name" : "PUT"
         } ],
         "icon_uri" : ""
       } ],
       "policies" : [ {
-        "id" : "9d2a90e5-d9d2-4bf9-9cb5-024cc3a94747",
+        "id" : "52dd5614-3a53-4ba3-87ea-dfb176c6dc89",
         "name" : "Admin Policy",
         "description" : "",
         "type" : "role",
@@ -741,7 +741,7 @@
           "roles" : "[{\"id\":\"irccs/admin\",\"required\":false}]"
         }
       }, {
-        "id" : "51d69e05-92f4-45f9-a606-bb7a8f9d89f7",
+        "id" : "aa02e855-ab2d-4f89-bb9d-dcc1335f0879",
         "name" : "Admin Permission",
         "description" : "",
         "type" : "resource",
@@ -765,8 +765,8 @@
         "name" : "DELETE",
         "iconUri" : ""
       }, {
-        "id" : "1f9918fc-cec0-47d2-8821-eefd68670055",
-        "name" : "UPDATE",
+        "id" : "c0b981bd-4cd4-4a59-8565-8f0320a834ea",
+        "name" : "PUT",
         "iconUri" : ""
       } ],
       "decisionStrategy" : "UNANIMOUS"
@@ -1391,7 +1391,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-address-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "saml-role-list-mapper" ]
       }
     }, {
       "id" : "9ecfc219-aab7-4fc3-8cb2-a3786d9192f8",
@@ -1400,7 +1400,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-address-mapper", "saml-user-property-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper" ]
       }
     }, {
       "id" : "221dcd54-3967-4f49-9708-5371c1a50912",
