@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  irccs-centro-ricerca:
+    container_name: irccs-centro-ricerca
+    image: nexus.infocube.it:443/org.quarkus.irccs.microservice/irccs-centroricerca:1.0.0-SNAPSHOT 
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - irccs-docker_default
+
+networks:
+  irccs-docker_default:
+    external: true
+
