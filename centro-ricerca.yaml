@@ -9,7 +9,8 @@ services:
       - "8080:8080"
     networks:
       - irccs-docker_default
-
+    volumes:
+      - ./config:/deployments/config
 networks:
   irccs-docker_default:
     external: true
