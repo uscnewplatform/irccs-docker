@@ -1,1 +1,0 @@
-docker build -f Dockerfile -t irccs/19-jdk-slim .
