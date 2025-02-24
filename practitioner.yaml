@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   irccs-centro-ricerca:
-    container_name: irccs-microservice-centro-ricerca
-    image: nexus.infocube.it/org.quarkuse/irccs-microservice-centroricerca:1.0.0-SNAPSHOT
+    container_name: irccs-microservice-practitioner
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:1.0.0-SNAPSHOT
     restart: always
     ports:
       - 8080
