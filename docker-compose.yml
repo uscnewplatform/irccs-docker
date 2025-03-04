@@ -1,0 +1,171 @@
+version: '3.8'
+
+
+networks:
+  irccs:
+    driver: bridge
+
+services:
+  irccs-microservice-auth:
+    image: nexus.infocube.it:443/i3/irccs/irccs-auth:latest
+    container_name: irccs-auth
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://irccs-keycloak:9445"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  irccs-microservice-practitioner:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-SNAPSHOT
+    container_name: irccs-practitioner
+    ports:
+      - "8384:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://irccs-keycloak:9445"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+ 
+  irccs-microservice-studio-clinico:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-SNAPSHOT
+    container_name: irccs-studio-clinico
+    ports:
+      - "8686:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://irccs-keycloak:9445"]
+      interval: 30s
+      timeout: 10s
+      retries: 5  
+  
+  irccs-microservice-anagrafica-pazienti:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-SNAPSHOT
+    container_name: irccs-anagrafica-pazienti
+    ports:
+      - "8282:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://irccs-keycloak:9445"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+       
+  irccs-microservice-ctcae:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-SNAPSHOT
+    container_name: irccs-ctcae
+    ports:
+      - "8999:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://irccs-keycloak:9445"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+ 
+  #irccs-httpd:
+    #image: nexus.infocube.it:443/org.quarkus/irccs-httpd-dashboard
+    #container_name: irccs-httpd-dashboard
+    #ports:
+      #- "80:80"
+    #volumes:
+      #- ./microservice-config:/usr/local/apache2/htdocs
+    #networks:
+      #- irccs
+      
+  postgres:
+    image: postgres
+    hostname: postgres
+    container_name: postgres-keycloak
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak_owner
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    networks:
+      - irccs
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.5
+    container_name: irccs-keycloak
+    restart: always
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+      ]
+    ports:
+      - 9445:8080
+    environment:
+      KEYCLOAK_ADMIN: gennaro.aurilia@gmail.com
+      KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
+      WEBHOOK_HTTP_BASE_PATH: "http://irccs-centro-ricerca:8181/fhir/AuditEvent"
+      WEBHOOK_HTTP_AUTH_USERNAME: "gennaro.aurilia@gmail.com"
+      WEBHOOK_HTTP_AUTH_PASSWORD: "Qwerty123!"
+      #KC_DB_URL: jdbc:postgresql://postgres-keycloak/keycloak
+      #KC_DB_KIND: postgres
+      ## KC_DB_DRIVER: org.postgresql.Driver
+      #KEYCLOAKCLI_ADMIN: keycloak
+      #KEYCLOAKCLI_PASSWORD: keycloak
+      ##      KC_HTTPS_PROTOCOLS: TLSv1.3,TLSv1.2
+      #KC_DB: postgres
+      #KC_DB_USERNAME: keycloak_owner
+      #KC_DB_PASSWORD: password
+      #KC_HOSTNAME: backoffice.irccs.infocube.it #non può andare insieme ad hostname_url
+      #KC_LOG_LEVEL: info
+      ##KC_HOSTNAME_URL: https://backoffice.irccs.infocube.it
+      ##KC_HOSTNAME_ADMIN_URL: http://backoffice.irccs.infocube.it/admin
+      #KEYCLOAK_ENABLE_HTTPS: "true"
+      ##KEYCLOAK_PRODUCTION: "true"
+      #KC_HOSTNAME_STRICT_HTTPS: "false"
+      #KC_HTTP_ENABLED: "true"
+      ##KC_HOSTNAME_DEBUG: "true"
+      #KC_PROXY: edge
+      #KC_PROXY_HEADERS: forwarded
+    volumes:
+      - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
+      - ./realm-export:/opt/keycloak/data/import
+      - ./realm-export:/export
+      - ./providers:/opt/keycloak/providers
+    depends_on:
+      - postgres
+    networks:
+      - irccs  
+
+  irccs-hapi-fhir:
+    image: hapiproject/hapi:v7.2.0
+    container_name: irccs-fhir
+    ports:
+      - "8081:80"    
+    volumes:
+      - ./hapi-fhir-config/application.yaml:/home/application.yaml
+    networks:
+      - irccs
+        
+volumes:
+  postgres_data:
+  php_data:
+  keycloak_data:
