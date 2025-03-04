@@ -1,0 +1,141 @@
+networks:
+  irccs:
+    driver: bridge
+
+services:
+  irccs-microservice-auth:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:1.0.0-SNAPSHOT
+    container_name: irccs-auth
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+      irccs-hapi-fhir:
+        condition: service_healthy
+  
+  irccs-microservice-practitioner:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-SNAPSHOT
+    container_name: irccs-practitioner
+    ports:
+      - "8384:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+      irccs-hapi-fhir:
+        condition: service_healthy
+ 
+  irccs-microservice-studio-clinico:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-SNAPSHOT
+    container_name: irccs-studio-clinico
+    ports:
+      - "8686:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+      irccs-hapi-fhir:
+        condition: service_healthy
+  
+  irccs-microservice-anagrafica-pazienti:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-SNAPSHOT
+    container_name: irccs-anagrafica-pazienti
+    ports:
+      - "8282:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+      irccs-hapi-fhir:
+        condition: service_healthy
+
+
+  #irccs-httpd:
+    #  image: nexus.infocube.it:443/org.quarkus/irccs-httpd-dashboard
+    #container_name: irccs-httpd-dashboard
+        #ports:
+    #  - "80:80"
+        #volumes:
+    #  - ./microservice-config:/usr/local/apache2/htdocs
+        #networks:
+      #  - irccs
+      
+  postgres-keycloak:
+    image: postgres
+    hostname: postgres
+    container_name: postgres-keycloak
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak_owner
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    networks:
+      - irccs
+
+  irccs-keycloak:
+    image: quay.io/keycloak/keycloak:24.0.5
+    container_name: irccs-keycloak
+    environment:
+      KEYCLOAK_ADMIN: gennaro.aurilia@gmail.com
+      KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
+    restart: always
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+      ]
+    ports:
+      - 9445:8080
+    volumes:
+      - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
+      - ./realm-export:/opt/keycloak/data/import
+      - ./realm-export:/export
+      - ./providers:/opt/keycloak/providers
+    depends_on:
+      - postgres-keycloak
+    networks:
+      - irccs  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://irccs-keycloak:9445"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  irccs-hapi-fhir:
+    image: hapiproject/hapi:v7.2.0
+    container_name: irccs-hapi-fhir
+    ports:
+      - "8081:80"    
+    volumes:
+      - ./hapi-fhir-config/application.yaml:/home/application.yaml
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://irccs-hapi-fhir:8081"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+  php_data:
+  keycloak_data:
