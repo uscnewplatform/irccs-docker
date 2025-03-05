@@ -2,11 +2,11 @@ version: '3.8'
 
 services:
   irccs-httpd:
-    container_name: irccs-httpd
-    image: nexus.infocube.it/org.quarkus/irccs-httpd:1.0.0-SNAPSHOT
+    container_name: irccs-httpd-test
+    image: irccs-httpd-dashboard
     restart: always
     ports:
-      - 80
+      - 8765:80
     networks:
       - irccs-docker_default
     volumes:
