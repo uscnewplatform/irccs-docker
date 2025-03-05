@@ -3,7 +3,7 @@ version: '3.8'
 services:
   irccs-centro-ricerca:
     container_name: irccs-microservice-auth
-    image: nexus.infocube.it/org.quarkus/irccs-microservice-autha:1.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-auth:1.0.0-SNAPSHOT
     restart: always
     ports:
       - 8080
