@@ -12,11 +12,11 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-    depends_on:
-      irccs-keycloak:
-        condition: service_healthy
-      irccs-hapi-fhir:
-        condition: service_healthy
+#    depends_on:
+#      irccs-keycloak:
+#        condition: service_healthy
+#      irccs-hapi-fhir:
+#        condition: service_healthy
   
   irccs-microservice-practitioner:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-SNAPSHOT
@@ -27,11 +27,11 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-    depends_on:
-      irccs-keycloak:
-        condition: service_healthy
-      irccs-hapi-fhir:
-        condition: service_healthy
+#    depends_on:
+#      irccs-keycloak:
+#        condition: service_healthy
+#      irccs-hapi-fhir:
+#        condition: service_healthy
  
   irccs-microservice-studio-clinico:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-SNAPSHOT
@@ -42,11 +42,11 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-    depends_on:
-      irccs-keycloak:
-        condition: service_healthy
-      irccs-hapi-fhir:
-        condition: service_healthy
+#    depends_on:
+#      irccs-keycloak:
+#        condition: service_healthy
+#      irccs-hapi-fhir:
+#        condition: service_healthy
   
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-SNAPSHOT
@@ -57,22 +57,23 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-    depends_on:
-      irccs-keycloak:
-        condition: service_healthy
-      irccs-hapi-fhir:
-        condition: service_healthy
+#    depends_on:
+#      irccs-keycloak:
+#        condition: service_healthy
+#      irccs-hapi-fhir:
+#        condition: service_healthy
 
 
-  #irccs-httpd:
-    #  image: nexus.infocube.it:443/org.quarkus/irccs-httpd-dashboard
-    #container_name: irccs-httpd-dashboard
-        #ports:
-    #  - "80:80"
-        #volumes:
-    #  - ./microservice-config:/usr/local/apache2/htdocs
-        #networks:
-      #  - irccs
+  irccs-httpd:
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard
+    container_name: irccs-httpd-dashboard
+    ports:
+      - "80:80"
+    volumes:
+      - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
+      - ./httpd-config/httpd.conf:/usr/local/apache2/httpd.conf
+    networks:
+      - irccs
       
   postgres-keycloak:
     image: postgres
@@ -107,9 +108,9 @@ services:
       - 9445:8080
     volumes:
       - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
-      - ./realm-export:/opt/keycloak/data/import
-      - ./realm-export:/export
-      - ./providers:/opt/keycloak/providers
+      - ./keycloak-config/realm-export:/opt/keycloak/data/import
+      - ./keycloak-config/realm-export:/export
+      - ./keycloak-config/providers:/opt/keycloak/providers
     depends_on:
       - postgres-keycloak
     networks:
@@ -124,7 +125,7 @@ services:
     image: hapiproject/hapi:v7.2.0
     container_name: irccs-hapi-fhir
     ports:
-      - "8081:80"    
+      - "8080:80"    
     volumes:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
     networks:
