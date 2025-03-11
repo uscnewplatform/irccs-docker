@@ -143,5 +143,3 @@ services:
 
 volumes:
   postgres_data:
-  php_data:
-  keycloak_data:
