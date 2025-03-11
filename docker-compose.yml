@@ -74,7 +74,7 @@ services:
         restart: true
 
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard-prova
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/pastrl-431:2.0.0
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
