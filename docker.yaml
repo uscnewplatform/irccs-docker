@@ -65,7 +65,7 @@ services:
 
 
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard-prova
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
