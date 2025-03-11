@@ -12,11 +12,10 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-#    depends_on:
-#      irccs-keycloak:
-#        condition: service_healthy
-#      irccs-hapi-fhir:
-#        condition: service_healthy
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+        restart: true
   
   irccs-microservice-practitioner:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-SNAPSHOT
@@ -27,12 +26,25 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-#    depends_on:
-#      irccs-keycloak:
-#        condition: service_healthy
-#      irccs-hapi-fhir:
-#        condition: service_healthy
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+        restart: true
  
+  irccs-microservice-centro-ricerca:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:1.0.0-SNAPSHOT
+    container_name: irccs-centro-ricerca
+    ports:
+      - "8181:8080"
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+        restart: true
+
   irccs-microservice-studio-clinico:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-SNAPSHOT
     container_name: irccs-studio-clinico
@@ -42,11 +54,10 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-#    depends_on:
-#      irccs-keycloak:
-#        condition: service_healthy
-#      irccs-hapi-fhir:
-#        condition: service_healthy
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+        restart: true
   
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-SNAPSHOT
@@ -57,12 +68,10 @@ services:
       - ./microservice-config:/deployments/config
     networks:
       - irccs
-#    depends_on:
-#      irccs-keycloak:
-#        condition: service_healthy
-#      irccs-hapi-fhir:
-#        condition: service_healthy
-
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+        restart: true
 
   irccs-httpd:
     image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard-prova
@@ -106,6 +115,7 @@ services:
       ]
     ports:
       - 9445:8080
+      - 9000:9000
     volumes:
       - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
       - ./keycloak-config/realm-export:/opt/keycloak/data/import
@@ -116,7 +126,7 @@ services:
     networks:
       - irccs  
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://irccs-keycloak:9445"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -125,16 +135,11 @@ services:
     image: hapiproject/hapi:v7.2.0
     container_name: irccs-hapi-fhir
     ports:
-      - "8080:80"    
+      - "8080:8080"    
     volumes:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
     networks:
       - irccs
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://irccs-hapi-fhir:8081"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
 volumes:
   postgres_data:
