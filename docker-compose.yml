@@ -4,7 +4,7 @@ networks:
 
 services:
   irccs-microservice-auth:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:1.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:1.0.0-R5-RELEASE
     container_name: irccs-auth
     volumes:
       - ./microservice-config:/deployments/config
@@ -15,20 +15,8 @@ services:
         condition: service_healthy
         restart: true
 
-  irccs-microservice-clinical-reasoning:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-clinical-reasoning:1.0.0-SNAPSHOT
-    container_name: irccs-clinical-reasoning
-    volumes:
-      - ./microservice-config:/deployments/config
-    networks:
-      - irccs
-    depends_on:
-      irccs-keycloak:
-        condition: service_healthy
-        restart: true
-
   irccs-microservice-ctcae:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:1.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:1.0.0-R5-RELEASE
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config/application.properties.ctcae:/deployments/config/application.properties
@@ -40,7 +28,7 @@ services:
         restart: true
  
   irccs-microservice-practitioner:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-R5-RELEASE
     container_name: irccs-practitioner
     volumes:
       - ./microservice-config:/deployments/config
@@ -52,7 +40,7 @@ services:
         restart: true
  
   irccs-microservice-centro-ricerca:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:1.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:1.0.0-R5-RELEASE
     container_name: irccs-centro-ricerca
     volumes:
       - ./microservice-config:/deployments/config
@@ -64,7 +52,7 @@ services:
         restart: true
 
   irccs-microservice-studio-clinico:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-R5-RELEASE
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
@@ -76,7 +64,7 @@ services:
         restart: true
   
   irccs-microservice-anagrafica-pazienti:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-R5-RELEASE
     container_name: irccs-anagrafica-pazienti
     volumes:
       - ./microservice-config:/deployments/config
@@ -88,13 +76,16 @@ services:
         restart: true
 
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/pastrl-431:1.0.0
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/1.0.0_r5_release:1.0.0-R5-RELEASE
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
     volumes:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./hapi-fhir-config/install_searchparameters.sh:/usr/local/apache2/install_searchparameters.sh
+    #entrypoint: ["/bin/sh", "-c", "apt-get update && apt-get install -y curl && sleep 60 && ./install_searchparameters.sh irccs-hapi-fhir:8080 && httpd-foreground"]
+    entrypoint: ["/bin/sh", "-c", "apt-get update && apt-get install -y curl && while ! curl -sSf http://irccs-hapi-fhir:8080/fhir/metadata >/dev/null; do echo 'Waiting for HAPI FHIR...'; sleep 5; done && /usr/local/apache2/install_searchparameters.sh irccs-hapi-fhir:8080 && httpd-foreground"]
     networks:
       - irccs
       
@@ -152,6 +143,8 @@ services:
       - postgres-hapi-fhir
     volumes:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
+    environment:
+      SPRING_CONFIG_LOCATION: '/home/application.yaml'
     networks:
       - irccs
 
@@ -176,8 +169,11 @@ services:
     networks:
       - irccs
     command: --requirepass password
+    volumes:
+      - redis_data:/data
 
  
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak: 
+  redis_data:

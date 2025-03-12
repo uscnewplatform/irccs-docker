@@ -45329,18 +45329,18 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {
-    "password": "zozvhmhcmlazskai",
+    "password": "aI9C4Cjb",
     "replyToDisplayName": "",
     "starttls": "true",
     "auth": "true",
     "port": "587",
-    "host": "smtp.gmail.com",
-    "replyTo": "noreply-pascale@admin.it",
-    "from": "i3.irccs.test@gmail.com",
+    "host": "pro.eu.turbo-smtp.com",
+    "replyTo": "gennaro.aurilia@gmail.com",
+    "from": "gennaro.aurilia@gmail.com",
     "fromDisplayName": "IRCCS - GESTIONE STUDI CLINICI",
     "envelopeFrom": "",
     "ssl": "false",
-    "user": "i3.irccs.test@gmail.com"
+    "user": "gennaro.aurilia@gmail.com"
   },
   "eventsEnabled": false,
   "eventsListeners": [
