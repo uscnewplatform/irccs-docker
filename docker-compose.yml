@@ -14,7 +14,31 @@ services:
       irccs-keycloak:
         condition: service_healthy
         restart: true
-  
+
+  irccs-microservice-clinical-reasoning:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-clinical-reasoning:1.0.0-SNAPSHOT
+    container_name: irccs-clinical-reasoning
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+        restart: true
+
+  irccs-microservice-ctcae:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:1.0.0-SNAPSHOT
+    container_name: irccs-ctcae
+    volumes:
+      - ./microservice-config/application.properties.ctcae:/deployments/config/application.properties
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+        restart: true
+ 
   irccs-microservice-practitioner:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-SNAPSHOT
     container_name: irccs-practitioner
@@ -144,6 +168,22 @@ services:
       POSTGRES_PASSWORD: admin
     networks:
       - irccs 
+
+ cache:
+    container_name: irccs-redis
+    hostname: redis
+    image: redis:7.0-rc
+    networks:
+      - irccs-docker_default
+    command: >
+      --requirepass password
+    network:
+      - irccs
+
+networks:
+   irccs-docker_default:
+     external: true
+     name: irccs-docker_default
 
 volumes:
   postgres_data_hapi:

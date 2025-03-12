@@ -1,0 +1,42 @@
+quarkus.log.level=INFO
+
+# Quarkus Dev Services configuration
+quarkus.devservices.enabled=true
+quarkus.devservices.timeout=10m
+
+# Quarkus Dev Services hapi server version -> i3-client
+#quarkus.hapi.devservices.version=7.2.0
+
+# Quarkus Dev Services keycloak configuration -> i3-annotation
+#quarkus.keycloak.devservices.image-name=keycloak/keycloak:24.0.5
+
+#test port
+quarkus.http.test-port=8683
+quarkus.http.test-ssl-port=8646
+quarkus.http.test-timeout=90s
+
+# CTC V5 Conf
+ctc.version.v5.file.name=CTCAE_v5.0_2017-11-27.xlsx
+ctc.redis.v5.key=ctc-v5
+
+# CTC V4 Conf
+ctc.version.v4.file.name=CTCAE_4.03_2010-06-14.xlsx
+ctc.redis.v4.key=ctc-v4
+
+# EORTC Conf
+eortc.version.file.name=eortc-qlq-c30.xlsx
+eortc.redis.key=eortc
+
+
+# PROCTC
+proctc.version.file.name=uosc_proctcaev1.xlsx
+proctc.redis.key=proctc
+
+
+# Cache config
+quarkus.redis.hosts=redis://cache:6379
+
+quarkus.redis.subscriber.hosts=redis://cache:6379
+quarkus.redis.password=password
+#Expiration time
+quarkus.redis.ttl=86400
