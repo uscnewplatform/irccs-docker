@@ -75,7 +75,7 @@ services:
       - irccs
       
   postgres-keycloak:
-    image: postgres
+    image: postgres:17.4
     hostname: postgres
     container_name: postgres-keycloak
     restart: always
@@ -117,7 +117,7 @@ services:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 30s
       timeout: 10s
-      retries: 7
+      retries: 10
 
   irccs-hapi-fhir:
     image: hapiproject/hapi:v7.2.0
