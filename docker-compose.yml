@@ -84,7 +84,6 @@ services:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./hapi-fhir-config/install_searchparameters.sh:/usr/local/apache2/install_searchparameters.sh
-    #entrypoint: ["/bin/sh", "-c", "apt-get update && apt-get install -y curl && sleep 60 && ./install_searchparameters.sh irccs-hapi-fhir:8080 && httpd-foreground"]
     entrypoint: ["/bin/sh", "-c", "apt-get update && apt-get install -y curl && while ! curl -sSf http://irccs-hapi-fhir:8080/fhir/metadata >/dev/null; do echo 'Waiting for HAPI FHIR...'; sleep 5; done && /usr/local/apache2/install_searchparameters.sh irccs-hapi-fhir:8080 && httpd-foreground"]
     networks:
       - irccs
