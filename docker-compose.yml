@@ -169,22 +169,15 @@ services:
     networks:
       - irccs 
 
- cache:
+  cache:
     container_name: irccs-redis
     hostname: redis
     image: redis:7.0-rc
     networks:
-      - irccs-docker_default
-    command: >
-      --requirepass password
-    network:
       - irccs
+    command: --requirepass password
 
-networks:
-   irccs-docker_default:
-     external: true
-     name: irccs-docker_default
-
+ 
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak: 
