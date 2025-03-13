@@ -13,7 +13,7 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-        restart: true
+    restart: always
 
   irccs-microservice-ctcae:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:1.0.0-R5-RELEASE
@@ -25,7 +25,7 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-        restart: true
+    restart: always
  
   irccs-microservice-practitioner:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-R5-RELEASE
@@ -37,7 +37,7 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-        restart: true
+    restart: always
  
   irccs-microservice-centro-ricerca:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:1.0.0-R5-RELEASE
@@ -49,7 +49,7 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-        restart: true
+    restart: always
 
   irccs-microservice-studio-clinico:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-R5-RELEASE
@@ -61,8 +61,8 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-        restart: true
-  
+    restart: always
+
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-R5-RELEASE
     container_name: irccs-anagrafica-pazienti
@@ -73,7 +73,7 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-        restart: true
+    restart: always
 
   irccs-httpd:
     image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/1.0.0_r5_release:1.0.0-R5-RELEASE
@@ -87,7 +87,7 @@ services:
     entrypoint: ["/bin/sh", "-c", "apt-get update && apt-get install -y curl && while ! curl -sSf http://irccs-hapi-fhir:8080/fhir/metadata >/dev/null; do echo 'Waiting for HAPI FHIR...'; sleep 15; done && /usr/local/apache2/install_searchparameters.sh irccs-hapi-fhir:8080 && httpd-foreground"]
     networks:
       - irccs
-      
+
   postgres-keycloak:
     image: postgres:17.4
     hostname: postgres
@@ -126,7 +126,7 @@ services:
     depends_on:
       - postgres-keycloak
     networks:
-      - irccs  
+      - irccs
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 30s
@@ -137,7 +137,7 @@ services:
     image: hapiproject/hapi:v7.2.0
     container_name: irccs-hapi-fhir
     ports:
-      - "8080:8080"    
+      - "8080:8080"
     depends_on:
       - postgres-hapi-fhir
     volumes:
@@ -159,7 +159,7 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
     networks:
-      - irccs 
+      - irccs
 
   cache:
     container_name: irccs-redis
@@ -171,8 +171,8 @@ services:
     volumes:
       - redis_data:/data
 
- 
+
 volumes:
   postgres_data_hapi:
-  postgres_data_keycloak: 
+  postgres_data_keycloak:
   redis_data:
