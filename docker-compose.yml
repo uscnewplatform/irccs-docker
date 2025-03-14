@@ -172,8 +172,21 @@ services:
     volumes:
       - redis_data:/data
 
+  jenkins:
+      image: jenkins/jenkins:2.440.1
+      ports:
+        - 8081:8080
+        - 5001:50000
+      container_name: irccs-jenkins
+      volumes:
+        - jenkins_home:/var/jenkins_home
+        - /usr/bin/docker:/usr/bin/docker
+        - /var/run/docker.sock:/var/run/docker.sock
+      networks:
+        - irccs
 
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
   redis_data:
+  jenkins_home:
