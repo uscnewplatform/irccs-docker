@@ -1,4 +1,3 @@
-# Variables
 quarkus.log.level=INFO
 quarkus.rest-client.auth-microservice-client.url=http://irccs-auth:8080
 quarkus.rest-client.group-microservice-client.url=http://irccs-centro-ricerca:8080
@@ -11,7 +10,6 @@ org.quarkus.irccs.query.limit=100
 # Keycloak Variables
 keycloak-port=8080
 keycloak-base-url=http://irccs-keycloak
-
 
 # Keycloak Configuration
 keycloak-client_id=irccs
@@ -37,3 +35,31 @@ quarkus.keycloak.policy-enforcer.paths.4.enforcement-mode=DISABLED
 quarkus.keycloak.policy-enforcer.paths.5.enforcement-mode=DISABLED
 quarkus.keycloak.policy-enforcer.paths.6.enforcement-mode=DISABLED
 quarkus.keycloak.policy-enforcer.http-method-as-scope=true
+
+quarkus.http.root-path=/api/service/
+
+# CTC V5 Conf
+ctc.version.v5.file.name=CTCAE_v5.0_2017-11-27.xlsx
+ctc.redis.v5.key=ctc-v5
+
+# CTC V4 Conf
+ctc.version.v4.file.name=CTCAE_4.03_2010-06-14.xlsx
+ctc.redis.v4.key=ctc-v4
+
+# EORTC Conf
+eortc.version.file.name=eortc-qlq-c30.xlsx
+eortc.redis.key=eortc
+
+
+# PROCTC
+proctc.version.file.name=uosc_proctcaev1.xlsx
+proctc.redis.key=proctc
+
+
+# Cache config
+quarkus.redis.hosts=redis://cache:6379
+
+quarkus.redis.subscriber.hosts=redis://cache:6379
+quarkus.redis.password=password
+#Expiration time
+quarkus.redis.ttl=86400

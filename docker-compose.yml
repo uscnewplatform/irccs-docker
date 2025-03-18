@@ -3,9 +3,94 @@ networks:
     driver: bridge
 
 services:
+  irccs-microservice-auth:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:2.0.0-SNAPSHOT
+    container_name: irccs-auth
+    volumes:
+      - ./microservice-config:/deployments/config
+      #- ./ssl:/home/ssl
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-ctcae:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
+    container_name: irccs-ctcae
+    volumes:
+      - ./microservice-config/application.properties.ctcae:/deployments/config/application.properties
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-practitioner:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:2.0.0-SNAPSHOT
+    container_name: irccs-practitioner
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-centro-ricerca:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:2.0.0-SNAPSHOT
+    container_name: irccs-centro-ricerca
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-studio-clinico:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
+    container_name: irccs-studio-clinico
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-anagrafica-pazienti:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
+    container_name: irccs-anagrafica-pazienti
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-httpd:
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/1.0.0_r5_release:2.0.0-SNAPSHOT
+    container_name: irccs-httpd-dashboard
+    ports:
+      - "80:80"
+    volumes:
+      - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
+      - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./hapi-fhir-config/install_searchparameters.sh:/usr/local/apache2/install_searchparameters.sh
+    entrypoint: ["/bin/sh", "-c", "apt-get update && apt-get install -y curl && while ! curl -sSf http://irccs-hapi-fhir:8080/fhir/metadata >/dev/null; do echo 'Waiting for HAPI FHIR...'; sleep 15; done && /usr/local/apache2/install_searchparameters.sh irccs-hapi-fhir:8080 && httpd-foreground"]
+    networks:
+      - irccs
 
   postgres-keycloak:
-    image: postgres
+    image: postgres:17.4
     hostname: postgres
     container_name: postgres-keycloak
     restart: always
@@ -15,8 +100,51 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak_owner
       POSTGRES_PASSWORD: password
+    networks:
+      - irccs
+
+  irccs-keycloak:
+    image: quay.io/keycloak/keycloak:26.0.5
+    container_name: irccs-keycloak
+    environment:
+      KEYCLOAK_ADMIN: gennaro.aurilia@gmail.com
+      KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
+    restart: always
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+      ]
     ports:
-      - "5433:5432"
+      - 9000:9000
+    volumes:
+      - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
+      - ./keycloak-config/realm-export:/opt/keycloak/data/import
+      - ./keycloak-config/realm-export:/export
+      - ./keycloak-config/providers/:/opt/keycloak/providers/
+      # - ./ssl:/opt/keycloak/ssl
+    depends_on:
+      - postgres-keycloak
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  irccs-hapi-fhir:
+    image: hapiproject/hapi:v7.2.0
+    container_name: irccs-hapi-fhir
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-hapi-fhir
+    volumes:
+      - ./hapi-fhir-config/application.yaml:/home/application.yaml
+    environment:
+      SPRING_CONFIG_LOCATION: '/home/application.yaml'
     networks:
       - irccs
 
@@ -31,68 +159,34 @@ services:
       POSTGRES_DB: hapi
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-    ports:
-      - "5432:5432"
     networks:
       - irccs
 
-  irccs-keycloak:
-    image: quay.io/keycloak/keycloak:24.0.5
-    container_name: irccs-keycloak
-    environment:
-      KEYCLOAK_ADMIN: keycloak
-      KEYCLOAK_ADMIN_PASSWORD: keycloak
-      KC_DB_URL: jdbc:postgresql://postgres-keycloak/keycloak
-      KC_DB_KIND: postgres
-      # KC_DB_DRIVER: org.postgresql.Driver
-      KEYCLOAKCLI_ADMIN: keycloak
-      KEYCLOAKCLI_PASSWORD: keycloak
-      #      KC_HTTPS_PROTOCOLS: TLSv1.3,TLSv1.2
-      KC_DB: postgres
-      KC_DB_USERNAME: keycloak_owner
-      KC_DB_PASSWORD: password
-      #KC_HOSTNAME: backoffice.irccs.infocube.it #non può andare insieme ad hostname_url
-      KC_LOG_LEVEL: info
-      KEYCLOAK_ENABLE_HTTPS: "true"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-      KC_HTTP_ENABLED: "true"
-      KC_HOSTNAME_BACKCHANNEL-DYNAMIC: "true"
-      KC_HOSTNAME_STRICT: "false"
-      KC_PROXY: edge
-      KC_PROXY_HEADERS: forwarded
-
-    restart: always
-    entrypoint:
-      [
-        "/bin/sh",
-        "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
-      ]
-    ports:
-      - 9445:8080
-    volumes:
-      - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
-      - ./keycloak-config/realm-export:/opt/keycloak/data/import
-      - ./providers:/opt/keycloak/providers
-    depends_on:
-      - postgres-keycloak
+  cache:
+    container_name: irccs-redis
+    hostname: redis
+    image: redis:7.0-rc
     networks:
-      - irccs  
-
-  irccs-hapi-fhir:
-    image: hapiproject/hapi:v7.2.0
-    container_name: irccs-hapi-fhir
-    environment:
-      SPRING_CONFIG_LOCATION: '/home/application.yaml'
-    ports:
-      - "8081:8080"
+      - irccs
+    command: --requirepass password
     volumes:
-      - ./hapi-fhir-config/application.yaml:/home/application.yaml
-    depends_on:
-      - postgres-hapi-fhir
+      - redis_data:/data
+
+  jenkins:
+    image: jenkins/jenkins:2.440.1
+    ports:
+      - 8081:8080
+      - 5001:50000
+    container_name: irccs-jenkins
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /usr/bin/docker:/usr/bin/docker
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - irccs
 
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
+  redis_data:
+  jenkins_home:
