@@ -4,7 +4,7 @@ networks:
 
 services:
   irccs-microservice-auth:
-    image: nexus.infocube.it:443/it.na.istitutotumori/irccs-microservice-auth:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:2.0.0-SNAPSHOT
     container_name: irccs-auth
     volumes:
       - ./microservice-config:/deployments/config
@@ -16,7 +16,7 @@ services:
     restart: always
 
   irccs-microservice-ctcae:
-    image: nexus.infocube.it:443/it.na.istitutotumori/irccs-microservice-ctcae:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config/application.properties.ctcae:/deployments/config/application.properties
@@ -28,7 +28,7 @@ services:
     restart: always
  
   irccs-microservice-practitioner:
-    image: nexus.infocube.it:443/it.na.istitutotumori/irccs-microservice-practitioner:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:2.0.0-SNAPSHOT
     container_name: irccs-practitioner
     volumes:
       - ./microservice-config:/deployments/config
@@ -40,7 +40,7 @@ services:
     restart: always
  
   irccs-microservice-centro-ricerca:
-    image: nexus.infocube.it:443/it.na.istitutotumori/irccs-microservice-centro-ricerca:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:2.0.0-SNAPSHOT
     container_name: irccs-centro-ricerca
     volumes:
       - ./microservice-config:/deployments/config
@@ -52,7 +52,7 @@ services:
     restart: always
 
   irccs-microservice-studio-clinico:
-    image: nexus.infocube.it:443/it.na.istitutotumori/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
@@ -64,7 +64,7 @@ services:
     restart: always
 
   irccs-microservice-anagrafica-pazienti:
-    image: nexus.infocube.it:443/it.na.istitutotumori/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
     container_name: irccs-anagrafica-pazienti
     volumes:
       - ./microservice-config:/deployments/config
