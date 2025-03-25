@@ -4,11 +4,10 @@ networks:
 
 services:
   irccs-microservice-auth:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:1.0.0-R5-RELEASE
     container_name: irccs-auth
     volumes:
       - ./microservice-config:/deployments/config
-      #- ./ssl:/home/ssl
     networks:
       - irccs
     depends_on:
@@ -17,7 +16,7 @@ services:
     restart: always
 
   irccs-microservice-ctcae:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:1.0.0-R5-RELEASE
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config/application.properties.ctcae:/deployments/config/application.properties
@@ -29,7 +28,7 @@ services:
     restart: always
 
   irccs-microservice-practitioner:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:1.0.0-R5-RELEASE
     container_name: irccs-practitioner
     volumes:
       - ./microservice-config:/deployments/config
@@ -41,7 +40,7 @@ services:
     restart: always
 
   irccs-microservice-centro-ricerca:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:1.0.0-R5-RELEASE
     container_name: irccs-centro-ricerca
     volumes:
       - ./microservice-config:/deployments/config
@@ -53,7 +52,7 @@ services:
     restart: always
 
   irccs-microservice-studio-clinico:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:1.0.0-R5-RELEASE
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
@@ -65,7 +64,7 @@ services:
     restart: always
 
   irccs-microservice-anagrafica-pazienti:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:1.0.0-R5-RELEASE
     container_name: irccs-anagrafica-pazienti
     volumes:
       - ./microservice-config:/deployments/config
@@ -77,7 +76,7 @@ services:
     restart: always
 
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/develop:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/1.0.0_r5_release:1.0.0-R5-RELEASE
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
@@ -117,13 +116,13 @@ services:
         "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
       ]
     ports:
+      - 9445:8080
       - 9000:9000
     volumes:
       - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
       - ./keycloak-config/realm-export:/opt/keycloak/data/import
       - ./keycloak-config/realm-export:/export
       - ./keycloak-config/providers/:/opt/keycloak/providers/
-      # - ./ssl:/opt/keycloak/ssl
     depends_on:
       - postgres-keycloak
     networks:
@@ -172,21 +171,8 @@ services:
     volumes:
       - redis_data:/data
 
-  jenkins:
-    image: jenkins/jenkins:2.440.1
-    ports:
-      - 8081:8080
-      - 5001:50000
-    container_name: irccs-jenkins
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /usr/bin/docker:/usr/bin/docker
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - irccs
 
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
   redis_data:
-  jenkins_home:
