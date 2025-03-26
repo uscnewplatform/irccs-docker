@@ -3,6 +3,18 @@ networks:
     driver: bridge
 
 services:
+  irccs-microservice-clinical-reasoning:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-clinical-reasoning:2.0.0-SNAPSHOT
+    container_name: irccs-clinical-reasoning
+    volumes:
+      - ./microservice-config:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
   irccs-microservice-auth:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:2.0.0-SNAPSHOT
     container_name: irccs-auth
