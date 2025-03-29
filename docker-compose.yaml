@@ -86,9 +86,8 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
-
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/develop:2.3.0
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/migrazione-r4-bis:2.3.0
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
@@ -99,7 +98,6 @@ services:
     entrypoint: ["/bin/sh", "-c", "apt-get update && apt-get install -y curl && while ! curl -sSf http://irccs-hapi-fhir:8080/fhir/metadata >/dev/null; do echo 'Waiting for HAPI FHIR...'; sleep 15; done && /usr/local/apache2/install_searchparameters.sh irccs-hapi-fhir:8080 && httpd-foreground"]
     networks:
       - irccs
-
   postgres-keycloak:
     image: postgres:17.4
     hostname: postgres
