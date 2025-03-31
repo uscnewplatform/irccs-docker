@@ -193,4 +193,26 @@ EOF
 
 done
 
-    
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType" : "SearchParameter",
+  "name" : "enrollment",
+  "title" : "enrollment",
+  "status" : "active",
+  "experimental" : true,
+  "publisher" : "Infocube",
+  "description" : "Search by extension value",
+  "code" : "enrollment",
+  "base" : ["ResearchStudy"],
+  "type" : "string",
+  "expression" : "ResearchStudy.enrollment.reference",
+  "processingMode" : "normal",
+  "modifier": ["exact"]
+}
+EOF
+  )
+
+  curl -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+       -H "Content-Type: application/json" \
+       -d "$JSON_BODY"
+
