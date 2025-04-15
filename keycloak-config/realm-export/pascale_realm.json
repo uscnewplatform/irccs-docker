@@ -18885,7 +18885,8 @@
             "displayName": "Base Questionnaire Resource",
             "attributes": {},
             "uris": [
-              "/fhir/Questionnaire/{id}"
+              "/fhir/Questionnaire/{id}",
+              "/api/service/*"
             ],
             "scopes": [
               {
