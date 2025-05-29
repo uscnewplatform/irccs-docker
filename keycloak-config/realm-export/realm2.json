@@ -3517,7 +3517,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "cwvB6qAn5iFl7pa9r04WxkordJyy3tjS",
       "redirectUris": [
         "/fhir/*"
       ],
