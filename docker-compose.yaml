@@ -52,7 +52,7 @@ services:
     restart: always
  
   irccs-microservice-centro-ricerca:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:2.0.1-SNAPSHOT
     container_name: irccs-centro-ricerca
     volumes:
       - ./microservice-config:/deployments/config
