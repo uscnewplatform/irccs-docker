@@ -40,7 +40,7 @@ services:
     restart: always
  
   irccs-microservice-practitioner:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:2.0.0-SNAPSHOT
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:2.0.1-SNAPSHOT
     container_name: irccs-practitioner
     volumes:
       - ./microservice-config:/deployments/config
