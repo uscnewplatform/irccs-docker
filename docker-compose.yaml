@@ -87,7 +87,7 @@ services:
         condition: service_healthy
     restart: always
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/develop:2.3.0
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/develop:2.3.1
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
