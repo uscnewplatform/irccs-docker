@@ -31,7 +31,7 @@ services:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
     container_name: irccs-ctcae
     volumes:
-      - ./microservice-config/application.properties.ctcae:/deployments/config/application.properties
+      - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
     networks:
       - irccs
     depends_on:
