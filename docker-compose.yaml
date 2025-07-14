@@ -120,8 +120,8 @@ services:
     entrypoint:
       [
         "/bin/sh",
-      	"-c",
-      	"/opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import --override true && /opt/keycloak/bin/kc.sh start-dev"
+        "-c",
+        "/opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import --override true && /opt/keycloak/bin/kc.sh start-dev"
       ]
     ports:
       - "9445:8080"
