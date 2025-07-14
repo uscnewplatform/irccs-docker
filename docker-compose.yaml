@@ -121,7 +121,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+        "/opt/keycloak/bin/kc.sh build --db postgres -Dkeycloak.migration.strategy=OVERWRITE_EXISTING && /opt/keycloak/bin/kc.sh start-dev --import-realm",
       ]
     ports:
       - "9445:8080"
