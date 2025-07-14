@@ -87,7 +87,7 @@ services:
         condition: service_healthy
     restart: always
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/develop:2.4.0
+    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/develop:2.4.1
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
@@ -159,6 +159,8 @@ services:
     hostname: postgres
     container_name: postgres-hapi-fhir
     restart: always
+    ports:
+     - "5432:5432"
     volumes:
       - postgres_data_hapi:/var/lib/postgresql/data
     environment:
