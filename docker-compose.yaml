@@ -121,7 +121,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import --override true --optimized && /opt/keycloak/bin/kc.sh start-dev"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import --override true --optimized && /opt/keycloak/bin/kc.sh start-dev"
       ]
     ports:
       - "9445:8080"
