@@ -116,13 +116,12 @@ services:
     environment:
       KEYCLOAK_ADMIN: gennaro.aurilia@gmail.com
       KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
-      KC_MIGRATION_STRATEGY: OVERWRITE_EXISTING
     restart: always
     entrypoint:
       [
         "/bin/sh",
-        "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres -Dkeycloak.migration.strategy=OVERWRITE_EXISTING && /opt/keycloak/bin/kc.sh start-dev --import-realm",
+      	"-c",
+      	"/opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import --override true && /opt/keycloak/bin/kc.sh start-dev"
       ]
     ports:
       - "9445:8080"
