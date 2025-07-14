@@ -121,14 +121,13 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh import --dir /opt/keycloak/data/import --override true && /opt/keycloak/bin/kc.sh start-dev"
+        "/opt/keycloak/bin/kc.sh import --dir=/opt/keycloak/data/import --override true --optimized && /opt/keycloak/bin/kc.sh start-dev"
       ]
     ports:
       - "9445:8080"
     volumes:
       - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
       - ./keycloak-config/realm-export:/opt/keycloak/data/import
-      - ./keycloak-config/realm-export:/export
       - ./keycloak-config/providers/:/opt/keycloak/providers/
     depends_on:
       - postgres-keycloak
