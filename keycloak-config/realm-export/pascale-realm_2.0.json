@@ -95,6 +95,114 @@
         "attributes": {}
       },
       {
+        "id": "f0de6453-dfac-453e-b68d-36cace15adcf",
+        "name": "task:delete",
+        "description": "Allows you to perform a delete operation on Task.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "d96b0005-ca52-4ada-b621-b868e66d7247",
+        "name": "task:read",
+        "description": "Allows you to perform a read operation on Task.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "4fa60b43-b5f8-4d7f-830f-b75f69978149",
+        "name": "task:update",
+        "description": "Allows you to perform a update operation on Task.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "654a8dbd-b78f-403f-bcf1-b4473511b3f1",
+        "name": "task:create",
+        "description": "Allows you to perform a create operation on Task.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "75396d8f-ec4d-449b-9b95-7328f8c50ddc",
+        "name": "task:history",
+        "description": "Allows you to perform a history operation on Task.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "bb55364d-d883-4fb8-8313-8c77017ac96f",
+        "name": "task:search",
+        "description": "Allows you to perform a search operation on Task.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "3f6271bc-e0c1-47a6-b85c-32d94e9e551c",
+        "name": "consent:read",
+        "description": "Allows you to perform a read operation on Consent.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "72a6e6bd-6dcb-4139-ad95-3b12c7fab2c7",
+        "name": "consent:create",
+        "description": "Allows you to perform a create operation on Consent.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "63e2a305-8d5a-45b7-9b0c-f579bcd660f5",
+        "name": "consent:search",
+        "description": "Allows you to perform a search operation on Consent.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "72576c17-768a-43b8-8b88-60f0af4903a8",
+        "name": "consent:delete",
+        "description": "Allows you to perform a delete operation on Consent.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "5825f568-3c79-4fd6-b917-be74d96557a2",
+        "name": "consent:update",
+        "description": "Allows you to perform a update operation on Consent.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "181e1bd8-bd55-44b4-ba92-532e6dc5058a",
+        "name": "consent:history",
+        "description": "Allows you to perform a history operation on Consent.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
         "id": "513569c0-12c2-45a0-ac47-0c94567e011b",
         "name": "appointment:history",
         "description": "Allows you to perform a history operation on Appointment.",
@@ -2557,71 +2665,71 @@
         ]
       }
     },
-		{
-			"id": "7651258b-0cc7-4338-94a6-3a59b820f825",
-			"name": "Amministratori Senologia",
-			"path": "/Amministratori Senologia",
-			"subGroups": [],
-			"attributes": {},
-			"realmRoles": [
-				"researchstudy:history",
-				"researchstudy:search",
-				"researchstudy:delete",
-				"researchstudy:create",
-				"researchstudy:read",
-				"researchstudy:update"
-			],
-			"clientRoles": {}
-		},
-		{
-			"id": "11a9fd7c-0db4-476e-8c9b-f7dfd8661211",
-			"name": "Medici",
-			"path": "/Medici",
-			"subGroups": [],
-			"attributes": {},
-			"realmRoles": [
-				"appointment:read",
-				"appointment:search",
-				"procedure:delete",
-				"appointment:history",
-				"questionnaire:read",
-				"questionnaire:update",
-				"careplan:create",
-				"careplan:history",
-				"procedure:create",
-				"researchstudy:delete",
-				"researchstudy:read",
-				"researchstudy:update",
-				"procedure:history"
-			],
-			"clientRoles": {}
-		},
-		{
-			"id": "c1477b8d-3a47-43a3-8d87-8f7647974f6c",
-			"name": "Radiologi",
-			"path": "/Radiologi",
-			"subGroups": [],
-			"attributes": {},
-			"realmRoles": [
-				"researchstudy:search",
-				"researchstudy:delete",
-				"researchstudy:create"
-			],
-			"clientRoles": {}
-		},
-		{
-			"id": "72db00f7-7000-4651-b4bc-28527dd2f41f",
-			"name": "Senologi",
-			"path": "/Senologi",
-			"subGroups": [],
-			"attributes": {},
-			"realmRoles": [
-				"researchstudy:search",
-				"researchstudy:delete",
-				"researchstudy:create"
-			],
-			"clientRoles": {}
-		}
+    {
+      "id": "7651258b-0cc7-4338-94a6-3a59b820f825",
+      "name": "Amministratori Senologia",
+      "path": "/Amministratori Senologia",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [
+        "researchstudy:history",
+        "researchstudy:search",
+        "researchstudy:delete",
+        "researchstudy:create",
+        "researchstudy:read",
+        "researchstudy:update"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "id": "11a9fd7c-0db4-476e-8c9b-f7dfd8661211",
+      "name": "Medici",
+      "path": "/Medici",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [
+        "appointment:read",
+        "appointment:search",
+        "procedure:delete",
+        "appointment:history",
+        "questionnaire:read",
+        "questionnaire:update",
+        "careplan:create",
+        "careplan:history",
+        "procedure:create",
+        "researchstudy:delete",
+        "researchstudy:read",
+        "researchstudy:update",
+        "procedure:history"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "id": "c1477b8d-3a47-43a3-8d87-8f7647974f6c",
+      "name": "Radiologi",
+      "path": "/Radiologi",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [
+        "researchstudy:search",
+        "researchstudy:delete",
+        "researchstudy:create"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "id": "72db00f7-7000-4651-b4bc-28527dd2f41f",
+      "name": "Senologi",
+      "path": "/Senologi",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [
+        "researchstudy:search",
+        "researchstudy:delete",
+        "researchstudy:create"
+      ],
+      "clientRoles": {}
+    }
   ],
   "defaultRole": {
     "id": "8cbf5352-bd46-494a-a175-24b843c077f1",
@@ -2674,254 +2782,254 @@
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
   "users": [
-		{
-			"id": "b5bfba8b-b662-4b3f-810a-be9704290a7c",
-			"createdTimestamp": 1710844562464,
-			"username": "giacomoleopardi@gmail.com",
-			"enabled": true,
-			"totp": false,
-			"emailVerified": true,
-			"firstName": "Giacomo",
-			"lastName": "Leopardi",
-			"email": "giacomoleopardi@gmail.com",
-			"attributes": {
-				"organizationRequest": [
-					"Pascale"
-				],
-				"phoneNumber": [
-					"3333333333"
-				]
-			},
-			"credentials": [
-				{
-					"id": "ec915301-ee0c-4359-9e33-8f1432c41260",
-					"type": "password",
-					"userLabel": "My password",
-					"createdDate": 1710844875881,
-					"secretData": "{\"value\":\"vBpAUxbsWB4g5NgBTCY1k74JQLYnfFylVZxkPnXDJxQ=\",\"salt\":\"SODxqpAYCBZCN8PO/B9Whg==\",\"additionalParameters\":{}}",
-					"credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-				}
-			],
-			"disableableCredentialTypes": [],
-			"requiredActions": [],
-			"realmRoles": [
-				"default-roles-pascale"
-			],
-			"notBefore": 0,
-			"groups": [
-				"/Senologi"
-			]
-		},
-		{
-			"id": "b2232f5e-0d22-47fd-a5e5-18ae2c271bd3",
-			"createdTimestamp": 1710844488403,
-			"username": "giovannipascoli@yopmail.com",
-			"enabled": true,
-			"totp": false,
-			"emailVerified": true,
-			"firstName": "Giovanni",
-			"lastName": "Pascoli",
-			"email": "giovannipascoli@yopmail.com",
-			"attributes": {
-				"organizationRequest": [
-					"Pascale"
-				],
-				"phoneNumber": [
-					"3333333333"
-				]
-			},
-			"credentials": [
-				{
-					"id": "eea2a01d-a4c7-4685-81ee-380a555cab6e",
-					"type": "password",
-					"userLabel": "My password",
-					"createdDate": 1710844949653,
-					"secretData": "{\"value\":\"7fWk26LK0N6BZR+RzcRfoTHg2iekSlVU31KPeeLdxtc=\",\"salt\":\"lpqrsfURQOWIkDSTJF+KEA==\",\"additionalParameters\":{}}",
-					"credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-				}
-			],
-			"disableableCredentialTypes": [],
-			"requiredActions": [],
-			"realmRoles": [
-				"default-roles-pascale"
-			],
-			"notBefore": 0,
-			"groups": [
-				"/Medici"
-			]
-		},
-		{
-			"id": "269c7534-d9b2-48b2-98fa-77ff32d539f5",
-			"createdTimestamp": 1710845045954,
-			"username": "giovanniverga@gmail.com",
-			"enabled": true,
-			"totp": false,
-			"emailVerified": true,
-			"firstName": "Giovanni",
-			"lastName": "Verga",
-			"email": "giovanniverga@gmail.com",
-			"attributes": {
-				"organizationRequest": [
-					"Pascale"
-				],
-				"phoneNumber": [
-					"3333333333"
-				]
-			},
-			"credentials": [
-				{
-					"id": "aa94a333-9d34-4d3f-bc30-ce79106178b3",
-					"type": "password",
-					"userLabel": "My password",
-					"createdDate": 1710845060616,
-					"secretData": "{\"value\":\"jP5PVLycTxJDJTR/mP760OZR1+GAbSK4cv0/l32QjNA=\",\"salt\":\"GxAoKz6KtfdoJzAaNyn+tg==\",\"additionalParameters\":{}}",
-					"credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-				}
-			],
-			"disableableCredentialTypes": [],
-			"requiredActions": [],
-			"realmRoles": [
-				"default-roles-pascale"
-			],
-			"notBefore": 0,
-			"groups": [
-				"/Amministratori Senologia"
-			]
-		},
-		{
-			"id": "05c66bc5-c04c-4fb6-ad6c-a4b0cdf45b5b",
-			"createdTimestamp": 1710844595812,
-			"username": "leonardodavinci@yopmail.com",
-			"enabled": true,
-			"totp": false,
-			"emailVerified": true,
-			"firstName": "Leonardo",
-			"lastName": "da Vinci",
-			"email": "leonardodavinci@yopmail.com",
-			"attributes": {
-				"organizationRequest": [
-					"Pascale"
-				],
-				"phoneNumber": [
-					"3333333333"
-				]
-			},
-			"credentials": [
-				{
-					"id": "8b8a5361-ca1e-499c-85bf-c0d031df5856",
-					"type": "password",
-					"userLabel": "My password",
-					"createdDate": 1710844938583,
-					"secretData": "{\"value\":\"2WhQWkLBDVWDpZDHDn8XivDH8Nr3qObBrRvwEyqpSt0=\",\"salt\":\"fYsZJ7F8645VVcSC1AlkYQ==\",\"additionalParameters\":{}}",
-					"credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-				}
-			],
-			"disableableCredentialTypes": [],
-			"requiredActions": [],
-			"realmRoles": [
-				"default-roles-pascale"
-			],
-			"notBefore": 0,
-			"groups": [
-				"/Senologi"
-			]
-		},
-		{
-			"id": "5ae1d266-14d1-45ef-b766-01d121acb51b",
-			"createdTimestamp": 1710844640330,
-			"username": "michelangelobuonarroti@yopmail.com",
-			"enabled": true,
-			"totp": false,
-			"emailVerified": true,
-			"firstName": "Michelangelo",
-			"lastName": "Buonarroti",
-			"email": "michelangelobuonarroti@yopmail.com",
-			"attributes": {
-				"organizationRequest": [
-					"Pascale"
-				],
-				"phoneNumber": [
-					"3333333333"
-				]
-			},
-			"credentials": [
-				{
-					"id": "b0f50b40-8cb7-45c2-866f-a0dc06154954",
-					"type": "password",
-					"userLabel": "My password",
-					"createdDate": 1710844716566,
-					"secretData": "{\"value\":\"klpxx9mg5stVrwIw1Ybz2zvAXDnaYEWJggjSIwHoMQM=\",\"salt\":\"JmnZwWXyW/2KcbYFyB3SxQ==\",\"additionalParameters\":{}}",
-					"credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-				}
-			],
-			"disableableCredentialTypes": [],
-			"requiredActions": [],
-			"realmRoles": [
-				"default-roles-pascale"
-			],
-			"notBefore": 0,
-			"groups": [
-				"/Radiologi"
-			]
-		},
-		{
-			"id": "4f814033-5e6b-4094-9c13-88582b03353a",
-			"createdTimestamp": 1706869746445,
-			"username": "gennaro.aurilia@gmail.com",
-			"enabled": true,
-			"totp": false,
-			"emailVerified": true,
-			"firstName": "Gennaro",
-			"lastName": "Aurilia",
-			"email": "gennaro.aurilia@gmail.com",
-			"attributes": {
-				"organizationRequest": [
-					"Senologia"
-				],
-				"phoneNumber": [
-					"3333333333"
-				]
-			},
-			"credentials": [
-				{
-					"type": "password",
-					"value": "Qwerty123!"
-				}
-			],
-			"disableableCredentialTypes": [],
-			"requiredActions": [],
-			"realmRoles": [
-				"default-roles-pascale"
-			],
-			"notBefore": 0,
-			"groups": [
-				"/admin"
-			]
-		},
-		{
-			"id": "1a854c31-4ba9-45f0-be18-29c787d3aad3",
-			"username": "service-account-irccs",
-			"emailVerified": true,
-			"createdTimestamp": 1706870760517,
-			"enabled": true,
-			"totp": false,
-			"serviceAccountClientId": "irccs",
-			"disableableCredentialTypes": [],
-			"requiredActions": [],
-			"realmRoles": [
-				"default-roles-pascale"
-			],
-			"clientRoles": {
-				"irccs": [
-					"uma_protection"
-				]
-			},
-			"notBefore": 0,
-			"groups": [
-				"/admin"
-			]
-		}
-	],
+    {
+      "id": "b5bfba8b-b662-4b3f-810a-be9704290a7c",
+      "createdTimestamp": 1710844562464,
+      "username": "giacomoleopardi@gmail.com",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Giacomo",
+      "lastName": "Leopardi",
+      "email": "giacomoleopardi@gmail.com",
+      "attributes": {
+        "organizationRequest": [
+          "Pascale"
+        ],
+        "phoneNumber": [
+          "3333333333"
+        ]
+      },
+      "credentials": [
+        {
+          "id": "ec915301-ee0c-4359-9e33-8f1432c41260",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1710844875881,
+          "secretData": "{\"value\":\"vBpAUxbsWB4g5NgBTCY1k74JQLYnfFylVZxkPnXDJxQ=\",\"salt\":\"SODxqpAYCBZCN8PO/B9Whg==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "notBefore": 0,
+      "groups": [
+        "/Senologi"
+      ]
+    },
+    {
+      "id": "b2232f5e-0d22-47fd-a5e5-18ae2c271bd3",
+      "createdTimestamp": 1710844488403,
+      "username": "giovannipascoli@yopmail.com",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Giovanni",
+      "lastName": "Pascoli",
+      "email": "giovannipascoli@yopmail.com",
+      "attributes": {
+        "organizationRequest": [
+          "Pascale"
+        ],
+        "phoneNumber": [
+          "3333333333"
+        ]
+      },
+      "credentials": [
+        {
+          "id": "eea2a01d-a4c7-4685-81ee-380a555cab6e",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1710844949653,
+          "secretData": "{\"value\":\"7fWk26LK0N6BZR+RzcRfoTHg2iekSlVU31KPeeLdxtc=\",\"salt\":\"lpqrsfURQOWIkDSTJF+KEA==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "notBefore": 0,
+      "groups": [
+        "/Medici"
+      ]
+    },
+    {
+      "id": "269c7534-d9b2-48b2-98fa-77ff32d539f5",
+      "createdTimestamp": 1710845045954,
+      "username": "giovanniverga@gmail.com",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Giovanni",
+      "lastName": "Verga",
+      "email": "giovanniverga@gmail.com",
+      "attributes": {
+        "organizationRequest": [
+          "Pascale"
+        ],
+        "phoneNumber": [
+          "3333333333"
+        ]
+      },
+      "credentials": [
+        {
+          "id": "aa94a333-9d34-4d3f-bc30-ce79106178b3",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1710845060616,
+          "secretData": "{\"value\":\"jP5PVLycTxJDJTR/mP760OZR1+GAbSK4cv0/l32QjNA=\",\"salt\":\"GxAoKz6KtfdoJzAaNyn+tg==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "notBefore": 0,
+      "groups": [
+        "/Amministratori Senologia"
+      ]
+    },
+    {
+      "id": "05c66bc5-c04c-4fb6-ad6c-a4b0cdf45b5b",
+      "createdTimestamp": 1710844595812,
+      "username": "leonardodavinci@yopmail.com",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Leonardo",
+      "lastName": "da Vinci",
+      "email": "leonardodavinci@yopmail.com",
+      "attributes": {
+        "organizationRequest": [
+          "Pascale"
+        ],
+        "phoneNumber": [
+          "3333333333"
+        ]
+      },
+      "credentials": [
+        {
+          "id": "8b8a5361-ca1e-499c-85bf-c0d031df5856",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1710844938583,
+          "secretData": "{\"value\":\"2WhQWkLBDVWDpZDHDn8XivDH8Nr3qObBrRvwEyqpSt0=\",\"salt\":\"fYsZJ7F8645VVcSC1AlkYQ==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "notBefore": 0,
+      "groups": [
+        "/Senologi"
+      ]
+    },
+    {
+      "id": "5ae1d266-14d1-45ef-b766-01d121acb51b",
+      "createdTimestamp": 1710844640330,
+      "username": "michelangelobuonarroti@yopmail.com",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Michelangelo",
+      "lastName": "Buonarroti",
+      "email": "michelangelobuonarroti@yopmail.com",
+      "attributes": {
+        "organizationRequest": [
+          "Pascale"
+        ],
+        "phoneNumber": [
+          "3333333333"
+        ]
+      },
+      "credentials": [
+        {
+          "id": "b0f50b40-8cb7-45c2-866f-a0dc06154954",
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1710844716566,
+          "secretData": "{\"value\":\"klpxx9mg5stVrwIw1Ybz2zvAXDnaYEWJggjSIwHoMQM=\",\"salt\":\"JmnZwWXyW/2KcbYFyB3SxQ==\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "notBefore": 0,
+      "groups": [
+        "/Radiologi"
+      ]
+    },
+    {
+      "id": "4f814033-5e6b-4094-9c13-88582b03353a",
+      "createdTimestamp": 1706869746445,
+      "username": "gennaro.aurilia@gmail.com",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Gennaro",
+      "lastName": "Aurilia",
+      "email": "gennaro.aurilia@gmail.com",
+      "attributes": {
+        "organizationRequest": [
+          "Senologia"
+        ],
+        "phoneNumber": [
+          "3333333333"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Qwerty123!"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "notBefore": 0,
+      "groups": [
+        "/admin"
+      ]
+    },
+    {
+      "id": "1a854c31-4ba9-45f0-be18-29c787d3aad3",
+      "username": "service-account-irccs",
+      "emailVerified": true,
+      "createdTimestamp": 1706870760517,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "irccs",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "clientRoles": {
+        "irccs": [
+          "uma_protection"
+        ]
+      },
+      "notBefore": 0,
+      "groups": [
+        "/admin"
+      ]
+    }
+  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -5257,6 +5365,7 @@
             "attributes": {},
             "uris": [
               "/fhir/ResearchStudy/{id}",
+              "/fhir/ResearchStudy/{id}/all",
               "/fhir/ResearchStudy/{id}/assignExtensions"
             ],
             "scopes": [
@@ -5688,7 +5797,7 @@
             "displayName": "Extract QuestionnaireResponse",
             "attributes": {},
             "uris": [
-              "/fhir/QuestionnaireResponse/{id}/$extract"
+              "/fhir/QuestionnaireResponse/$extract"
             ],
             "scopes": [
               {
@@ -5712,6 +5821,156 @@
               },
               {
                 "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create Task Resource",
+            "type": "Task",
+            "ownerManagedAccess": false,
+            "displayName": "Create Task Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Task"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base Task Resource",
+            "type": "Task",
+            "ownerManagedAccess": false,
+            "displayName": "Base Task Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Task/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search Task Resource",
+            "type": "Task",
+            "ownerManagedAccess": false,
+            "displayName": "Search Task Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Task/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History Task Resource",
+            "type": "Task",
+            "ownerManagedAccess": false,
+            "displayName": "History Task Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Task/{id}/_history",
+              "/fhir/Task/{id}/_history/{id}",
+              "/fhir/Task/_history"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create Consent Resource",
+            "type": "Consent",
+            "ownerManagedAccess": false,
+            "displayName": "Create Consent Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Consent"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base Consent Resource",
+            "type": "Consent",
+            "ownerManagedAccess": false,
+            "displayName": "Base Consent Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Consent/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search Consent Resource",
+            "type": "Consent",
+            "ownerManagedAccess": false,
+            "displayName": "Search Consent Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Consent/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History Consent Resource",
+            "type": "Consent",
+            "ownerManagedAccess": false,
+            "displayName": "History Consent Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Consent/{id}/_history",
+              "/fhir/Consent/{id}/_history/{id}",
+              "/fhir/Consent/_history"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
               }
             ],
             "icon_uri": ""
@@ -7407,6 +7666,126 @@
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "roles": "[{\"id\":\"searchparameter:history\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Create Task Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"task:create\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Read Task Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"task:read\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Update Task Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"task:update\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Delete Task Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"task:delete\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Search Task Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"task:search\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "History Task Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"task:history\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Create Consent Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"consent:create\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Read Consent Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"consent:read\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Update Consent Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"consent:update\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Delete Consent Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"consent:delete\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Search Consent Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"consent:search\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "History Consent Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"consent:history\",\"required\":false}]"
             }
           },
           {
@@ -10332,6 +10711,174 @@
               "resources": "[\"Evaluate Library\"]",
               "applyPolicies": "[\"Update Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\",\"Create Library Policy\"]"
             }
+          },
+          {
+            "name": "Create Task Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create Task Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Create Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read Task Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Task Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Task Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update Task Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Task Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Task Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete Task Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Task Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Task Policy\"]"
+            }
+          },
+          {
+            "name": "Search Task Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search Task Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Search Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History Task Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History Task Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History Task Policy\"]"
+            }
+          },
+          {
+            "name": "Search Task Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create Task Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Search Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+            {
+            "name": "Create Consent Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create Consent Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Create Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read Consent Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Consent Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Consent Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update Consent Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Consent Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Consent Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete Consent Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Consent Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Consent Policy\"]"
+            }
+          },
+          {
+            "name": "Search Consent Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search Consent Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Search Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History Consent Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History Consent Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History Consent Policy\"]"
+            }
+          },
+          {
+            "name": "Search Consent Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create Consent Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Search Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
           }
         ],
         "scopes": [
@@ -10565,7 +11112,7 @@
             "user.attribute": "foo",
             "id.token.claim": "false",
             "lightweight.claim": "false",
-            "access.token.claim": "false",
+            "access.token.claim": "true",
             "claim.name": "resource_access.${client_id}.roles",
             "jsonType.label": "String"
           }
