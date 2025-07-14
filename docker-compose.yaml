@@ -116,6 +116,7 @@ services:
     environment:
       KEYCLOAK_ADMIN: gennaro.aurilia@gmail.com
       KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
+      KC_MIGRATION_STRATEGY: OVERWRITE_EXISTING
     restart: always
     entrypoint:
       [
