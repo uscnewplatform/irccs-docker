@@ -179,7 +179,7 @@ services:
       - redis_data:/data
     ports:
       - "6379:8080"
-      -
+
   irccs-microservice-tac:
     image: nexus.infocube.it:443/org.quarkus/irccs-microservice-tac:2.0.0-SNAPSHOT
     container_name: irccs-tac
