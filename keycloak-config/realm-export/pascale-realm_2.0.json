@@ -3461,6 +3461,31 @@
             "icon_uri": ""
           },
           {
+            "name": "Dicom Resource",
+            "type": "Dicom",
+            "ownerManagedAccess": false,
+            "displayName": "Dicom Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/dicom/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
             "name": "Create ActivityDefinition Resource",
             "type": "ActivityDefinition",
             "ownerManagedAccess": false,
@@ -9512,6 +9537,90 @@
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"GET\"]",
               "applyPolicies": "[\"Search Group Policy\",\"Admin Group Policy\",\"Admin Role Policy\",\"Search Organization Policy\"]"
+            }
+          },
+          {
+            "name": "Create Dicom Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Dicom Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read Dicom Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Dicom Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update Dicom Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Dicom Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete Dicom Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Dicom Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search Dicom Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Dicom Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History Dicom Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Dicom Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search Dicom Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Dicom Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
