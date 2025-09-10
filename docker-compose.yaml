@@ -179,7 +179,18 @@ services:
       - redis_data:/data
     ports:
       - "6379:8080"
-
+      -
+  irccs-microservice-tac:
+    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-tac:2.0.0-SNAPSHOT
+    container_name: irccs-tac
+    volumes:
+      - ./microservice-config-tac:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
 
 volumes:
   postgres_data_hapi:
