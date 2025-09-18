@@ -1,0 +1,16 @@
+server {
+    listen 80;
+    server_name backoffice.irccs.infocube.it;
+
+    location / {
+        access_log            /var/log/nginx/irccs.access.log;
+        error_log   /var/log/nginx/irccs.access.error.log;
+        proxy_pass http://10.99.88.146:9445;
+        proxy_set_header Host backoffice.irccs.infocube.it;  # Set the Host header to the desired server name
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        sub_filter_once off;  # Ensures that sub_filter is applied to all responses
+        sub_filter_types text/html text/css text/xml;  # Specify the MIME types to process
+    }
+}
