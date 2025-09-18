@@ -2622,7 +2622,8 @@
       "realmRoles": [
         "default-roles-pascale",
         "offline_access",
-        "uma_authorization"
+        "uma_authorization",
+        "admin"
       ],
       "clientRoles": {
         "realm-management": [
@@ -10905,7 +10906,7 @@
               "applyPolicies": "[\"Search Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
-            {
+          {
             "name": "Create Consent Permission",
             "description": "",
             "type": "scope",
@@ -11733,7 +11734,7 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {
-    "password": "**********",
+    "password": "Password per SMTP server :)",
     "replyToDisplayName": "",
     "starttls": "true",
     "auth": "true",
