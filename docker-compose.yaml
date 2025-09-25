@@ -181,7 +181,7 @@ services:
       - "6379:8080"
 
   irccs-microservice-tac:
-    image: nexus.infocube.it/org.quarkus/irccs-microservice-tac:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-tac:2.1.0-SNAPSHOT
     container_name: irccs-tac
     volumes:
       - ./microservice-config-tac:/deployments/config
