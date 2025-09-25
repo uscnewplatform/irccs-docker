@@ -56,4 +56,21 @@ git clone git@github.com:infocube-it/irccs-docker.git
 cd irccs-docker
 docker-compose up -d
 
+Configurazione suggerita per un container test mode
+8Core
+10GByte MEM
+10GByte Swap
+5000GB Disk
+
+Una volta avviato dovremo passare alla configurazione:
+
+A) Set up user and password keycloak admin
+   Select new user from menu and add to super admin
+   Remove predefined user
+ 
+B) Reset Passwork irccs admin
+   Select new user from menu and add to super admin
+   Remove predefined user
+C) Set Mail mail server
+    Set the mail server and mail address to change password 
 Nel docker compose yaml, in entrypoint sono state inserite comandi per installare le search parameters in hapi fhir. La chiamata viene fatta solo dopo 60 secondi, perche è necessario che HAPI FHIR sia disponibile, ed il check viene fatto tramite chiamata a HAPI FHIR (ogni 15 secondi)
