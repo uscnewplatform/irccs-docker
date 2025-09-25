@@ -4,7 +4,7 @@ networks:
 
 services:
   irccs-microservice-clinical-reasoning:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-clinical-reasoning:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-clinical-reasoning:2.0.0-SNAPSHOT
     container_name: irccs-clinical-reasoning
     volumes:
       - ./microservice-config:/deployments/config
@@ -16,7 +16,7 @@ services:
     restart: always
 
   irccs-microservice-auth:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-auth:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-auth:2.0.0-SNAPSHOT
     container_name: irccs-auth
     volumes:
       - ./microservice-config:/deployments/config
@@ -28,7 +28,7 @@ services:
     restart: always
 
   irccs-microservice-ctcae:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
@@ -40,7 +40,7 @@ services:
     restart: always
  
   irccs-microservice-practitioner:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-practitioner:2.0.1-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:2.0.1-SNAPSHOT
     container_name: irccs-practitioner
     volumes:
       - ./microservice-config:/deployments/config
@@ -52,7 +52,7 @@ services:
     restart: always
  
   irccs-microservice-centro-ricerca:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-centro-ricerca:2.0.1-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-centro-ricerca:2.0.1-SNAPSHOT
     container_name: irccs-centro-ricerca
     volumes:
       - ./microservice-config:/deployments/config
@@ -64,7 +64,7 @@ services:
     restart: always
 
   irccs-microservice-studio-clinico:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
@@ -76,7 +76,7 @@ services:
     restart: always
 
   irccs-microservice-anagrafica-pazienti:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
     container_name: irccs-anagrafica-pazienti
     volumes:
       - ./microservice-config:/deployments/config
@@ -87,7 +87,7 @@ services:
         condition: service_healthy
     restart: always
   irccs-httpd:
-    image: nexus.infocube.it:443/i3/irccs/irccs-httpd-dashboard/develop:2.5.2
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.2
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
@@ -181,7 +181,7 @@ services:
       - "6379:8080"
 
   irccs-microservice-tac:
-    image: nexus.infocube.it:443/org.quarkus/irccs-microservice-tac:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-tac:2.0.0-SNAPSHOT
     container_name: irccs-tac
     volumes:
       - ./microservice-config-tac:/deployments/config
