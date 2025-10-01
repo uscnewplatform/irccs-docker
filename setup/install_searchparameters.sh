@@ -170,49 +170,88 @@ ITEMS=(
 for item in "${ITEMS[@]}"; do
   JSON_BODY=$(cat <<EOF
 {
-  "resourceType" : "SearchParameter",
-  "name" : "group-id",
-  "title" : "group-id",
-  "status" : "active",
-  "experimental" : true,
-  "publisher" : "Infocube",
-  "description" : "Search by extension value",
-  "code" : "group-id",
-  "base" : ["$item"],
-  "type" : "string",
-  "expression" : "$item.identifier.value | $item.extension.where(url='group_ids').value",
-  "processingMode" : "normal",
+  "resourceType": "SearchParameter",
+  "name": "group-id",
+  "title": "group-id",
+  "status": "active",
+  "experimental": true,
+  "publisher": "Infocube",
+  "description": "Search by extension value",
+  "code": "group-id",
+  "base": ["$item"],
+  "type": "string",
+  "expression": "$item.identifier.value | $item.extension.where(url = 'group_ids').value",
+  "processingMode": "normal",
   "modifier": ["exact"]
 }
 EOF
   )
 
-  curl -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
-       -H "Content-Type: application/json" \
-       -d "$JSON_BODY"
-
+  curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+        -H "Content-Type: application/json" \
+        -d "$JSON_BODY"
 done
 
+# Enrollment SearchParameter
 JSON_BODY=$(cat <<EOF
 {
-  "resourceType" : "SearchParameter",
-  "name" : "enrollment",
-  "title" : "enrollment",
-  "status" : "active",
-  "experimental" : true,
-  "publisher" : "Infocube",
-  "description" : "Search by extension value",
-  "code" : "enrollment",
-  "base" : ["ResearchStudy"],
-  "type" : "string",
-  "expression" : "ResearchStudy.enrollment.reference",
-  "processingMode" : "normal",
+  "resourceType": "SearchParameter",
+  "name": "enrollment",
+  "title": "enrollment",
+  "status": "active",
+  "experimental": true,
+  "publisher": "Infocube",
+  "description": "Search by enrollment reference",
+  "code": "enrollment",
+  "base": ["ResearchStudy"],
+  "type": "string",
+  "expression": "ResearchStudy.enrollment.reference",
+  "processingMode": "normal",
   "modifier": ["exact"]
 }
 EOF
-  )
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
 
-  curl -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
-       -H "Content-Type: application/json" \
-       -d "$JSON_BODY"
+# CarePlan.activity.outcomeReference SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://your.fhir.server/SearchParameter/CarePlan-activity-outcomeReference",
+  "name": "activity-outcomeReference",
+  "status": "active",
+  "description": "References used in CarePlan.activity.outcomeReference",
+  "code": "activity-outcomeReference",
+  "base": ["CarePlan"],
+  "type": "reference",
+  "expression": "CarePlan.activity.outcomeReference",
+  "target": ["Questionnaire"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
 
+# ActivityDefinition.documentation SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://your.fhir.server/SearchParameter/ActivityDefinition-documentation",
+  "name": "documentation",
+  "status": "active",
+  "description": "Include CarePlan referenced as documentation in ActivityDefinition.relatedArtifact",
+  "code": "documentation",
+  "base": ["ActivityDefinition"],
+  "type": "reference",
+  "expression": "ActivityDefinition.relatedArtifact.where(type = 'documentation').url",
+  "xpathUsage": "normal",
+  "target": ["CarePlan"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
