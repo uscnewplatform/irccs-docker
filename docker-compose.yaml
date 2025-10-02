@@ -185,6 +185,7 @@ services:
     container_name: irccs-tac
     volumes:
       - ./microservice-config-tac:/deployments/config
+      - ./dicom:/data
     networks:
       - irccs
     depends_on:
