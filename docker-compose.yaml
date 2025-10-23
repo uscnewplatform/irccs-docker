@@ -8,6 +8,8 @@ services:
     container_name: irccs-clinical-reasoning
     volumes:
       - ./microservice-config:/deployments/config
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
@@ -20,6 +22,8 @@ services:
     container_name: irccs-auth
     volumes:
       - ./microservice-config:/deployments/config
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
@@ -32,6 +36,8 @@ services:
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
@@ -44,6 +50,8 @@ services:
     container_name: irccs-practitioner
     volumes:
       - ./microservice-config:/deployments/config
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
@@ -56,6 +64,8 @@ services:
     container_name: irccs-centro-ricerca
     volumes:
       - ./microservice-config:/deployments/config
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
@@ -68,6 +78,8 @@ services:
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
@@ -80,6 +92,8 @@ services:
     container_name: irccs-anagrafica-pazienti
     volumes:
       - ./microservice-config:/deployments/config
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
@@ -104,8 +118,8 @@ services:
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak_owner
+      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}keycloak
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}keycloak_owner
       POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
     networks:
       - irccs
@@ -164,7 +178,7 @@ services:
     volumes:
       - postgres_data_hapi:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: hapi
+      POSTGRES_DB: ${HAPI_DB_NAME}
       POSTGRES_USER: ${HAPI_DB_USER}
       POSTGRES_PASSWORD: ${HAPI_DB_PASSWORD}
     networks:
@@ -190,6 +204,8 @@ services:
     volumes:
       - ./microservice-config-tac:/deployments/config
       - ./dicom:/data
+    env_file:
+      - .env
     networks:
       - irccs
     depends_on:
