@@ -1,0 +1,224 @@
+networks:
+  irccs:
+    driver: bridge
+
+services:
+  irccs-microservice-clinical-reasoning:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-clinical-reasoning:2.0.0-SNAPSHOT
+    container_name: irccs-clinical-reasoning
+    volumes:
+      - ./microservice-config:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-auth:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-auth:2.0.0-SNAPSHOT
+    container_name: irccs-auth
+    volumes:
+      - ./microservice-config:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-ctcae:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
+    container_name: irccs-ctcae
+    volumes:
+      - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+ 
+  irccs-microservice-practitioner:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:2.0.1-SNAPSHOT
+    container_name: irccs-practitioner
+    volumes:
+      - ./microservice-config:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+ 
+  irccs-microservice-centro-ricerca:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-centro-ricerca:2.0.1-SNAPSHOT
+    container_name: irccs-centro-ricerca
+    volumes:
+      - ./microservice-config:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-studio-clinico:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
+    container_name: irccs-studio-clinico
+    volumes:
+      - ./microservice-config:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-anagrafica-pazienti:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
+    container_name: irccs-anagrafica-pazienti
+    volumes:
+      - ./microservice-config:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+  irccs-httpd:
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.5
+    container_name: irccs-httpd-dashboard
+    ports:
+      - "80:80"
+    volumes:
+      - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
+      - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    networks:
+      - irccs
+  postgres-keycloak:
+    image: postgres:17.4
+    hostname: postgres
+    container_name: postgres-keycloak
+    restart: always
+    volumes:
+      - postgres_data_keycloak:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}keycloak
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}keycloak_owner
+      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+    networks:
+      - irccs
+
+  irccs-keycloak:
+    image: quay.io/keycloak/keycloak:26.0.5
+    container_name: irccs-keycloak
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_DB_URL: ${KC_DB_URL}
+    env_file:
+      - .env
+    restart: always
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+      ]
+    ports:
+      - "9445:8080"
+    volumes:
+      - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
+      - ./keycloak-config/realm-export:/opt/keycloak/data/import
+      - ./keycloak-config/realm-export:/export
+      - ./keycloak-config/providers/:/opt/keycloak/providers/
+    depends_on:
+      - postgres-keycloak
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  irccs-hapi-fhir:
+    image: hapiproject/hapi:v8.0.0
+    container_name: irccs-hapi-fhir
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-hapi-fhir
+    volumes:
+      - ./hapi-fhir-config/application.yaml:/home/application.yaml
+    environment:
+      SPRING_CONFIG_LOCATION: '/home/application.yaml'
+    env_file:
+      - .env
+    networks:
+      - irccs
+
+  postgres-hapi-fhir:
+    image: postgres:16.8
+    hostname: postgres
+    container_name: postgres-hapi-fhir
+    restart: always
+    volumes:
+      - postgres_data_hapi:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${HAPI_DB_NAME}
+      POSTGRES_USER: ${HAPI_DB_USER}
+      POSTGRES_PASSWORD: ${HAPI_DB_PASSWORD}
+    networks:
+      - irccs
+
+  cache:
+    container_name: irccs-redis
+    hostname: redis
+    image: redis:7.0-rc
+    networks:
+      - irccs
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:8080"
+
+  irccs-microservice-tac:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-tac:2.1.0-SNAPSHOT
+    container_name: irccs-tac
+    volumes:
+      - ./microservice-config-tac:/deployments/config
+      - ./dicom:/data
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+volumes:
+  postgres_data_hapi:
+  postgres_data_keycloak:
+  redis_data:

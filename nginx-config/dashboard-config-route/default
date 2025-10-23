@@ -1,0 +1,21 @@
+server {
+    listen 80;
+    server_name irccs.staging.infocube.it;
+
+    location / {
+        proxy_pass http://10.99.88.146:80/;
+        client_max_body_size 2000M;
+    }
+}
+server {
+    listen 443 ssl;
+    server_name irccs.staging.infocube.it;
+
+    ssl_certificate /etc/letsencrypt/live/irccs.staging.infocube.it/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/irccs.staging.infocube.it/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/irccs.staging.infocube.it/chain.pem;
+    client_max_body_size 2000M;
+    location / {
+        proxy_pass http://irccs.staging.infocube.it;
+    }
+}
