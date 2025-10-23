@@ -1,14 +1,14 @@
-Introduzione.
+## Introduzione.
 La presente guida si pone l'obiettivo di semplificare la prima installazione del portale
 su una nuova piattaforma
 
 
-Prerequisiti:
+## PREREQUISITI INSTALLAZIONE :
 
 Installare docker
 Installare docker-compose
 Installare git
-Copiare una valida ssh_key per accedere al repository git
+Copiare una valida ssh_key per accedere al repository git 
 Installare openssl openssl-dev openssh
 
 I seguenti passi sono necessari solo per installazioni su Proxmox
@@ -39,51 +39,49 @@ Va configurato il repository nexus di infocube in docker:
   20 apk add openssl openssl-dev openssh
 
 
-
-
-Per avviare il progetto:
+## Per avviare il progetto:
 
 ```
 git clone git@github.com:infocube-it/irccs-docker.git
 cd irccs-docker
 cp .env_example .env
-# Modifica .env e imposta valori sicuri per tutte le variabili richieste
-# (non committare il file .env)
+(il file .env va richiesto al team di sviluppo e NON VA COMMITTATO)
+
 docker-compose up -d
 ```
 
-### Variabili d'ambiente richieste (.env)
-- **KEYCLOAK_ADMIN**, **KEYCLOAK_ADMIN_PASSWORD**
-- **KEYCLOAK_CLIENT_ID**, **KEYCLOAK_CLIENT_SECRET**, **KEYCLOAK_REALM**
-- **POSTGRES_KEYCLOAK_PASSWORD**
-- **HAPI_DB_USER**, **HAPI_DB_PASSWORD**
-- **REDIS_PASSWORD**
-- **JWT_SECRET** (genera un valore robusto, ad es.: `openssl rand -hex 64`)
+## CONFIGURAZIONI FHIR/KEYCLOAK
 
-### Sicurezza
-- **Non committare** `.env` (è già in `.gitignore`).
-- Se credenziali sono state già pubblicate, **ruotale immediatamente** (Keycloak admin, client secret, Postgres, Redis, JWT).
-- Valuta la **pulizia della storia git** per rimuovere segreti esposti (BFG o `git filter-repo`).
+## 1. Installazione SearchParameters FHIR
 
+```bash
+bash setup/install_searchparameters.sh hostname:port
+Usage: install_searchparameters.sh hostname:port
+```
+##### hostname:port deve corrispondere all’istanza FHIR target.
 
+Lo script installerà i parametri di ricerca necessari per garantire il corretto funzionamento dei microservizi che interagiscono con il server FHIR.
 
-Una volta avviato dovremo passare alla configurazione:
+## 2. Configurazione SMTP in Keycloak
 
-A) Set up user and password keycloak admin
-   Select new user from menu and add to super admin
-   Remove predefined user
- 
-B) Reset Passwork irccs admin
-   Select new user from menu and add to super admin
-   Remove predefined user
-C) Set Mail mail server
-    Set the mail server and mail address to change password 
-Nel docker compose yaml, in entrypoint sono state inserite comandi per installare le search parameters in hapi fhir. La chiamata viene fatta solo dopo 60 secondi, perche è necessario che HAPI FHIR sia disponibile, ed il check viene fatto tramite chiamata a HAPI FHIR (ogni 15 secondi)
+Accedere alla dashboard di Keycloak ed effettuare i seguenti passaggi:
+
+- Autenticarsi con utenza di ADMIN (fornita nel file .env):
 
 
+**Assicurarsi di cambiare password di quest'ultimo**
+
+- Selezionare il realm: _pascale_.
+
+- Nel menu laterale, aprire _Realm Settings_ → scheda _Email_.
+
+- Nella sezione Connection & Authentication (in fondo alla pagina):
+
+- Inserire i parametri SMTP forniti dall’infrastruttura.
+
+- Verificare la connessione cliccando su _Test connection_.
 
 
----configurare smtp in keycloak da ADMIN
 
 NOTE:
 
