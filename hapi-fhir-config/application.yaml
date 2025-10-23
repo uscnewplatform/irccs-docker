@@ -15,8 +15,8 @@ spring:
     baselineOnMigrate: true
   datasource:
     url: 'jdbc:postgresql://postgres-hapi-fhir:5432/hapi'
-    username: admin
-    password: admin
+    username: ${HAPI_DB_USER}
+    password: ${HAPI_DB_PASSWORD}
     driverClassName: org.postgresql.Driver
     max-active: 15
 

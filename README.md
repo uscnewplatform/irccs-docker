@@ -1,16 +1,7 @@
-Per attivare Keycloak in SSL è necessario:
-inserire certificato e chiave tramite volume, e riportarli nel keycloak.conf.
-rimuovere lo start-dev dal docker-compose
+Introduzione.
+La presente guida si pone l'obiettivo di semplificare la prima installazione del portale
+su una nuova piattaforma
 
-Momentaneamente inserito in /etc/hosts:
-
-127.0.0.1 keycloak.irccs.infocube.it
-
-per testare keycloak.
-
-Va verificato come impostare l'hostname di Keycloak in funzione delle chiamate che arrivano dai microservizi, altrimenti non è raggiungibile se non fa match l'url chiamato con quello dichiarato nel conf.
-
-Notare che in SSL la porta passa da 9445 a 8443 (inserita nella versione corrente del docker-compose) 
 
 Prerequisiti:
 
@@ -20,8 +11,11 @@ Installare git
 Copiare una valida ssh_key per accedere al repository git
 Installare openssl openssl-dev openssh
 
-
+I seguenti passi sono necessari solo per installazioni su Proxmox
 Su un Container Proxmox Alpine v3.22
+Va configurato il repository nexus di infocube in docker: 
+ - docker login nexus.infocube.it (chiedere le credenziali)
+
 
    1 apk update && apk upgrade
    2 apk add docker docker-compose
@@ -44,23 +38,34 @@ Su un Container Proxmox Alpine v3.22
   19 apk add git
   20 apk add openssl openssl-dev openssh
 
-Va configurato il repository nexus di infocube in docker:
 
-docker login nexus.infocube.it (chiedere le credenziali)
 
 
 Per avviare il progetto:
 
-
+```
 git clone git@github.com:infocube-it/irccs-docker.git
 cd irccs-docker
+cp .env_example .env
+# Modifica .env e imposta valori sicuri per tutte le variabili richieste
+# (non committare il file .env)
 docker-compose up -d
+```
 
-Configurazione suggerita per un container test mode
-8Core
-10GByte MEM
-10GByte Swap
-5000GB Disk
+### Variabili d'ambiente richieste (.env)
+- **KEYCLOAK_ADMIN**, **KEYCLOAK_ADMIN_PASSWORD**
+- **KEYCLOAK_CLIENT_ID**, **KEYCLOAK_CLIENT_SECRET**, **KEYCLOAK_REALM**
+- **POSTGRES_KEYCLOAK_PASSWORD**
+- **HAPI_DB_USER**, **HAPI_DB_PASSWORD**
+- **REDIS_PASSWORD**
+- **JWT_SECRET** (genera un valore robusto, ad es.: `openssl rand -hex 64`)
+
+### Sicurezza
+- **Non committare** `.env` (è già in `.gitignore`).
+- Se credenziali sono state già pubblicate, **ruotale immediatamente** (Keycloak admin, client secret, Postgres, Redis, JWT).
+- Valuta la **pulizia della storia git** per rimuovere segreti esposti (BFG o `git filter-repo`).
+
+
 
 Una volta avviato dovremo passare alla configurazione:
 
@@ -74,3 +79,30 @@ B) Reset Passwork irccs admin
 C) Set Mail mail server
     Set the mail server and mail address to change password 
 Nel docker compose yaml, in entrypoint sono state inserite comandi per installare le search parameters in hapi fhir. La chiamata viene fatta solo dopo 60 secondi, perche è necessario che HAPI FHIR sia disponibile, ed il check viene fatto tramite chiamata a HAPI FHIR (ogni 15 secondi)
+
+
+
+
+---configurare smtp in keycloak da ADMIN
+
+NOTE:
+
+Per attivare Keycloak in SSL è necessario:
+inserire certificato e chiave tramite volume, e riportarli nel keycloak.conf.
+rimuovere lo start-dev dal docker-compose
+
+Momentaneamente inserito in /etc/hosts:
+
+127.0.0.1 keycloak.irccs.infocube.it
+
+per testare keycloak.
+
+Va verificato come impostare l'hostname di Keycloak in funzione delle chiamate che arrivano dai microservizi, altrimenti non è raggiungibile se non fa match l'url chiamato con quello dichiarato nel conf.
+
+Notare che in SSL la porta passa da 9445 a 8443 (inserita nella versione corrente del docker-compose) 
+
+Configurazione suggerita per un container test mode
+8Core
+10GByte MEM
+10GByte Swap
+5000GB Disk

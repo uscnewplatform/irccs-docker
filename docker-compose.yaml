@@ -106,7 +106,7 @@ services:
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak_owner
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
     networks:
       - irccs
 
@@ -114,8 +114,8 @@ services:
     image: quay.io/keycloak/keycloak:26.0.5
     container_name: irccs-keycloak
     environment:
-      KEYCLOAK_ADMIN: gennaro.aurilia@gmail.com
-      KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     restart: always
     entrypoint:
       [
@@ -151,6 +151,8 @@ services:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
+    env_file:
+      - .env
     networks:
       - irccs
 
@@ -163,8 +165,8 @@ services:
       - postgres_data_hapi:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: hapi
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: ${HAPI_DB_USER}
+      POSTGRES_PASSWORD: ${HAPI_DB_PASSWORD}
     networks:
       - irccs
 
@@ -174,7 +176,9 @@ services:
     image: redis:7.0-rc
     networks:
       - irccs
-    command: --requirepass password
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     volumes:
       - redis_data:/data
     ports:
