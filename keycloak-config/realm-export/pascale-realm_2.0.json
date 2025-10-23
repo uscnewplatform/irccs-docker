@@ -2994,7 +2994,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "Qwerty123!"
+          "value": ""
         }
       ],
       "disableableCredentialTypes": [],
@@ -3250,7 +3250,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "cwvB6qAn5iFl7pa9r04WxkordJyy3tjS",
+      "secret": "",
       "redirectUris": [
         "/fhir/*"
       ],
