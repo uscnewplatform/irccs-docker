@@ -2991,12 +2991,6 @@
           "3333333333"
         ]
       },
-      "credentials": [
-        {
-          "type": "password",
-          "value": ""
-        }
-      ],
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
