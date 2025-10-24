@@ -117,9 +117,11 @@ services:
     restart: always
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}keycloak
-      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}keycloak_owner
+      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
       POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
     networks:
       - irccs
@@ -130,9 +132,12 @@ services:
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_DB_USERNAME: ${KC_DB_USERNAME}
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
-      KC_DB_URL: ${KC_DB_URL}
+      KC_DB: postgres
+      KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER}
+      KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+      KC_DB_URL_HOST: postgres-keycloak
+      KC_DB_URL_PORT: 5432
+      KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
     env_file:
       - .env
     restart: always
@@ -180,6 +185,8 @@ services:
     hostname: postgres
     container_name: postgres-hapi-fhir
     restart: always
+    env_file:
+      - .env
     volumes:
       - postgres_data_hapi:/var/lib/postgresql/data
     environment:

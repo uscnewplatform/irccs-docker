@@ -55,6 +55,7 @@ docker-compose up -d
 ## 1. Installazione SearchParameters FHIR
 
 ```bash
+chmod +x install_searchparameters.sh
 bash setup/install_searchparameters.sh hostname:port
 Usage: install_searchparameters.sh hostname:port
 ```
@@ -81,7 +82,22 @@ Accedere alla dashboard di Keycloak ed effettuare i seguenti passaggi:
 
 - Verificare la connessione cliccando su _Test connection_.
 
+## 3 Cambio SECRET Keycloak
 
+Loggarsi con l'utenza di Admin alla UI di keycloak , (http://irccs-keycloak:9445)
+Accedi a Keycloak (porta 9445): Realm pascale → Clients → irccs → Credentials → REGENERATE CLIENT SECRET (premere si al popup)
+Copiare il secret generato ed inserirlo nel file .env (variabile KEYCLOAK_CLIENT_SECRET) ed eseguire i comandi:
+docker-compose down
+docker-compose up -d
+
+## Installazione PJ J-LI
+Portarsi nella cartella setup ed eseguire il comando
+chmod +x install_jli.sh
+
+Eseguire poi il comando
+./install_jli.sh http://{ip}:{port}/fhir  
+
+ip e port sono quelle del container di fhir (vedi docker-compose, la porta esposta per hapi-fhir è 8080) : http://irccs-hapi-fhir:8080/fhir
 
 NOTE:
 
