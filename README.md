@@ -120,3 +120,8 @@ Configurazione suggerita per un container test mode
 10GByte MEM
 10GByte Swap
 5000GB Disk
+
+
+Verifiche:
+
+in keycloak, verificare che l'utente di servizio nel realm pascale "service-account-irccs" abbia il ruolo /admin (necessario per le chiamate di signup)
