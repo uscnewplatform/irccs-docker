@@ -71,7 +71,7 @@ Accedere alla dashboard di Keycloak ed effettuare i seguenti passaggi:
 - Autenticarsi con utenza di ADMIN (fornita nel file .env):
 
 
-**Assicurarsi di cambiare password di quest'ultimo** ed assegnargli il ruolo di admin
+**Assicurarsi di cambiare password di quest'ultimo** ed assegnargli il ruolo di admin cliccando su users->gennaro.aurilia@gmail.com ->Role mapping->assign role = ADMIN
 
 - Selezionare il realm: _pascale_.
 
