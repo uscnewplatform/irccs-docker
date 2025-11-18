@@ -54,9 +54,10 @@ docker-compose up -d
 
 ## 1. Installazione SearchParameters FHIR
 
+Portarsi nella cartella setup ed eseguire il comando
 ```bash
 chmod +x install_searchparameters.sh
-bash setup/install_searchparameters.sh hostname:port
+bash install_searchparameters.sh hostname:port
 Usage: install_searchparameters.sh hostname:port
 ```
 ##### hostname:port deve corrispondere all’istanza FHIR target.
@@ -70,7 +71,7 @@ Accedere alla dashboard di Keycloak ed effettuare i seguenti passaggi:
 - Autenticarsi con utenza di ADMIN (fornita nel file .env):
 
 
-**Assicurarsi di cambiare password di quest'ultimo**
+**Assicurarsi di cambiare password di quest'ultimo** ed assegnargli il ruolo di admin
 
 - Selezionare il realm: _pascale_.
 
@@ -95,7 +96,9 @@ Portarsi nella cartella setup ed eseguire il comando
 chmod +x install_jli.sh
 
 Eseguire poi il comando
+```bash
 ./install_jli.sh http://{ip}:{port}/fhir  
+```
 
 ip e port sono quelle del container di fhir (vedi docker-compose, la porta esposta per hapi-fhir è 8080) : http://irccs-hapi-fhir:8080/fhir
 
