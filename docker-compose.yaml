@@ -8,8 +8,6 @@ services:
     container_name: irccs-clinical-reasoning
     volumes:
       - ./microservice-config:/deployments/config
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
@@ -22,8 +20,6 @@ services:
     container_name: irccs-auth
     volumes:
       - ./microservice-config:/deployments/config
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
@@ -31,41 +27,36 @@ services:
         condition: service_healthy
     restart: always
 
+
   irccs-microservice-ctcae:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
       irccs-keycloak:
         condition: service_healthy
     restart: always
- 
+
   irccs-microservice-practitioner:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:2.0.1-SNAPSHOT
     container_name: irccs-practitioner
     volumes:
       - ./microservice-config:/deployments/config
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
       irccs-keycloak:
         condition: service_healthy
     restart: always
- 
+
   irccs-microservice-centro-ricerca:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-centro-ricerca:2.0.1-SNAPSHOT
     container_name: irccs-centro-ricerca
     volumes:
       - ./microservice-config:/deployments/config
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
@@ -78,8 +69,6 @@ services:
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
@@ -92,8 +81,6 @@ services:
     container_name: irccs-anagrafica-pazienti
     volumes:
       - ./microservice-config:/deployments/config
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
@@ -117,12 +104,10 @@ services:
     restart: always
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
-    env_file:
-      - .env
     environment:
-      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
-      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak_owner
+      POSTGRES_PASSWORD: password
     networks:
       - irccs
 
@@ -130,30 +115,34 @@ services:
     image: quay.io/keycloak/keycloak:26.0.5
     container_name: irccs-keycloak
     environment:
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_DB: postgres
-      KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER}
-      KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
-      KC_DB_URL_HOST: postgres-keycloak
-      KC_DB_URL_PORT: 5432
-      KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
-    env_file:
-      - .env
+      KEYCLOAK_ADMIN: gennaro.aurilia@gmail.com
+      KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
+      PROXY_ADDRESS_FORWARDING: "true"
+      KEYCLOAK_HOSTNAME: backoffice.irccs.infocube.it
+      # KEYCLOAK_FRONTEND_URL: http://10.99.88.146:9445/
+      # KC_HTTP_HEADER_CONTENT_SECURITY_POLICY: "frame-src 'self' https://backoffice.irccs.infocube.it;"
     restart: always
+    #    entrypoint:
+    #      [
+    #        "/bin/sh",
+    #        "-c",
+    #        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+    #      ]
     entrypoint:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname https://backoffice.irccs.infocube.it --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
+      #      - "9446:8443"
       - "9445:8080"
     volumes:
       - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
       - ./keycloak-config/realm-export:/opt/keycloak/data/import
       - ./keycloak-config/realm-export:/export
       - ./keycloak-config/providers/:/opt/keycloak/providers/
+      #- ./keycloak-config/certs:/opt/keycloak/conf/certs
     depends_on:
       - postgres-keycloak
     networks:
@@ -175,8 +164,6 @@ services:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
-    env_file:
-      - .env
     networks:
       - irccs
 
@@ -185,14 +172,12 @@ services:
     hostname: postgres
     container_name: postgres-hapi-fhir
     restart: always
-    env_file:
-      - .env
     volumes:
       - postgres_data_hapi:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${HAPI_DB_NAME}
-      POSTGRES_USER: ${HAPI_DB_USER}
-      POSTGRES_PASSWORD: ${HAPI_DB_PASSWORD}
+      POSTGRES_DB: hapi
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     networks:
       - irccs
 
@@ -202,9 +187,7 @@ services:
     image: redis:7.0-rc
     networks:
       - irccs
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    command: --requirepass password
     volumes:
       - redis_data:/data
     ports:
@@ -216,14 +199,25 @@ services:
     volumes:
       - ./microservice-config-tac:/deployments/config
       - ./dicom:/data
-    env_file:
-      - .env
     networks:
       - irccs
     depends_on:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+
+  irccs-microservice-zammad:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-zammad:1.0.0-SNAPSHOT
+    container_name: irccs-zammad
+    volumes:
+      - ./microservice-config-zammad:/deployments/config
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
 
 volumes:
   postgres_data_hapi:
