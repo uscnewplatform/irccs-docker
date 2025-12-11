@@ -119,15 +119,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: Qwerty123!
       PROXY_ADDRESS_FORWARDING: "true"
       KEYCLOAK_HOSTNAME: backoffice.irccs.infocube.it
-      # KEYCLOAK_FRONTEND_URL: http://10.99.88.146:9445/
-      # KC_HTTP_HEADER_CONTENT_SECURITY_POLICY: "frame-src 'self' https://backoffice.irccs.infocube.it;"
     restart: always
-    #    entrypoint:
-    #      [
-    #        "/bin/sh",
-    #        "-c",
-    #        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
-    #      ]
     entrypoint:
       [
         "/bin/sh",
