@@ -128,3 +128,7 @@ Configurazione suggerita per un container test mode
 Verifiche:
 
 in keycloak, verificare che l'utente di servizio nel realm pascale "service-account-irccs" abbia il ruolo /admin (necessario per le chiamate di signup)
+
+
+Nel caso in cui si voglia disabilitare la gestione dei ticket, va commentato/eliminato la property VITE_APP_ZAMMAD_HOST all'interno di httpd-config/config-prod.js : questo
+nasconderà i bottoni e bloccherà le chiamate di polling di ricerca dei ticket

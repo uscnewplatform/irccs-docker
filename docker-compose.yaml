@@ -44,7 +44,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
- 
+
   irccs-microservice-practitioner:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:2.0.1-SNAPSHOT
     container_name: irccs-practitioner
@@ -58,7 +58,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
- 
+
   irccs-microservice-centro-ricerca:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-centro-ricerca:2.0.1-SNAPSHOT
     container_name: irccs-centro-ricerca
@@ -74,7 +74,7 @@ services:
     restart: always
 
   irccs-microservice-studio-clinico:
-    image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:2.1.0-SNAPSHOT
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
@@ -101,13 +101,14 @@ services:
         condition: service_healthy
     restart: always
   irccs-httpd:
-    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.6
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.7
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
     volumes:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
     networks:
       - irccs
   postgres-keycloak:
@@ -138,6 +139,8 @@ services:
       KC_DB_URL_HOST: postgres-keycloak
       KC_DB_URL_PORT: 5432
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
+      PROXY_ADDRESS_FORWARDING: "true"
+      KEYCLOAK_HOSTNAME: ${KC_HOSTNAME} 
     env_file:
       - .env
     restart: always
@@ -145,7 +148,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start-dev --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING",
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname https://${KC_HOSTNAME} --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
       - "9445:8080"
@@ -216,6 +219,20 @@ services:
     volumes:
       - ./microservice-config-tac:/deployments/config
       - ./dicom:/data
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
+  irccs-microservice-zammad:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-zammad:1.0.3-SNAPSHOT
+    container_name: irccs-zammad
+    volumes:
+      - ./microservice-config-zammad:/deployments/config
     env_file:
       - .env
     networks:

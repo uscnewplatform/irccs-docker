@@ -3248,7 +3248,7 @@
                         ],
                         "linkId": "f58a64c6-eaf3-4ccf-f0ee-61dd6bc69ad5",
                         "text": "Hai già fatto una terapia di prima linea?",
-                        "type": "string",
+                        "type": "choice",
                         "required": true,
                         "answerOption": [
                             {
@@ -3315,9 +3315,11 @@
                                     {
                                         "question": "f58a64c6-eaf3-4ccf-f0ee-61dd6bc69ad5",
                                         "operator": "=",
-                                        "answerString": "no"
-                                    }
-                                ],
+                                        "answerCoding": {
+                                            "system": "urn:uuid:91035afc-a9b7-467f-9f4d-80d14b748311",
+                                            "code": "no"
+                                        }
+                                    }],
                                 "required": false,
                                 "answerOption": [
                                     {
