@@ -74,7 +74,7 @@ services:
     restart: always
 
   irccs-microservice-studio-clinico:
-    image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:2.1.0-SNAPSHOT
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
@@ -101,13 +101,14 @@ services:
         condition: service_healthy
     restart: always
   irccs-httpd:
-    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.6
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.7
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
     volumes:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
     networks:
       - irccs
   postgres-keycloak:
