@@ -132,3 +132,9 @@ in keycloak, verificare che l'utente di servizio nel realm pascale "service-acco
 
 Nel caso in cui si voglia disabilitare la gestione dei ticket, va commentato/eliminato la property VITE_APP_ZAMMAD_HOST all'interno di httpd-config/config-prod.js : questo
 nasconderà i bottoni e bloccherà le chiamate di polling di ricerca dei ticket
+
+
+## Note application.properties MS
+Questa nota serve per gli sviluppatori per capire come funziona la gestione dell'application.properties dei microservizi.
+I file di properiets deployati all'interno delle diverse cartelle del progetto vanno in aggiunta e/o modifica dei file application.properties "interni" dei microservizi.
+Questo significa che ci sono delle proprietà interne dei MS che non sono esposte , volutamente, all'esterno(vedi rootpath dei controller).
