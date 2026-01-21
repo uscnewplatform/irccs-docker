@@ -211,7 +211,7 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - "6379:8080"
+      - "6379:6379"
 
   irccs-microservice-tac:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-tac:2.1.0-SNAPSHOT
