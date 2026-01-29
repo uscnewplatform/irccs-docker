@@ -44,7 +44,7 @@ Va configurato il repository nexus di infocube in docker:
 ```
 git clone git@github.com:infocube-it/irccs-docker.git
 cd irccs-docker
-cp .env_example .env
+cp .env_example .env (con permessi il lettura e scrittura! 777) 
 (il file .env va richiesto al team di sviluppo e NON VA COMMITTATO)
 
 docker-compose up -d
