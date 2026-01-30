@@ -91,6 +91,13 @@ Copiare il secret generato ed inserirlo nel file .env (variabile KEYCLOAK_CLIENT
 docker-compose down
 docker-compose up -d
 
+## 4 Aggiunta lingua italiano e themes customizzati
+
+Loggarsi con l'utenza di Admin alla UI di keycloak , (http://irccs-keycloak:9445)
+Accedi al realm pascale e poi clicca su REALM CONFIG
+Cliccare sulla tab Languages e aggiungere italiano
+Clicca su Themes e poi su Custom Theme e selezionare il provider customizzato pascale-theme per il tema
+
 ## Installazione PJ J-LI
 Portarsi nella cartella setup ed eseguire il comando
 chmod +x install_jli.sh
