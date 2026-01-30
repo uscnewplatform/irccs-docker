@@ -32,12 +32,14 @@ services:
     restart: always
 
   irccs-microservice-ctcae:
-    image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.1-SNAPSHOT
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
     env_file:
       - .env
+    ports:
+      - "8987:8080"
     networks:
       - irccs
     depends_on:
@@ -140,7 +142,7 @@ services:
       KC_DB_URL_PORT: 5432
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
       PROXY_ADDRESS_FORWARDING: "true"
-      KEYCLOAK_HOSTNAME: ${KC_HOSTNAME} 
+      KEYCLOAK_HOSTNAME: backoffice.irccs.infocube.it
     env_file:
       - .env
     restart: always
@@ -148,7 +150,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname https://${KC_HOSTNAME} --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname https://backoffice.irccs.infocube.it --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
       - "9445:8080"
