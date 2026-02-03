@@ -1,0 +1,8 @@
+name: docs
+title: IRCCS Docker Documentation
+version: 'main'
+nav:
+  - modules/ROOT/nav.adoc
+  - modules/microservices/nav.adoc
+  - modules/configuration/nav.adoc
+  - modules/deployment/nav.adoc
