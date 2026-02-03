@@ -3,19 +3,6 @@ networks:
     driver: bridge
 
 services:
-
-  # Documentazione Antora
-  docs:
-    image: antora/antora:latest
-    container_name: irccs-docs
-    working_dir: /antora
-    volumes:
-      - ./docs:/antora
-      - docs-build:/antora/build
-    command: antora-playbook.yml
-    networks:
-      - irccs
-
   irccs-microservice-clinical-reasoning:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-clinical-reasoning:2.0.0-SNAPSHOT
     container_name: irccs-clinical-reasoning
@@ -259,4 +246,3 @@ volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
   redis_data:
-  docs-build:

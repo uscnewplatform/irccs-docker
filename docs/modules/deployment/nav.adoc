@@ -1,3 +1,0 @@
-.Deployment
-* xref:docker-setup.adoc[Docker Setup]
-* xref:zammad-ticketing.adoc[Zammad Ticketing]
