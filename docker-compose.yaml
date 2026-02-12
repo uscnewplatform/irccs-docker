@@ -92,6 +92,8 @@ services:
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
     container_name: irccs-anagrafica-pazienti
+    ports:
+      - "8976:8080"
     volumes:
       - ./microservice-config:/deployments/config
     env_file:

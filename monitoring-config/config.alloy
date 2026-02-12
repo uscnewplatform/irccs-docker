@@ -1,0 +1,391 @@
+// prometheus.exporter.unix "unix_exporter" {
+//   include_exporter_metrics = true
+//   enable_collectors = ["cpu", "diskstats", "filesystem", "loadavg", "meminfo", "netdev", "netstat", "stat", "time", "uname", "ethtool", "textfile", "memory", "vmstat", "interrupts", "mdadm", "netclass", "nfs", "ntp", "sockstat", "tcpstat", "process", "process_namespace", "powersupply", "supervisord"]
+// }
+
+prometheus.exporter.cadvisor "cadvisor_exporter" {
+  docker_host = "unix:///var/run/docker.sock"
+  docker_only = true
+  storage_duration = "5m"
+}
+
+discovery.relabel "cadvisor_relabel" {
+    targets = prometheus.exporter.cadvisor.cadvisor_exporter.targets
+
+    rule {
+        target_label = "job"
+        replacement  = "integrations/docker"
+    }
+
+    rule {
+        target_label = "instance"
+        replacement  = constants.hostname
+    }
+}
+
+// Configure a prometheus.scrape component to collect cadvisor metrics.
+prometheus.scrape "cadvisor_scraper" {
+  targets    = discovery.relabel.cadvisor_relabel.output
+  forward_to = [ prometheus.remote_write.metrics_write.receiver ]
+}
+
+// ###############################
+// #### Logging Configuration ####
+// ###############################
+
+// Discover Docker containers and extract metadata.
+discovery.docker "linux" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// Define a relabeling rule to create a service name from the container name.
+discovery.relabel "logs_integrations_docker" {
+      targets = []
+  
+      rule {
+          source_labels = ["__meta_docker_container_name"]
+          regex = "/(.*)"
+          target_label = "container_name"
+      }
+
+     rule {
+        target_label = "instance"
+        replacement  = constants.hostname
+    }
+
+}
+
+
+discovery.relabel "integrations_node_exporter" {
+  targets = prometheus.exporter.unix.integrations_node_exporter.targets
+
+  rule {
+    // Set the instance label to the hostname of the machine
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
+
+  rule {
+    // Set a standard job name for all node_exporter metrics
+    target_label = "job"
+    replacement = "integrations/node_exporter"
+  }
+}
+
+// Configure the node_exporter integration to collect system metrics
+prometheus.exporter.unix "integrations_node_exporter" {
+  // Disable unnecessary collectors to reduce overhead
+  disable_collectors = ["ipvs", "btrfs", "infiniband", "xfs", "zfs"]
+  enable_collectors = ["meminfo"]
+
+  filesystem {
+    // Exclude filesystem types that aren't relevant for monitoring
+    fs_types_exclude     = "^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|tmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$"
+    // Exclude mount points that aren't relevant for monitoring
+    mount_points_exclude = "^/(dev|proc|run/credentials/.+|sys|var/lib/docker/.+)($|/)"
+    // Timeout for filesystem operations
+    mount_timeout        = "5s"
+  }
+
+  netclass {
+    // Ignore virtual and container network interfaces
+    ignored_devices = "^(veth.*|cali.*|[a-f0-9]{15})$"
+  }
+
+  netdev {
+    // Exclude virtual and container network interfaces from device metrics
+    device_exclude = "^(veth.*|cali.*|[a-f0-9]{15})$"
+  }
+
+
+}
+
+// Define how to scrape metrics from the node_exporter
+prometheus.scrape "integrations_node_exporter" {
+scrape_interval = "15s"
+  // Use the targets with labels from the discovery.relabel component
+  targets    = discovery.relabel.integrations_node_exporter.output
+  // Send the scraped metrics to the relabeling component
+  forward_to = [prometheus.remote_write.metrics_write.receiver]
+}
+
+// Collect logs from systemd journal for node_exporter integration
+loki.source.journal "logs_integrations_integrations_node_exporter_journal_scrape" {
+  // Only collect logs from the last 24 hours
+  max_age       = "24h0m0s"
+  // Apply relabeling rules to the logs
+  relabel_rules = discovery.relabel.logs_integrations_integrations_node_exporter_journal_scrape.rules
+  // Send logs to the local Loki instance
+  forward_to    = [loki.write.logs_write_client.receiver]
+}
+
+// Define which log files to collect for node_exporter
+local.file_match "logs_integrations_integrations_node_exporter_direct_scrape" {
+  path_targets = [{
+    // Target localhost for log collection
+    __address__ = "localhost",
+    // Collect standard system logs
+    __path__    = "/var/log/{syslog,messages,*.log}",
+    // Add instance label with hostname
+    instance    = constants.hostname,
+    // Add job label for logs
+    job         = "integrations/node_exporter",
+  }]
+}
+
+// Define relabeling rules for systemd journal logs
+discovery.relabel "logs_integrations_integrations_node_exporter_journal_scrape" {
+  targets = []
+
+  rule {
+    // Extract systemd unit information into a label
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+
+  rule {
+    // Extract boot ID information into a label
+    source_labels = ["__journal__boot_id"]
+    target_label  = "boot_id"
+  }
+
+  rule {
+    // Extract transport information into a label
+    source_labels = ["__journal__transport"]
+    target_label  = "transport"
+  }
+
+  rule {
+    // Extract log priority into a level label
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+}
+
+// Collect logs from files for node_exporter
+loki.source.file "logs_integrations_integrations_node_exporter_direct_scrape" {
+  // Use targets defined in local.file_match
+  targets    = local.file_match.logs_integrations_integrations_node_exporter_direct_scrape.targets
+  // Send logs to the local Loki instance
+  forward_to = [loki.write.logs_write_client.receiver]
+}
+
+
+// Configure a loki.source.docker component to collect logs from Docker containers.
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.linux.targets
+  relabel_rules = discovery.relabel.logs_integrations_docker.rules
+  forward_to = [loki.write.logs_write_client.receiver]
+}
+
+// prometheus.scrape "unix_scraper" {
+//   targets    = prometheus.exporter.unix.unix_exporter.targets
+//   forward_to = [prometheus.remote_write.metrics_write.receiver]
+// }
+
+
+// prometheus.scrape "metrics_scrape" {
+// 	targets = [{
+// 		__address__ = format("%s:%s", env("DEMO_HOST"), env("DEMO_PORT")),
+// 	}]
+// 	forward_to = [prometheus.remote_write.metrics_write.receiver]
+// 	job_name   = env("DEMO_SERVER_PACKAGE_NAME")
+// }
+
+prometheus.remote_write "metrics_write" {
+	endpoint {
+		url  = format("http://%s:%s/api/v1/push", env("MIMIR_HOST"), env("MIMIR_PORT"))
+		queue_config { }
+		metadata_config { }
+	}
+}
+
+loki.process "logs_process_client" {
+  forward_to = [loki.write.logs_write_client.receiver]
+
+  stage.logfmt {
+      mapping = { "kind" = "", "service_name" = "", "app" = "" }
+  }
+
+  stage.labels {
+      values = { "kind" = "kind", "service_name" = "service_name", "app" = "app" }
+  }
+}
+
+// loki.source.api "logs_source_ms_http" {
+//     http {
+//         listen_address = "0.0.0.0"
+//         listen_port = "3100"
+//     }
+//     forward_to = [loki.write.logs_write_client.receiver]
+// }
+
+loki.write "logs_write_client" {
+	endpoint {
+		url = format("http://%s:%s/loki/api/v1/push", env("LOKI_HOST"), env("LOKI_PORT"))
+	}
+	external_labels = {
+        }
+}
+
+
+local.file_match "logs_file_server" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/server.log",
+		app         = env("DEMO_SERVER_PACKAGE_NAME"),
+	}]
+}
+
+loki.source.file "logs_source_server" {
+	targets               = local.file_match.logs_file_server.targets
+	forward_to            = [loki.write.logs_write_server.receiver]
+	legacy_positions_file = "/tmp/positions-server.yaml"
+}
+
+loki.write "logs_write_server" {
+	endpoint {
+		url = format("http://%s:%s/loki/api/v1/push", env("LOKI_HOST"), env("LOKI_PORT"))
+	}
+	external_labels = {
+        }
+}
+
+logging {
+	level = "info"
+}
+
+faro.receiver "integrations_app_agent_receiver" {
+	extra_log_labels = {
+		app  = env("DEMO_CLIENT_PACKAGE_NAME"),
+		kind = "",
+	}
+
+	server {
+		listen_address           = "0.0.0.0"
+		listen_port              = env("AGENT_PORT_APP_RECEIVER")
+		cors_allowed_origins     = ["*"]
+		api_key                  = env("AGENT_KEY_APP_RECEIVER")
+		max_allowed_payload_size = "10MiB"
+
+		rate_limiting {
+			rate = 50
+		}
+	}
+
+	sourcemaps { }
+
+	output {
+		logs   = [loki.process.logs_process_client.receiver]
+		traces = [otelcol.exporter.otlp.trace_write.input]
+	}
+}
+
+otelcol.receiver.otlp "default" {
+	grpc {
+		include_metadata = true
+	}
+
+	http {
+		include_metadata = true
+	}
+
+	output {
+		metrics = [otelcol.processor.batch.default.input]
+		logs    = [otelcol.processor.batch.default.input]
+		traces  = [otelcol.processor.batch.default.input]
+	}
+}
+
+otelcol.processor.batch "default" {
+  output {
+    traces = [
+      otelcol.connector.servicegraph.default.input,
+      otelcol.exporter.otlp.trace_write.input,
+    ]
+	logs = [otelcol.exporter.otlphttp.default.input]
+	metrics = [otelcol.exporter.prometheus.metrics_write.input]
+  }
+}
+
+
+otelcol.exporter.otlp "trace_write" {
+	retry_on_failure {
+		max_elapsed_time = "1m0s"
+	}
+
+	client {
+		endpoint = format("%s:%s", env("TEMPO_HOST"), env("TEMPO_PORT_OTLP_RECEIVER"))
+
+		tls {
+			insecure = true
+			insecure_skip_verify = true
+		}
+	}
+}
+
+otelcol.connector.servicegraph "default" {
+  metrics_flush_interval = "10s"
+  dimensions = ["service.name", "http.method"]
+  
+  // Configure the span store for better pairing
+  store {
+    max_items = 5000
+    ttl = "30s"
+  }
+  
+  output {
+    metrics = [otelcol.exporter.otlphttp.default.input]
+  }
+}
+
+otelcol.exporter.otlphttp "default" {
+  client {
+	endpoint = format("http://%s:%s/otlp", env("LOKI_HOST"), env("LOKI_PORT"))
+  }
+}
+
+otelcol.exporter.prometheus "metrics_write" {
+  forward_to = [prometheus.remote_write.metrics_write.receiver]
+}
+
+// Receives profiles over HTTP
+pyroscope.receive_http "default" {
+   http {
+       listen_address = "0.0.0.0"
+       listen_port = 9999
+   }
+   forward_to = [pyroscope.write.backend.receiver]
+}
+
+// Forwards profiles to Pyroscope
+pyroscope.write "backend" {
+   endpoint {
+       url = "http://pyroscope:4040"
+   }
+}
+
+loki.source.syslog "local" {
+  listener {
+    address  = "0.0.0.0:51893"
+    labels   = { component = "loki.source.syslog", protocol = "tcp" }
+  }
+
+  listener {
+    address  = "0.0.0.0:51898"
+    protocol = "udp"
+    labels   = { component = "loki.source.syslog", protocol = "udp" }
+  }
+
+  forward_to = [loki.write.logs_write_server.receiver]
+}
+
+//prometheus.exporter.postgres "postgres_exporter" {
+//    data_source_names = [env("DATABASE_EXPORTER_DATA_SOURCE_URI")]
+//	enabled_collectors = ["long_running_transactions", "process_idle"]
+//}
+
+
+// Enable live debugging features (empty config means use defaults)
+livedebugging{}
