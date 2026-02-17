@@ -34,7 +34,7 @@ limits_config:
   retention_period: 360h
   max_query_series: 100000
   max_query_parallelism: 2
-
+  volume_enabled: true
 ruler:
   alertmanager_url: http://alert-manager:9093
 
