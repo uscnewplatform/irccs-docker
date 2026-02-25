@@ -255,3 +255,25 @@ EOF
 curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -H "Content-Type: application/json" \
       -d "$JSON_BODY"
+
+# Group.name SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "id": "group-name",
+  "url": "http://hl7.org/fhir/SearchParameter/Group-name",
+  "name": "name",
+  "status": "active",
+  "description": "Search by group name",
+  "code": "name",
+  "base": [
+    "Group"
+  ],
+  "type": "string",
+  "expression": "Group.name"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/fhir+json" \
+      -d "$JSON_BODY"
