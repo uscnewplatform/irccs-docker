@@ -113,7 +113,7 @@ services:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
-      - ./build/site:/usr/local/apache2/htdocs/docs
+      - ./httpd-config/docs:/usr/local/apache2/htdocs/docs #documentazione antora
     networks:
       - irccs
   postgres-keycloak:
