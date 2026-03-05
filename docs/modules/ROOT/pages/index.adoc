@@ -1,0 +1,49 @@
+= IRCCS Docker — Infrastruttura di Deployment
+:description: Panoramica del repository irccs-docker per il deployment della piattaforma IRCCS basata su Docker Compose.
+
+== Introduzione
+
+Il repository `irccs-docker` contiene tutta la configurazione necessaria per il deployment della **piattaforma IRCCS** (Istituto di Ricerca e Cura a Carattere Scientifico) su qualsiasi host che supporti Docker e Docker Compose.
+
+La piattaforma è un portale clinico che gestisce studi clinici, anagrafica pazienti, gestione dei professionisti sanitari e integrazione con standard HL7 FHIR R4.
+È composta da un insieme di microservizi Quarkus orchestrati tramite Docker Compose, con supporto a:
+
+* **FHIR R4** — Server HAPI FHIR per la gestione delle risorse cliniche
+* **Keycloak** — Identity Provider per autenticazione e autorizzazione
+* **Redis** — Cache distribuita
+* **Apache HTTPD** — Reverse proxy e serving della web application
+* **Zammad** — Sistema di ticketing integrato
+* **Stack di monitoraggio** — Grafana + Loki + Alloy per log, metriche e tracing
+
+== Struttura del repository
+
+[source]
+----
+irccs-docker/
+├── docker-compose.yaml              # Stack principale applicativo
+├── docker-compose-monitoring.yaml   # Stack di monitoraggio (Grafana/Loki/Alloy)
+├── .env_example                     # Template variabili d'ambiente
+├── microservice-config/             # Configurazione comune ai microservizi
+├── microservice-config-ctcae/       # Configurazione microservizio CTCAE
+├── microservice-config-tac/         # Configurazione microservizio TAC (DICOM)
+├── microservice-config-zammad/      # Configurazione microservizio Zammad
+├── hapi-fhir-config/                # Configurazione server HAPI FHIR
+├── keycloak-config/                 # Configurazione Keycloak (realm, provider, theme)
+├── httpd-config/                    # Configurazione Apache HTTPD e frontend
+├── nginx-config/                    # Configurazione Nginx (routing)
+├── monitoring-config/               # Configurazione Grafana, Loki, Alloy
+├── setup/                           # Script di inizializzazione
+├── zammad-ticketing/                # Docker Compose separato per Zammad
+├── dicom/                           # Volume dati DICOM per il microservizio TAC
+├── lucenefiles/                     # Volume indici Lucene per HAPI FHIR
+└── docs/                            # Documentazione Antora (questo sito)
+----
+
+== Navigazione rapida
+
+* xref:architettura.adoc[Architettura] — Diagramma dei servizi e delle dipendenze
+* xref:microservizi.adoc[Microservizi] — Descrizione di ogni microservizio
+* xref:installazione.adoc[Installazione e Avvio] — Guida passo-passo alla prima installazione
+* xref:configurazioni.adoc[Configurazioni] — Variabili d'ambiente, Keycloak, FHIR, HTTPD
+* xref:monitoraggio.adoc[Stack di Monitoraggio] — Grafana, Loki e Alloy
+* xref:changelog.adoc[Changelog] — Storico delle versioni principali

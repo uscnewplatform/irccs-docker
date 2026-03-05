@@ -1,0 +1,176 @@
+= Installazione e Avvio
+:description: Guida passo-passo per la prima installazione della piattaforma IRCCS su un nuovo host.
+
+== Prerequisiti
+
+Prima di procedere, assicurarsi che siano installati sul sistema:
+
+* **Docker** e **Docker Compose**
+* **Git**
+* **OpenSSL** (`openssl`, `openssl-dev`)
+* **OpenSSH** (`openssh`)
+* Una chiave SSH valida per accedere al repository Git
+* Accesso al registro Docker privato Nexus: `nexus.infocube.it`
+
+[TIP]
+====
+Per effettuare il login al registro Nexus:
+
+[source,bash]
+----
+docker login nexus.infocube.it
+----
+
+Le credenziali vanno richieste al team di sviluppo.
+====
+
+== Installazione su Alpine Linux / Proxmox
+
+Per installazioni su container Proxmox con Alpine v3.22, eseguire i seguenti comandi:
+
+[source,bash]
+----
+apk update && apk upgrade
+apk add docker docker-compose
+rc-service docker up
+rc-service docker start
+rc-update add docker
+----
+
+Configurare il daemon Docker con log rotation e storage driver:
+
+[source,bash]
+----
+mkdir -p /etc/docker
+cat > /etc/docker/daemon.json << EOF
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "20m",
+    "max-file": "3"
+  },
+  "storage-driver": "vfs"
+}
+EOF
+rc-service docker restart
+apk add git
+apk add openssl openssl-dev openssh
+----
+
+== Avvio rapido del progetto
+
+[source,bash]
+----
+git clone git@github.com:infocube-it/irccs-docker.git
+cd irccs-docker
+cp .env_example .env
+# Compilare il file .env con i valori forniti dal team di sviluppo
+docker compose up -d
+----
+
+[WARNING]
+====
+Il file `.env` contiene credenziali riservate e **non deve mai essere committato** sul repository Git.
+Il file `.env_example` fornisce il template con i nomi di tutte le variabili richieste.
+====
+
+=== Configurazione hardware consigliata (ambiente di test)
+
+[cols="1,1"]
+|===
+|Risorsa |Valore consigliato
+
+|CPU
+|8 Core
+
+|RAM
+|10 GByte
+
+|Swap
+|10 GByte
+
+|Disco
+|500 GByte
+|===
+
+== Configurazioni post-avvio
+
+=== 1. Installazione Search Parameters FHIR
+
+Dopo il primo avvio, è necessario installare i parametri di ricerca custom nel server FHIR per garantire il corretto funzionamento dei microservizi.
+
+[source,bash]
+----
+cd setup
+chmod +x install_searchparameters.sh
+bash install_searchparameters.sh <hostname>:<port>
+----
+
+Sostituire `<hostname>:<port>` con l'indirizzo del container HAPI FHIR (default: `irccs-hapi-fhir:8080`).
+
+=== 2. Configurazione SMTP in Keycloak
+
+. Accedere alla dashboard Keycloak all'indirizzo `http://<host>:9445`
+. Autenticarsi con le credenziali di admin definite nel file `.env`
+. **Cambiare immediatamente la password** dell'utente admin e assegnargli il ruolo `ADMIN`
+. Selezionare il realm `pascale`
+. Nel menu laterale: *Realm Settings* → tab *Email*
+. Inserire i parametri SMTP forniti dall'infrastruttura
+. Verificare la connessione con il pulsante *Test connection*
+
+=== 3. Configurazione lingua e tema Keycloak
+
+. Accedere alla UI di Keycloak (`http://<host>:9445`)
+. Selezionare il realm `pascale` → *Realm Settings*
+. Tab *Languages*: aggiungere **Italiano**
+. Tab *Themes* → *Custom Theme*: selezionare `pascale-theme`
+
+=== 4. Rinnovo/Cambio Client Secret Keycloak
+
+Se si rigenera il client secret di Keycloak:
+
+. Accedere a: Realm `pascale` → *Clients* → `irccs` → *Credentials* → *REGENERATE CLIENT SECRET*
+. Copiare il nuovo secret
+. Aggiornare la variabile `KEYCLOAK_CLIENT_SECRET` nel file `.env`
+. Riavviare lo stack:
+
+[source,bash]
+----
+docker compose down
+docker compose up -d
+----
+
+=== 5. Installazione Patient Journey J-LI
+
+[source,bash]
+----
+cd setup
+chmod +x install_jli.sh
+./install_jli.sh http://irccs-hapi-fhir:8080/fhir
+----
+
+=== 6. Verifica account di servizio Keycloak
+
+Verificare che l'utente di servizio `service-account-irccs` nel realm `pascale` abbia il ruolo `/admin` (necessario per le operazioni di signup).
+
+== Abilitazione SSL per Keycloak
+
+Per attivare Keycloak in modalità SSL:
+
+. Fornire certificato e chiave privata tramite volume Docker, riportandoli nel file `keycloak.conf`
+. Rimuovere il flag `--start-dev` dall'entrypoint nel `docker-compose.yaml`
+. La porta HTTPS di Keycloak passa da `9445` (HTTP) a `8443` (HTTPS)
+
+[NOTE]
+====
+In ambiente di test può essere necessario aggiungere l'hostname di Keycloak in `/etc/hosts`:
+
+[source]
+----
+127.0.0.1 keycloak.irccs.infocube.it
+----
+====
+
+== Disabilitazione del sistema di ticketing
+
+Per disabilitare il modulo Zammad, commentare o rimuovere la variabile `VITE_APP_ZAMMAD_HOST` nel file `httpd-config/config-prod.js`. Questo nasconderà i pulsanti di gestione ticket e bloccherà le chiamate di polling.

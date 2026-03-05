@@ -1,0 +1,276 @@
+= Configurazioni
+:description: Guida alle variabili d'ambiente, configurazione Keycloak, HAPI FHIR, Apache HTTPD e microservizi della piattaforma IRCCS.
+
+== Variabili d'ambiente (.env)
+
+Tutte le configurazioni sensibili sono gestite tramite il file `.env` (da copiare da `.env_example`).
+Il file **non deve mai essere versionato** su Git.
+
+=== Keycloak
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`KEYCLOAK_ADMIN`
+|Email dell'utente amministratore di Keycloak
+
+|`KEYCLOAK_ADMIN_PASSWORD`
+|Password dell'utente amministratore
+
+|`KEYCLOAK_CLIENT_ID`
+|ID del client Keycloak per i microservizi (`irccs`)
+
+|`KEYCLOAK_CLIENT_SECRET`
+|Secret del client Keycloak (da rigenerare dopo la prima installazione)
+
+|`KEYCLOAK_REALM`
+|Nome del realm Keycloak (default: `pascale`)
+
+|`KC_DB_USERNAME`
+|Username database Keycloak
+
+|`KC_DB_PASSWORD`
+|Password database Keycloak
+
+|`KC_DB_URL`
+|URL JDBC del database Keycloak
+
+|`KC_HOSTNAME`
+|Hostname pubblico di Keycloak
+|===
+
+=== PostgreSQL (Keycloak)
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`POSTGRES_KEYCLOAK_DB`
+|Nome del database PostgreSQL per Keycloak
+
+|`POSTGRES_KEYCLOAK_USER`
+|Username del database
+
+|`POSTGRES_KEYCLOAK_PASSWORD`
+|Password del database
+|===
+
+=== PostgreSQL (HAPI FHIR)
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`HAPI_DB_NAME`
+|Nome del database PostgreSQL per HAPI FHIR
+
+|`HAPI_DB_USER`
+|Username del database
+
+|`HAPI_DB_PASSWORD`
+|Password del database
+|===
+
+=== Redis
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`REDIS_PASSWORD`
+|Password di accesso a Redis
+|===
+
+=== JWT e OIDC
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`JWT_SECRET`
+|Chiave segreta per la firma dei token JWT (64 caratteri hex o base64)
+
+|`OIDC_TOKEN_ISSUER`
+|URL dell'issuer OIDC (es. `https://backoffice.irccs.infocube.it/realms/pascale`)
+|===
+
+=== Zammad
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`ZAMMAD_TOKEN_SERVICE`
+|Token API per l'accesso a Zammad
+
+|`ZAMMAD_BASE_URL`
+|URL dell'istanza Zammad
+
+|`ZAMMAD_ADMIN_EMAIL`
+|Email dell'utente admin Zammad
+
+|`ZAMMAD_INTERVAL_POLLING`
+|Intervallo di polling dei ticket (secondi)
+|===
+
+=== CTCAE / OTP Email
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`OTP_MAIL_FROM`
+|Indirizzo mittente per le email OTP
+
+|`OTP_MAIL_HOST`
+|Server SMTP
+
+|`OTP_MAIL_PORT`
+|Porta SMTP
+
+|`OTP_MAIL_TLS`
+|Modalità TLS (`REQUIRED`, `OPTIONAL`, `NONE`)
+
+|`OTP_MAIL_USER`
+|Username account email
+
+|`OTP_MAIL_PSW`
+|Password account email
+|===
+
+== Configurazione Keycloak
+
+=== File di configurazione
+
+Il file `keycloak-config/keycloak.conf` contiene la configurazione del server Keycloak:
+
+* **Health**: endpoint `/health` abilitato
+* **Metrics**: endpoint `/metrics` abilitato
+* **HTTPS**: abilitato (`https-enabled=true`)
+* **HTTP**: abilitato in parallelo (`http-enabled=true`)
+* `hostname-strict=false` — non verifica strict match dell'hostname
+
+=== Realm
+
+Il realm `pascale` è importato automaticamente all'avvio da `keycloak-config/realm-export/pascale-realm_2.0.json`. La strategia di migrazione è `OVERWRITE_EXISTING`.
+
+=== Provider personalizzati
+
+Nella cartella `keycloak-config/providers/` sono presenti:
+
+* `infocube-custom-provider-1.1.0.jar` — provider custom Infocube (es. autenticazione custom)
+* `pascale-theme.jar` — tema grafico personalizzato per le pagine Keycloak
+
+=== Client `irccs`
+
+Il client `irccs` è configurato nel realm `pascale` per:
+
+* Autenticazione dei microservizi tramite `client_credentials`
+* Policy enforcement delle risorse protette
+
+L'utente di servizio `service-account-irccs` deve avere il ruolo `/admin` per le operazioni di signup.
+
+== Configurazione HAPI FHIR
+
+Il file `hapi-fhir-config/application.yaml` configura il server FHIR:
+
+=== Parametri principali
+
+[cols="2,3"]
+|===
+|Parametro |Valore/Descrizione
+
+|`hapi.fhir.fhir_version`
+|`R4` — versione FHIR utilizzata
+
+|`hapi.fhir.cr.enabled`
+|`true` — modulo CQL/Clinical Reasoning attivo
+
+|`hapi.fhir.openapi_enabled`
+|`true` — Swagger UI su `/fhir/swagger-ui/index.html`
+
+|`reuse_cached_search_results_millis`
+|`-1` — cache disabilitata (necessario per l'eleggibilità)
+
+|`hapi.fhir.allow_cascading_deletes`
+|`true`
+
+|`hapi.fhir.allow_contains_searches`
+|`true`
+
+|`hapi.fhir.allow_multiple_delete`
+|`true`
+
+|`hapi.fhir.cors.allowed_origin`
+|`*` — tutti gli origin
+
+|`search-coord-max-pool-size`
+|`100`
+|===
+
+=== Tipi Bundle supportati
+
+`COLLECTION`, `DOCUMENT`, `MESSAGE`, `TRANSACTION`, `TRANSACTIONRESPONSE`, `BATCH`, `BATCHRESPONSE`, `HISTORY`, `SEARCHSET`
+
+== Configurazione Apache HTTPD
+
+=== httpd-config/config-prod.js
+
+Questo file viene montato come `config.js` nella web application React e inietta la configurazione runtime:
+
+[source,javascript]
+----
+window.APP_CONFIG = {
+    VITE_APP_STAGING_MS_HOST: "",       // Host dei microservizi (vuoto = stesso origin)
+    VITE_APP_STAGING_AUTH_HOST: "",     // Host del microservizio auth
+    VITE_APP_ZAMMAD_HOST: "https://...", // URL istanza Zammad (rimuovere per disabilitare)
+    VITE_APP_ZAMMAD_POLL_INTERVAL_SECONDS: "120",  // Polling ogni 120s
+    VITE_APP_ZAMMAD_TICKET_ANNUNCE_STATE_ID: "7"   // ID stato ticket "annunciato"
+};
+----
+
+[TIP]
+====
+Per disabilitare il sistema di ticketing, rimuovere o commentare la riga `VITE_APP_ZAMMAD_HOST`. Questo nasconderà tutti i controlli UI relativi ai ticket.
+====
+
+=== Virtual Host Apache
+
+I file `httpd-config/irccs.conf` e `httpd-config/httpd.conf` configurano il virtual host Apache per:
+
+* Serving dell'applicazione React
+* Routing reverse proxy verso i microservizi
+* Serving della documentazione Antora su `/docs`
+
+== Configurazione microservizi
+
+=== application.properties (comune)
+
+Posizione: `microservice-config/application.properties`
+
+Questo file è condiviso da tutti i microservizi (eccetto CTCAE, TAC e Zammad che hanno cartelle dedicate):
+
+[source,properties]
+----
+# URL del server FHIR
+org.quarkus.irccs.fhir-server=http://irccs-hapi-fhir:8080/fhir
+
+# Timeout (ms)
+org.quarkus.irccs.socket.timeout=120000
+org.quarkus.irccs.connection.timeout=120000
+
+# Keycloak
+keycloak-port=8080
+keycloak-base-url=http://irccs-keycloak
+quarkus.keycloak.policy-enforcer.enable=true
+
+# OIDC
+quarkus.oidc.token.issuer=${OIDC_TOKEN_ISSUER}
+----
+
+=== Configurazioni specifiche
+
+* `microservice-config-ctcae/` — configurazione per CTCAE (OTP email)
+* `microservice-config-tac/` — configurazione per TAC (DICOM)
+* `microservice-config-zammad/` — configurazione per integrazione Zammad
