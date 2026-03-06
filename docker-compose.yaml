@@ -247,6 +247,12 @@ services:
         condition: service_healthy
     restart: always
 
+  irccs-antora-docs:
+    image: nexus.infocube.it/i3/irccs/antora-docs:develop
+    container_name: irccs-antora-docs
+    restart: always
+    networks:
+      - irccs
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
