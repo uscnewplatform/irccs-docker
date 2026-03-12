@@ -38,8 +38,6 @@ services:
       - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
     env_file:
       - .env
-    ports:
-      - "8987:8080"
     networks:
       - irccs
     depends_on:
@@ -92,8 +90,6 @@ services:
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
     container_name: irccs-anagrafica-pazienti
-    ports:
-      - "8976:8080"
     volumes:
       - ./microservice-config:/deployments/config
     env_file:
@@ -105,7 +101,7 @@ services:
         condition: service_healthy
     restart: always
   irccs-httpd:
-    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.9
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.10
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"

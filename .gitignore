@@ -2,3 +2,4 @@
 /docker-compose_dev.yaml
 .env
 .env.*
+./httpd-config/config-prod.js
