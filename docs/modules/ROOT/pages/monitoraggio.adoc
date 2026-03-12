@@ -1,0 +1,227 @@
+= Stack di Monitoraggio
+:description: Descrizione dello stack di monitoraggio della piattaforma IRCCS basato su Grafana, Loki e Grafana Alloy.
+
+== Panoramica
+
+Lo stack di monitoraggio è definito nel file `docker-compose-monitoring.yaml` e gira su una rete Docker separata (`monitoring_stack_network`), isolata dallo stack applicativo principale.
+
+Lo stack è composto da tre componenti:
+
+* **Grafana** — Dashboard di visualizzazione per metriche, log e trace
+* **Loki** — Sistema di aggregazione dei log
+* **Grafana Alloy** — Agente di raccolta dati (metriche, log, trace, profiling)
+
+== Servizi
+
+=== Grafana
+
+[cols="1,3"]
+|===
+|Immagine |`grafana/grafana:${GRAFANA_VERSION}`
+|Porta |`${GRAFANA_PORT}` (default: 3000)
+|===
+
+Dashboard di visualizzazione. Accede ai dati tramite datasource configurati in `monitoring-config/datasource/datasource.yaml`.
+
+Credenziali configurate tramite variabili d'ambiente:
+
+* `GF_SECURITY_ADMIN_USER`
+* `GF_SECURITY_ADMIN_PASSWORD`
+* `GF_USERS_ALLOW_SIGN_UP`
+
+=== Loki
+
+[cols="1,3"]
+|===
+|Immagine |`grafana/loki:3.5`
+|Porta |`${LOKI_PORT}`
+|Volume |`loki_data` (persistente)
+|===
+
+Sistema di aggregazione e indicizzazione dei log. La configurazione è in `monitoring-config/loki-config.yml`. I dati di log sono persistiti nel volume Docker `loki_data`.
+
+=== Grafana Alloy
+
+[cols="1,3"]
+|===
+|Immagine |`grafana/alloy:v1.11.3`
+|Porta |`${AGENT_PORT}`, `${AGENT_PORT_APP_RECEIVER}`, `${ALLOY_OTEL_PORT}`, `${ALLOY_PYROSCOPE_PORT}`
+|Modalità |Privilegiata (`privileged: true`)
+|===
+
+Agente di raccolta dati che sostituisce il vecchio Grafana Agent. Raccoglie:
+
+* **Log** dai container Docker → inviati a Loki
+* **Metriche** sistema (CPU, RAM, disco, rete) → inviati a Grafana
+* **Trace** OpenTelemetry (porta OTLP dedicata)
+* **Profiling** continuo (Pyroscope)
+
+Monta i seguenti path di sistema in sola lettura per la raccolta dei dati:
+
+[source]
+----
+/                     → rootfs (ro)
+/var/run              → socket Docker
+/sys                  → metriche kernel
+/var/lib/docker       → metriche container
+/dev/disk             → metriche disco
+/var/run/docker.sock  → API Docker
+/proc                 → metriche processo
+----
+
+La configurazione Alloy è in `monitoring-config/config.alloy`.
+
+== Dashboard disponibili
+
+La cartella `monitoring-config/dashboards/` contiene le dashboard Grafana pre-configurate:
+
+=== Dashboard applicative
+
+[cols="2,3"]
+|===
+|File |Descrizione
+
+|`dashboard.json`
+|Dashboard principale della piattaforma IRCCS
+
+|`frontend-application.json`
+|Metriche dell'applicazione frontend React
+
+|`Spring_boot_3.x_dashboard.json`
+|Metriche Spring Boot 3.x per i microservizi
+
+|`JVM_Spring.json`
+|Metriche JVM per applicazioni Spring/Quarkus
+
+|`monitor_services.json`
+|Stato dei servizi Docker
+|===
+
+=== Dashboard infrastrutturali
+
+[cols="2,3"]
+|===
+|File |Descrizione
+
+|`1860_rev32.json`
+|Node Exporter Full — metriche host sistema
+
+|`dashboard_node_metrics.json`
+|Metriche nodo (CPU, RAM, disco)
+
+|`dashboard_container_metrics.json`
+|Metriche container Docker
+
+|`docker_containers.json`
+|Overview container Docker
+
+|`docker_host.json`
+|Overview host Docker
+|===
+
+=== Dashboard log (Loki)
+
+[cols="2,3"]
+|===
+|File |Descrizione
+
+|`logging_dashboard.json`
+|Dashboard logging generale
+
+|`Loki_logs_app.json`
+|Log aggregati dell'applicazione
+
+|`loki_example.json`
+|Esempi di query Loki
+
+|`Pcs_Loki_Dash_.json`
+|Dashboard Loki personalizzata PCS
+|===
+
+=== Dashboard trace
+
+[cols="2,3"]
+|===
+|File |Descrizione
+
+|`trace-with-failed-requests.json`
+|Trace con richieste fallite
+
+|`trace-with-both-db-attributes.json`
+|Trace con attributi database
+
+|`trace-with-expired-edges.json`
+|Trace con edge scaduti
+
+|`trace-with-virtual-nodes.json`
+|Trace con nodi virtuali
+|===
+
+=== Dashboard Mimir (metriche scalabili)
+
+Sono presenti oltre 20 dashboard per il monitoraggio di **Grafana Mimir** (sistema di metriche scalabile), incluse:
+overview, reads, writes, compactor, ruler, alertmanager, queries, tenants, rollout progress.
+
+== Provisioning automatico
+
+Le dashboard vengono caricate automaticamente all'avvio di Grafana tramite il provisioning configurato in:
+
+* `monitoring-config/dashboard-provisioning/dashboards.yaml` — definisce la cartella sorgente delle dashboard
+* `monitoring-config/datasource/datasource.yaml` — configura i datasource (Loki, Prometheus, ecc.)
+
+== Configurazione tramite variabili d'ambiente
+
+Le principali variabili d'ambiente per il monitoraggio (da inserire nel file `.env`):
+
+[cols="2,3"]
+|===
+|Variabile |Descrizione
+
+|`GRAFANA_VERSION`
+|Versione dell'immagine Grafana
+
+|`GRAFANA_PORT`
+|Porta esposta di Grafana (es. `3000`)
+
+|`GF_SECURITY_ADMIN_USER`
+|Username admin Grafana
+
+|`GF_SECURITY_ADMIN_PASSWORD`
+|Password admin Grafana
+
+|`GF_USERS_ALLOW_SIGN_UP`
+|Permette la registrazione utenti (`false` raccomandato)
+
+|`LOKI_PORT`
+|Porta di Loki
+
+|`AGENT_PORT`
+|Porta principale di Alloy
+
+|`AGENT_PORT_APP_RECEIVER`
+|Porta receiver applicazioni di Alloy
+
+|`ALLOY_OTEL_PORT`
+|Porta OpenTelemetry di Alloy
+
+|`ALLOY_PYROSCOPE_PORT`
+|Porta Pyroscope di Alloy
+
+|`GRAFANA_CONFIG_PATH_LOCAL`
+|Path locale del file `grafana.ini`
+
+|`LOKI_CONFIG_PATH_LOCAL`
+|Path locale della configurazione Loki
+
+|`ALLOY_CONFIG_PATH_LOCAL`
+|Path locale della configurazione Alloy
+|===
+
+== Avvio dello stack di monitoraggio
+
+Lo stack di monitoraggio si avvia separatamente dallo stack applicativo:
+
+[source,bash]
+----
+docker compose -f docker-compose-monitoring.yaml up -d
+----

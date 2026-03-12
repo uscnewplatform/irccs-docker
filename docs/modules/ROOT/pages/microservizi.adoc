@@ -1,0 +1,194 @@
+= Microservizi
+:description: Descrizione dettagliata di ogni microservizio Quarkus della piattaforma IRCCS.
+
+== Panoramica
+
+I microservizi sono applicazioni **Quarkus** pubblicate sul registro privato `nexus.infocube.it` e orchestrate tramite Docker Compose.
+Tutti i microservizi (eccetto CTCAE) condividono la stessa configurazione base in `microservice-config/application.properties`, che sovrascrive e integra le proprietà interne (`application.properties` embedded nell'immagine).
+
+[NOTE]
+====
+Le proprietà nel file `application.properties` esterno si aggiungono o sovrascrivono quelle interne al microservizio. Le proprietà interne (es. rootpath dei controller) non sono esposte all'esterno volutamente.
+====
+
+== Configurazione comune
+
+Tutti i microservizi condividono le seguenti configurazioni (`microservice-config/application.properties`):
+
+* **URL FHIR Server**: `http://irccs-hapi-fhir:8080/fhir`
+* **URL Auth microservice**: `http://irccs-auth:8080`
+* **URL Centro Ricerca microservice**: `http://irccs-centro-ricerca:8080`
+* **URL Practitioner microservice**: `http://irccs-practitioner:8080`
+* **URL CTCAE microservice (Redis)**: `http://irccs-ctcae:8080`
+* **Keycloak base URL**: `http://irccs-keycloak:8080`
+* **Query limit FHIR**: 1000 risorse
+* **Timeout connessione**: 120 secondi
+
+== Descrizione dei microservizi
+
+=== irccs-microservice-auth
+
+[cols="1,3"]
+|===
+|Container |`irccs-auth`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-auth:2.0.1-SNAPSHOT`
+|Porta esposta |— (solo rete interna)
+|Config |`microservice-config/application.properties`
+|===
+
+Gestisce l'autenticazione e la gestione degli utenti. Espone gli endpoint:
+
+* `POST /fhir/auth/users/signup` — registrazione nuovi utenti
+* `POST /fhir/auth/users/token` — ottenimento token JWT
+* `POST /fhir/auth/users/logout` — logout
+* `POST /fhir/auth/users/forgotPassword` — recupero password
+* `POST /fhir/auth/users/updatePassword` — aggiornamento password
+* `GET /fhir/auth/users/me` — profilo utente corrente
+* `GET /fhir/auth/users/organizations` — organizzazioni disponibili
+
+Gli endpoint di autenticazione sono esclusi dalla policy enforcement Keycloak (`enforcement-mode=DISABLED`).
+
+=== irccs-microservice-clinical-reasoning
+
+[cols="1,3"]
+|===
+|Container |`irccs-clinical-reasoning`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-clinical-reasoning:2.0.0-SNAPSHOT`
+|Porta esposta |— (solo rete interna)
+|Config |`microservice-config/application.properties`
+|===
+
+Gestisce il **ragionamento clinico** tramite CQL (Clinical Quality Language) integrato con HAPI FHIR. Supporta la randomizzazione e la minimizzazione dei pazienti negli studi clinici (Patient Journey J-LI).
+
+=== irccs-microservice-ctcae
+
+[cols="1,3"]
+|===
+|Container |`irccs-ctcae`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.1-SNAPSHOT`
+|Porta esposta |`8987`
+|Config |`microservice-config-ctcae/application.properties`
+|===
+
+Gestisce gli **eventi avversi CTCAE** (Common Terminology Criteria for Adverse Events). Implementa la verifica tramite **OTP via email** per la segnalazione sicura degli eventi avversi.
+
+Configurazione SMTP dedicata (variabili d'ambiente):
+
+* `OTP_MAIL_FROM` — indirizzo mittente
+* `OTP_MAIL_HOST` — server SMTP
+* `OTP_MAIL_PORT` — porta SMTP
+* `OTP_MAIL_TLS` — modalità TLS
+* `OTP_MAIL_USER` / `OTP_MAIL_PSW` — credenziali
+
+=== irccs-microservice-practitioner
+
+[cols="1,3"]
+|===
+|Container |`irccs-practitioner`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:2.0.1-SNAPSHOT`
+|Porta esposta |— (solo rete interna)
+|Config |`microservice-config/application.properties`
+|===
+
+Gestisce il **registro dei professionisti sanitari** (medici, infermieri, ricercatori) mappati come risorse FHIR `Practitioner`.
+
+=== irccs-microservice-centro-ricerca
+
+[cols="1,3"]
+|===
+|Container |`irccs-centro-ricerca`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-centro-ricerca:2.0.1-SNAPSHOT`
+|Porta esposta |— (solo rete interna)
+|Config |`microservice-config/application.properties`
+|===
+
+Gestisce i **centri di ricerca** e le organizzazioni coinvolte negli studi clinici, mappati come risorse FHIR `Organization`.
+
+=== irccs-microservice-studio-clinico
+
+[cols="1,3"]
+|===
+|Container |`irccs-studio-clinico`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:2.1.0-SNAPSHOT`
+|Porta esposta |— (solo rete interna)
+|Config |`microservice-config/application.properties`
+|===
+
+Gestisce i **protocolli degli studi clinici**, incluse le fasi di arruolamento, randomizzazione e follow-up dei pazienti. Integra le risorse FHIR `ResearchStudy`, `ResearchSubject` e `ClinicalImpression`.
+
+=== irccs-microservice-anagrafica-pazienti
+
+[cols="1,3"]
+|===
+|Container |`irccs-anagrafica-pazienti`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT`
+|Porta esposta |`8976`
+|Config |`microservice-config/application.properties`
+|===
+
+Gestisce l'**anagrafica dei pazienti**, mappati come risorse FHIR `Patient`. Espone anche la rotta `/fhir/patients/*` con enforcement disabilitato per scenari specifici di accesso.
+
+=== irccs-microservice-tac
+
+[cols="1,3"]
+|===
+|Container |`irccs-tac`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-tac:2.1.0-SNAPSHOT`
+|Porta esposta |— (solo rete interna)
+|Config |`microservice-config-tac/application.properties`
+|Volume dati |`./dicom:/data`
+|===
+
+Gestisce le **immagini diagnostiche DICOM** (TAC, risonanze, ecc.). I file DICOM sono persistiti nel volume locale `./dicom` montato in `/data` all'interno del container.
+
+=== irccs-microservice-zammad
+
+[cols="1,3"]
+|===
+|Container |`irccs-zammad`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-zammad:1.0.3-SNAPSHOT`
+|Porta esposta |— (solo rete interna)
+|Config |`microservice-config-zammad/application.properties`
+|===
+
+Microservizio di integrazione con il sistema di **ticketing Zammad**. Gestisce la creazione e il polling dei ticket di supporto. Configurabile tramite le variabili:
+
+* `ZAMMAD_TOKEN_SERVICE` — token di accesso API Zammad
+* `ZAMMAD_BASE_URL` — URL dell'istanza Zammad
+* `ZAMMAD_ADMIN_EMAIL` — email dell'utente admin Zammad
+* `ZAMMAD_INTERVAL_POLLING` — intervallo di polling (secondi)
+
+== HAPI FHIR
+
+[cols="1,3"]
+|===
+|Container |`irccs-hapi-fhir`
+|Immagine |`hapiproject/hapi:v8.0.0`
+|Porta esposta |`8080`
+|Config |`hapi-fhir-config/application.yaml`
+|===
+
+Server **HAPI FHIR R4** che funge da repository centrale per tutte le risorse cliniche. Caratteristiche principali:
+
+* Versione FHIR: **R4**
+* Database: PostgreSQL 16 (`postgres-hapi-fhir`)
+* Pool connessioni: max 10 (Hikari)
+* Modulo **CQL/Clinical Reasoning** abilitato (`hapi.fhir.cr.enabled: true`)
+* OpenAPI abilitato su `/fhir/swagger-ui/index.html`
+* Ricerca avanzata Lucene: disabilitata (usa Hibernate Search base)
+* Cache ricerche: disabilitata (`reuse_cached_search_results_millis: -1`) — necessario per l'eleggibilità
+* Bulk export/import: disabilitato
+* CORS: `*` (tutti gli origin)
+
+== Frontend (Apache HTTPD)
+
+[cols="1,3"]
+|===
+|Container |`irccs-httpd-dashboard`
+|Immagine |`nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.9`
+|Porta esposta |`80`
+|===
+
+Serve la **web application React** (dashboard clinica) e funge da reverse proxy verso i microservizi backend. La configurazione runtime è iniettata tramite il file `httpd-config/config-prod.js` montato come `config.js`.
+
+La documentazione Antora è servita sotto il path `/docs` tramite il volume `./httpd-config/docs`.

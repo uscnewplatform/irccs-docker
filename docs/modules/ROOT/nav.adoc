@@ -1,0 +1,7 @@
+* xref:index.adoc[Panoramica]
+* xref:architettura.adoc[Architettura]
+** xref:microservizi.adoc[Microservizi]
+** xref:monitoraggio.adoc[Stack di Monitoraggio]
+* xref:installazione.adoc[Installazione e Avvio]
+* xref:configurazioni.adoc[Configurazioni]
+* xref:changelog.adoc[Changelog]

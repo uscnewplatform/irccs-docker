@@ -246,7 +246,7 @@ JSON_BODY=$(cat <<EOF
   "code": "documentation",
   "base": ["ActivityDefinition"],
   "type": "reference",
-  "expression": "ActivityDefinition.relatedArtifact.where(type = 'documentation').url",
+  "expression": "ActivityDefinition.relatedArtifact.where(type='documentation').resource",
   "xpathUsage": "normal",
   "target": ["CarePlan"]
 }
@@ -255,3 +255,84 @@ EOF
 curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -H "Content-Type: application/json" \
       -d "$JSON_BODY"
+
+# PlanDefinition.documentation SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://your.fhir.server/SearchParameter/PlanDefinition-documentation",
+  "name": "documentation",
+  "status": "active",
+  "description": "Include CarePlan referenced as documentation in PlanDefinition.relatedArtifact",
+  "code": "documentation",
+  "base": ["PlanDefinition"],
+  "type": "reference",
+  "expression": "PlanDefinition.relatedArtifact.where(type='documentation').resource",
+  "xpathUsage": "normal",
+  "target": ["CarePlan"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# Group name SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "id": "group-name",
+  "url": "http://hl7.org/fhir/SearchParameter/Group-name",
+  "name": "name",
+  "status": "active",
+  "description": "Search by group name",
+  "code": "name",
+  "base": [
+    "Group"
+  ],
+  "type": "string",
+  "expression": "Group.name"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# Group identifier-assigner SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+    "resourceType": "SearchParameter",
+    "status": "active",
+    "code": "identifier-assigner",
+    "base": [
+        "Group"
+    ],
+    "type": "reference",
+    "expression": "Group.identifier.assigner"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# Group assigner SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+    "resourceType": "SearchParameter",
+    "status": "active",
+    "code": "assigner",
+    "base": [
+        "Group"
+    ],
+    "type": "reference",
+    "expression": "Group.identifier.assigner"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+

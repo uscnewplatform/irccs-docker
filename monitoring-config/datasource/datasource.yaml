@@ -1,0 +1,29 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: 'Loki'
+
+datasources:
+
+  - name: 'Loki'
+    type: 'loki'
+    access: 'proxy'
+    orgId: 1
+    url: 'http://${LOKI_HOST}:${LOKI_PORT}'
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: true
+    uid: 'loki'
+    jsonData:
+      derivedFields:
+        - datasourceUid: 'tempo'
+          matcherRegex: 'traceID=(\w+)'
+          name: 'TraceID'
+          url: '$${__value.raw}'
+  # - uid: 'local-pyroscope'
+  #   type: 'grafana-pyroscope-datasource'
+  #   name: 'Pyroscope'
+  #   url: http://pyroscope:4040
+  #   jsonData:
+  #     keepCookies: [pyroscope_git_session]

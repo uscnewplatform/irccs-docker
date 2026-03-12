@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+.login-pf body {
+    background-image: linear-gradient(to left top, #00458a2c, #ed5f071c);
+    font-family: 'Roboto', sans-serif !important;
+}
+
+
+:root {
+    --pf-global--primary-color--100: #ff7f00 !important;
+}
+
+
+#kc-header-wrapper {
+    background-image: url('/LogoPascale.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    height: 100px;
+}
+
+#kc-header-wrapper span {
+    display: none;
+}
+
+#kc-page-title {
+    font-weight: bolder !important;
+}
+
+#kc-form-buttons>input[type="submit"] {
+    background-color: #00458A !important;
+    color: white !important;
+    font-weight: bolder !important;
+}
+
+
+div.kc-logo-text{
+    display: none !important;
+}

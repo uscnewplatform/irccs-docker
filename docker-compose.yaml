@@ -32,12 +32,14 @@ services:
     restart: always
 
   irccs-microservice-ctcae:
-    image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.0-SNAPSHOT
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.1-SNAPSHOT
     container_name: irccs-ctcae
     volumes:
       - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
     env_file:
       - .env
+    ports:
+      - "8987:8080"
     networks:
       - irccs
     depends_on:
@@ -90,6 +92,8 @@ services:
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:2.0.0-SNAPSHOT
     container_name: irccs-anagrafica-pazienti
+    ports:
+      - "8976:8080"
     volumes:
       - ./microservice-config:/deployments/config
     env_file:
@@ -109,6 +113,7 @@ services:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
+      - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
     networks:
       - irccs
   postgres-keycloak:
@@ -140,7 +145,7 @@ services:
       KC_DB_URL_PORT: 5432
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
       PROXY_ADDRESS_FORWARDING: "true"
-      KEYCLOAK_HOSTNAME: ${KC_HOSTNAME} 
+      KEYCLOAK_HOSTNAME: backoffice.irccs.infocube.it
     env_file:
       - .env
     restart: always
@@ -148,7 +153,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname https://${KC_HOSTNAME} --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname https://backoffice.irccs.infocube.it --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
       - "9445:8080"
@@ -242,6 +247,12 @@ services:
         condition: service_healthy
     restart: always
 
+  irccs-antora-docs:
+    image: nexus.infocube.it/i3/irccs/antora-docs:develop
+    container_name: irccs-antora-docs
+    restart: always
+    networks:
+      - irccs
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
