@@ -47,7 +47,7 @@ Import automatico da `keycloak-config/realm-export/pascale-realm_2.0.json` con s
 
 === Ruoli FHIR fine-grained
 
-Convenzione `{ResourceType}:{operation}` — es. `Patient:read`, `Task:create`, `Questionnaire:read`.
+Convenzione `+{ResourceType}:{operation}+` — es. `Patient:read`, `Task:create`, `Questionnaire:read`.
 Assegnati come sotto-ruoli dei ruoli standard compositi.
 
 == Authorization Services — Risorse
@@ -60,10 +60,10 @@ Assegnati come sotto-ruoli dei ruoli standard compositi.
 | AuthGroup Resource | `/fhir/auth/groups`, `/fhir/auth/groups/*` | GET POST PUT DELETE
 | Dicom Resource | `/fhir/dicom/*` | GET POST PUT DELETE
 | TOTP Resource | `/totp/*` | POST
-| Create {Type} Resource | `/fhir/{Type}` | GET POST
-| Base {Type} Resource | `/fhir/{Type}/{id}` | GET PUT DELETE
-| Search {Type} Resource | `/fhir/{Type}/_search` | GET
-| History {Type} Resource | `/fhir/{Type}/_history` | GET
+| Create \{Type} Resource | `/fhir/\{Type}` | GET POST
+| Base \{Type} Resource | `/fhir/\{Type}/\{id}` | GET PUT DELETE
+| Search \{Type} Resource | `/fhir/\{Type}/_search` | GET
+| History \{Type} Resource | `/fhir/\{Type}/_history` | GET
 |===
 
 NOTE: Con `policyEnforcementMode: ENFORCING`, qualsiasi risorsa senza una permission esplicita viene negata. Aggiungere sempre sia la risorsa sia la permission.
