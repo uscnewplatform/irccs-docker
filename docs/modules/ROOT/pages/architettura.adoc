@@ -1,163 +1,97 @@
-= Architettura della Piattaforma
-:description: Descrizione dell'architettura a microservizi della piattaforma IRCCS, con servizi, dipendenze e porte esposte.
+= Architettura del Sistema
+:description: Panoramica dell'architettura a microservizi della piattaforma IRCCS.
 
-== Panoramica
-
-La piattaforma IRCCS adotta un'architettura a **microservizi** orchestrata tramite Docker Compose su una rete bridge dedicata (`irccs`). Tutti i servizi comunicano internamente via hostname Docker; solo le porte strettamente necessarie sono esposte sull'host.
-
-== Stack applicativo principale
-
-Il file `docker-compose.yaml` definisce lo stack applicativo core.
-
-=== Rete Docker
-
-Tutti i container applicativi appartengono alla rete bridge `irccs`.
-
-=== Volumi persistenti
+== Stack tecnologico
 
 [cols="1,2"]
 |===
-|Volume |Contenuto
+| Componente | Tecnologia
 
-|`postgres_data_keycloak`
-|Dati del database PostgreSQL per Keycloak
-
-|`postgres_data_hapi`
-|Dati del database PostgreSQL per HAPI FHIR
-
-|`redis_data`
-|Dati della cache Redis
+| Runtime microservizi | Quarkus 3.19.1 (Java 21), Quarkus 3.x (Java 17 per Zammad)
+| FHIR Server | HAPI FHIR R4
+| Identity Provider | Keycloak 26.0.5
+| Database | PostgreSQL 15
+| Cache / OTP | Redis
+| Frontend | React 18, TypeScript, Material-UI
+| Proxy | Apache HTTPD
+| Containerizzazione | Docker Compose
 |===
 
-== Servizi e dipendenze
+== Mappa dei servizi
 
-Il diagramma seguente mostra le dipendenze di avvio tra i container:
+[cols="2,1,3"]
+|===
+| Container | Porta | Responsabilità
+
+| `irccs-httpd` | 80 | Reverse proxy, serve UI e docs
+| `irccs-keycloak` | interno | Identity Provider OIDC/OAuth2
+| `postgres-keycloak` | interno | Database Keycloak
+| `irccs-hapi-fhir` | interno | HAPI FHIR Server R4
+| `irccs-microservice-auth` | interno | Autenticazione, utenti, gruppi
+| `irccs-microservice-anagrafica-pazienti` | interno | Pazienti e risorse correlate
+| `irccs-microservice-studio-clinico` | interno | Studi clinici, CRF
+| `irccs-microservice-centro-ricerca` | interno | Centri ricerca, organizzazioni
+| `irccs-microservice-practitioner` | interno | Operatori sanitari
+| `irccs-microservice-ctcae` | interno | CTCAE, OTP, export Excel
+| `irccs-microservice-crf-tac` | interno | Upload DICOM
+| `irccs-microservice-clinical-reasoning` | interno | Clinical Decision Support
+| `irccs-microservice-zammad` | interno | Integrazione ticketing
+| `cache` (Redis) | interno | OTP e dati volatili
+|===
+
+== Routing Apache HTTPD
 
 [source]
 ----
-postgres-keycloak
-      └── irccs-keycloak (healthcheck)
-                ├── irccs-microservice-auth
-                ├── irccs-microservice-clinical-reasoning
-                ├── irccs-microservice-ctcae
-                ├── irccs-microservice-practitioner
-                ├── irccs-microservice-centro-ricerca
-                ├── irccs-microservice-studio-clinico
-                ├── irccs-microservice-anagrafica-pazienti
-                ├── irccs-microservice-tac
-                └── irccs-microservice-zammad
-
-postgres-hapi-fhir
-      └── irccs-hapi-fhir
-
-irccs-httpd (no dipendenze dichiarate)
-cache / Redis (no dipendenze dichiarate)
+/                      → React Dashboard (build statica)
+/docs/                 → Antora Documentation (build statica)
+/fhir/auth/            → irccs-microservice-auth
+/fhir/Patient/         → irccs-microservice-anagrafica-pazienti
+/fhir/ResearchStudy/   → irccs-microservice-studio-clinico
+/fhir/Organization/    → irccs-microservice-centro-ricerca
+/fhir/Practitioner/    → irccs-microservice-practitioner
+/api/service/          → irccs-microservice-ctcae
+/totp/                 → irccs-microservice-ctcae
+/dicom/                → irccs-microservice-crf-tac
+/fhir/zammad/          → irccs-microservice-zammad
 ----
 
-I microservizi applicativi **attendono il healthcheck di Keycloak** prima di avviarsi, garantendo che l'Identity Provider sia disponibile.
+== Pattern di sicurezza
 
-== Tabella dei servizi
+=== JWT e OIDC
 
-[cols="2,2,1,3"]
-|===
-|Container |Immagine |Porta host |Descrizione
+Tutti i microservizi validano il Bearer token JWT emesso da Keycloak tramite:
+[source,properties]
+----
+quarkus.oidc.token.issuer=${OIDC_TOKEN_ISSUER}
+quarkus.oidc.token.verification=jwt
+quarkus.oidc.application-type=service
+----
 
-|`irccs-httpd-dashboard`
-|`nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop`
-|`80`
-|Frontend React servito da Apache HTTPD; funge da reverse proxy verso i microservizi
+=== Keycloak Policy Enforcer
 
-|`irccs-keycloak`
-|`quay.io/keycloak/keycloak:26.0.5`
-|`9445`
-|Identity Provider (IdP) basato su Keycloak 26; gestisce autenticazione e autorizzazione
+Il `policy-enforcer` di Quarkus verifica per ogni request se l'utente ha il permesso di accedere alla risorsa FHIR con il metodo HTTP richiesto (usato come scope):
+[source,properties]
+----
+quarkus.keycloak.policy-enforcer.enable=true
+quarkus.keycloak.policy-enforcer.http-method-as-scope=true
+----
 
-|`postgres-keycloak`
-|`postgres:17.4`
-|— (interno)
-|Database PostgreSQL dedicato a Keycloak
+=== Groups-IDs e visibilità
 
-|`irccs-hapi-fhir`
-|`hapiproject/hapi:v8.0.0`
-|`8080`
-|Server HAPI FHIR R4 per la gestione delle risorse cliniche HL7
+Ogni risorsa FHIR è taggata con `group_ids` corrispondenti all'organizzazione dell'utente che l'ha creata. L'interceptor `FhirInterceptor` (libreria `i3-annotations`) filtra automaticamente i risultati in base ai gruppi del JWT dell'utente.
 
-|`postgres-hapi-fhir`
-|`postgres:16.8`
-|— (interno)
-|Database PostgreSQL dedicato a HAPI FHIR
+I microservizi di sistema (es. `irccs-microservice-crf-tac`) usano il **service account** Keycloak per bypassare il filtro `group_ids` nelle operazioni interne.
 
-|`irccs-redis`
-|`redis:7.0-rc`
-|`6379`
-|Cache Redis condivisa tra i microservizi
-
-|`irccs-auth`
-|`nexus.../irccs-microservice-auth`
-|— (interno)
-|Microservizio di autenticazione e gestione utenti
-
-|`irccs-clinical-reasoning`
-|`nexus.../irccs-microservice-clinical-reasoning`
-|— (interno)
-|Microservizio per il ragionamento clinico (CQL/FHIR)
-
-|`irccs-ctcae`
-|`nexus.../irccs-microservice-ctcae`
-|`8987`
-|Microservizio per la gestione degli eventi avversi CTCAE con OTP via email
-
-|`irccs-practitioner`
-|`nexus.../irccs-microservice-practitioner`
-|— (interno)
-|Microservizio per la gestione dei professionisti sanitari
-
-|`irccs-centro-ricerca`
-|`nexus.../irccs-microservice-centro-ricerca`
-|— (interno)
-|Microservizio per la gestione dei centri di ricerca
-
-|`irccs-studio-clinico`
-|`nexus.../irccs-microservice-studio-clinico`
-|— (interno)
-|Microservizio per la gestione degli studi clinici
-
-|`irccs-anagrafica-pazienti`
-|`nexus.../irccs-microservice-anagrafica-pazienti`
-|`8976`
-|Microservizio per l'anagrafica dei pazienti
-
-|`irccs-tac`
-|`nexus.../irccs-microservice-tac`
-|— (interno)
-|Microservizio per la gestione di immagini DICOM/TAC
-
-|`irccs-zammad`
-|`nexus.../irccs-microservice-zammad`
-|— (interno)
-|Microservizio di integrazione con il sistema di ticketing Zammad
-|===
-
-== Stack di monitoraggio
-
-Lo stack di monitoraggio è definito nel file `docker-compose-monitoring.yaml` e gira su una rete separata (`monitoring_stack_network`).
-
-Vedere xref:monitoraggio.adoc[Stack di Monitoraggio] per i dettagli.
-
-== Flusso di autenticazione
+== Interceptor CDI — catena di elaborazione
 
 [source]
 ----
-Browser / Client
-      │
-      ▼
-Apache HTTPD (porta 80)
-      │  (reverse proxy)
-      ▼
-Microservizi Quarkus
-      │  (OIDC token validation)
-      ▼
-Keycloak (porta 9445) ←→ PostgreSQL (Keycloak DB)
+HTTP Request
+  → [Keycloak Policy Enforcer] verifica permesso
+  → AuthFlowInterceptor (@AroundInvoke, @SyncAuthFlow)
+    → FhirInterceptor.intercept(fhirClient, context)
+      → Flow specializzato (PatientFlow / PractitionerFlow / Flow default)
+        → context.proceed() → metodo del controller
+          → FhirClient<T> → HAPI FHIR Server
 ----
-
-Tutti i microservizi validano i token JWT emessi da Keycloak tramite il protocollo OIDC. La policy enforcement viene gestita a livello di ogni microservizio tramite `quarkus-keycloak-policy-enforcer`.

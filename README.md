@@ -2,7 +2,6 @@
 La presente guida si pone l'obiettivo di semplificare la prima installazione del portale
 su una nuova piattaforma
 
-
 ## PREREQUISITI INSTALLAZIONE :
 
 Installare docker

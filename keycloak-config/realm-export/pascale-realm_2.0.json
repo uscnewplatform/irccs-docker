@@ -3334,6 +3334,19 @@
       "nodeReRegistrationTimeout": -1,
       "protocolMappers": [
         {
+          "id": "e4f8eeda-1234-5678-9abc-def012345678",
+          "name": "scan-claims",
+          "protocol": "openid-connect",
+          "protocolMapper": "scan-claims-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
           "id": "97c53fae-dc8e-45f1-ac55-e65399cffc3d",
           "name": "Organization Request",
           "protocol": "openid-connect",
@@ -11458,6 +11471,19 @@
         "display.on.consent.screen": "false"
       },
       "protocolMappers": [
+        {
+          "id": "e4f8eeda-1234-5678-9abc-def012345678",
+          "name": "scan-claims",
+          "protocol": "openid-connect",
+          "protocolMapper": "scan-claims-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
         {
           "id": "270a3289-fe3f-4be6-9f7b-97c8a2d2c804",
           "name": "groups",

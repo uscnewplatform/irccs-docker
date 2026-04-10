@@ -1,0 +1,111 @@
+= Keycloak — Identità e Accessi
+:description: Configurazione del realm Keycloak, client IRCCS, ruoli e Authorization Services.
+
+== Realm `pascale`
+
+Import automatico da `keycloak-config/realm-export/pascale-realm_2.0.json` con strategia `OVERWRITE_EXISTING`.
+
+[cols="1,2"]
+|===
+| Parametro | Valore
+
+| Realm name | `pascale`
+| SSL Required | `external`
+| Access Token Lifespan | 1800 s (30 min)
+| SSO Session Max | 36000 s (10 ore)
+| OTP Policy | TOTP — HmacSHA1, 6 cifre, 30 s
+|===
+
+== Client `irccs`
+
+[cols="1,2"]
+|===
+| Parametro | Valore
+
+| Client ID | `irccs`
+| Access Type | `confidential`
+| Service Accounts | Abilitato
+| Authorization Services | Abilitato
+| Policy Enforcement Mode | `ENFORCING`
+| HTTP Method as Scope | `true`
+|===
+
+== Ruoli utente
+
+[cols="1,3"]
+|===
+| Ruolo | Descrizione
+
+| `superadmin` | Accesso completo senza restrizioni gruppo
+| `admin` | Amministratore sistema
+| `sperimentatore_pi` | Principal Investigator (composito, include `sperimentatore`)
+| `sperimentatore` | Ricercatore
+| `radiologo` | Accesso immagini DICOM
+| `frontOffice` | Operatore front-office
+| `backOffice` | Operatore back-office
+|===
+
+=== Ruoli FHIR fine-grained
+
+Convenzione `+{ResourceType}:{operation}+` — es. `Patient:read`, `Task:create`, `Questionnaire:read`.
+Assegnati come sotto-ruoli dei ruoli standard compositi.
+
+== Authorization Services — Risorse
+
+[cols="2,3,1"]
+|===
+| Risorsa | URI | Scope
+
+| Admin Resource | `/fhir/*` | GET POST PUT DELETE
+| AuthGroup Resource | `/fhir/auth/groups`, `/fhir/auth/groups/*` | GET POST PUT DELETE
+| Dicom Resource | `/fhir/dicom/*` | GET POST PUT DELETE
+| TOTP Resource | `/totp/*` | POST
+| Create \{Type} Resource | `/fhir/\{Type}` | GET POST
+| Base \{Type} Resource | `/fhir/\{Type}/\{id}` | GET PUT DELETE
+| Search \{Type} Resource | `/fhir/\{Type}/_search` | GET
+| History \{Type} Resource | `/fhir/\{Type}/_history` | GET
+|===
+
+NOTE: Con `policyEnforcementMode: ENFORCING`, qualsiasi risorsa senza una permission esplicita viene negata. Aggiungere sempre sia la risorsa sia la permission.
+
+== JWT — Claim rilevanti
+
+[cols="1,3"]
+|===
+| Claim | Descrizione
+
+| `sub` | UUID utente Keycloak
+| `email` | Email utente
+| `groups` | Gruppi Keycloak (es. `/admin`, `/irccs-centroRicerca-{id}`)
+| `organizations-id` | JSON list organizzazioni con `keycloakId`
+| `realm_access.roles` | Ruoli standard
+| `resource_access.irccs.roles` | Ruoli FHIR fine-grained
+|===
+
+== Percorsi pubblici (enforcement-mode=DISABLED)
+
+[source]
+----
+POST /fhir/auth/users/signup
+POST /fhir/auth/users/token
+POST /fhir/auth/users/logout
+POST /fhir/auth/users/forgotPassword
+PUT  /fhir/auth/users/updatePassword
+GET  /fhir/auth/users/me
+GET  /fhir/auth/users/organizations
+POST /totp/generate
+POST /totp/verify
+----
+
+== Service Account
+
+I microservizi di sistema (es. `irccs-microservice-crf-tac`) usano il service account tramite `ServiceAccountTokenProvider` per operazioni che bypassano il filtro `group_ids`. Il token è ottenuto via client credentials flow e cachato automaticamente.
+
+== Aggiungere un nuovo ruolo/permesso
+
+. Keycloak Admin Console → realm `pascale`
+. **Roles** → crea ruolo fine-grained (es. `DocumentReference:create`)
+. Assegnalo al ruolo composito appropriato
+. **Clients** → `irccs` → **Authorization** → verifica/crea risorsa per il path
+. **Authorization** → **Permissions** → crea permission (risorsa + policy)
+. Esporta realm aggiornato in `keycloak-config/realm-export/pascale-realm_2.0.json`

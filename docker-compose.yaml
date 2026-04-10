@@ -101,7 +101,7 @@ services:
         condition: service_healthy
     restart: always
   irccs-httpd:
-    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.10
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.12
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
@@ -150,7 +150,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname http://pj.istitutotumori.na.it:9445 --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname http://10.40.10.121:9445 --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
       - "9445:8080"

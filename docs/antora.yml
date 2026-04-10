@@ -1,6 +1,8 @@
-name: irccs-docker
-title: IRCCS Docker - Infrastruttura di Deployment
-version: '2.x'
-start_page: ROOT:index.adoc
+name: infrastruttura
+title: Infrastruttura e Deploy
+version: ~
+prerelease: false
+version_aliases:
+  - latest
 nav:
   - modules/ROOT/nav.adoc

@@ -1,0 +1,104 @@
+= Deployment Docker Compose
+:description: Guida al deployment della piattaforma IRCCS con Docker Compose.
+
+== Prerequisiti
+
+* Docker Engine ≥ 24 e Docker Compose v2
+* File `.env` con tutte le variabili richieste
+
+== Variabili d'ambiente (.env)
+
+[source,shell]
+----
+# Keycloak
+KEYCLOAK_CLIENT_ID=irccs
+KEYCLOAK_CLIENT_SECRET=<segreto>
+KEYCLOAK_REALM=pascale
+KEYCLOAK_ADMIN=admin
+KEYCLOAK_ADMIN_PASSWORD=<password>
+OIDC_TOKEN_ISSUER=http://irccs-keycloak/realms/pascale
+
+# Database
+POSTGRES_USER=keycloak
+POSTGRES_PASSWORD=<password>
+POSTGRES_DB=keycloak
+
+# Redis
+REDIS_PASSWORD=<password>
+
+# Email OTP
+OTP_MAIL_FROM=noreply@irccs.it
+OTP_MAIL_HOST=smtp.example.com
+OTP_MAIL_PORT=587
+OTP_MAIL_TLS=REQUIRED
+OTP_MAIL_USER=<smtp-user>
+OTP_MAIL_PSW=<smtp-password>
+----
+
+== Avvio
+
+[source,shell]
+----
+cd irccs-docker
+docker compose up -d
+docker compose ps          # verifica stato
+docker compose logs -f     # log in tempo reale
+----
+
+== Configurazione condivisa microservizi
+
+Il file `microservice-config/application.properties` viene montato come volume in tutti i microservizi (eccetto CTCAE) e sovrascrive le proprietà del JAR:
+
+[source,properties]
+----
+quarkus.rest-client.auth-microservice-client.url=http://irccs-auth:8080
+quarkus.rest-client.group-microservice-client.url=http://irccs-centro-ricerca:8080
+quarkus.rest-client.practitioner-microservice-client.url=http://irccs-practitioner:8080
+quarkus.rest-client.redis-microservice-client.url=http://irccs-ctcae:8080
+org.quarkus.irccs.fhir-server=http://irccs-hapi-fhir:8080/fhir
+org.quarkus.irccs.query.limit=100
+keycloak-base-url=http://irccs-keycloak
+keycloak-port=8080
+quarkus.keycloak.policy-enforcer.enable=true
+quarkus.keycloak.policy-enforcer.http-method-as-scope=true
+----
+
+`microservice-config-ctcae/application.properties` estende la configurazione con:
+
+* path OTP (`/totp/generate`, `/totp/verify`) con `enforcement-mode=DISABLED`
+* configurazione Redis e mailer OTP
+
+== Aggiornamento di un singolo microservizio
+
+[source,shell]
+----
+# Rebuild immagine e riavvio del solo servizio modificato
+docker compose up -d --build irccs-microservice-auth
+docker compose logs -f irccs-microservice-auth
+----
+
+== Monitoring (opzionale)
+
+[source,shell]
+----
+docker compose -f docker-compose.yaml -f docker-compose-monitoring.yaml up -d
+----
+
+Aggiunge Prometheus (metriche da `/q/metrics`) e Grafana.
+
+== Zammad Ticketing (stack separato)
+
+[source,shell]
+----
+cd irccs-docker/zammad-ticketing
+docker compose up -d
+----
+
+== Health checks Quarkus
+
+Ogni microservizio espone:
+
+* `GET /q/health` — health generale
+* `GET /q/health/live` — liveness
+* `GET /q/health/ready` — readiness
+* `GET /q/metrics` — metriche Prometheus

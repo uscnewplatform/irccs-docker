@@ -336,3 +336,27 @@ curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -d "$JSON_BODY"
 
 
+# Create ADMIN first User inHAPI FHIR
+JSON_BODY=$(cat <<EOF
+{
+      "resourceType": "Practitioner",
+      "extension": [ ],
+      "active": true,
+      "name": [ {
+        "text": " Gennaro Aurilia",
+        "family": "Aurilia",
+        "given": [ "Gennaro" ]
+      } ],
+      "telecom": [ {
+        "system": "phone",
+        "value": ""
+      }, {
+        "system": "email",
+        "value": "gennaro.aurilia@gmail.com"
+      } ]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/Practitioner" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
