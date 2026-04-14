@@ -3304,7 +3304,7 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "",
       "redirectUris": [
-        "/fhir/*",
+        "*",
         "http://localhost:3001",
         "http://localhost:3001/*"
       ],

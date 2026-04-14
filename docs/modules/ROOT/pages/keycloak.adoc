@@ -56,7 +56,7 @@ Assegnati come sotto-ruoli dei ruoli standard compositi.
 |===
 | Risorsa | URI | Scope
 
-| Admin Resource | `/fhir/*` | GET POST PUT DELETE
+| Admin Resource | `*` | GET POST PUT DELETE
 | AuthGroup Resource | `/fhir/auth/groups`, `/fhir/auth/groups/*` | GET POST PUT DELETE
 | Dicom Resource | `/fhir/dicom/*` | GET POST PUT DELETE
 | TOTP Resource | `/totp/*` | POST
