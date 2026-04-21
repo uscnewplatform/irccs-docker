@@ -56,7 +56,7 @@ Assegnati come sotto-ruoli dei ruoli standard compositi.
 |===
 | Risorsa | URI | Scope
 
-| Admin Resource | `/fhir/*` | GET POST PUT DELETE
+| Admin Resource | `*` | GET POST PUT DELETE
 | AuthGroup Resource | `/fhir/auth/groups`, `/fhir/auth/groups/*` | GET POST PUT DELETE
 | Dicom Resource | `/fhir/dicom/*` | GET POST PUT DELETE
 | TOTP Resource | `/totp/*` | POST
@@ -109,3 +109,12 @@ I microservizi di sistema (es. `irccs-microservice-crf-tac`) usano il service ac
 . **Clients** → `irccs` → **Authorization** → verifica/crea risorsa per il path
 . **Authorization** → **Permissions** → crea permission (risorsa + policy)
 . Esporta realm aggiornato in `keycloak-config/realm-export/pascale-realm_2.0.json`
+
+== Creazione Provider "scan-claims"
+
+Per installare il provider `scan-claims` su Keycloak e aggiungerlo al client IRCCS:
+
+1. Eseguire `/opt/keycloak/bin/kc.sh build` da dentro il container.
+2. Andare in console **Clients** → **irccs** → **Client scopes** → **irccs-dedicated** → **Add mapper** e aggiungere scan session (`patientid/study/id`) con nome `scan-claims`.
+
+Comparirà il QR code per il provider `scan-claims`.

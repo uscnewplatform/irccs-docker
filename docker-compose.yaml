@@ -100,6 +100,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+
   irccs-httpd:
     image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.12
     container_name: irccs-httpd-dashboard
@@ -141,8 +142,9 @@ services:
       KC_DB_URL_PORT: 5432
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
       PROXY_ADDRESS_FORWARDING: "true"
-      #KEYCLOAK_HOSTNAME: pj.istitutotumori.na.it
-      #KEYCLOAK_PORT: 9445
+      KC_HOSTNAME_URL: http://10.40.10.121
+      #KC_HOSTNAME_STRICT: true
+      #KC_PROXY: edge
     env_file:
       - .env
     restart: always
@@ -250,6 +252,21 @@ services:
     restart: always
     networks:
       - irccs
+
+  irccs-microservice-patient-interview:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-patient-interview:2.0.1-SNAPSHOT
+    container_name: irccs-patient-interview
+    volumes:
+      - ./microservice-config:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
