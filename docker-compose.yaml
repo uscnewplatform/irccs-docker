@@ -142,7 +142,7 @@ services:
       KC_DB_URL_PORT: 5432
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
       PROXY_ADDRESS_FORWARDING: "true"
-      KC_HOSTNAME_URL: http://10.40.10.121
+      KC_HOSTNAME_URL: http://10.40.10.121:9445
       #KC_HOSTNAME_STRICT: true
       #KC_PROXY: edge
     env_file:
