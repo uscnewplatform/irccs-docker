@@ -251,6 +251,21 @@ services:
         condition: service_healthy
     restart: always
 
+  irccs-microservice-webpush:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-webpush:1.0.0-SNAPSHOT
+    container_name: irccs-webpush
+    hostname: irccs-webpush
+    volumes:
+      - ./microservice-config-webpush:/deployments/config
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+    restart: always
+
   irccs-antora-docs:
     image: nexus.infocube.it/i3/irccs/antora-docs:develop
     container_name: irccs-antora-docs
