@@ -251,6 +251,25 @@ services:
         condition: service_healthy
     restart: always
 
+  postgres-webpush:
+    image: postgres:17.4
+    container_name: postgres-webpush
+    hostname: postgres-webpush
+    volumes:
+      - postgres_data_webpush:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: webpush
+      POSTGRES_USER: ${WEBPUSH_DB_USER}
+      POSTGRES_PASSWORD: ${WEBPUSH_DB_PASSWORD}
+    networks:
+      - irccs
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${WEBPUSH_DB_USER} -d webpush"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   irccs-microservice-webpush:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-webpush:1.0.0-SNAPSHOT
     container_name: irccs-webpush
@@ -263,6 +282,8 @@ services:
       - irccs
     depends_on:
       irccs-keycloak:
+        condition: service_healthy
+      postgres-webpush:
         condition: service_healthy
     restart: always
 
@@ -290,4 +311,5 @@ services:
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
+  postgres_data_webpush:
   redis_data:
