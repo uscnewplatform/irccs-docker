@@ -124,6 +124,7 @@ services:
     restart: always
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     env_file:
       - .env
     environment:
@@ -132,6 +133,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
     networks:
       - irccs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_KEYCLOAK_USER} -d ${POSTGRES_KEYCLOAK_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   irccs-keycloak:
     image: quay.io/keycloak/keycloak:26.0.5
@@ -201,18 +207,12 @@ services:
       - .env
     volumes:
       - postgres_data_hapi:/var/lib/postgresql/data
-      - ./postgres-init:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: ${HAPI_DB_NAME}
       POSTGRES_USER: ${HAPI_DB_USER}
       POSTGRES_PASSWORD: ${HAPI_DB_PASSWORD}
     networks:
       - irccs
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${HAPI_DB_USER} -d ${HAPI_DB_NAME}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   cache:
     container_name: irccs-redis
@@ -270,7 +270,7 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-      postgres-hapi-fhir:
+      postgres-keycloak:
         condition: service_healthy
     restart: always
 
