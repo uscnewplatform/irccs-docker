@@ -201,12 +201,18 @@ services:
       - .env
     volumes:
       - postgres_data_hapi:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: ${HAPI_DB_NAME}
       POSTGRES_USER: ${HAPI_DB_USER}
       POSTGRES_PASSWORD: ${HAPI_DB_PASSWORD}
     networks:
       - irccs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${HAPI_DB_USER} -d ${HAPI_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   cache:
     container_name: irccs-redis
@@ -251,25 +257,6 @@ services:
         condition: service_healthy
     restart: always
 
-  postgres-webpush:
-    image: postgres:17.4
-    container_name: postgres-webpush
-    hostname: postgres-webpush
-    volumes:
-      - postgres_data_webpush:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: webpush
-      POSTGRES_USER: ${WEBPUSH_DB_USER}
-      POSTGRES_PASSWORD: ${WEBPUSH_DB_PASSWORD}
-    networks:
-      - irccs
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${WEBPUSH_DB_USER} -d webpush"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   irccs-microservice-webpush:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-webpush:1.0.0-SNAPSHOT
     container_name: irccs-webpush
@@ -283,7 +270,7 @@ services:
     depends_on:
       irccs-keycloak:
         condition: service_healthy
-      postgres-webpush:
+      postgres-hapi-fhir:
         condition: service_healthy
     restart: always
 
@@ -311,5 +298,4 @@ services:
 volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
-  postgres_data_webpush:
   redis_data:
