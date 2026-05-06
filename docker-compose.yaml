@@ -80,7 +80,7 @@ services:
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
-      - ./translations/webpush-messages.properties:/deployments/config/webpush-messages.properties
+      - ./translations:/deployments/translations
     env_file:
       - .env
     networks:
@@ -264,7 +264,7 @@ services:
     hostname: irccs-webpush
     volumes:
       - ./microservice-config-webpush:/deployments/config
-      - ./translations/webpush-messages.properties:/deployments/config/webpush-messages.properties
+      - ./translations:/deployments/translations
     env_file:
       - .env
     networks:
