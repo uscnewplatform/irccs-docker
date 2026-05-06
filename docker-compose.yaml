@@ -192,6 +192,7 @@ services:
       - postgres-hapi-fhir
     volumes:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
+      - ./terminology:/terminology
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
     env_file:
