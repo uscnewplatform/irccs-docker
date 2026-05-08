@@ -193,7 +193,7 @@ services:
     volumes:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
       - ./terminology:/terminology
-      - ./lucenefiles:/lucenefiles
+      - ./hapi-fhir-config/lucenefiles:/lucenefiles
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
     env_file:
