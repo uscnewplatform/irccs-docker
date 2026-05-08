@@ -193,6 +193,7 @@ services:
     volumes:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
       - ./terminology:/terminology
+      - hapi_lucene_data:/lucenefiles
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
     env_file:
@@ -302,3 +303,4 @@ volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
   redis_data:
+  hapi_lucene_data:
