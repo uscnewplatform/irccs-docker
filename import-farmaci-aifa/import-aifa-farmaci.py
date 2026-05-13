@@ -46,9 +46,11 @@ import io
 import json
 import os
 import sys
+import warnings
 from datetime import date
 
 import requests
+import urllib3
 
 # ── costanti ──────────────────────────────────────────────────────────────────
 
@@ -89,6 +91,8 @@ def parse_args():
                    help="Elenca le versioni già caricate su HAPI ed esce")
     p.add_argument("--force-download", action="store_true",
                    help="Forza il download dei CSV da aifa.gov.it anche se già presenti")
+    p.add_argument("--no-verify-ssl", action="store_true",
+                   help="Disabilita verifica certificato SSL (usa se aifa.gov.it non è raggiungibile per SSL)")
     return p.parse_args()
 
 
@@ -104,13 +108,14 @@ def csv_path(version: str, name: str) -> str:
 
 # ── download / lettura locale ─────────────────────────────────────────────────
 
-def load_csv(local_path: str, remote_url: str, force: bool = False) -> str:
+def load_csv(local_path: str, remote_url: str, force: bool = False,
+             verify_ssl: bool = True) -> str:
     if not force and os.path.exists(local_path):
         print(f"  Locale  : {local_path}")
         with open(local_path, encoding="windows-1252", errors="replace") as f:
             return f.read()
     print(f"  Download: {remote_url}")
-    r = requests.get(remote_url, timeout=60)
+    r = requests.get(remote_url, timeout=60, verify=verify_ssl)
     r.raise_for_status()
     content = r.content.decode("windows-1252", errors="replace")
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
@@ -352,6 +357,11 @@ def main() -> None:
     version = args.version or date.today().strftime("%Y-%m")
     force   = args.force_download
 
+    verify_ssl = not args.no_verify_ssl
+    if not verify_ssl:
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        print("ATTENZIONE: verifica SSL disabilitata (--no-verify-ssl)")
+
     if args.list:
         print(f"HAPI FHIR: {hapi}")
         list_versions(hapi)
@@ -364,15 +374,15 @@ def main() -> None:
 
     print("=== Caricamento CSV AIFA ===")
     drugs_a = parse_classe_a(
-        load_csv(csv_path(version, "aifa_classe_a.csv"), CSV_A_URL, force))
+        load_csv(csv_path(version, "aifa_classe_a.csv"), CSV_A_URL, force, verify_ssl))
     print(f"  Classe A: {len(drugs_a)} farmaci")
 
     drugs_h = parse_classe_h(
-        load_csv(csv_path(version, "aifa_classe_h.csv"), CSV_H_URL, force))
+        load_csv(csv_path(version, "aifa_classe_h.csv"), CSV_H_URL, force, verify_ssl))
     print(f"  Classe H: {len(drugs_h)} farmaci")
 
     atc_map = parse_equivalenti(
-        load_csv(csv_path(version, "aifa_equivalenti.csv"), CSV_EQUIV_URL, force))
+        load_csv(csv_path(version, "aifa_equivalenti.csv"), CSV_EQUIV_URL, force, verify_ssl))
     print(f"  Lista trasparenza: {len(atc_map)} AIC con ATC")
 
     print("\n=== Arricchimento con ATC ===")
