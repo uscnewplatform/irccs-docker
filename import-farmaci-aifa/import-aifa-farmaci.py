@@ -115,7 +115,8 @@ def load_csv(local_path: str, remote_url: str, force: bool = False,
         with open(local_path, encoding="windows-1252", errors="replace") as f:
             return f.read()
     print(f"  Download: {remote_url}")
-    r = requests.get(remote_url, timeout=60, verify=verify_ssl)
+    r = requests.get(remote_url, timeout=60, verify=verify_ssl,
+                     headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36"})
     r.raise_for_status()
     content = r.content.decode("windows-1252", errors="replace")
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
