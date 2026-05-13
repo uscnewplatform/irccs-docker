@@ -1,0 +1,304 @@
+= Import Farmaci AIFA
+:description: Guida all'import del catalogo farmaci AIFA come CodeSystem e ValueSet in HAPI FHIR.
+
+Procedura per caricare il catalogo farmaci AIFA su HAPI FHIR come risorse di terminologia FHIR (CodeSystem + ValueSet).
+Supporta versionamento annuale: versioni diverse coesistono, nessun duplicato.
+
+== Struttura cartella
+
+I file si trovano in `irccs-docker/import-farmaci-aifa/`.
+
+[source]
+----
+import-farmaci-aifa/
+├── import-aifa-farmaci.py       ← script (non modificare)
+├── README.md
+├── 2026-05/                     ← snapshot maggio 2026 (nel repo)
+│   ├── aifa_classe_a.csv
+│   ├── aifa_classe_h.csv
+│   └── aifa_equivalenti.csv
+└── 2026-10/                     ← esempio versione successiva
+    └── ...
+----
+
+Ogni sottocartella `YYYY-MM` contiene i CSV dello snapshot AIFA corrispondente.
+Il nome della cartella coincide con la versione usata nelle risorse FHIR.
+
+Per aggiornare a una nuova versione AIFA, vedi <<aggiornamento-annuale>>.
+
+== Prerequisiti
+
+* Python 3.10+
+* Libreria `requests`:
+
+[source,bash]
+----
+pip install requests
+----
+
+* HAPI FHIR raggiungibile (locale o remoto)
+
+== Utilizzo
+
+[source,bash]
+----
+cd irccs-docker/import-farmaci-aifa
+
+# Import della cartella 2026-05 già presente nel repo
+python3 import-aifa-farmaci.py http://localhost:8080/fhir --version 2026-05
+
+# Import con versione automatica (mese corrente)
+python3 import-aifa-farmaci.py http://localhost:8080/fhir
+
+# Elenca versioni caricate su HAPI + cartelle locali presenti
+python3 import-aifa-farmaci.py http://localhost:8080/fhir --list
+
+# Forza re-download dei CSV (ignora file locali)
+python3 import-aifa-farmaci.py http://localhost:8080/fhir --version 2026-05 --force-download
+----
+
+== Risorse FHIR create
+
+[cols="2,4", options="header"]
+|===
+| Tipo | URL canonica
+
+| CodeSystem
+| `https://aifa.gov.it/fhir/CodeSystem/farmaci`
+
+| ValueSet Classe A
+| `https://aifa.gov.it/fhir/ValueSet/farmaci-classe-a`
+
+| ValueSet Classe H
+| `https://aifa.gov.it/fhir/ValueSet/farmaci-classe-h`
+
+| ValueSet Tutti (A+H)
+| `https://aifa.gov.it/fhir/ValueSet/farmaci-aifa`
+
+| ValueSet con ATC
+| `https://aifa.gov.it/fhir/ValueSet/farmaci-con-atc`
+|===
+
+=== Proprietà del CodeSystem
+
+[cols="2,1,3", options="header"]
+|===
+| Proprietà | Tipo | Disponibilità
+
+| `principio-attivo`
+| string
+| Sempre
+
+| `descrizione-gruppo`
+| string
+| Sempre
+
+| `titolare-aic`
+| string
+| Sempre
+
+| `classe`
+| code (`A` / `H`)
+| Sempre
+
+| `atc`
+| code (es. `A10AE04`)
+| ~65% dei farmaci (fonte: lista di trasparenza)
+|===
+
+== Versionamento
+
+=== Modello
+
+Ogni import usa la stessa URL canonica con una **versione** diversa (`YYYY-MM`).
+Le versioni coesistono su HAPI FHIR; quella con versione più alta è usata di default.
+
+[source]
+----
+CodeSystem url = https://aifa.gov.it/fhir/CodeSystem/farmaci
+               version = 2025-10   ← snapshot ottobre 2025
+               version = 2026-05   ← snapshot maggio 2026  ← default
+----
+
+=== Comportamento dell'upload
+
+[cols="3,3", options="header"]
+|===
+| Situazione | Azione
+
+| Prima esecuzione con versione X
+| `POST` → crea nuova risorsa
+
+| Ri-esecuzione con stessa versione X
+| `PUT` → aggiorna in-place, nessun duplicato
+
+| Esecuzione con nuova versione Y
+| `POST` → crea nuova risorsa, la X rimane
+|===
+
+=== Query per versione specifica
+
+[source,bash]
+----
+# Ultima versione disponibile (default)
+GET /fhir/ValueSet/$expand?url=https://aifa.gov.it/fhir/ValueSet/farmaci-aifa&filter=aspirina
+
+# Versione specifica (storico)
+GET /fhir/ValueSet/$expand?url=https://aifa.gov.it/fhir/ValueSet/farmaci-aifa&valueSetVersion=2025-10&filter=aspirina
+----
+
+=== Pinnare una versione in un questionario
+
+Per ancorare uno studio al catalogo con cui è stato creato, usare la notazione `url|versione`:
+
+[source,json]
+----
+{
+  "linkId": "farmaco-assunto",
+  "type": "choice",
+  "answerValueSet": "https://aifa.gov.it/fhir/ValueSet/farmaci-aifa|2025-10"
+}
+----
+
+[#aggiornamento-annuale]
+== Aggiornamento annuale
+
+Procedura consigliata (es. ottobre 2026):
+
+. Crea la nuova cartella:
+
+[source,bash]
+----
+mkdir import-farmaci-aifa/2026-10
+----
+
+[start=2]
+. Scarica i nuovi CSV da AIFA e salvali nella cartella con i nomi standard:
++
+[cols="2,4", options="header"]
+|===
+| File | Fonte AIFA
+
+| `aifa_classe_a.csv`
+| https://www.aifa.gov.it/en/liste-farmaci-a-h[Classe A per nome commerciale]
+
+| `aifa_classe_h.csv`
+| https://www.aifa.gov.it/en/liste-farmaci-a-h[Classe H per nome commerciale]
+
+| `aifa_equivalenti.csv`
+| https://www.aifa.gov.it/en/liste-di-trasparenza[Lista Trasparenza (contiene ATC)]
+|===
++
+In alternativa, lo script scarica automaticamente se la cartella è vuota o con `--force-download`.
+Se le URL AIFA cambiano, aggiorna `CSV_A_URL`, `CSV_H_URL`, `CSV_EQUIV_URL` nello script.
+
+. Esegui l'import:
+
+[source,bash]
+----
+python3 import-aifa-farmaci.py http://localhost:8080/fhir --version 2026-10
+----
+
+[start=4]
+. Verifica che entrambe le versioni siano presenti:
+
+[source,bash]
+----
+python3 import-aifa-farmaci.py http://localhost:8080/fhir --list
+----
+
+I questionari già creati con la versione precedente continuano a funzionare senza modifiche.
+
+== API HAPI FHIR
+
+=== Ricerca farmaci per nome
+
+[source,bash]
+----
+curl "http://localhost:8080/fhir/ValueSet/$expand\
+?url=https://aifa.gov.it/fhir/ValueSet/farmaci-aifa\
+&filter=aspirina&count=20"
+----
+
+=== Dettagli farmaco (lookup)
+
+[source,bash]
+----
+curl "http://localhost:8080/fhir/CodeSystem/$lookup\
+?system=https://aifa.gov.it/fhir/CodeSystem/farmaci\
+&code=043658032"
+----
+
+Risposta: nome commerciale, principio attivo, titolare AIC, classe SSN, codice ATC (se disponibile).
+
+=== Validazione codice AIC
+
+[source,bash]
+----
+curl "http://localhost:8080/fhir/CodeSystem/$validate-code\
+?url=https://aifa.gov.it/fhir/CodeSystem/farmaci\
+&code=043658032"
+----
+
+=== Lista versioni caricate
+
+[source,bash]
+----
+curl "http://localhost:8080/fhir/CodeSystem\
+?url=https://aifa.gov.it/fhir/CodeSystem/farmaci\
+&_elements=version,date,count"
+----
+
+== Integrazione Questionnaire Builder
+
+I farmaci AIFA si usano nel builder CRF in due modalità:
+
+=== Farmaco come domanda
+
+Bottone **"Cerca Farmaco AIFA"** nel builder: cerca un farmaco per nome e lo aggiunge come domanda `boolean`.
+
+[source,json]
+----
+{
+  "linkId": "...",
+  "text": "ASPIRINA*30 cpr 500 mg",
+  "type": "boolean",
+  "code": [{
+    "system": "https://aifa.gov.it/fhir/CodeSystem/farmaci",
+    "code": "012345678"
+  }]
+}
+----
+
+=== Farmaco come risposta
+
+Domanda `choice` → sorgente "ValueSet da HAPI" → cerca "AIFA".
+Il paziente compila tramite autocomplete con ricerca live su HAPI `$expand`.
+
+[source,json]
+----
+{
+  "linkId": "...",
+  "text": "Quale farmaco sta assumendo?",
+  "type": "choice",
+  "answerValueSet": "https://aifa.gov.it/fhir/ValueSet/farmaci-aifa"
+}
+----
+
+== Fonti dati
+
+I dati sono pubblicati da AIFA sotto licenza https://creativecommons.org/licenses/by/3.0/it/[CC BY 3.0 IT].
+
+[cols="2,4", options="header"]
+|===
+| Dataset | Pagina AIFA
+
+| Classe A / H
+| https://www.aifa.gov.it/en/liste-farmaci-a-h
+
+| Lista Trasparenza (con ATC)
+| https://www.aifa.gov.it/en/liste-di-trasparenza
+
+| Open Data (portale)
+| https://www.aifa.gov.it/en/open-data
+|===
