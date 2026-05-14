@@ -60,7 +60,6 @@ CS_URL     = "https://aifa.gov.it/"
 VS_A_URL   = "https://aifa.gov.it/fhir/ValueSet/farmaci-classe-a"
 VS_H_URL   = "https://aifa.gov.it/fhir/ValueSet/farmaci-classe-h"
 VS_ALL_URL = "https://aifa.gov.it/fhir/ValueSet/farmaci-aifa"
-VS_ATC_URL = "https://aifa.gov.it/fhir/ValueSet/farmaci-con-atc"
 
 # URL di download AIFA — aggiornare quando AIFA pubblica nuovi file
 AIFA_BASE     = "https://www.aifa.gov.it/documents/20142/3635001"
@@ -131,7 +130,7 @@ def parse_equivalenti(content: str) -> dict[str, str]:
     atc_map: dict[str, str] = {}
     reader = csv.DictReader(io.StringIO(content), delimiter=";")
     for row in reader:
-        aic = (row.get("AIC") or "").strip()
+        aic = (row.get("AIC") or "").strip().zfill(9)  # normalizza a 9 cifre
         atc = (row.get("ATC") or "").strip()
         if aic and atc:
             atc_map[aic] = atc
@@ -257,12 +256,6 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
                 "operator":    ["="],
                 "value":       "code A | H",
             },
-            {
-                "code":        "atc",
-                "description": "Filtra per presenza codice ATC",
-                "operator":    ["exists"],
-                "value":       "true | false",
-            },
         ],
         "property": [
             {"code": "principio-attivo",   "type": "string", "description": "Principio attivo"},
@@ -276,11 +269,9 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
 
 
 def build_valueset(url: str, name: str, title: str, description: str,
-                   version: str, classe_filter: str | None = None,
-                   atc_exists: bool = False) -> dict:
+                   version: str, classe_filter: str | None = None) -> dict:
     """
     classe_filter "A"|"H" → property filter classe = A|H.
-    atc_exists True       → property filter atc exists true.
     Altrimenti include tutto il CodeSystem.
     """
     if classe_filter:
@@ -288,12 +279,6 @@ def build_valueset(url: str, name: str, title: str, description: str,
             "system":  CS_URL,
             "version": version,
             "filter":  [{"property": "classe", "op": "=", "value": classe_filter}],
-        }
-    elif atc_exists:
-        include = {
-            "system":  CS_URL,
-            "version": version,
-            "filter":  [{"property": "atc", "op": "exists", "value": "true"}],
         }
     else:
         include = {"system": CS_URL, "version": version}
@@ -461,23 +446,21 @@ def main() -> None:
     vs_all = build_valueset(VS_ALL_URL, "AIFAFarmaciAll",       "Farmaci Autorizzati AIFA (Classe A e H)",
                             "Tutti i farmaci autorizzati AIFA (Classe A e H)",
                             version)
-    vs_atc = build_valueset(VS_ATC_URL, "AIFAFarmaciConATC",   "Farmaci AIFA con codice ATC",
-                            "Farmaci AIFA con codice ATC (lista di trasparenza)",
-                            version, atc_exists=True)
 
     print("\n=== Upload su HAPI FHIR ===")
     fhir_conditional_put(hapi, cs)
     fhir_conditional_put(hapi, vs_a)
     fhir_conditional_put(hapi, vs_h)
     fhir_conditional_put(hapi, vs_all)
-    fhir_conditional_put(hapi, vs_atc)
 
     print(f"\nFatto! (versione {version})")
     list_versions(hapi)
     print()
     print("Query HAPI utili:")
-    print(f"  Ultima versione : GET {hapi}/ValueSet/$expand?url={VS_ALL_URL}&filter=<nome>")
-    print(f"  Versione {version}: GET {hapi}/ValueSet/$expand?url={VS_ALL_URL}&valueSetVersion={version}&filter=<nome>")
+    print(f"  Tutti i farmaci : GET {hapi}/ValueSet/$expand?url={VS_ALL_URL}&filter=<nome>")
+    print(f"  Solo classe A   : GET {hapi}/ValueSet/$expand?url={VS_A_URL}&filter=<nome>")
+    print(f"  Solo classe H   : GET {hapi}/ValueSet/$expand?url={VS_H_URL}&filter=<nome>")
+    print(f"  Versione spec.  : GET {hapi}/ValueSet/$expand?url={VS_ALL_URL}&valueSetVersion={version}&filter=<nome>")
     print(f"  Lookup farmaco  : GET {hapi}/CodeSystem/$lookup?system={CS_URL}&code=<AIC>")
     print(f"  Validate AIC    : GET {hapi}/CodeSystem/$validate-code?url={CS_URL}&code=<AIC>")
 
