@@ -56,7 +56,7 @@ import urllib3
 
 HAPI_URL_DEFAULT = "http://localhost:8080/fhir"
 
-CS_URL     = "https://aifa.gov.it/fhir/CodeSystem/farmaci"
+CS_URL     = "https://aifa.gov.it/"
 VS_A_URL   = "https://aifa.gov.it/fhir/ValueSet/farmaci-classe-a"
 VS_H_URL   = "https://aifa.gov.it/fhir/ValueSet/farmaci-classe-h"
 VS_ALL_URL = "https://aifa.gov.it/fhir/ValueSet/farmaci-aifa"
@@ -228,6 +228,14 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
         ),
         "content": "complete",
         "count":   len(concepts),
+        "filter": [
+            {
+                "code":        "classe",
+                "description": "Filtra per classe di rimborsabilità",
+                "operator":    ["="],
+                "value":       "code A | H",
+            },
+        ],
         "property": [
             {"code": "principio-attivo",   "type": "string", "description": "Principio attivo"},
             {"code": "descrizione-gruppo", "type": "string", "description": "Descrizione gruppo equivalenza"},
@@ -240,7 +248,28 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
 
 
 def build_valueset(url: str, name: str, title: str, description: str,
-                   codes: list[str], version: str) -> dict:
+                   version: str, classe_filter: str | None = None,
+                   codes: list[str] | None = None) -> dict:
+    """
+    Se classe_filter è "A" o "H" usa property filter sul CodeSystem (testo cercabile).
+    Se codes è fornito usa lista esplicita (solo per farmaci-con-atc).
+    Altrimenti include tutto il CodeSystem.
+    """
+    if classe_filter:
+        include = {
+            "system":  CS_URL,
+            "version": version,
+            "filter":  [{"property": "classe", "op": "=", "value": classe_filter}],
+        }
+    elif codes is not None:
+        include = {
+            "system":  CS_URL,
+            "version": version,
+            "concept": [{"code": c} for c in codes],
+        }
+    else:
+        include = {"system": CS_URL, "version": version}
+
     return {
         "resourceType": "ValueSet",
         "url":          url,
@@ -252,13 +281,7 @@ def build_valueset(url: str, name: str, title: str, description: str,
         "date":         str(date.today()),
         "publisher":    "AIFA - Agenzia Italiana del Farmaco",
         "description":  f"{description} — versione {version}.",
-        "compose": {
-            "include": [{
-                "system":  CS_URL,
-                "version": version,
-                "concept": [{"code": c} for c in codes],
-            }]
-        },
+        "compose":      {"include": [include]},
     }
 
 
@@ -398,23 +421,21 @@ def main() -> None:
     cs = build_codesystem(all_drugs, version)
     print(f"  CodeSystem v{version}: {cs['count']} concetti")
 
-    codes_a   = [d["code"] for d in drugs_a]
-    codes_h   = [d["code"] for d in drugs_h]
     codes_atc = [d["code"] for d in all_drugs if d["atc"]]
     print(f"  Farmaci con ATC: {len(codes_atc)}")
 
     vs_a   = build_valueset(VS_A_URL,   "AIFAFarmaciClasseA",  "Farmaci AIFA Classe A",
                             "Farmaci rimborsati dal SSN (Classe A) - AIFA",
-                            codes_a,           version)
+                            version, classe_filter="A")
     vs_h   = build_valueset(VS_H_URL,   "AIFAFarmaciClasseH",  "Farmaci AIFA Classe H",
                             "Farmaci uso ospedaliero (Classe H) - AIFA",
-                            codes_h,           version)
+                            version, classe_filter="H")
     vs_all = build_valueset(VS_ALL_URL, "AIFAFarmaciAll",       "Farmaci Autorizzati AIFA (Classe A e H)",
                             "Tutti i farmaci autorizzati AIFA (Classe A e H)",
-                            codes_a + codes_h, version)
+                            version)
     vs_atc = build_valueset(VS_ATC_URL, "AIFAFarmaciConATC",   "Farmaci AIFA con codice ATC",
                             "Farmaci AIFA con codice ATC (lista di trasparenza)",
-                            codes_atc,         version)
+                            version, codes=codes_atc)
 
     print("\n=== Upload su HAPI FHIR ===")
     fhir_conditional_put(hapi, cs)
