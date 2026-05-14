@@ -257,6 +257,12 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
                 "operator":    ["="],
                 "value":       "code A | H",
             },
+            {
+                "code":        "atc",
+                "description": "Filtra per presenza codice ATC",
+                "operator":    ["exists"],
+                "value":       "true | false",
+            },
         ],
         "property": [
             {"code": "principio-attivo",   "type": "string", "description": "Principio attivo"},
@@ -271,10 +277,10 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
 
 def build_valueset(url: str, name: str, title: str, description: str,
                    version: str, classe_filter: str | None = None,
-                   codes: list[str] | None = None) -> dict:
+                   atc_exists: bool = False) -> dict:
     """
-    Se classe_filter è "A" o "H" usa property filter sul CodeSystem (testo cercabile).
-    Se codes è fornito usa lista esplicita (solo per farmaci-con-atc).
+    classe_filter "A"|"H" → property filter classe = A|H.
+    atc_exists True       → property filter atc exists true.
     Altrimenti include tutto il CodeSystem.
     """
     if classe_filter:
@@ -283,11 +289,11 @@ def build_valueset(url: str, name: str, title: str, description: str,
             "version": version,
             "filter":  [{"property": "classe", "op": "=", "value": classe_filter}],
         }
-    elif codes is not None:
+    elif atc_exists:
         include = {
             "system":  CS_URL,
             "version": version,
-            "concept": [{"code": c} for c in codes],
+            "filter":  [{"property": "atc", "op": "exists", "value": "true"}],
         }
     else:
         include = {"system": CS_URL, "version": version}
@@ -443,8 +449,8 @@ def main() -> None:
     cs = build_codesystem(all_drugs, version)
     print(f"  CodeSystem v{version}: {cs['count']} concetti")
 
-    codes_atc = [d["code"] for d in all_drugs if d["atc"]]
-    print(f"  Farmaci con ATC: {len(codes_atc)}")
+    n_atc = sum(1 for d in all_drugs if d["atc"])
+    print(f"  Farmaci con ATC: {n_atc}")
 
     vs_a   = build_valueset(VS_A_URL,   "AIFAFarmaciClasseA",  "Farmaci AIFA Classe A",
                             "Farmaci rimborsati dal SSN (Classe A) - AIFA",
@@ -457,7 +463,7 @@ def main() -> None:
                             version)
     vs_atc = build_valueset(VS_ATC_URL, "AIFAFarmaciConATC",   "Farmaci AIFA con codice ATC",
                             "Farmaci AIFA con codice ATC (lista di trasparenza)",
-                            version, codes=codes_atc)
+                            version, atc_exists=True)
 
     print("\n=== Upload su HAPI FHIR ===")
     fhir_conditional_put(hapi, cs)
