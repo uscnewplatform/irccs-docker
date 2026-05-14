@@ -206,12 +206,34 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
         ]
         if d["atc"]:
             props.append({"code": "atc", "valueCode": d["atc"]})
-        concepts.append({
+        concept: dict = {
             "code":       d["code"],
             "display":    d["display"],
             "definition": d["principio_attivo"],
             "property":   props,
-        })
+        }
+        designations = []
+        if d["principio_attivo"]:
+            designations.append({
+                "use":   {"system": "https://aifa.gov.it/fhir/CodeSystem/designation-use",
+                          "code": "principio-attivo", "display": "Principio attivo"},
+                "value": d["principio_attivo"],
+            })
+        if d["descrizione_gruppo"]:
+            designations.append({
+                "use":   {"system": "https://aifa.gov.it/fhir/CodeSystem/designation-use",
+                          "code": "descrizione-gruppo", "display": "Descrizione gruppo equivalenza"},
+                "value": d["descrizione_gruppo"],
+            })
+        if d["atc"]:
+            designations.append({
+                "use":   {"system": "https://aifa.gov.it/fhir/CodeSystem/designation-use",
+                          "code": "atc", "display": "Codice ATC"},
+                "value": d["atc"],
+            })
+        if designations:
+            concept["designation"] = designations
+        concepts.append(concept)
     return {
         "resourceType": "CodeSystem",
         "url":          CS_URL,
