@@ -23,7 +23,7 @@ if [[ "$HTTP_CODE" == "200" || "$HTTP_CODE" == "201" ]]; then
   echo ""
   echo "  Risorse caricate:"
   echo "    CodeSystem         → $HAPI/CodeSystem/proctc-v1"
-  echo "    ValueSet           → $HAPI/ValueSet/proctc-v1-adverse-events"
+  echo "    ValueSet           → $HAPI/ValueSet/proctc-v1-items"
   echo "    StructureDefinition→ $HAPI/StructureDefinition/proctc-v1-grade-severity"
 else
   echo "  ✗ Errore HTTP $HTTP_CODE"
