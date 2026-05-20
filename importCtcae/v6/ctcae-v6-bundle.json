@@ -29971,13 +29971,13 @@
     {
       "resource": {
         "resourceType": "StructureDefinition",
-        "id": "ctcae-grade-severity",
-        "url": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-grade-severity",
+        "id": "ctcae-v6-grade-severity",
+        "url": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v6-grade-severity",
         "version": "1.0",
-        "name": "CtcaeGradeSeverity",
-        "title": "CTCAE Grade Severity Extension",
+        "name": "CtcaeV6GradeSeverity",
+        "title": "CTCAE v6.0 Grade Severity Extension",
         "status": "active",
-        "date": "2026-05-15",
+        "date": "2026-05-20",
         "kind": "complex-type",
         "abstract": false,
         "context": [
@@ -29989,13 +29989,13 @@
         "type": "Extension",
         "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
         "derivation": "constraint",
-        "description": "Estensione su QuestionnaireItem per memorizzare le descrizioni dei gradi CTCAE v6 (1-5), la System Organ Class e la nota navigazionale del termine CTCAE associato.",
+        "description": "Estensione su QuestionnaireItem per CTCAE v6.0: gradi 1-5, SOC MedDRA 28.0, nota navigazionale e variazioni rispetto a v5.",
         "differential": {
           "element": [
             {
               "id": "Extension",
               "path": "Extension",
-              "short": "Metadati CTCAE v6 su QuestionnaireItem"
+              "short": "Metadati CTCAE v6.0 su QuestionnaireItem"
             },
             {
               "id": "Extension.extension",
@@ -30014,7 +30014,7 @@
               "id": "Extension.extension:grade1",
               "path": "Extension.extension",
               "sliceName": "grade1",
-              "short": "Grade 1 – descrizione CTCAE",
+              "short": "Grade 1 – descrizione CTCAE v6.0",
               "min": 0,
               "max": "1"
             },
@@ -30036,7 +30036,7 @@
               "id": "Extension.extension:grade2",
               "path": "Extension.extension",
               "sliceName": "grade2",
-              "short": "Grade 2 – descrizione CTCAE",
+              "short": "Grade 2 – descrizione CTCAE v6.0",
               "min": 0,
               "max": "1"
             },
@@ -30058,7 +30058,7 @@
               "id": "Extension.extension:grade3",
               "path": "Extension.extension",
               "sliceName": "grade3",
-              "short": "Grade 3 – descrizione CTCAE",
+              "short": "Grade 3 – descrizione CTCAE v6.0",
               "min": 0,
               "max": "1"
             },
@@ -30080,7 +30080,7 @@
               "id": "Extension.extension:grade4",
               "path": "Extension.extension",
               "sliceName": "grade4",
-              "short": "Grade 4 – descrizione CTCAE",
+              "short": "Grade 4 – descrizione CTCAE v6.0",
               "min": 0,
               "max": "1"
             },
@@ -30102,7 +30102,7 @@
               "id": "Extension.extension:grade5",
               "path": "Extension.extension",
               "sliceName": "grade5",
-              "short": "Grade 5 – descrizione CTCAE",
+              "short": "Grade 5 – descrizione CTCAE v6.0",
               "min": 0,
               "max": "1"
             },
@@ -30124,7 +30124,7 @@
               "id": "Extension.extension:soc",
               "path": "Extension.extension",
               "sliceName": "soc",
-              "short": "System Organ Class MedDRA",
+              "short": "System Organ Class MedDRA 28.0",
               "min": 0,
               "max": "1"
             },
@@ -30146,7 +30146,7 @@
               "id": "Extension.extension:navNote",
               "path": "Extension.extension",
               "sliceName": "navNote",
-              "short": "Nota navigazionale CTCAE",
+              "short": "Nota navigazionale NCI",
               "min": 0,
               "max": "1"
             },
@@ -30165,9 +30165,31 @@
               ]
             },
             {
+              "id": "Extension.extension:v6change",
+              "path": "Extension.extension",
+              "sliceName": "v6change",
+              "short": "Tipo variazione rispetto a CTCAE v5",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:v6change.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "v6change"
+            },
+            {
+              "id": "Extension.extension:v6change.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
               "id": "Extension.url",
               "path": "Extension.url",
-              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-grade-severity"
+              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v6-grade-severity"
             },
             {
               "id": "Extension.value[x]",
@@ -30179,7 +30201,7 @@
       },
       "request": {
         "method": "PUT",
-        "url": "StructureDefinition/ctcae-grade-severity"
+        "url": "StructureDefinition/ctcae-v6-grade-severity"
       }
     }
   ]

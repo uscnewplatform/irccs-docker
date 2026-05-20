@@ -50,7 +50,7 @@ except ImportError:
 
 CS_URL = "https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6"
 VS_URL = "https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6-adverse-events"
-SD_URL = "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-grade-severity"
+SD_URL = "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v6-grade-severity"
 
 VERSION = "6.0"
 
@@ -166,11 +166,7 @@ def build_valueset(termini: list[dict]) -> dict:
 
 
 def build_structuredefinition() -> dict:
-    """
-    Estensione FHIR su QuestionnaireItem che porta i metadati CTCAE v6:
-    descrizioni gradi 1-5, SOC e nota navigazionale.
-    Permette di profilare i QuestionnaireItem derivati da CTCAE v6.
-    """
+    """StructureDefinition CTCAE v6.0 — grade1-5, soc, navNote, v6change."""
     def slice_str(name: str, short: str) -> list[dict]:
         return [
             {"id": f"Extension.extension:{name}", "path": "Extension.extension",
@@ -183,14 +179,15 @@ def build_structuredefinition() -> dict:
 
     elementi = [
         {"id": "Extension", "path": "Extension",
-         "short": "Metadati CTCAE v6 su QuestionnaireItem"},
+         "short": "Metadati CTCAE v6.0 su QuestionnaireItem"},
         {"id": "Extension.extension", "path": "Extension.extension",
          "slicing": {"discriminator": [{"type": "value", "path": "url"}], "rules": "open"}},
     ]
     for i in range(1, 6):
-        elementi += slice_str(f"grade{i}", f"Grade {i} – descrizione CTCAE")
-    elementi += slice_str("soc",     "System Organ Class MedDRA")
-    elementi += slice_str("navNote", "Nota navigazionale CTCAE")
+        elementi += slice_str(f"grade{i}", f"Grade {i} – descrizione CTCAE v6.0")
+    elementi += slice_str("soc",      "System Organ Class MedDRA 28.0")
+    elementi += slice_str("navNote",  "Nota navigazionale NCI")
+    elementi += slice_str("v6change", "Tipo variazione rispetto a CTCAE v5")
     elementi += [
         {"id": "Extension.url",       "path": "Extension.url",       "fixedUri": SD_URL},
         {"id": "Extension.value[x]",  "path": "Extension.value[x]",  "max": "0"},
@@ -198,11 +195,11 @@ def build_structuredefinition() -> dict:
 
     return {
         "resourceType": "StructureDefinition",
-        "id":           "ctcae-grade-severity",
+        "id":           "ctcae-v6-grade-severity",
         "url":          SD_URL,
         "version":      "1.0",
-        "name":         "CtcaeGradeSeverity",
-        "title":        "CTCAE Grade Severity Extension",
+        "name":         "CtcaeV6GradeSeverity",
+        "title":        "CTCAE v6.0 Grade Severity Extension",
         "status":       "active",
         "date":         str(date.today()),
         "kind":         "complex-type",
@@ -212,8 +209,8 @@ def build_structuredefinition() -> dict:
         "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
         "derivation":   "constraint",
         "description": (
-            "Estensione su QuestionnaireItem per memorizzare le descrizioni dei gradi CTCAE v6 (1-5), "
-            "la System Organ Class e la nota navigazionale del termine CTCAE associato."
+            "Estensione su QuestionnaireItem per CTCAE v6.0: gradi 1-5, SOC MedDRA 28.0, "
+            "nota navigazionale e variazioni rispetto a v5."
         ),
         "differential": {"element": elementi},
     }

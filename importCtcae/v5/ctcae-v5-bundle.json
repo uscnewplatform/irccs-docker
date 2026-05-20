@@ -28000,11 +28000,11 @@
     {
       "resource": {
         "resourceType": "StructureDefinition",
-        "id": "ctcae-grade-severity",
-        "url": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-grade-severity",
+        "id": "ctcae-v5-grade-severity",
+        "url": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v5-grade-severity",
         "version": "1.0",
-        "name": "CtcaeGradeSeverity",
-        "title": "CTCAE Grade Severity Extension",
+        "name": "CtcaeV5GradeSeverity",
+        "title": "CTCAE v5.0 Grade Severity Extension",
         "status": "active",
         "date": "2026-05-20",
         "kind": "complex-type",
@@ -28018,13 +28018,13 @@
         "type": "Extension",
         "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
         "derivation": "constraint",
-        "description": "Estensione su QuestionnaireItem per memorizzare le descrizioni dei gradi CTCAE (1-5), la System Organ Class e la nota navigazionale del termine CTCAE associato.",
+        "description": "Estensione su QuestionnaireItem per CTCAE v5.0: gradi 1-5, SOC MedDRA, nota navigazionale e variazioni rispetto a v4.",
         "differential": {
           "element": [
             {
               "id": "Extension",
               "path": "Extension",
-              "short": "Metadati CTCAE su QuestionnaireItem"
+              "short": "Metadati CTCAE v5.0 su QuestionnaireItem"
             },
             {
               "id": "Extension.extension",
@@ -28043,7 +28043,7 @@
               "id": "Extension.extension:grade1",
               "path": "Extension.extension",
               "sliceName": "grade1",
-              "short": "Grade 1 – descrizione CTCAE",
+              "short": "Grade 1 – descrizione CTCAE v5.0",
               "min": 0,
               "max": "1"
             },
@@ -28065,7 +28065,7 @@
               "id": "Extension.extension:grade2",
               "path": "Extension.extension",
               "sliceName": "grade2",
-              "short": "Grade 2 – descrizione CTCAE",
+              "short": "Grade 2 – descrizione CTCAE v5.0",
               "min": 0,
               "max": "1"
             },
@@ -28087,7 +28087,7 @@
               "id": "Extension.extension:grade3",
               "path": "Extension.extension",
               "sliceName": "grade3",
-              "short": "Grade 3 – descrizione CTCAE",
+              "short": "Grade 3 – descrizione CTCAE v5.0",
               "min": 0,
               "max": "1"
             },
@@ -28109,7 +28109,7 @@
               "id": "Extension.extension:grade4",
               "path": "Extension.extension",
               "sliceName": "grade4",
-              "short": "Grade 4 – descrizione CTCAE",
+              "short": "Grade 4 – descrizione CTCAE v5.0",
               "min": 0,
               "max": "1"
             },
@@ -28131,7 +28131,7 @@
               "id": "Extension.extension:grade5",
               "path": "Extension.extension",
               "sliceName": "grade5",
-              "short": "Grade 5 – descrizione CTCAE",
+              "short": "Grade 5 – descrizione CTCAE v5.0",
               "min": 0,
               "max": "1"
             },
@@ -28175,7 +28175,7 @@
               "id": "Extension.extension:navNote",
               "path": "Extension.extension",
               "sliceName": "navNote",
-              "short": "Nota navigazionale CTCAE",
+              "short": "Nota navigazionale NCI",
               "min": 0,
               "max": "1"
             },
@@ -28194,9 +28194,31 @@
               ]
             },
             {
+              "id": "Extension.extension:v5change",
+              "path": "Extension.extension",
+              "sliceName": "v5change",
+              "short": "Tipo variazione rispetto a CTCAE v4",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:v5change.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "v5change"
+            },
+            {
+              "id": "Extension.extension:v5change.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
               "id": "Extension.url",
               "path": "Extension.url",
-              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-grade-severity"
+              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v5-grade-severity"
             },
             {
               "id": "Extension.value[x]",
@@ -28208,7 +28230,7 @@
       },
       "request": {
         "method": "PUT",
-        "url": "StructureDefinition/ctcae-grade-severity"
+        "url": "StructureDefinition/ctcae-v5-grade-severity"
       }
     }
   ]
