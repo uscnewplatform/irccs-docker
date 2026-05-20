@@ -38,6 +38,8 @@ services:
       - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
     env_file:
       - .env
+    ports:
+      - "8987:8080"
     networks:
       - irccs
     depends_on:
@@ -78,6 +80,7 @@ services:
     container_name: irccs-studio-clinico
     volumes:
       - ./microservice-config:/deployments/config
+      - ./translations:/deployments/translations
     env_file:
       - .env
     networks:
@@ -90,6 +93,8 @@ services:
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:2.1.0-SNAPSHOT
     container_name: irccs-anagrafica-pazienti
+    ports:
+      - "8976:8080"
     volumes:
       - ./microservice-config:/deployments/config
     env_file:
@@ -120,6 +125,7 @@ services:
     restart: always
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     env_file:
       - .env
     environment:
@@ -128,6 +134,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
     networks:
       - irccs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_KEYCLOAK_USER} -d ${POSTGRES_KEYCLOAK_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   irccs-keycloak:
     image: quay.io/keycloak/keycloak:26.0.5
@@ -142,7 +153,8 @@ services:
       KC_DB_URL_PORT: 5432
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
       PROXY_ADDRESS_FORWARDING: "true"
-      KC_HOSTNAME_URL: http://10.40.10.121:9445
+      KC_HOSTNAME: https://backoffice.irccs.infocube.it
+      KC_HOSTNAME_URL: https://backoffice.irccs.infocube.it
       #KC_HOSTNAME_STRICT: true
       #KC_PROXY: edge
     env_file:
@@ -152,7 +164,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname http://10.40.10.121:9445 --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname https://backoffice.irccs.infocube.it --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
       - "9445:8080"
@@ -180,6 +192,8 @@ services:
       - postgres-hapi-fhir
     volumes:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
+      - ./terminology:/terminology
+      - ./hapi-fhir-config/lucenefiles:/lucenefiles
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
     env_file:
@@ -246,12 +260,64 @@ services:
         condition: service_healthy
     restart: always
 
+  irccs-microservice-webpush:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-webpush:1.0.0-SNAPSHOT
+    container_name: irccs-webpush
+    hostname: irccs-webpush
+    volumes:
+      - ./microservice-config-webpush:/deployments/config
+      - ./translations:/deployments/translations
+    env_file:
+      - .env
+    networks:
+      - irccs
+    depends_on:
+      irccs-keycloak:
+        condition: service_healthy
+      postgres-keycloak:
+        condition: service_healthy
+    restart: always
+
   irccs-antora-docs:
     image: nexus.infocube.it/i3/irccs/antora-docs:develop
     container_name: irccs-antora-docs
     restart: always
     networks:
       - irccs
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    container_name: irccs-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - cluster.name=snowstorm-cluster
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - irccs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: always
+
+  snowstorm:
+    image: snomedinternational/snowstorm:latest
+    container_name: irccs-snowstorm
+    command: --elasticsearch.urls=http://elasticsearch:9200
+    environment:
+      - JDK_JAVA_OPTIONS=--add-opens java.base/java.util=ALL-UNNAMED
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - "8085:8080"
+    networks:
+      - irccs
+    restart: always
 
   irccs-microservice-patient-interview:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-patient-interview:2.1.0-SNAPSHOT
@@ -271,3 +337,4 @@ volumes:
   postgres_data_hapi:
   postgres_data_keycloak:
   redis_data:
+  elasticsearch_data:

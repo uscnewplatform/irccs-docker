@@ -153,6 +153,95 @@ chmod +x install_jli.sh
 
 Verificare che l'utente di servizio `service-account-irccs` nel realm `pascale` abbia il ruolo `/admin` (necessario per le operazioni di signup).
 
+=== 6. Import terminologia LOINC (opzionale)
+
+Per abilitare la validazione e ricerca di codici LOINC nel server FHIR è necessario importare la terminologia.
+
+[IMPORTANT]
+====
+A partire da LOINC 2.77, il file `MultiAxialHierarchy.csv` è stato rimosso e sostituito da `ComponentHierarchyBySystem.csv`. Tutti i file sono inoltre racchiusi in una cartella con il numero di versione (es. `Loinc_2.82/`). +
+Il file `terminology/loincupload.properties` nel repository gestisce già questi mapping — non modificare i path di default senza aggiornare anche questo file.
+====
+
+==== Prerequisiti
+
+* Account su https://loinc.org (registrazione gratuita)
+* File `Loinc_<version>.zip` scaricato dalla sezione *Downloads* di loinc.org
+https://loinc.org/download/loinc-complete/
+
+* `hapi-fhir-cli.jar` della stessa versione del server (es. 8.6.8)
+https://github.com/hapifhir/hapi-fhir/releases/download/v8.6.8/hapi-fhir-8.6.8-cli.zip
+
+
+==== Procedura
+
+Copiare zip, properties e CLI nel container (il CLI **deve girare dentro il container** perché i file > 10 MB vengono referenziati localmente, non trasferiti via HTTP):
+
+[source,bash]
+----
+docker cp Loinc_2.XX.zip irccs-hapi-fhir:/tmp/
+docker cp terminology/loincupload.properties irccs-hapi-fhir:/tmp/
+docker cp terminology/hapi-fhir-cli.jar irccs-hapi-fhir:/tmp/
+----
+
+Eseguire l'import:
+
+[source,bash]
+----
+docker exec irccs-hapi-fhir java -jar /tmp/hapi-fhir-cli.jar upload-terminology \
+  -d /tmp/Loinc_2.82.zip \
+  -d /tmp/loincupload.properties \
+  -t http://localhost:8080/fhir \
+  -v r4 \
+  -u http://loinc.org
+----
+
+[NOTE]
+====
+L'operazione richiede 15-30 minuti. Monitorare i log in un secondo terminale:
+
+[source,bash]
+----
+docker logs -f irccs-hapi-fhir
+----
+
+Completamento confermato da risposta HTTP 200 con `OperationOutcome` di severity `information`.
+====
+
+Per aggiornare a una versione LOINC successiva, aggiornare il prefisso di versione (es. `Loinc_2.82` → `Loinc_2.83`) in tutte le righe del file `terminology/loincupload.properties`.
+
+=== 7. Installazione librerie CRF su HAPI FHIR
+
+Le librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE v1, EORTC QLQ-C30) sono distribuite come `CodeSystem` FHIR nella cartella `importCrfLibraries/`.
+Ogni sotto-cartella contiene uno script di installazione che esegue il push del bundle FHIR su HAPI.
+
+[source,bash]
+----
+cd importCrfLibraries
+
+# CTCAE v4
+bash ctcae-v4/install-ctcae-v4.sh http://irccs-hapi-fhir:8080/fhir
+
+# CTCAE v5
+bash ctcae-v5/install-ctcae-v5.sh http://irccs-hapi-fhir:8080/fhir
+
+# CTCAE v6
+bash ctcae-v6/install-ctcae-v6.sh http://irccs-hapi-fhir:8080/fhir
+
+# PRO-CTCAE v1
+bash proctc-v1/install-proctc-v1.sh http://irccs-hapi-fhir:8080/fhir
+
+# EORTC QLQ-C30
+bash eortc-v1/install-eortc-v1.sh http://irccs-hapi-fhir:8080/fhir
+----
+
+[NOTE]
+====
+Gli script inviano il bundle FHIR tramite `curl` in modalità `transaction`. +
+Se HAPI FHIR restituisce `200 OK` con un `Bundle` di risposta, l'installazione è riuscita. +
+Per i dettagli sull'architettura e la struttura delle librerie, vedere xref:librerie-crf.adoc[Librerie CRF — Gestione e Import].
+====
+
 == Abilitazione SSL per Keycloak
 
 Per attivare Keycloak in modalità SSL:

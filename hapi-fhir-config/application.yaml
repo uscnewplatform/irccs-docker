@@ -32,21 +32,21 @@ spring:
       #If using H2, then supply the value of ca.uhn.fhir.jpa.model.dialect.HapiFhirH2Dialect
       #If using postgres, then supply the value of ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgres94Dialect
       hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgres94Dialect
-  #      hibernate.hbm2ddl.auto: update
-  #      hibernate.jdbc.batch_size: 20
-  #      hibernate.cache.use_query_cache: false
-  #      hibernate.cache.use_second_level_cache: false
-  #      hibernate.cache.use_structured_entries: false
-  #      hibernate.cache.use_minimal_puts: false
+      #      hibernate.hbm2ddl.auto: update
+      #      hibernate.jdbc.batch_size: 20
+      #      hibernate.cache.use_query_cache: false
+      #      hibernate.cache.use_second_level_cache: false
+      #      hibernate.cache.use_structured_entries: false
+      #      hibernate.cache.use_minimal_puts: false
 
-  ###    These settings will enable fulltext search with lucene or elastic
+      ###    These settings will enable fulltext search with lucene or elastic
       hibernate.search.enabled: true
-  ### lucene parameters
-#      hibernate.search.backend.type: lucene
-#      hibernate.search.backend.analysis.configurer: ca.uhn.fhir.jpa.search.HapiHSearchAnalysisConfigurers$HapiLuceneAnalysisConfigurer
-#      hibernate.search.backend.directory.type: local-filesystem
-#      hibernate.search.backend.directory.root: target/lucenefiles
-#      hibernate.search.backend.lucene_version: lucene_current
+      ### lucene parameters
+      hibernate.search.backend.type: lucene
+      hibernate.search.backend.analysis.configurer: ca.uhn.fhir.jpa.search.HapiHSearchAnalysisConfigurers$HapiLuceneAnalysisConfigurer
+      hibernate.search.backend.directory.type: local-filesystem
+      hibernate.search.backend.directory.root: /lucenefiles
+      hibernate.search.backend.lucene_version: lucene_current
   ### elastic parameters ===> see also elasticsearch section below <===
 #      hibernate.search.backend.type: elasticsearch
 #      hibernate.search.backend.analysis.configurer: ca.uhn.fhir.jpa.search.HapiHSearchAnalysisConfigurers$HapiElasticAnalysisConfigurer
@@ -62,6 +62,13 @@ hapi:
         hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgres94Dialect
         hibernate.search.enabled: true
   fhir:
+
+    ### --- ablita valuset loinc --- ###
+    loinc_answerlist_valuesets_enabled: true
+    loinc_valueset_expansion_enabled: true
+    #  integrazione Snowstorm per SNOMED:
+    external_terminology_server_url: 'http://snowstorm:8080/fhir'
+
     ### This flag when enabled to true, will avail evaluate measure operations from CR Module.
     ### Flag is false by default, can be passed as command line argument to override.
     cr:
@@ -131,7 +138,7 @@ hapi:
     #    enable_index_contained_resource: false
     ###  !!Extended Lucene/Elasticsearch Indexing is still a experimental feature, expect some features (e.g. _total=accurate) to not work as expected!!
     ###  more information here: https://hapifhir.io/hapi-fhir/docs/server_jpa/elastic.html
-    advanced_lucene_indexing: false
+    advanced_lucene_indexing: true
     bulk_export_enabled: false
     bulk_import_enabled: false
     #    enforce_referential_integrity_on_delete: false
@@ -149,6 +156,7 @@ hapi:
     mdm_rules_json_location: "mdm-rules.json"
     #    local_base_urls:
     #      - https://hapi.fhir.org/baseR4
+    defer_indexing_for_codesystems_of_size: 50000
     logical_urls:
       - http://terminology.hl7.org/*
       - https://terminology.hl7.org/*
@@ -158,6 +166,8 @@ hapi:
       - https://unitsofmeasure.org/*
       - http://loinc.org/*
       - https://loinc.org/*
+      - http://ncicb.nci.nih.gov/*
+      - https://ncicb.nci.nih.gov/*
     #    partitioning:
     #      allow_references_across_partitions: false
     #      partitioning_include_in_search_hashes: false
