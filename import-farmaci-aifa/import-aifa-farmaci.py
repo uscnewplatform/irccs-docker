@@ -207,8 +207,8 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
             props.append({"code": "atc", "valueCode": d["atc"]})
         concept: dict = {
             "code":       d["code"],
-            "display":    d["display"],
-            "definition": d["principio_attivo"],
+            "display":    d["principio_attivo"] or d["display"],
+            "definition": d["display"],
             "property":   props,
         }
         designations = []
