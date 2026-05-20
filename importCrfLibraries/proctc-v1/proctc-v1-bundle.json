@@ -1,0 +1,4979 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "CodeSystem",
+        "id": "proctc-v1",
+        "url": "https://healthcaredelivery.cancer.gov/pro-ctcae",
+        "version": "1.0",
+        "name": "PRO_CTCAEv1",
+        "title": "PRO-CTCAE v1 Patient-Reported Outcomes",
+        "status": "active",
+        "content": "complete",
+        "date": "2026-05-20",
+        "description": "NCI Patient-Reported Outcomes version of CTCAE (PRO-CTCAE) v1. 125 termini.",
+        "publisher": "NCI / IRCCS Pascale",
+        "copyright": "NCI PRO-CTCAE v1",
+        "property": [
+          {
+            "code": "macrogroup",
+            "description": "Macrogruppo sintomatologico",
+            "type": "string"
+          },
+          {
+            "code": "category",
+            "description": "Categoria di sintomo",
+            "type": "string"
+          },
+          {
+            "code": "interface",
+            "description": "Tipo di interfaccia UI",
+            "type": "string"
+          },
+          {
+            "code": "answ1",
+            "description": "Risposta 1",
+            "type": "string"
+          },
+          {
+            "code": "answ2",
+            "description": "Risposta 2",
+            "type": "string"
+          },
+          {
+            "code": "answ3",
+            "description": "Risposta 3",
+            "type": "string"
+          },
+          {
+            "code": "answ4",
+            "description": "Risposta 4",
+            "type": "string"
+          },
+          {
+            "code": "answ5",
+            "description": "Risposta 5",
+            "type": "string"
+          },
+          {
+            "code": "answ6",
+            "description": "Risposta 6",
+            "type": "string"
+          },
+          {
+            "code": "answ7",
+            "description": "Risposta 7",
+            "type": "string"
+          },
+          {
+            "code": "answ8",
+            "description": "Risposta 8",
+            "type": "string"
+          }
+        ],
+        "concept": [
+          {
+            "code": "PROCTC-0001",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SENSAZIONE DI BOCCA SECCA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SENSAZIONE DI BOCCA SECCA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0002",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A DEGLUTIRE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DIFFICOLTA A DEGLUTIRE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0003",
+            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le PIAGHE IN BOCCA O IN GOLA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PIAGHE IN BOCCA O IN GOLA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0004",
+            "display": "Negli ultimi 7 giorni, in che misura le PIAGHE IN BOCCA O IN GOLA HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PIAGHE IN BOCCA O IN GOLA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0005",
+            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le SCREPOLATURE AGLI ANGOLI DELLA BOCCA, nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SCREPOLATURE AGLI ANGOLI DELLA BOCCA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0006",
+            "display": "Negli ultimi 7 giorni, ha notato MODIFICAZIONI DELLA VOCE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MODIFICAZIONI DELLA VOCE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0007",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la VOCE RAUCA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "VOCE RAUCA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0008",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A SENTIRE IL SAPORE DI CIBI O BEVANDE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DIFFICOLTÀ A SENTIRE IL SAPORE DI CIBI O BEVANDE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0009",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DELL’APPETITO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "CALO DELL'’APPETITO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0010",
+            "display": "Negli ultimi 7 giorni, in che misura il CALO DELL’APPETITO HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "CALO DELL'’APPETITO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0011",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto NAUSEA (senso di malessere allo stomaco)?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "NAUSEA (senso di malessere allo stomaco)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0012",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la NAUSEA (senso di malessere allo stomaco) nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "NAUSEA (senso di malessere allo stomaco)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0013",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto VOMITO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "VOMITO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0014",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il VOMITO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "VOMITO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0015",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha accusato IL BRUCIORE DI STOMACO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BRUCIORE DI STOMACO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0016",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE IL BRUCIORE DI STOMACO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BRUCIORE DI STOMACO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0017",
+            "display": "Negli ultimi 7 giorni, ha notato una MAGGIOR PRODUZIONE DI ARIA INTESTINALE (FLATULENZA)?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAGGIOR PRODUZIONE DI ARIA INTESTINALE (FLATULENZA)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0018",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto GONFIORE DELLA PANCIA?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "GONFIORE DELLA PANCIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0019",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il GONFIORE DELLA PANCIA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "GONFIORE DELLA PANCIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0020",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto il SINGHIOZZO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SINGHIOZZO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0021",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il SINGHIOZZO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SINGHIOZZO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0022",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la STITICHEZZA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "STITICHEZZA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0023",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha notato FECI MOLLI O ACQUOSE (DIARREA)?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "FECI MOLLI O ACQUOSE (DIARREA)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0024",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto MAL DI PANCIA?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAL DI PANCIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0025",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il MAL DI PANCIA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAL DI PANCIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0026",
+            "display": "Negli ultimi 7 giorni, in che misura il MAL DI PANCIA HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAL DI PANCIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0027",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto PERDITE DI FECI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PERDITE DI FECI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0028",
+            "display": "Negli ultimi 7 giorni, in che misura le PERDITE DI FECI HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PERDITE DI FECI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0029",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la MANCANZA DI FIATO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MANCANZA DI FIATO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0030",
+            "display": "Negli ultimi 7 giorni, in che misura la MANCANZA DI FIATO ha INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MANCANZA DI FIATO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0031",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la TOSSE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TOSSE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0032",
+            "display": "Negli ultimi 7 giorni, in che misura la TOSSE HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TOSSE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0033",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il RESPIRO SIBILANTE (EMISSIONE DI UN FISCHIO QUANDO SI RESPIRA) nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "RESPIRO SIBILANTE (EMISSIONE DI UN FISCHIO QUANDO SI RESPIRA)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0034",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto GONFIORE ALLE BRACCIA O ALLE GAMBE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0035",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il GONFIORE ALLE BRACCIA O ALLE GAMBE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0036",
+            "display": "Negli ultimi 7 giorni, in che misura il GONFIORE ALLE BRACCIA O ALLE GAMBE HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0037",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito PALPITAZIONI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PALPITAZIONI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0038",
+            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le PALPITAZIONI nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PALPITAZIONI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0039",
+            "display": "Negli ultimi 7 giorni, ha avuto qualche IRRITAZIONE DELLA PELLE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "IRRITAZIONE DELLA PELLE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0040",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SECCHEZZA DELLA PELLE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SECCHEZZA DELLA PELLE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0041",
+            "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i BRUFOLI (ACNE) SUL VOLTO O SUL TORACE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BRUFOLI (ACNE) SUL VOLTO O SUL TORACE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0042",
+            "display": "Negli ultimi 7 giorni, ha PERSO I CAPELLI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PERDITA DEI CAPELLI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0043",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il PRURITO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PRURITO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0044",
+            "display": "Negli ultimi 7 giorni, ha sviluppato ORTICARIA  (BOLLE ROSSE che provocano prurito) sulla pelle?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ORTICARIA (BOLLE ROSSE che provocano prurito SULLA PELLE)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0045",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SINDROME MANO-PIEDE (IRRITAZIONE DELLE MANI O DEI PIEDI CHE PUÒ CAUSARE SCREPOLATURE, SPELLATURE, ROSSORE O DOLORE) nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SINDROME MANO-PIEDE (IRRITAZIONE DELLE MANI O DEI PIEDI CHE PUÒ CAUSARE SCREPOLATURE, SPELLATURE, ROSSORE O DOLORE)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0046",
+            "display": "Negli ultimi 7 giorni, ha PERSO DELLE UNGHIE DELLE MANI O DEI PIEDI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PERDITA DI UNGHIE DELLE MANI O DEI PIEDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0047",
+            "display": "Negli ultimi 7 giorni, ha notato la presenza di ISPESSIMENTI O SOLCHI SULLE UNGHIE DELLE MANI O DEI PIEDI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ISPESSIMENTI O SOLCHI SULLE UNGHIE DELLE MANI O DEI PIEDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0048",
+            "display": "Negli ultimi 7 giorni, ha notato una VARIAZIONE DI COLORE DELLE UNGHIE DELLE MANI O DEI PIEDI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "VARIAZIONE DI COLORE DELLE UNGHIE DELLE MANI O DEI PIEDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0049",
+            "display": "Negli ultimi 7 giorni, ha notato una MAGGIOR SENSIBILITÀ DELLA PELLE AI RAGGI SOLARI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAGGIOR SENSIBILITÀ DELLA PELLE AI RAGGI SOLARI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0050",
+            "display": "Negli ultimi 7 giorni, ha avuto PIAGHE DA DECUBITO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PIAGHE DA DECUBITO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0051",
+            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le BRUCIATURE DELLA PELLE IN CONSEGUENZA DELLA RADIOTERAPIA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BRUCIATURE DELLA PELLE IN CONSEGUENZA DELLA RADIOTERAPIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Non pertinente"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0052",
+            "display": "Negli ultimi 7 giorni, ha notato un INSOLITO INSCURIMENTO DELLA PELLE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INSOLITO INSCURIMENTO DELLA PELLE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0053",
+            "display": "Negli ultimi 7 giorni, ha notato la presenza di SMAGLIATURE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SMAGLIATURE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0054",
+            "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, quanto è stato GRAVE l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0055",
+            "display": "Negli ultimi 7 giorni, in che misura l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0056",
+            "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i GIRAMENTI DI TESTA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "GIRAMENTI DI TESTA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0057",
+            "display": "Negli ultimi 7 giorni, in che misura i GIRAMENTI DI TESTA HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "GIRAMENTI DI TESTA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0058",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE l''APPANN!MENTO DELLA VISTA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "APPANNAMENTO DELLA VISTA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0059",
+            "display": "Negli ultimi 7 giorni, in che misura  l'' APPANNAMENTO DELLA VISTA HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "APPANNAMENTO DELLA VISTA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0060",
+            "display": "Negli ultimi 7 giorni, ha notato la comparsa di LAMPI DAVANTI AGLI OCCHI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "LAMPI DAVANTI AGLI OCCHI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0061",
+            "display": "Negli ultimi 7 giorni, ha avvertito la presenza di MOSCHE VOLANTI DAVANTI AGLI OCCHI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MOSCHE VOLANTI DAVANTI AGLI OCCHI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0062",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l''ECCESSIVA LACRIMAZIONE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ECCESSIVA LACRIMAZIONE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0063",
+            "display": "Negli ultimi 7 giorni, in che misura l''ECCESSIVA LACRIMAZIONE HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ECCESSIVA LACRIMAZIONE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0064",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il RONZIO NELLE ORECCHIE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "RONZIO NELLE ORECCHIE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0065",
+            "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i PROBLEMI DI CONCENTRAZIONE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PROBLEMI DI CONCENTRAZIONE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0066",
+            "display": "Negli ultimi 7 giorni, in che misura i PROBLEMI DI CONCENTRAZIONE HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PROBLEMI DI CONCENTRAZIONE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0067",
+            "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i PROBLEMI DI MEMORIA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PROBLEMI DI MEMORIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0068",
+            "display": "Negli ultimi 7 giorni, in che misura i PROBLEMI DI MEMORIA HANNO INTERFERITO con le Sue attivitàabituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PROBLEMI DI MEMORIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0069",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE FISICO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE FISICO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0070",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE FISICO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE FISICO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0071",
+            "display": "Negli ultimi 7 giorni, in che misura il DOLORE FISICO HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE FISICO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0072",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto MAL DI TESTA?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAL DI TESTA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0073",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il MAL DI TESTA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAL DI TESTA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0074",
+            "display": "Negli ultimi 7 giorni, in che misura il MAL DI TESTA HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MAL DI TESTA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0075",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE AI MUSCOLI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE AI MUSCOLI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0076",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE AI MUSCOLI nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE AI MUSCOLI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0077",
+            "display": "Negli ultimi 7 giorni, in che misura il DOLORE AI MUSCOLI HA INTEREFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE AI MUSCOLI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0078",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0079",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE) nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0080",
+            "display": "Negli ultimi 7 giorni, in che misura il DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE) HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0081",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0082",
+            "display": "Negli ultimi 7 giorni, in che misura l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0083",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0084",
+            "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, in che misura il SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA HA INTERFERITO con le sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0085",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto ANSIA?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ANSIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0086",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l''ANSIA nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ANSIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0087",
+            "display": "Negli ultimi 7 giorni, in che misura l''ANSIA HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ANSIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0088",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "STATO D''ANIMO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0089",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE, nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "STATO D''ANIMO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0090",
+            "display": "Negli ultimi 7 giorni, in che misura la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "STATO D’ANIMO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0091",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha provato TRISTEZZA o INFELICITÀ?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TRISTEZZA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0092",
+            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI la TRISTEZZA o l’INFELICITÀ nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TRISTEZZA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0093",
+            "display": "Negli ultimi 7 giorni, in che misura TRISTEZZA o INFELICITÀ HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TRISTEZZA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0094",
+            "display": "Negli ultimi 7 giorni, ha avuto MESTRUAZIONI IRREGOLARI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "MESTRUAZIONI IRREGOLARI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Non pertinente"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0095",
+            "display": "Negli ultimi 7 giorni, ha saltato un CICLO MESTRUALE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "REGOLARITÀ DELLE MESTRUAZIONI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Non pertinente"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0096",
+            "display": "Negli ultimi 7 giorni, ha notato la presenza di INSOLITE PERDITE VAGINALI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INSOLITE PERDITE VAGINALI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0097",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SECCHEZZA VAGINALE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SECCHEZZA VAGINALE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0098",
+            "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI il DOLORE O BRUCIORE NELL''URINARE, nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE O BRUCIORE NELL'URINARE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0099",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito un BISOGNO URGENTE DI URINARE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BISOGNO URGENTE DI URINARE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0100",
+            "display": "Negli ultimi 7 giorni, in che misura il BISOGNO URGENTE DI URINARE HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BISOGNO URGENTE DI URINARE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0101",
+            "display": "Negli ultimi 7 giorni, ci sono state volte in cui ha avvertito un BISOGNO FREQUENTE DI URINARE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BISOGNO FREQUENTE DI URINARE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0102",
+            "display": "Negli ultimi 7 giorni, in che misura il BISOGNO FREQUENTE DI URINARE HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "BISOGNO FREQUENTE DI URINARE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0103",
+            "display": "Negli ultimi 7 giorni, ha notato una VARIAZIONE DI COLORE DELLE URINE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "VARIAZIONE DI COLORE DELLE URINE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0104",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha notato PERDITE DI URINA?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PERDITE DI URINA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0105",
+            "display": "Negli ultimi 7 giorni, in che misura le PERDITE DI URINA HANNO INTERFERITO con le Sue attività abituali oquotidiane?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PERDITE DI URINA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0106",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A RAGGIUNGERE O MANTENERE L''EREZIONE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DIFFICOLTÀ A RAGGIUNGERE O MANTENERE L''EREZIONE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Non sessualmente attivo"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Preferisco non rispondere"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0107",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha PROBLEMI DI EIACULAZIONE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "PROBLEMI DI EIACULAZIONE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Non sessualmente attivo"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Preferisco non rispondere"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0108",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DEL DESIDERIO SESSUALE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "CALO DEL DESIDERIO SESSUALE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Non sessualmente attivo"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Preferisco non rispondere"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0109",
+            "display": "Negli ultimi 7 giorni, Le è sembrato che ci volesse TROPPO TEMPO PER RAGGIUNGERE L’ORGASMO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TROPPO TEMPO PER RAGGIUNGERE L''ORGASMO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Non sessualmente attivo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Preferisco non rispondere"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0110",
+            "display": "Negli ultimi 7 giorni, ha avvertito INCAPACITÀ A RAGGIUNGERE L''ORGASMO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INCAPACITÀ A RAGGIUNGERE L''ORGASMO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Non sessualmente attivo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Preferisco non rispondere"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0111",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE DURANTE IL RAPPORTO VAGINALE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE DURANTE IL RAPPORTO VAGINALE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Non sessualmente attivo"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Preferisco non rispondere"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0112",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE l''AUMENTO DI VOLUME O TENSIONE DELLE MAMMELLE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "AUMENTO DI VOLUME O TENSIONE DELLE MAMMELLE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0113",
+            "display": "Negli ultimi 7 giorni, si è PROCURATO LIVIDI FACILMENTE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "LIVIDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0114",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito TREMORI O BRIVIDI?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TREMORI O BRIVIDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0115",
+            "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i TREMORI O BRIVIDI nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "TREMORI O BRIVIDI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0116",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha sviluppato INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0117",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE, nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0118",
+            "display": "Negli ultimi 7 giorni, ha notato un CALO DELLA SUDORAZIONE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "CALO DELLA SUDORAZIONE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0119",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto VAMPATE DI CALORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "VAMPATE DI CALORE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0120",
+            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le VAMPATE DI CALORE nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "VAMPATE DI CALORE"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0121",
+            "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto perdita di SANGUE DAL NASO?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SANGUE DAL NASO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Mai"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Raramente"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Qualche volta"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Spesso"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Quasi sempre"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0122",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la perdita di SANGUE DAL NASO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "SANGUE DAL NASO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0123",
+            "display": "Negli ultimi 7 giorni, ha sviluppato DOLORE, GONFIORE, ROSSORE NEL PUNTO IN CUI È STATA SOMMINISTRATA LA TERAPIA?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "DOLORE, GONFIORE, ROSSORE NEL PUNTO IN CUI È STATA SOMMINISTRATA LA TERAPIA"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Sì"
+              },
+              {
+                "code": "answ2",
+                "valueString": "No"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Non pertinente"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0124",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il problema dell’ODORE CORPOREO nel momento PEGGIORE?",
+            "property": [
+              {
+                "code": "category",
+                "valueString": "ODORE CORPOREO"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "PROCTC-0125",
+            "display": "Descriva il sintomo e quanto è stato grave nel momento peggiore",
+            "property": [
+              {
+                "code": "macrogroup",
+                "valueString": "ALTRI SINTOMI"
+              },
+              {
+                "code": "category",
+                "valueString": "ALTRI SINTOMI"
+              },
+              {
+                "code": "interface",
+                "valueString": "radio"
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per nulla"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Molto"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Moltissimo"
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "CodeSystem/proctc-v1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "ValueSet",
+        "id": "proctc-v1-adverse-events",
+        "url": "https://healthcaredelivery.cancer.gov/pro-ctcae-adverse-events",
+        "version": "1.0",
+        "name": "PRO_CTCAEv1AdverseEvents",
+        "title": "PRO-CTCAE v1 Adverse Events ValueSet",
+        "status": "active",
+        "date": "2026-05-20",
+        "description": "Tutti i 125 termini PRO-CTCAE v1",
+        "compose": {
+          "include": [
+            {
+              "system": "https://healthcaredelivery.cancer.gov/pro-ctcae",
+              "concept": [
+                {
+                  "code": "PROCTC-0001",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SENSAZIONE DI BOCCA SECCA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0002",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A DEGLUTIRE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0003",
+                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le PIAGHE IN BOCCA O IN GOLA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0004",
+                  "display": "Negli ultimi 7 giorni, in che misura le PIAGHE IN BOCCA O IN GOLA HANNO INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0005",
+                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le SCREPOLATURE AGLI ANGOLI DELLA BOCCA, nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0006",
+                  "display": "Negli ultimi 7 giorni, ha notato MODIFICAZIONI DELLA VOCE?"
+                },
+                {
+                  "code": "PROCTC-0007",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la VOCE RAUCA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0008",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A SENTIRE IL SAPORE DI CIBI O BEVANDE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0009",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DELL’APPETITO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0010",
+                  "display": "Negli ultimi 7 giorni, in che misura il CALO DELL’APPETITO HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0011",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto NAUSEA (senso di malessere allo stomaco)?"
+                },
+                {
+                  "code": "PROCTC-0012",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la NAUSEA (senso di malessere allo stomaco) nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0013",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto VOMITO?"
+                },
+                {
+                  "code": "PROCTC-0014",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il VOMITO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0015",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha accusato IL BRUCIORE DI STOMACO?"
+                },
+                {
+                  "code": "PROCTC-0016",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE IL BRUCIORE DI STOMACO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0017",
+                  "display": "Negli ultimi 7 giorni, ha notato una MAGGIOR PRODUZIONE DI ARIA INTESTINALE (FLATULENZA)?"
+                },
+                {
+                  "code": "PROCTC-0018",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto GONFIORE DELLA PANCIA?"
+                },
+                {
+                  "code": "PROCTC-0019",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il GONFIORE DELLA PANCIA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0020",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto il SINGHIOZZO?"
+                },
+                {
+                  "code": "PROCTC-0021",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il SINGHIOZZO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0022",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la STITICHEZZA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0023",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha notato FECI MOLLI O ACQUOSE (DIARREA)?"
+                },
+                {
+                  "code": "PROCTC-0024",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto MAL DI PANCIA?"
+                },
+                {
+                  "code": "PROCTC-0025",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il MAL DI PANCIA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0026",
+                  "display": "Negli ultimi 7 giorni, in che misura il MAL DI PANCIA HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0027",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto PERDITE DI FECI?"
+                },
+                {
+                  "code": "PROCTC-0028",
+                  "display": "Negli ultimi 7 giorni, in che misura le PERDITE DI FECI HANNO INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0029",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la MANCANZA DI FIATO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0030",
+                  "display": "Negli ultimi 7 giorni, in che misura la MANCANZA DI FIATO ha INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0031",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la TOSSE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0032",
+                  "display": "Negli ultimi 7 giorni, in che misura la TOSSE HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0033",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il RESPIRO SIBILANTE (EMISSIONE DI UN FISCHIO QUANDO SI RESPIRA) nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0034",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto GONFIORE ALLE BRACCIA O ALLE GAMBE?"
+                },
+                {
+                  "code": "PROCTC-0035",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il GONFIORE ALLE BRACCIA O ALLE GAMBE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0036",
+                  "display": "Negli ultimi 7 giorni, in che misura il GONFIORE ALLE BRACCIA O ALLE GAMBE HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0037",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito PALPITAZIONI?"
+                },
+                {
+                  "code": "PROCTC-0038",
+                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le PALPITAZIONI nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0039",
+                  "display": "Negli ultimi 7 giorni, ha avuto qualche IRRITAZIONE DELLA PELLE?"
+                },
+                {
+                  "code": "PROCTC-0040",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SECCHEZZA DELLA PELLE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0041",
+                  "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i BRUFOLI (ACNE) SUL VOLTO O SUL TORACE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0042",
+                  "display": "Negli ultimi 7 giorni, ha PERSO I CAPELLI?"
+                },
+                {
+                  "code": "PROCTC-0043",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il PRURITO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0044",
+                  "display": "Negli ultimi 7 giorni, ha sviluppato ORTICARIA  (BOLLE ROSSE che provocano prurito) sulla pelle?"
+                },
+                {
+                  "code": "PROCTC-0045",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SINDROME MANO-PIEDE (IRRITAZIONE DELLE MANI O DEI PIEDI CHE PUÒ CAUSARE SCREPOLATURE, SPELLATURE, ROSSORE O DOLORE) nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0046",
+                  "display": "Negli ultimi 7 giorni, ha PERSO DELLE UNGHIE DELLE MANI O DEI PIEDI?"
+                },
+                {
+                  "code": "PROCTC-0047",
+                  "display": "Negli ultimi 7 giorni, ha notato la presenza di ISPESSIMENTI O SOLCHI SULLE UNGHIE DELLE MANI O DEI PIEDI?"
+                },
+                {
+                  "code": "PROCTC-0048",
+                  "display": "Negli ultimi 7 giorni, ha notato una VARIAZIONE DI COLORE DELLE UNGHIE DELLE MANI O DEI PIEDI?"
+                },
+                {
+                  "code": "PROCTC-0049",
+                  "display": "Negli ultimi 7 giorni, ha notato una MAGGIOR SENSIBILITÀ DELLA PELLE AI RAGGI SOLARI?"
+                },
+                {
+                  "code": "PROCTC-0050",
+                  "display": "Negli ultimi 7 giorni, ha avuto PIAGHE DA DECUBITO?"
+                },
+                {
+                  "code": "PROCTC-0051",
+                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le BRUCIATURE DELLA PELLE IN CONSEGUENZA DELLA RADIOTERAPIA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0052",
+                  "display": "Negli ultimi 7 giorni, ha notato un INSOLITO INSCURIMENTO DELLA PELLE?"
+                },
+                {
+                  "code": "PROCTC-0053",
+                  "display": "Negli ultimi 7 giorni, ha notato la presenza di SMAGLIATURE?"
+                },
+                {
+                  "code": "PROCTC-0054",
+                  "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, quanto è stato GRAVE l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI?"
+                },
+                {
+                  "code": "PROCTC-0055",
+                  "display": "Negli ultimi 7 giorni, in che misura l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0056",
+                  "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i GIRAMENTI DI TESTA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0057",
+                  "display": "Negli ultimi 7 giorni, in che misura i GIRAMENTI DI TESTA HANNO INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0058",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE l''APPANN!MENTO DELLA VISTA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0059",
+                  "display": "Negli ultimi 7 giorni, in che misura  l'' APPANNAMENTO DELLA VISTA HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0060",
+                  "display": "Negli ultimi 7 giorni, ha notato la comparsa di LAMPI DAVANTI AGLI OCCHI?"
+                },
+                {
+                  "code": "PROCTC-0061",
+                  "display": "Negli ultimi 7 giorni, ha avvertito la presenza di MOSCHE VOLANTI DAVANTI AGLI OCCHI?"
+                },
+                {
+                  "code": "PROCTC-0062",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l''ECCESSIVA LACRIMAZIONE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0063",
+                  "display": "Negli ultimi 7 giorni, in che misura l''ECCESSIVA LACRIMAZIONE HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0064",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il RONZIO NELLE ORECCHIE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0065",
+                  "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i PROBLEMI DI CONCENTRAZIONE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0066",
+                  "display": "Negli ultimi 7 giorni, in che misura i PROBLEMI DI CONCENTRAZIONE HANNO INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0067",
+                  "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i PROBLEMI DI MEMORIA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0068",
+                  "display": "Negli ultimi 7 giorni, in che misura i PROBLEMI DI MEMORIA HANNO INTERFERITO con le Sue attivitàabituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0069",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE FISICO?"
+                },
+                {
+                  "code": "PROCTC-0070",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE FISICO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0071",
+                  "display": "Negli ultimi 7 giorni, in che misura il DOLORE FISICO HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0072",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto MAL DI TESTA?"
+                },
+                {
+                  "code": "PROCTC-0073",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il MAL DI TESTA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0074",
+                  "display": "Negli ultimi 7 giorni, in che misura il MAL DI TESTA HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0075",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE AI MUSCOLI?"
+                },
+                {
+                  "code": "PROCTC-0076",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE AI MUSCOLI nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0077",
+                  "display": "Negli ultimi 7 giorni, in che misura il DOLORE AI MUSCOLI HA INTEREFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0078",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)?"
+                },
+                {
+                  "code": "PROCTC-0079",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE) nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0080",
+                  "display": "Negli ultimi 7 giorni, in che misura il DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE) HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0081",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0082",
+                  "display": "Negli ultimi 7 giorni, in che misura l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0083",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0084",
+                  "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, in che misura il SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA HA INTERFERITO con le sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0085",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto ANSIA?"
+                },
+                {
+                  "code": "PROCTC-0086",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l''ANSIA nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0087",
+                  "display": "Negli ultimi 7 giorni, in che misura l''ANSIA HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0088",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE?"
+                },
+                {
+                  "code": "PROCTC-0089",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE, nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0090",
+                  "display": "Negli ultimi 7 giorni, in che misura la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0091",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha provato TRISTEZZA o INFELICITÀ?"
+                },
+                {
+                  "code": "PROCTC-0092",
+                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI la TRISTEZZA o l’INFELICITÀ nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0093",
+                  "display": "Negli ultimi 7 giorni, in che misura TRISTEZZA o INFELICITÀ HANNO INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0094",
+                  "display": "Negli ultimi 7 giorni, ha avuto MESTRUAZIONI IRREGOLARI?"
+                },
+                {
+                  "code": "PROCTC-0095",
+                  "display": "Negli ultimi 7 giorni, ha saltato un CICLO MESTRUALE?"
+                },
+                {
+                  "code": "PROCTC-0096",
+                  "display": "Negli ultimi 7 giorni, ha notato la presenza di INSOLITE PERDITE VAGINALI?"
+                },
+                {
+                  "code": "PROCTC-0097",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SECCHEZZA VAGINALE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0098",
+                  "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI il DOLORE O BRUCIORE NELL''URINARE, nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0099",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito un BISOGNO URGENTE DI URINARE?"
+                },
+                {
+                  "code": "PROCTC-0100",
+                  "display": "Negli ultimi 7 giorni, in che misura il BISOGNO URGENTE DI URINARE HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0101",
+                  "display": "Negli ultimi 7 giorni, ci sono state volte in cui ha avvertito un BISOGNO FREQUENTE DI URINARE?"
+                },
+                {
+                  "code": "PROCTC-0102",
+                  "display": "Negli ultimi 7 giorni, in che misura il BISOGNO FREQUENTE DI URINARE HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                },
+                {
+                  "code": "PROCTC-0103",
+                  "display": "Negli ultimi 7 giorni, ha notato una VARIAZIONE DI COLORE DELLE URINE?"
+                },
+                {
+                  "code": "PROCTC-0104",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha notato PERDITE DI URINA?"
+                },
+                {
+                  "code": "PROCTC-0105",
+                  "display": "Negli ultimi 7 giorni, in che misura le PERDITE DI URINA HANNO INTERFERITO con le Sue attività abituali oquotidiane?"
+                },
+                {
+                  "code": "PROCTC-0106",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A RAGGIUNGERE O MANTENERE L''EREZIONE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0107",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha PROBLEMI DI EIACULAZIONE?"
+                },
+                {
+                  "code": "PROCTC-0108",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DEL DESIDERIO SESSUALE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0109",
+                  "display": "Negli ultimi 7 giorni, Le è sembrato che ci volesse TROPPO TEMPO PER RAGGIUNGERE L’ORGASMO?"
+                },
+                {
+                  "code": "PROCTC-0110",
+                  "display": "Negli ultimi 7 giorni, ha avvertito INCAPACITÀ A RAGGIUNGERE L''ORGASMO?"
+                },
+                {
+                  "code": "PROCTC-0111",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE DURANTE IL RAPPORTO VAGINALE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0112",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE l''AUMENTO DI VOLUME O TENSIONE DELLE MAMMELLE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0113",
+                  "display": "Negli ultimi 7 giorni, si è PROCURATO LIVIDI FACILMENTE?"
+                },
+                {
+                  "code": "PROCTC-0114",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito TREMORI O BRIVIDI?"
+                },
+                {
+                  "code": "PROCTC-0115",
+                  "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i TREMORI O BRIVIDI nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0116",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha sviluppato INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)?"
+                },
+                {
+                  "code": "PROCTC-0117",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE, nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0118",
+                  "display": "Negli ultimi 7 giorni, ha notato un CALO DELLA SUDORAZIONE?"
+                },
+                {
+                  "code": "PROCTC-0119",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto VAMPATE DI CALORE?"
+                },
+                {
+                  "code": "PROCTC-0120",
+                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le VAMPATE DI CALORE nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0121",
+                  "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto perdita di SANGUE DAL NASO?"
+                },
+                {
+                  "code": "PROCTC-0122",
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la perdita di SANGUE DAL NASO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0123",
+                  "display": "Negli ultimi 7 giorni, ha sviluppato DOLORE, GONFIORE, ROSSORE NEL PUNTO IN CUI È STATA SOMMINISTRATA LA TERAPIA?"
+                },
+                {
+                  "code": "PROCTC-0124",
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il problema dell’ODORE CORPOREO nel momento PEGGIORE?"
+                },
+                {
+                  "code": "PROCTC-0125",
+                  "display": "Descriva il sintomo e quanto è stato grave nel momento peggiore"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "ValueSet/proctc-v1-adverse-events"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "proctc-v1-grade-severity",
+        "url": "https://irccs-pascale.it/fhir/StructureDefinition/proctc-v1-grade-severity",
+        "version": "1.0",
+        "name": "PRO_CTCAEv1GradeSeverity",
+        "title": "PRO-CTCAE v1 Grade Severity Extension",
+        "status": "active",
+        "date": "2026-05-20",
+        "kind": "complex-type",
+        "abstract": false,
+        "context": [
+          {
+            "type": "element",
+            "expression": "QuestionnaireItem"
+          }
+        ],
+        "type": "Extension",
+        "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+        "derivation": "constraint",
+        "description": "Estensione su QuestionnaireItem per PRO-CTCAE v1: macrogruppo, categoria, interfaccia UI e opzioni di risposta 1-8.",
+        "differential": {
+          "element": [
+            {
+              "id": "Extension",
+              "path": "Extension",
+              "short": "Metadati PRO-CTCAE v1 su QuestionnaireItem"
+            },
+            {
+              "id": "Extension.extension",
+              "path": "Extension.extension",
+              "slicing": {
+                "discriminator": [
+                  {
+                    "type": "value",
+                    "path": "url"
+                  }
+                ],
+                "rules": "open"
+              }
+            },
+            {
+              "id": "Extension.extension:macrogroup",
+              "path": "Extension.extension",
+              "sliceName": "macrogroup",
+              "short": "Macrogruppo sintomatologico",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:macrogroup.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "macrogroup"
+            },
+            {
+              "id": "Extension.extension:macrogroup.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:category",
+              "path": "Extension.extension",
+              "sliceName": "category",
+              "short": "Categoria di sintomo",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:category.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "category"
+            },
+            {
+              "id": "Extension.extension:category.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:interface",
+              "path": "Extension.extension",
+              "sliceName": "interface",
+              "short": "Tipo di interfaccia UI",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:interface.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "interface"
+            },
+            {
+              "id": "Extension.extension:interface.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ1",
+              "path": "Extension.extension",
+              "sliceName": "answ1",
+              "short": "Risposta 1",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ1.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ1"
+            },
+            {
+              "id": "Extension.extension:answ1.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ2",
+              "path": "Extension.extension",
+              "sliceName": "answ2",
+              "short": "Risposta 2",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ2.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ2"
+            },
+            {
+              "id": "Extension.extension:answ2.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ3",
+              "path": "Extension.extension",
+              "sliceName": "answ3",
+              "short": "Risposta 3",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ3.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ3"
+            },
+            {
+              "id": "Extension.extension:answ3.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ4",
+              "path": "Extension.extension",
+              "sliceName": "answ4",
+              "short": "Risposta 4",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ4.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ4"
+            },
+            {
+              "id": "Extension.extension:answ4.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ5",
+              "path": "Extension.extension",
+              "sliceName": "answ5",
+              "short": "Risposta 5",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ5.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ5"
+            },
+            {
+              "id": "Extension.extension:answ5.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ6",
+              "path": "Extension.extension",
+              "sliceName": "answ6",
+              "short": "Risposta 6",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ6.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ6"
+            },
+            {
+              "id": "Extension.extension:answ6.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ7",
+              "path": "Extension.extension",
+              "sliceName": "answ7",
+              "short": "Risposta 7",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ7.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ7"
+            },
+            {
+              "id": "Extension.extension:answ7.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ8",
+              "path": "Extension.extension",
+              "sliceName": "answ8",
+              "short": "Risposta 8",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ8.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ8"
+            },
+            {
+              "id": "Extension.extension:answ8.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.url",
+              "path": "Extension.url",
+              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/proctc-v1-grade-severity"
+            },
+            {
+              "id": "Extension.value[x]",
+              "path": "Extension.value[x]",
+              "max": "0"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "StructureDefinition/proctc-v1-grade-severity"
+      }
+    }
+  ]
+}

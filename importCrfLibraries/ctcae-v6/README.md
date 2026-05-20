@@ -8,7 +8,7 @@ Per caricare su HAPI basta lo script shell. Per rigenerare da un nuovo Excel, se
 ## Struttura cartella
 
 ```
-importCtcae/v6/
+importCrfLibraries/ctcae-v6/
 ├── import-ctcae-v6.py        ← script Python (legge Excel + push su HAPI)
 ├── install-ctcae-v6.sh       ← push curl del bundle pre-generato
 ├── ctcae-v6-bundle.json      ← bundle FHIR pre-generato (committed nel repo)
@@ -33,8 +33,7 @@ pip install openpyxl requests
 ## Utilizzo rapido (bundle pre-generato)
 
 ```bash
-cd irccs-docker/importCtcae/v6
-bash install-ctcae-v6.sh http://localhost:8080/fhir
+bash importCrfLibraries/ctcae-v6/install-ctcae-v6.sh http://localhost:8080/fhir
 ```
 
 ---
@@ -138,7 +137,7 @@ curl "http://localhost:8080/fhir/CodeSystem/\$validate-code?url=https://ncicb.nc
 Quando NCI rilascerà CTCAE v7:
 
 ```bash
-mkdir irccs-docker/importCtcae/v7
+mkdir importCrfLibraries/ctcae-v7
 cp import-ctcae-v6.py ../v7/import-ctcae-v7.py
 # aggiorna CS_URL, VS_URL, VERSION nello script v7
 python3 ../v7/import-ctcae-v7.py "CTCAE_v7.xlsx"
