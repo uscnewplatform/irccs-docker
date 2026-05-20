@@ -1,0 +1,92 @@
+= Librerie CRF — Gestione e Import
+:description: Architettura delle librerie CRF (CTCAE, PRO-CTCAE, EORTC) come CodeSystem FHIR su HAPI.
+
+== Panoramica
+
+Le librerie CRF (Case Report Form) utilizzate dalla piattaforma sono distribuite come risorse FHIR standard importate su HAPI FHIR durante l'installazione iniziale.
+Il frontend recupera i vocabolari direttamente da HAPI, senza passare da microservizi intermedi.
+
+[cols="1,2,2"]
+|===
+| Libreria | CodeSystem URL | Cartella
+
+| CTCAE v4 | `http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#ctcae-v4` | `importCrfLibraries/ctcae-v4/`
+| CTCAE v5 | `http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#ctcae-v5` | `importCrfLibraries/ctcae-v5/`
+| CTCAE v6 | `http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#ctcae-v6` | `importCrfLibraries/ctcae-v6/`
+| PRO-CTCAE v1 | `https://healthcaredelivery.cancer.gov/pro-ctcae` | `importCrfLibraries/proctc-v1/`
+| EORTC QLQ-C30 | `https://www.eortc.org/qlq-c30` | `importCrfLibraries/eortc-v1/`
+|===
+
+== Struttura di ogni libreria
+
+Ogni cartella contiene:
+
+[source]
+----
+importCrfLibraries/<libreria>/
+├── import-<libreria>.py       # script Python che genera il bundle FHIR da Excel
+├── install-<libreria>.sh      # script curl che invia il bundle a HAPI FHIR
+└── <libreria>-bundle.json     # bundle FHIR pre-generato (committato)
+----
+
+Il bundle FHIR è di tipo `transaction` e contiene:
+
+* `CodeSystem` — termini con proprietà estese (SOC, gradi, codici interni)
+* `ValueSet` — tutti i codici del CodeSystem
+* `StructureDefinition` — profilo FHIR per i questionari che usano la libreria
+
+== Generazione del bundle (solo se necessario aggiornare)
+
+I bundle JSON sono già generati e committati nel repository.
+Per rigenerare da un nuovo file Excel:
+
+[source,bash]
+----
+cd importCrfLibraries/<libreria>
+python3 import-<libreria>.py /path/to/file.xlsx
+----
+
+Il file `<libreria>-bundle.json` viene sovrascritto.
+Committare il file aggiornato e rieseguire lo script di installazione.
+
+=== Requisiti Python
+
+[source,bash]
+----
+pip install openpyxl
+----
+
+== Come il frontend recupera le librerie
+
+Il frontend React (TypeScript) non usa endpoint di microservizio per i vocabolari CRF.
+Ogni libreria ha un service dedicato in `src/fhir/service/Terminology/`:
+
+[cols="1,2"]
+|===
+| File | Libreria
+
+| `CtcaeV4Service.ts` | CTCAE v4
+| `CtcaeV5Service.ts` | CTCAE v5
+| `CtcaeV6Service.ts` | CTCAE v6
+| `ProctcV1Service.ts` | PRO-CTCAE v1
+| `EortcV1Service.ts` | EORTC QLQ-C30
+|===
+
+Ogni service:
+
+. Interroga HAPI FHIR con `GET /CodeSystem?url=<CS_URL>`
+. Raggruppa i concetti per sezione (SOC / categoria / head)
+. Costruisce un oggetto `Questionnaire` FHIR in memoria
+. Il `Questionnaire` viene poi renderizzato dai componenti di CRF nel builder e nel questionario paziente
+
+Il hook `useCtcae` (in `src/fhir/hooks/questionnaire/`) orchestra la chiamata al service corretto in base al tipo di questionario selezionato (`CTC_V4`, `CTC_V5`, `CTC_V6`, `PROCTC_V1`, `EORTC_V1`).
+
+== Aggiungere una nuova libreria CRF
+
+. Creare la cartella `importCrfLibraries/<nuova-libreria>/`
+. Scrivere lo script Python che genera il bundle FHIR (CodeSystem + ValueSet + StructureDefinition)
+. Scrivere lo script `install-<nuova-libreria>.sh` che invia il bundle a HAPI con `curl`
+. Committare il bundle JSON generato
+. Nel frontend, creare `src/fhir/service/Terminology/<NuovaLiberia>Service.ts` seguendo il pattern esistente
+. Aggiungere il nuovo tipo in `useCtcae.ts` e nel modello `QuestionnaireTypeKey`
+. Aggiornare questa pagina e xref:installazione.adoc[Installazione e Setup]

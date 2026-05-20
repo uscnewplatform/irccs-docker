@@ -4150,11 +4150,11 @@
     {
       "resource": {
         "resourceType": "ValueSet",
-        "id": "proctc-v1-adverse-events",
-        "url": "https://healthcaredelivery.cancer.gov/pro-ctcae-adverse-events",
+        "id": "proctc-v1-items",
+        "url": "https://healthcaredelivery.cancer.gov/pro-ctcae-items",
         "version": "1.0",
-        "name": "PRO_CTCAEv1AdverseEvents",
-        "title": "PRO-CTCAE v1 Adverse Events ValueSet",
+        "name": "PRO_CTCAEv1Items",
+        "title": "PRO-CTCAE v1 Items ValueSet",
         "status": "active",
         "date": "2026-05-20",
         "description": "Tutti i 125 termini PRO-CTCAE v1",
@@ -4670,7 +4670,7 @@
       },
       "request": {
         "method": "PUT",
-        "url": "ValueSet/proctc-v1-adverse-events"
+        "url": "ValueSet/proctc-v1-items"
       }
     },
     {

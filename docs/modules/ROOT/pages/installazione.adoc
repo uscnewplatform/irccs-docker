@@ -210,6 +210,38 @@ Completamento confermato da risposta HTTP 200 con `OperationOutcome` di severity
 
 Per aggiornare a una versione LOINC successiva, aggiornare il prefisso di versione (es. `Loinc_2.82` → `Loinc_2.83`) in tutte le righe del file `terminology/loincupload.properties`.
 
+=== 7. Installazione librerie CRF su HAPI FHIR
+
+Le librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE v1, EORTC QLQ-C30) sono distribuite come `CodeSystem` FHIR nella cartella `importCrfLibraries/`.
+Ogni sotto-cartella contiene uno script di installazione che esegue il push del bundle FHIR su HAPI.
+
+[source,bash]
+----
+cd importCrfLibraries
+
+# CTCAE v4
+bash ctcae-v4/install-ctcae-v4.sh http://irccs-hapi-fhir:8080/fhir
+
+# CTCAE v5
+bash ctcae-v5/install-ctcae-v5.sh http://irccs-hapi-fhir:8080/fhir
+
+# CTCAE v6
+bash ctcae-v6/install-ctcae-v6.sh http://irccs-hapi-fhir:8080/fhir
+
+# PRO-CTCAE v1
+bash proctc-v1/install-proctc-v1.sh http://irccs-hapi-fhir:8080/fhir
+
+# EORTC QLQ-C30
+bash eortc-v1/install-eortc-v1.sh http://irccs-hapi-fhir:8080/fhir
+----
+
+[NOTE]
+====
+Gli script inviano il bundle FHIR tramite `curl` in modalità `transaction`. +
+Se HAPI FHIR restituisce `200 OK` con un `Bundle` di risposta, l'installazione è riuscita. +
+Per i dettagli sull'architettura e la struttura delle librerie, vedere xref:librerie-crf.adoc[Librerie CRF — Gestione e Import].
+====
+
 == Abilitazione SSL per Keycloak
 
 Per attivare Keycloak in modalità SSL:
