@@ -6,15 +6,15 @@
 Le librerie CRF (Case Report Form) utilizzate dalla piattaforma sono distribuite come risorse FHIR standard importate su HAPI FHIR durante l'installazione iniziale.
 Il frontend recupera i vocabolari direttamente da HAPI, senza passare da microservizi intermedi.
 
-[cols="1,2,2"]
+[cols="1,2,2,2"]
 |===
-| Libreria | CodeSystem URL | Cartella
+| Libreria | CodeSystem URL | ValueSet URL | Cartella
 
-| CTCAE v4 | `http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#ctcae-v4` | `importCrfLibraries/ctcae-v4/`
-| CTCAE v5 | `http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#ctcae-v5` | `importCrfLibraries/ctcae-v5/`
-| CTCAE v6 | `http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#ctcae-v6` | `importCrfLibraries/ctcae-v6/`
-| PRO-CTCAE v1 | `https://healthcaredelivery.cancer.gov/pro-ctcae` | `importCrfLibraries/proctc-v1/`
-| EORTC QLQ-C30 | `https://www.eortc.org/qlq-c30` | `importCrfLibraries/eortc-v1/`
+| CTCAE v4 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4-adverse-events` | `importCrfLibraries/ctcae-v4/`
+| CTCAE v5 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5-adverse-events` | `importCrfLibraries/ctcae-v5/`
+| CTCAE v6 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6-adverse-events` | `importCrfLibraries/ctcae-v6/`
+| PRO-CTCAE v1 | `https://healthcaredelivery.cancer.gov/pro-ctcae` | `https://healthcaredelivery.cancer.gov/pro-ctcae-items` | `importCrfLibraries/proctc-v1/`
+| EORTC QLQ-C30 | `https://www.eortc.org/qlq-c30` | `https://www.eortc.org/qlq-c30-items` | `importCrfLibraries/eortc-v1/`
 |===
 
 == Struttura di ogni libreria
@@ -32,7 +32,7 @@ importCrfLibraries/<libreria>/
 Il bundle FHIR è di tipo `transaction` e contiene:
 
 * `CodeSystem` — termini con proprietà estese (SOC, gradi, codici interni)
-* `ValueSet` — tutti i codici del CodeSystem
+* `ValueSet` — tutti i codici del CodeSystem (usato per la ricerca server-side con `$expand?filter=`)
 * `StructureDefinition` — profilo FHIR per i questionari che usano la libreria
 
 == Generazione del bundle (solo se necessario aggiornare)
@@ -59,17 +59,31 @@ pip install openpyxl
 == Come il frontend recupera le librerie
 
 Il frontend React (TypeScript) non usa endpoint di microservizio per i vocabolari CRF.
-Ogni libreria ha un service dedicato in `src/fhir/service/Terminology/`:
+
+=== URL centralizzati
+
+Tutti gli URL (CodeSystem e ValueSet) sono centralizzati in un unico file:
+
+[source]
+----
+src/fhir/service/Terminology/CrfConfig.ts
+----
+
+Esporta `CRF_CS_URL` e `CRF_VS_URL`, entrambe `Partial<Record<QuestionnaireTypeKey, string>>`.
+Ogni altro file del frontend importa da qui — nessun URL hardcoded altrove.
+
+=== Service per tipo
+
+CTCAE v4/v5/v6 condividono un unico service (`CtcaeV6Service.ts`) che accetta l'URL come parametro.
+PRO-CTCAE e EORTC hanno service separati.
 
 [cols="1,2"]
 |===
-| File | Libreria
+| File | Librerie gestite
 
-| `CtcaeV4Service.ts` | CTCAE v4
-| `CtcaeV5Service.ts` | CTCAE v5
-| `CtcaeV6Service.ts` | CTCAE v6
-| `ProctcV1Service.ts` | PRO-CTCAE v1
-| `EortcV1Service.ts` | EORTC QLQ-C30
+| `src/fhir/service/Terminology/CtcaeV6Service.ts` | CTCAE v4, v5, v6
+| `src/fhir/service/Terminology/ProctcV1Service.ts` | PRO-CTCAE v1
+| `src/fhir/service/Terminology/EortcV1Service.ts` | EORTC QLQ-C30
 |===
 
 Ogni service:
@@ -77,16 +91,90 @@ Ogni service:
 . Interroga HAPI FHIR con `GET /CodeSystem?url=<CS_URL>`
 . Raggruppa i concetti per sezione (SOC / categoria / head)
 . Costruisce un oggetto `Questionnaire` FHIR in memoria
-. Il `Questionnaire` viene poi renderizzato dai componenti di CRF nel builder e nel questionario paziente
+. Il `Questionnaire` viene renderizzato nei componenti CRF (builder e questionario paziente)
 
-Il hook `useCtcae` (in `src/fhir/hooks/questionnaire/`) orchestra la chiamata al service corretto in base al tipo di questionario selezionato (`CTC_V4`, `CTC_V5`, `CTC_V6`, `PROCTC_V1`, `EORTC_V1`).
+Il hook `useCtcae` (`src/fhir/hooks/questionnaire/useCtcae.ts`) orchestra la chiamata al service corretto in base al tipo di questionario selezionato.
 
-== Aggiungere una nuova libreria CRF
+=== Ricerca server-side
 
-. Creare la cartella `importCrfLibraries/<nuova-libreria>/`
-. Scrivere lo script Python che genera il bundle FHIR (CodeSystem + ValueSet + StructureDefinition)
-. Scrivere lo script `install-<nuova-libreria>.sh` che invia il bundle a HAPI con `curl`
-. Committare il bundle JSON generato
-. Nel frontend, creare `src/fhir/service/Terminology/<NuovaLiberia>Service.ts` seguendo il pattern esistente
-. Aggiungere il nuovo tipo in `useCtcae.ts` e nel modello `QuestionnaireTypeKey`
-. Aggiornare questa pagina e xref:installazione.adoc[Installazione e Setup]
+Il dialog di import CRF (`CtcImportDialog`) effettua ricerche tramite `ValueSet/$expand?filter=<testo>` su HAPI usando il `ValueSet URL` della libreria.
+Se HAPI non ha Lucene indexing attivo, viene applicato un post-filtro client-side sul `display` dei concetti restituiti.
+
+== Aggiungere una nuova libreria CRF (es. CTCAE v7)
+
+=== 1. Bundle FHIR (irccs-docker)
+
+. Creare la cartella `importCrfLibraries/ctcae-v7/`
+. Copiare lo script Python da `ctcae-v6/` e adattarlo ai nuovi URL e al formato Excel v7
+. Eseguire lo script per generare `ctcae-v7-bundle.json`
+. Creare `install-ctcae-v7.sh` seguendo il modello degli altri script
+. Committare bundle JSON e script
+. Aggiungere il passo di installazione in xref:installazione.adoc[Installazione e Setup]
+
+=== 2. Configurazione URL (irccs-react-dashboard)
+
+In `src/fhir/service/Terminology/CrfConfig.ts`, aggiungere le entry per il nuovo tipo:
+
+[source,typescript]
+----
+export const CRF_CS_URL: Partial<Record<QuestionnaireTypeKey, string>> = {
+    // ... esistenti ...
+    CTC_V7: 'https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v7',
+};
+
+export const CRF_VS_URL: Partial<Record<QuestionnaireTypeKey, string>> = {
+    // ... esistenti ...
+    CTC_V7: 'https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v7-adverse-events',
+};
+----
+
+=== 3. Tipo questionario (irccs-react-dashboard)
+
+In `src/fhir/models/Questionnaire.ts`, aggiungere il nuovo tipo all'enum `QuestionnaireType`:
+
+[source,typescript]
+----
+export enum QuestionnaireType {
+    // ... esistenti ...
+    "CTC_V7" = "CTC - V7",
+}
+----
+
+E aggiungere il relativo identificatore in `QuestionnaireIdentifier`:
+
+[source,typescript]
+----
+"CTC_V7": {
+    system: "CTCAE",
+    value:  "CTC_V7",
+    name:   "CTC_V7"
+},
+----
+
+=== 4. Service (irccs-react-dashboard)
+
+CTCAE v7 può riutilizzare `CtcaeV6Service.ts` che già gestisce v4/v5/v6.
+Aggiungere solo la costante URL e la funzione export:
+
+[source,typescript]
+----
+// In CtcaeV6Service.ts
+const CS_URL_V7 = CRF_CS_URL.CTC_V7!;
+
+export async function buildCtcaeV7Questionnaire(): Promise<Questionnaire> {
+    return buildCtcaeQuestionnaire(CS_URL_V7);
+}
+----
+
+=== 5. Hook (irccs-react-dashboard)
+
+In `src/fhir/hooks/questionnaire/useCtcae.ts`, aggiungere il caso nel `queryFn`:
+
+[source,typescript]
+----
+if (type === 'CTC_V7') return buildCtcaeV7Questionnaire();
+----
+
+=== 6. Aggiornare questa pagina
+
+Aggiungere la nuova libreria alla tabella in cima.
