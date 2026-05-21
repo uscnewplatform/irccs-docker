@@ -24,7 +24,7 @@ services:
     networks:
       - irccs-docker_irccs
     depends_on:
-      - irccs-docker_irccs-pwa-backend
+      - irccs-pwa-backend
     restart: always
 
   irccs-pwa-backend:
