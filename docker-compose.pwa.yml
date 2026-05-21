@@ -1,0 +1,53 @@
+# Stack PWA separato — si aggancia alla rete "irccs" già creata da docker-compose.yaml.
+# Avvio: docker compose -f docker-compose.pwa.yml up -d
+# Stop:  docker compose -f docker-compose.pwa.yml down
+#
+# Prerequisiti: stack IRCCS già avviato per Keycloak e httpd.
+
+networks:
+  irccs:
+    external: true
+
+volumes:
+  pwa_db_data:
+
+services:
+  irccs-pwa:
+    image: nexus.infocube.it:443/i3/irccs/irccs-pwa/develop:1.0.0
+    container_name: irccs-pwa
+    hostname: irccs-pwa
+    environment:
+      BACKEND_UPSTREAM: http://irccs-pwa-backend:8000
+      NGINX_PORT: 8080
+    ports:
+      - "8090:8080"
+    networks:
+      - irccs
+    depends_on:
+      - irccs-pwa-backend
+    restart: always
+
+  irccs-pwa-backend:
+    image: nexus.infocube.it:443/i3/irccs/irccs-pwa-backend/develop:1.0.0
+    container_name: irccs-pwa-backend
+    hostname: irccs-pwa-backend
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: sqlite:////app/data/questionari.db
+      IRCCS_API_BASE_URL: http://irccs-httpd
+      KEYCLOAK_REALM_URL: http://irccs-keycloak:8080/realms/pascale
+      WEB_APP_BASE_PATH: /app/
+    volumes:
+      - pwa_db_data:/app/data
+    networks:
+      - irccs
+    restart: always
+
+  irccs-pwa-admin:
+    image: nexus.infocube.it:443/i3/irccs/irccs-pwa-admin/develop:1.0.0
+    container_name: irccs-pwa-admin
+    hostname: irccs-pwa-admin
+    networks:
+      - irccs
+    restart: always
