@@ -56,7 +56,7 @@ import urllib3
 
 HAPI_URL_DEFAULT = "http://localhost:8080/fhir"
 
-CS_URL     = "https://aifa.gov.it/"
+CS_URL     = "https://aifa.gov.it/fhir/CodeSystem/farmaci"
 VS_A_URL   = "https://aifa.gov.it/fhir/ValueSet/farmaci-classe-a"
 VS_H_URL   = "https://aifa.gov.it/fhir/ValueSet/farmaci-classe-h"
 VS_ALL_URL = "https://aifa.gov.it/fhir/ValueSet/farmaci-aifa"
@@ -205,10 +205,12 @@ def build_codesystem(drugs: list[dict], version: str) -> dict:
         ]
         if d["atc"]:
             props.append({"code": "atc", "valueCode": d["atc"]})
+        nome_comm = d["display"]
+        pa        = d["principio_attivo"]
         concept: dict = {
             "code":       d["code"],
-            "display":    d["principio_attivo"] or d["display"],
-            "definition": d["display"],
+            "display":    f"{pa} — {nome_comm}" if pa else nome_comm,
+            "definition": nome_comm,
             "property":   props,
         }
         designations = []
