@@ -35,6 +35,10 @@ services:
       - .env
     environment:
       DATABASE_URL: sqlite:////app/data/questionari.db
+      SECRET_KEY: ${PWA_SECRET_KEY}
+      ENVIRONMENT: ${PWA_ENVIRONMENT:-staging}
+      ENFORCE_HTTPS: ${PWA_ENFORCE_HTTPS:-false}
+      CORS_ORIGINS: ${PWA_CORS_ORIGINS:-}
       IRCCS_API_BASE_URL: http://irccs-httpd
       KEYCLOAK_REALM_URL: http://irccs-keycloak:8080/realms/pascale
       WEB_APP_BASE_PATH: /app/
