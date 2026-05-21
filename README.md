@@ -140,6 +140,91 @@ Nel caso in cui si voglia disabilitare la gestione dei ticket, va commentato/eli
 nasconderà i bottoni e bloccherà le chiamate di polling di ricerca dei ticket
 
 
+## Setup WebPush DB (installazioni esistenti)
+
+Su fresh install il file `postgres-init/01-create-webpush-db.sh` viene eseguito automaticamente da PostgreSQL al primo avvio.
+
+Su installazioni esistenti (volume già inizializzato) eseguire manualmente:
+
+```bash
+source .env
+
+docker exec -it postgres-keycloak psql -U "$POSTGRES_KEYCLOAK_USER" -d postgres \
+  -c "CREATE USER webpush WITH PASSWORD '$WEBPUSH_DB_PASSWORD';"
+
+docker exec -it postgres-keycloak psql -U "$POSTGRES_KEYCLOAK_USER" -d postgres \
+  -c "CREATE DATABASE webpush OWNER webpush;"
+
+docker exec -it postgres-keycloak psql -U "$POSTGRES_KEYCLOAK_USER" -d postgres \
+  -c "GRANT ALL PRIVILEGES ON DATABASE webpush TO webpush;"
+
+docker compose up -d irccs-webpush
+```
+
+## Stack PWA (stack separato)
+
+La PWA questionari (`irccs-pwa`) gira in uno stack Docker separato che si aggancia alla rete `irccs-docker_irccs`.
+
+### Prerequisiti
+
+Aggiungere al `.env` prima di avviare:
+
+```bash
+# OBBLIGATORIO: openssl rand -hex 32
+PWA_SECRET_KEY=
+
+# staging = no ENFORCE_HTTPS richiesto; production = richiede ENFORCE_HTTPS=true
+PWA_ENVIRONMENT=staging
+PWA_ENFORCE_HTTPS=false
+
+# Origini CORS ammesse (porta admin + eventuale dominio pubblico)
+# Esempio: http://10.99.88.204:8092,https://pwa.irccs.infocube.it
+PWA_CORS_ORIGINS=
+```
+
+### Build mode (HTTP vs HTTPS)
+
+Le immagini Flutter (PWA paziente e admin) sono buildate con `BUILD_MODE`:
+
+| Valore | Quando usarlo |
+|--------|--------------|
+| `profile` (default) | Preprod/locale senza HTTPS — `kReleaseMode=false`, HTTP consentito |
+| `release` | Produzione con HTTPS attivo — `kReleaseMode=true`, HTTPS obbligatorio |
+
+Per cambiare mode: triggera il job Jenkins `irccs-pwa` con parametro `BUILD_MODE=release` (o `profile`), poi rideploya le immagini.
+
+### Avvio
+
+```bash
+# Prerequisito: stack IRCCS principale già avviato
+docker compose up -d
+
+# Avvio stack PWA
+docker compose -f docker-compose.pwa.yml up -d
+```
+
+### Setup iniziale (una sola volta)
+
+```bash
+docker exec irccs-pwa-backend python seed.py
+```
+
+Crea utente admin e dati demo. Senza questo step il login admin non funziona.
+
+### URL
+
+| Servizio | URL |
+|----------|-----|
+| PWA paziente | http://\<IP\>:8090/app/ |
+| PWA admin panel | http://\<IP\>:8092/pwa-admin/ |
+| Backend API (Swagger) | http://\<IP\>:8091/docs |
+
+### Stop stack PWA
+
+```bash
+docker compose -f docker-compose.pwa.yml down
+```
+
 ## Note application.properties MS
 Questa nota serve per gli sviluppatori per capire come funziona la gestione dell'application.properties dei microservizi.
 I file di properiets deployati all'interno delle diverse cartelle del progetto vanno in aggiunta e/o modifica dei file application.properties "interni" dei microservizi.
