@@ -107,7 +107,7 @@ services:
     restart: always
 
   irccs-httpd:
-    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.12
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:2.5.13
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
@@ -157,6 +157,10 @@ services:
       KC_HOSTNAME_URL: ${KC_HOSTNAME_URL}
       #KC_HOSTNAME_STRICT: true
       #KC_PROXY: edge
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: forwarded
     env_file:
       - .env
     restart: always
@@ -285,39 +289,38 @@ services:
     networks:
       - irccs
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
-    container_name: irccs-elasticsearch
-    environment:
-      - discovery.type=single-node
-      - cluster.name=snowstorm-cluster
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-      - irccs
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    restart: always
+  #elasticsearch:
+  #  image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+  #  container_name: irccs-elasticsearch
+  #  environment:
+  #    - discovery.type=single-node
+  #    - cluster.name=snowstorm-cluster
+  #    - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+  #  volumes:
+  #    - elasticsearch_data:/usr/share/elasticsearch/data
+  #  networks:
+  #    - irccs
+  #  healthcheck:
+  #    test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+  #    interval: 30s
+  #    timeout: 10s
+  #    retries: 10
+  #  restart: always
 
-  snowstorm:
-    image: snomedinternational/snowstorm:latest
-    container_name: irccs-snowstorm
-    command: --elasticsearch.urls=http://elasticsearch:9200
-    environment:
-      - JDK_JAVA_OPTIONS=--add-opens java.base/java.util=ALL-UNNAMED
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    ports:
-      - "8085:8080"
-    networks:
-      - irccs
-    restart: always
+  #snowstorm:
+  #  image: snomedinternational/snowstorm:latest
+  #  container_name: irccs-snowstorm
+  #  command: --elasticsearch.urls=http://elasticsearch:9200
+  #  environment:
+  #    - JDK_JAVA_OPTIONS=--add-opens java.base/java.util=ALL-UNNAMED
+  #  depends_on:
+  #    elasticsearch:
+  #      condition: service_healthy
+  #  ports:
+  #    - "8085:8080"
+  #  networks:
+  #    - irccs
+  #  restart: always
 
   irccs-microservice-patient-interview:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-patient-interview:2.1.0-SNAPSHOT
