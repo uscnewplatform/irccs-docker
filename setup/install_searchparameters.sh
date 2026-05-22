@@ -336,6 +336,25 @@ curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -d "$JSON_BODY"
 
 
+# Group questionnaire SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://yourserver/SearchParameter/group-questionnaire",
+  "name": "group-questionnaire",
+  "status": "active",
+  "code": "questionnaire",
+  "base": ["Group"],
+  "type": "reference",
+  "expression": "Group.characteristic.where(code.coding.code='questionnaire').value.ofType(Reference)",
+  "target": ["Questionnaire"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
 # Create ADMIN first User inHAPI FHIR
 JSON_BODY=$(cat <<EOF
 {
