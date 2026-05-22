@@ -193,25 +193,39 @@ Le immagini Flutter (PWA paziente e admin) sono buildate con `BUILD_MODE`:
 
 Per cambiare mode: triggera il job Jenkins `irccs-pwa` con parametro `BUILD_MODE=release` (o `profile`), poi rideploya le immagini.
 
-### Avvio
+### Avvio completo (prima installazione)
 
+**1. Configura `.env`** (vedi sezione Prerequisiti sopra)
+
+**2. Avvia lo stack IRCCS principale** (se non già up):
 ```bash
-# Prerequisito: stack IRCCS principale già avviato
-docker compose up -d
-
-# Avvio stack PWA
-docker compose -f docker-compose.pwa.yml up -d
+docker-compose up -d
 ```
 
-### Setup iniziale (una sola volta)
+**3. Avvia lo stack PWA:**
+```bash
+docker-compose -f docker-compose.pwa.yml up -d
+```
 
+**4. Verifica che i container siano up:**
+```bash
+docker-compose -f docker-compose.pwa.yml ps
+# tutti e 3 devono essere in stato "Up"
+```
+
+**5. Seed iniziale — obbligatorio alla prima installazione:**
 ```bash
 docker exec irccs-pwa-backend python seed.py
 ```
+Crea l'utente admin PWA e i dati demo. **Senza questo step il login admin non funziona.**
 
-Crea utente admin e dati demo. Senza questo step il login admin non funziona.
+**6. Verifica backend:**
+```bash
+docker exec irccs-pwa-backend curl -s http://localhost:8000/health
+# atteso: {"status":"ok"}
+```
 
-### URL
+**7. Apri nel browser:**
 
 | Servizio | URL |
 |----------|-----|
@@ -219,11 +233,25 @@ Crea utente admin e dati demo. Senza questo step il login admin non funziona.
 | PWA admin panel | http://\<IP\>:8092/pwa-admin/ |
 | Backend API (Swagger) | http://\<IP\>:8091/docs |
 
+### Aggiornamento immagini
+
+```bash
+docker-compose -f docker-compose.pwa.yml pull
+docker-compose -f docker-compose.pwa.yml up -d
+```
+
 ### Stop stack PWA
 
 ```bash
-docker compose -f docker-compose.pwa.yml down
+docker-compose -f docker-compose.pwa.yml down
 ```
+
+### Troubleshooting
+
+- **Flutter crasha con "API_BASE_URL deve essere HTTPS"** → le immagini sono state buildate con `BUILD_MODE=release`. Rebuildare con `BUILD_MODE=profile` (job Jenkins `irccs-pwa`).
+- **Login admin non funziona** → eseguire `docker exec irccs-pwa-backend python seed.py`.
+- **Backend non risponde** → `docker-compose -f docker-compose.pwa.yml logs --tail=50 irccs-pwa-backend`.
+- **Rete non trovata all'avvio** → lo stack IRCCS principale deve essere up prima (`docker-compose up -d`).
 
 ## Note application.properties MS
 Questa nota serve per gli sviluppatori per capire come funziona la gestione dell'application.properties dei microservizi.
