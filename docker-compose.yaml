@@ -125,7 +125,7 @@ services:
     restart: always
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
-      - ./postgres-init:/docker-entrypoint-initdb.d
+      - ./microservice-config-webpush/postgres-init:/docker-entrypoint-initdb.d
     env_file:
       - .env
     environment:

@@ -5,7 +5,7 @@
 # Prerequisiti: stack IRCCS già avviato per Keycloak e httpd.
 
 networks:
-  irccs:
+  irccs-docker_irccs:
     external: true
 
 volumes:
@@ -22,7 +22,7 @@ services:
     ports:
       - "8090:8080"
     networks:
-      - irccs
+      - irccs-docker_irccs
     depends_on:
       - irccs-pwa-backend
     restart: always
@@ -31,6 +31,8 @@ services:
     image: nexus.infocube.it:443/i3/irccs/irccs-pwa-backend/develop:1.0.0
     container_name: irccs-pwa-backend
     hostname: irccs-pwa-backend
+    ports:
+      - "8091:8000"
     env_file:
       - .env
     environment:
@@ -45,7 +47,7 @@ services:
     volumes:
       - pwa_db_data:/app/data
     networks:
-      - irccs
+      - irccs-docker_irccs
     restart: always
 
   irccs-pwa-admin:
@@ -53,5 +55,5 @@ services:
     container_name: irccs-pwa-admin
     hostname: irccs-pwa-admin
     networks:
-      - irccs
+      - irccs-docker_irccs
     restart: always
