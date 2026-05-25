@@ -192,7 +192,7 @@ EOF
         -d "$JSON_BODY"
 done
 
-# Enrollment SearchParameter
+# Enrollment SearchParameter (string — ricerca per ID stringa)
 JSON_BODY=$(cat <<EOF
 {
   "resourceType": "SearchParameter",
@@ -208,6 +208,27 @@ JSON_BODY=$(cat <<EOF
   "expression": "ResearchStudy.enrollment.reference",
   "processingMode": "normal",
   "modifier": ["exact"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# Enrollment-group SearchParameter (reference type — per _revinclude:iterate)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "name": "enrollment-group",
+  "title": "enrollment-group",
+  "status": "active",
+  "publisher": "Infocube",
+  "description": "Reference search on ResearchStudy.enrollment for _revinclude",
+  "code": "enrollment-group",
+  "base": ["ResearchStudy"],
+  "type": "reference",
+  "expression": "ResearchStudy.enrollment",
+  "target": ["Group"]
 }
 EOF
 )
@@ -270,6 +291,26 @@ JSON_BODY=$(cat <<EOF
   "expression": "PlanDefinition.relatedArtifact.where(type='documentation').resource",
   "xpathUsage": "normal",
   "target": ["CarePlan"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# PlanDefinition.action.definitionCanonical SearchParameter (per _revinclude da ActivityDefinition)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://your.fhir.server/SearchParameter/PlanDefinition-action-definition",
+  "name": "action-definition",
+  "status": "active",
+  "description": "ActivityDefinition or PlanDefinition referenced in PlanDefinition.action.definitionCanonical",
+  "code": "action-definition",
+  "base": ["PlanDefinition"],
+  "type": "reference",
+  "expression": "PlanDefinition.action.definitionCanonical",
+  "target": ["ActivityDefinition", "PlanDefinition"]
 }
 EOF
 )
