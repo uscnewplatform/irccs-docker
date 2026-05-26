@@ -305,11 +305,11 @@ JSON_BODY=$(cat <<EOF
   "url": "http://your.fhir.server/SearchParameter/PlanDefinition-action-definition",
   "name": "action-definition",
   "status": "active",
-  "description": "ActivityDefinition or PlanDefinition referenced in PlanDefinition.action.definitionCanonical",
+  "description": "ActivityDefinition or PlanDefinition referenced in PlanDefinition.action.definitionCanonical or action.definition",
   "code": "action-definition",
   "base": ["PlanDefinition"],
   "type": "reference",
-  "expression": "PlanDefinition.action.definitionCanonical",
+  "expression": "PlanDefinition.action.definitionCanonical | PlanDefinition.action.definition",
   "target": ["ActivityDefinition", "PlanDefinition"]
 }
 EOF
