@@ -1,0 +1,21 @@
+{
+  "resourceType": "ValueSet",
+  "id": "aifa-atc-all",
+  "url": "http://terminology.hl7.it/ValueSet/aifa-atc-all",
+  "version": "2026-06",
+  "name": "AIFAATCAll",
+  "title": "Principi Attivi ATC (tutti) - AIFA",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-06-03",
+  "publisher": "AIFA - Agenzia Italiana del Farmaco",
+  "description": "Tutti i principi attivi per codice ATC — versione 2026-06.",
+  "compose": {
+    "include": [
+      {
+        "system": "http://terminology.hl7.it/CodeSystem/aifa-atc-principi-attivi",
+        "version": "2026-06"
+      }
+    ]
+  }
+}
