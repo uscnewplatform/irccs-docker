@@ -98,7 +98,8 @@ def org_assigner_id(group):
 def main():
     ap = argparse.ArgumentParser(description="Backfill gruppo farmacovigilanza + Group.code")
     ap.add_argument("--fhir-url", required=True, help="Base URL HAPI FHIR, es. http://localhost:8080/fhir")
-    ap.add_argument("--centro-url", required=True, help="Base URL microservizio centro-ricerca (per POST /fhir/Group)")
+    ap.add_argument("--centro-url", required=True, help="Base URL per POST creazione Group (centro-ricerca o reverse-proxy)")
+    ap.add_argument("--group-path", default="/fhir/Group", help="Path di creazione Group sul centro-url (es. /fhir/Group in locale, /Group dietro reverse-proxy preprod)")
     ap.add_argument("--token", default="", help="Bearer token admin (super-admin Keycloak)")
     ap.add_argument("--dry-run", action="store_true", help="Mostra le azioni senza eseguirle")
     args = ap.parse_args()
@@ -174,7 +175,7 @@ def main():
                 headers = auth_headers(args.token)
                 headers["organizationId"] = org_id
                 headers["role"] = FARMACO_ROLE
-                r = requests.post(f"{centro}/fhir/Group", headers=headers, data=json.dumps(payload),
+                r = requests.post(f"{centro}{args.group_path}", headers=headers, data=json.dumps(payload),
                                   timeout=120)
                 r.raise_for_status()
                 stats["farmaco_created"] += 1
