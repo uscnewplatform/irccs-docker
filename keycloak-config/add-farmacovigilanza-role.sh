@@ -1,25 +1,29 @@
 #!/usr/bin/env bash
 #
-# Crea il realm role 'farmacovigilanza' clonando i compositi di 'radiologo'.
+# Crea/allinea i realm role della farmacovigilanza su un Keycloak GIA' AVVIATO
+# (senza re-import del realm). Idempotente.
 #
-# Il ruolo farmacovigilanza eredita gli stessi permessi del radiologo:
-#   - read/search su tutte le risorse cliniche (Patient, QuestionnaireResponse,
-#     Questionnaire, CarePlan, Observation, ...)
-#   - internal:ui:patients (vede solo il menu Pazienti)
-#   - internal:read:group + internal:read:organization (vede i pazienti di
-#     tutti i centri dello studio)
-#   - nessun create/update/delete su risorse cliniche
-#   - apertura ticket (come radiologo)
+# Crea:
+#   - internal:read:study-associated  (flag) -> abilita in Flow.java la visibilita'
+#     per-associazione: l'utente vede pazienti/CRF di TUTTI i centri degli studi a
+#     cui i suoi gruppi sono associati (group_ids sullo studio), non solo del proprio.
+#   - opened_sae_email                (composite) -> profilo farmacovigilanza:
+#       * internal:ui:patients (menu Pazienti)
+#       * lettura (read/search) su patient, questionnaire, questionnaireresponse,
+#         researchstudy, researchsubject, adverseevent, practitioner, group, organization
+#       * internal:read:study-associated + internal:read:group (visibilita')
+#       * internal:create:group + task:create/read/search (apertura query/ticket)
+#       * NESSUN create/update sulle CRF (questionnaireresponse), NESSUN
+#         internal:read:organization (niente visibilita' dell'intero centro)
 #
-# I ruoli Keycloak sono additivi: un utente con anche altri ruoli ottiene
-# l'unione dei permessi.
+# NB: i sotto-ruoli elencati devono gia' esistere nel realm (lo sono nel realm pascale).
+# I gruppi per-centro "<Org> Farmaco vigilanza" sono creati a runtime da OrganizationFlow
+# alla creazione del centro; per i centri esistenti usare setup/backfill_farmacovigilanza.py.
 #
 # Uso:
 #   KC_URL=http://localhost:9445 REALM=pascale \
 #   ADMIN_USER=admin ADMIN_PASS=*** \
 #   ./add-farmacovigilanza-role.sh
-#   
-# Opzionale: CREATE_GROUP=true crea anche il gruppo /Farmacovigilanza col ruolo.
 #
 # Richiede: curl, jq.
 
@@ -30,15 +34,32 @@ REALM="${REALM:-pascale}"
 ADMIN_USER="${ADMIN_USER:-admin}"
 ADMIN_PASS="${ADMIN_PASS:-admin}"
 ADMIN_REALM="${ADMIN_REALM:-master}"
-SRC_ROLE="${SRC_ROLE:-radiologo}"
-NEW_ROLE="${NEW_ROLE:-farmacovigilanza}"
-CREATE_GROUP="${CREATE_GROUP:-false}"
+NEW_ROLE="${NEW_ROLE:-opened_sae_email}"
+FLAG_ROLE="internal:read:study-associated"
+
+# Compositi curati del ruolo farmacovigilanza.
+COMPOSITE_ROLES=(
+  "internal:ui:patients"
+  "internal:read:study-associated"
+  "internal:read:group"
+  "internal:create:group"
+  "patient:read" "patient:search"
+  "questionnaire:read" "questionnaire:search"
+  "questionnaireresponse:read" "questionnaireresponse:search"
+  "researchstudy:read" "researchstudy:search"
+  "researchsubject:read" "researchsubject:search"
+  "adverseevent:read" "adverseevent:search"
+  "practitioner:read" "practitioner:search"
+  "group:read" "group:search"
+  "organization:read" "organization:search"
+  "task:create" "task:read" "task:search"
+)
 
 command -v jq >/dev/null || { echo "ERRORE: jq non installato"; exit 1; }
 
 echo "Keycloak : $KC_URL"
 echo "Realm    : $REALM"
-echo "Clono    : $SRC_ROLE -> $NEW_ROLE"
+echo "Ruolo    : $NEW_ROLE"
 echo
 
 # ── 1. Token admin ──────────────────────────────────────────────────────────
@@ -54,44 +75,45 @@ AUTH=(-H "Authorization: Bearer $TOKEN")
 
 api() { curl -fsS "${AUTH[@]}" -H "Content-Type: application/json" "$@"; }
 
-# ── 2. Verifica ruolo sorgente ───────────────────────────────────────────────
-if ! api "$KC_URL/admin/realms/$REALM/roles/$SRC_ROLE" >/dev/null 2>&1; then
-  echo "ERRORE: ruolo sorgente '$SRC_ROLE' non trovato nel realm $REALM"
-  exit 1
+# urlencode minimale per i nomi ruolo con ':'
+enc() { jq -rn --arg s "$1" '$s|@uri'; }
+
+# ── 2. Crea il flag internal:read:study-associated (idempotente) ─────────────
+if api "$KC_URL/admin/realms/$REALM/roles/$(enc "$FLAG_ROLE")" >/dev/null 2>&1; then
+  echo "Flag '$FLAG_ROLE' gia' presente."
+else
+  echo "Creo flag '$FLAG_ROLE'."
+  api -X POST "$KC_URL/admin/realms/$REALM/roles" \
+    -d "{\"name\":\"$FLAG_ROLE\",\"description\":\"Abilita la visibilita' read/search sulle risorse di tutti i centri degli studi a cui i gruppi dell'utente sono associati\",\"composite\":false}" >/dev/null
 fi
 
-# ── 3. Crea il nuovo ruolo (idempotente) ─────────────────────────────────────
-if api "$KC_URL/admin/realms/$REALM/roles/$NEW_ROLE" >/dev/null 2>&1; then
-  echo "Ruolo '$NEW_ROLE' gia' presente, procedo ad allineare i compositi."
+# ── 3. Crea il ruolo composito opened_sae_email (idempotente) ────────────────
+if api "$KC_URL/admin/realms/$REALM/roles/$(enc "$NEW_ROLE")" >/dev/null 2>&1; then
+  echo "Ruolo '$NEW_ROLE' gia' presente, allineo i compositi."
 else
   echo "Creo ruolo '$NEW_ROLE'."
   api -X POST "$KC_URL/admin/realms/$REALM/roles" \
-    -d "{\"name\":\"$NEW_ROLE\",\"description\":\"Farmacovigilanza: read-only clinico come radiologo + apertura ticket\",\"composite\":true}" >/dev/null
+    -d "{\"name\":\"$NEW_ROLE\",\"description\":\"Farmacovigilanza: lettura pazienti/CRF di tutti i centri degli studi associati + apertura query/ticket\",\"composite\":true}" >/dev/null
 fi
 
-# ── 4. Copia i compositi di radiologo nel nuovo ruolo ─────────────────────────
-COMPOSITES=$(api "$KC_URL/admin/realms/$REALM/roles/$SRC_ROLE/composites")
-N=$(echo "$COMPOSITES" | jq 'length')
-echo "Compositi di '$SRC_ROLE': $N"
+# ── 4. Costruisci la lista di RoleRepresentation dei compositi ───────────────
+COMPOSITES_JSON="[]"
+for role in "${COMPOSITE_ROLES[@]}"; do
+  rep=$(api "$KC_URL/admin/realms/$REALM/roles/$(enc "$role")" 2>/dev/null || true)
+  if [ -z "$rep" ] || [ "$(echo "$rep" | jq -r '.name // empty')" = "" ]; then
+    echo "  ATTENZIONE: sotto-ruolo '$role' non trovato nel realm, lo salto."
+    continue
+  fi
+  COMPOSITES_JSON=$(jq -c --argjson r "$rep" '. + [$r]' <<<"$COMPOSITES_JSON")
+done
 
-# POST accetta la lista di RoleRepresentation cosi' com'e' (id+name bastano)
-api -X POST "$KC_URL/admin/realms/$REALM/roles/$NEW_ROLE/composites" \
-  -d "$COMPOSITES" >/dev/null
+N=$(echo "$COMPOSITES_JSON" | jq 'length')
+echo "Compositi risolti: $N"
 
-echo "Compositi assegnati a '$NEW_ROLE'."
-
-# ── 5. (opzionale) Gruppo Farmacovigilanza col ruolo ─────────────────────────
-if [ "$CREATE_GROUP" = "true" ]; then
-  echo "Creo gruppo '/$NEW_ROLE' (se assente) e assegno il ruolo."
-  api -X POST "$KC_URL/admin/realms/$REALM/groups" \
-    -d "{\"name\":\"$NEW_ROLE\"}" >/dev/null 2>&1 || true
-  GID=$(api "$KC_URL/admin/realms/$REALM/groups?search=$NEW_ROLE" | jq -r ".[] | select(.name==\"$NEW_ROLE\") | .id" | head -1)
-  ROLE_JSON=$(api "$KC_URL/admin/realms/$REALM/roles/$NEW_ROLE")
-  api -X POST "$KC_URL/admin/realms/$REALM/groups/$GID/role-mappings/realm" \
-    -d "[$ROLE_JSON]" >/dev/null
-  echo "Gruppo '/$NEW_ROLE' -> ruolo '$NEW_ROLE' assegnato (group id: $GID)."
-fi
+# ── 5. Assegna i compositi (POST e' additivo/idempotente) ────────────────────
+api -X POST "$KC_URL/admin/realms/$REALM/roles/$(enc "$NEW_ROLE")/composites" \
+  -d "$COMPOSITES_JSON" >/dev/null
 
 echo
-echo "FATTO. Ruolo '$NEW_ROLE' creato clonando '$SRC_ROLE' ($N compositi)."
-echo "Assegna il ruolo (o il gruppo) agli utenti di farmacovigilanza dalla console Keycloak."
+echo "FATTO. Ruolo '$NEW_ROLE' allineato con $N compositi + flag '$FLAG_ROLE'."
+echo "Assegna il ruolo agli utenti via gruppo '<Org> Farmaco vigilanza' (creato da OrganizationFlow / backfill)."

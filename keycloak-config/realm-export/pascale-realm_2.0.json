@@ -309,6 +309,53 @@
         "attributes": {}
       },
       {
+        "id": "a1f0c2e4-7b3d-4e9a-9c11-0f5e6d8a2b34",
+        "name": "opened_sae_email",
+        "description": "Farmacovigilanza: lettura pazienti/CRF di tutti i centri degli studi associati + apertura query/ticket",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "internal:ui:patients",
+            "internal:read:study-associated",
+            "internal:read:group",
+            "internal:create:group",
+            "patient:read",
+            "patient:search",
+            "questionnaire:read",
+            "questionnaire:search",
+            "questionnaireresponse:read",
+            "questionnaireresponse:search",
+            "researchstudy:read",
+            "researchstudy:search",
+            "researchsubject:read",
+            "researchsubject:search",
+            "adverseevent:read",
+            "adverseevent:search",
+            "practitioner:read",
+            "practitioner:search",
+            "group:read",
+            "group:search",
+            "organization:read",
+            "organization:search",
+            "task:create",
+            "task:read",
+            "task:search"
+          ]
+        },
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "b7e3d4f5-2a1c-4e6b-8d90-3c4f5a6b7c81",
+        "name": "internal:read:study-associated",
+        "description": "Abilita la visibilita' (read/search) sulle risorse di tutti i centri degli studi a cui i gruppi dell'utente sono associati (group_ids sullo studio)",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
         "id": "b3a92e48-d5cc-4ac1-a5c5-74c22adae799",
         "name": "radiologo",
         "description": "",
@@ -2656,6 +2703,22 @@
           },
           "realmRoles": [
             "sperimentatore"
+          ],
+          "clientRoles": {}
+        },
+        {
+          "id": "c4d8e2a1-5f6b-4c3d-9e7a-1b2c3d4e5f60",
+          "name": "Pascale Farmaco vigilanza",
+          "path": "/Pascale/Pascale Farmaco vigilanza",
+          "parentId": "9c793cfa-397b-4388-a0ad-26fd4ff74fc6",
+          "subGroups": [],
+          "attributes": {
+            "isOrganization": [
+              "false"
+            ]
+          },
+          "realmRoles": [
+            "opened_sae_email"
           ],
           "clientRoles": {}
         }
