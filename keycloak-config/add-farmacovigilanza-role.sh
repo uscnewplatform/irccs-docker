@@ -11,6 +11,8 @@
 #       * internal:ui:patients (menu Pazienti)
 #       * lettura (read/search) su patient, questionnaire, questionnaireresponse,
 #         researchstudy, researchsubject, adverseevent, practitioner, group, organization
+#       * lettura (read/search) strutture CRF/diario: careplan, activitydefinition,
+#         plandefinition, observation, consent (per visualizzare i questionari)
 #       * internal:read:study-associated + internal:read:group (visibilita')
 #       * internal:create:group + task:create/read/search (apertura query/ticket)
 #       * NESSUN create/update sulle CRF (questionnaireresponse), NESSUN
@@ -52,6 +54,14 @@ COMPOSITE_ROLES=(
   "practitioner:read" "practitioner:search"
   "group:read" "group:search"
   "organization:read" "organization:search"
+  # Lettura strutture CRF/diario per visualizzare i questionari del paziente
+  # (CarePlan + ActivityDefinition + PlanDefinition), le linee terapeutiche
+  # (Observation) e il consenso (Consent). Solo read/search: nessuna modifica CRF.
+  "careplan:read" "careplan:search"
+  "activitydefinition:read" "activitydefinition:search"
+  "plandefinition:read" "plandefinition:search"
+  "observation:read" "observation:search"
+  "consent:read" "consent:search"
   "task:create" "task:read" "task:search"
 )
 
