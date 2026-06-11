@@ -108,6 +108,14 @@ Eseguire poi il comando
 
 ip e port sono quelle del container di fhir (vedi docker-compose, la porta esposta per hapi-fhir è 8080) : http://irccs-hapi-fhir:8080/fhir
 
+## Installazione tipi di consenso
+Registry dinamico dei tipi di consenso come CodeSystem FHIR (`urn:irccs:consent-type`). Precarica i 9 tipi base (terminologia HL7). Necessario per il designer e per il tipo `privacy`.
+```bash
+chmod +x install_consent_types.sh
+bash install_consent_types.sh hostname:port
+```
+Idempotente (PUT conditional). Gestione successiva da dashboard: Back-office → Tipi di consenso (SuperAdmin).
+
 NOTE:
 
 Per attivare Keycloak in SSL è necessario:

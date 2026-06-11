@@ -420,3 +420,49 @@ EOF
 curl -s -X POST "http://$HOSTNAME_PORT/fhir/Practitioner" \
       -H "Content-Type: application/json" \
       -d "$JSON_BODY"
+
+# ── Consent ─────────────────────────────────────────────────────────────────
+# La dashboard cerca i consensi con `Consent?patient=<id>&status=active`
+# (vedi ConsentClient.fetchActiveConsents). Su alcuni HAPI questi param non sono
+# attivi di default → la ricerca torna vuota anche se la risorsa esiste.
+# Una volta installati, ogni salvataggio successivo viene indicizzato in automatico;
+# per i consensi gia esistenti serve un $reindex una-tantum.
+
+# Consent.patient (reference)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://irccs.pascale.it/SearchParameter/Consent-patient",
+  "name": "patient",
+  "status": "active",
+  "description": "Search Consent by patient reference",
+  "code": "patient",
+  "base": ["Consent"],
+  "type": "reference",
+  "expression": "Consent.patient",
+  "target": ["Patient"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# Consent.status (token)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://irccs.pascale.it/SearchParameter/Consent-status",
+  "name": "status",
+  "status": "active",
+  "description": "Search Consent by status",
+  "code": "status",
+  "base": ["Consent"],
+  "type": "token",
+  "expression": "Consent.status"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
