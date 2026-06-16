@@ -66,6 +66,12 @@ hapi:
     ### --- ablita valuset loinc --- ###
     loinc_answerlist_valuesets_enabled: true
     loinc_valueset_expansion_enabled: true
+
+    ### Pre-espansione ValueSet: indicizza i concept (display + designation) nelle
+    ### tabelle TermValueSetConcept. Necessaria per $expand?filter che matcha le
+    ### designation (es. ricerca farmaci per principio attivo). Job schedulato in
+    ### background, una tantum per (ri)caricamento del CodeSystem/ValueSet.
+    pre_expand_value_sets: true
     #  integrazione Snowstorm per SNOMED:
     external_terminology_server_url: 'http://snowstorm:8080/fhir'
 
