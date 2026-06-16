@@ -37,6 +37,8 @@ import csv
 import json
 import os
 import sys
+import threading
+import time
 import urllib.parse
 import urllib.request
 import urllib.error
@@ -235,13 +237,28 @@ def build_valueset(version: str) -> dict:
 
 # ── HAPI (solo stdlib, niente requests) ──────────────────────────────────────
 
+def _heartbeat(label: str):
+    """Context manager-like: stampa elapsed ogni 15s finché non stoppato."""
+    stop = threading.Event()
+    t0 = time.monotonic()
+
+    def beat():
+        while not stop.wait(15):
+            print(f"    ... {label}: in attesa risposta HAPI, {int(time.monotonic()-t0)}s",
+                  flush=True)
+    th = threading.Thread(target=beat, daemon=True)
+    th.start()
+    return stop, t0
+
+
 def http_json(method: str, url: str, params: dict | None = None,
-              body: str | None = None, timeout: int = 30):
+              body: str | None = None, timeout: int = 30, heartbeat: bool = False):
     """Ritorna (status_code, parsed_json_or_None, raw_text). Niente eccezioni su 4xx/5xx."""
     if params:
         url = f"{url}?{urllib.parse.urlencode(params)}"
     data = body.encode("utf-8") if body is not None else None
     req = urllib.request.Request(url, data=data, method=method, headers=FHIR_HEADERS)
+    hb = _heartbeat(f"{method} {url.split('?')[0]}") if heartbeat else None
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             status = resp.getcode()
@@ -249,6 +266,10 @@ def http_json(method: str, url: str, params: dict | None = None,
     except urllib.error.HTTPError as e:
         status = e.code
         text = e.read().decode("utf-8", errors="replace")
+    finally:
+        if hb:
+            hb[0].set()
+            print(f"    -> risposta dopo {int(time.monotonic()-hb[1])}s", flush=True)
     try:
         parsed = json.loads(text) if text else None
     except json.JSONDecodeError:
@@ -272,16 +293,18 @@ def fhir_conditional_put(hapi_url: str, resource: dict) -> dict | None:
             existing_id = entries[0]["resource"]["id"]
 
     body = json.dumps(resource)
-    print(f"  [{rt}] payload {len(body)/1024/1024:.1f} MB, invio (timeout {PUT_TIMEOUT}s)...")
+    big = len(body) > 1_000_000  # heartbeat solo per payload grandi
+    print(f"  [{rt}] payload {len(body)/1024/1024:.1f} MB, invio (timeout {PUT_TIMEOUT}s) "
+          f"@ {time.strftime('%H:%M:%S')} ...", flush=True)
     if existing_id:
         resource["id"] = existing_id
         body = json.dumps(resource)
         st, js, text = http_json("PUT", f"{hapi_url}/{rt}/{existing_id}",
-                                 body=body, timeout=PUT_TIMEOUT)
+                                 body=body, timeout=PUT_TIMEOUT, heartbeat=big)
         verb = "PUT"
     else:
         st, js, text = http_json("POST", f"{hapi_url}/{rt}",
-                                 body=body, timeout=PUT_TIMEOUT)
+                                 body=body, timeout=PUT_TIMEOUT, heartbeat=big)
         verb = "POST"
 
     if st not in (200, 201):
