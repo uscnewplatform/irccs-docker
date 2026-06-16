@@ -117,16 +117,16 @@ def _des(code, display, value):
 
 
 def build_concept(d):
+    # NB: $apply-codesystem-delta-add SCARTA le designation ma TIENE le property.
+    # Ricerca = via display. forma/atc/pa = property, recuperate dal frontend con
+    # $lookup alla selezione del farmaco (non da $expand, che non ritorna le property).
     pa, denom, descr, forma, atc = d["pa"], d["denom"], d["descr"], d["forma"], d["atc"]
     nome = " ".join(x for x in (denom, descr) if x).strip()
     display = f"{pa} — {nome}" if (pa and nome) else (nome or pa)
-    des = [_des("principio-attivo", "Principio attivo", pa)]
-    if forma: des.append(_des("forma", "Forma farmaceutica", forma))
-    if atc:   des.append(_des("atc", "Codice ATC", atc))
     props = [{"code": "principio-attivo", "valueString": pa}]
     if forma: props.append({"code": "forma", "valueString": forma})
     if atc:   props.append({"code": "atc", "valueString": atc})
-    return {"code": d["code"], "display": display, "designation": des, "property": props}
+    return {"code": d["code"], "display": display, "property": props}
 
 
 # ── HAPI ─────────────────────────────────────────────────────────────────────
