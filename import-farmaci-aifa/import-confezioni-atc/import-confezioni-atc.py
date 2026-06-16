@@ -58,8 +58,8 @@ FHIR_HEADERS = {
 }
 
 # PUT di ~159k concept content=complete: il server deve parsare + indicizzare
-# (Lucene). Timeout ampio.
-PUT_TIMEOUT = 1800
+# (Lucene) in UNA transazione. Timeout ampio (60 min).
+PUT_TIMEOUT = 3600
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
@@ -73,10 +73,19 @@ def parse_args():
                    help="Path di confezioni.csv (default: ricerca standard)")
     p.add_argument("--version", default=None,
                    help="Versione YYYY-MM (default: mese corrente)")
+    p.add_argument("--cs-url", default=None,
+                   help=f"Override URL CodeSystem (default: {CS_URL}). "
+                        "Usa un url vuoto per forzare una CREATE pulita (deferred storage).")
+    p.add_argument("--vs-url", default=None,
+                   help=f"Override URL ValueSet (default: {VS_URL}).")
     p.add_argument("--dry-run", action="store_true",
                    help="Costruisce e scrive il JSON, nessun PUT su HAPI")
     p.add_argument("--limit", type=int, default=None,
                    help="Usa solo le prime N confezioni (test)")
+    p.add_argument("--slim", action="store_true",
+                   help="Droppa le property dai concept (tiene solo display + designation). "
+                        "Meno righe da indicizzare -> PUT piu' leggera. Le designation "
+                        "(pa/forma/atc) restano, il frontend usa quelle.")
     p.add_argument("--out", default=None,
                    help="File di output del CodeSystem in dry-run")
     p.add_argument("--list", action="store_true",
@@ -139,7 +148,7 @@ def _designation(code: str, display: str, value: str) -> dict:
             "value": value}
 
 
-def build_codesystem(confezioni: list[dict], version: str) -> dict:
+def build_codesystem(confezioni: list[dict], version: str, slim: bool = False) -> dict:
     seen: set[str] = set()
     concepts = []
     n_forma = n_atc = 0
@@ -171,12 +180,14 @@ def build_codesystem(confezioni: list[dict], version: str) -> dict:
             designations.append(_designation("atc", "Codice ATC", atc))
             n_atc += 1
 
-        concepts.append({
+        concept = {
             "code":        d["code"],
             "display":     display,
-            "property":    props,
             "designation": designations,
-        })
+        }
+        if not slim:
+            concept["property"] = props
+        concepts.append(concept)
 
     print(f"  Concept: {len(concepts)}  | con forma: {n_forma}  | con atc: {n_atc}")
 
@@ -303,9 +314,14 @@ def list_versions(hapi_url: str) -> None:
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
+    global CS_URL, VS_URL
     args    = parse_args()
     hapi    = args.hapi_url
     version = args.version or date.today().strftime("%Y-%m")
+    if args.cs_url:
+        CS_URL = args.cs_url
+    if args.vs_url:
+        VS_URL = args.vs_url
 
     if args.list:
         print(f"HAPI FHIR: {hapi}")
@@ -324,7 +340,9 @@ def main() -> None:
     confezioni = parse_confezioni(csv_file, args.limit)
 
     print("\n=== Build risorse FHIR ===")
-    cs = build_codesystem(confezioni, version)
+    if args.slim:
+        print("  [SLIM] property droppate, solo display + designation")
+    cs = build_codesystem(confezioni, version, slim=args.slim)
     vs = build_valueset(version)
 
     if args.dry_run:
