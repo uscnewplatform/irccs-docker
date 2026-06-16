@@ -4,3 +4,5 @@
 .env.*
 /keycloak-config/providers_sources/infocube-custom-provider/target/
 /keycloak-config/providers_sources/keycloak-scan-spi/target/
+# output dry-run import farmaci (non committare)
+/import-farmaci-aifa/import-confezioni-atc/codesystem-confezioni-atc.json
