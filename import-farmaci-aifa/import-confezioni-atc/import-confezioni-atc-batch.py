@@ -123,7 +123,10 @@ def build_concept(d):
     des = [_des("principio-attivo", "Principio attivo", pa)]
     if forma: des.append(_des("forma", "Forma farmaceutica", forma))
     if atc:   des.append(_des("atc", "Codice ATC", atc))
-    return {"code": d["code"], "display": display, "designation": des}
+    props = [{"code": "principio-attivo", "valueString": pa}]
+    if forma: props.append({"code": "forma", "valueString": forma})
+    if atc:   props.append({"code": "atc", "valueString": atc})
+    return {"code": d["code"], "display": display, "designation": des, "property": props}
 
 
 # ── HAPI ─────────────────────────────────────────────────────────────────────
