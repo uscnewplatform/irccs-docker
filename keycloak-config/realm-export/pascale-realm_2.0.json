@@ -2300,6 +2300,24 @@
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
+      },
+      {
+        "id": "3426b582-927a-402f-93d2-e8a4d95b1bb1",
+        "name": "datamanager",
+        "description": "Profilo datamanager (visibilità domande CRF / gruppi per centro)",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "dc3d5491-84b4-45c8-aefd-164e2626c7ed",
+        "name": "pi",
+        "description": "Profilo pi (visibilità domande CRF / gruppi per centro)",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
       }
     ],
     "client": {
