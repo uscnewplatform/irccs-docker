@@ -12,11 +12,16 @@
         "title": "PRO-CTCAE v1 Patient-Reported Outcomes",
         "status": "active",
         "content": "complete",
-        "date": "2026-05-20",
+        "date": "2026-06-25",
         "description": "NCI Patient-Reported Outcomes version of CTCAE (PRO-CTCAE) v1. 125 termini.",
         "publisher": "NCI / IRCCS Pascale",
         "copyright": "NCI PRO-CTCAE v1",
         "property": [
+          {
+            "code": "number",
+            "description": "Numero progressivo della domanda (1..N)",
+            "type": "integer"
+          },
           {
             "code": "macrogroup",
             "description": "Macrogruppo sintomatologico",
@@ -79,6 +84,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SENSAZIONE DI BOCCA SECCA nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 1
+              },
+              {
                 "code": "category",
                 "valueString": "SENSAZIONE DI BOCCA SECCA"
               },
@@ -112,6 +121,10 @@
             "code": "PROCTC-0002",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A DEGLUTIRE nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 2
+              },
               {
                 "code": "category",
                 "valueString": "DIFFICOLTA A DEGLUTIRE"
@@ -147,6 +160,10 @@
             "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le PIAGHE IN BOCCA O IN GOLA nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 3
+              },
+              {
                 "code": "category",
                 "valueString": "PIAGHE IN BOCCA O IN GOLA"
               },
@@ -180,6 +197,10 @@
             "code": "PROCTC-0004",
             "display": "Negli ultimi 7 giorni, in che misura le PIAGHE IN BOCCA O IN GOLA HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 4
+              },
               {
                 "code": "category",
                 "valueString": "PIAGHE IN BOCCA O IN GOLA"
@@ -215,6 +236,10 @@
             "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le SCREPOLATURE AGLI ANGOLI DELLA BOCCA, nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 5
+              },
+              {
                 "code": "category",
                 "valueString": "SCREPOLATURE AGLI ANGOLI DELLA BOCCA"
               },
@@ -249,6 +274,10 @@
             "display": "Negli ultimi 7 giorni, ha notato MODIFICAZIONI DELLA VOCE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 6
+              },
+              {
                 "code": "category",
                 "valueString": "MODIFICAZIONI DELLA VOCE"
               },
@@ -270,6 +299,10 @@
             "code": "PROCTC-0007",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la VOCE RAUCA nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 7
+              },
               {
                 "code": "category",
                 "valueString": "VOCE RAUCA"
@@ -305,6 +338,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A SENTIRE IL SAPORE DI CIBI O BEVANDE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 8
+              },
+              {
                 "code": "category",
                 "valueString": "DIFFICOLTÀ A SENTIRE IL SAPORE DI CIBI O BEVANDE"
               },
@@ -338,6 +375,10 @@
             "code": "PROCTC-0009",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DELL’APPETITO nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 9
+              },
               {
                 "code": "category",
                 "valueString": "CALO DELL'’APPETITO"
@@ -373,6 +414,10 @@
             "display": "Negli ultimi 7 giorni, in che misura il CALO DELL’APPETITO HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 10
+              },
+              {
                 "code": "category",
                 "valueString": "CALO DELL'’APPETITO"
               },
@@ -406,6 +451,10 @@
             "code": "PROCTC-0011",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto NAUSEA (senso di malessere allo stomaco)?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 11
+              },
               {
                 "code": "category",
                 "valueString": "NAUSEA (senso di malessere allo stomaco)"
@@ -441,6 +490,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la NAUSEA (senso di malessere allo stomaco) nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 12
+              },
+              {
                 "code": "category",
                 "valueString": "NAUSEA (senso di malessere allo stomaco)"
               },
@@ -474,6 +527,10 @@
             "code": "PROCTC-0013",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto VOMITO?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 13
+              },
               {
                 "code": "category",
                 "valueString": "VOMITO"
@@ -509,6 +566,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il VOMITO nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 14
+              },
+              {
                 "code": "category",
                 "valueString": "VOMITO"
               },
@@ -542,6 +603,10 @@
             "code": "PROCTC-0015",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha accusato IL BRUCIORE DI STOMACO?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 15
+              },
               {
                 "code": "category",
                 "valueString": "BRUCIORE DI STOMACO"
@@ -577,6 +642,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE IL BRUCIORE DI STOMACO nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 16
+              },
+              {
                 "code": "category",
                 "valueString": "BRUCIORE DI STOMACO"
               },
@@ -611,6 +680,10 @@
             "display": "Negli ultimi 7 giorni, ha notato una MAGGIOR PRODUZIONE DI ARIA INTESTINALE (FLATULENZA)?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 17
+              },
+              {
                 "code": "category",
                 "valueString": "MAGGIOR PRODUZIONE DI ARIA INTESTINALE (FLATULENZA)"
               },
@@ -632,6 +705,10 @@
             "code": "PROCTC-0018",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto GONFIORE DELLA PANCIA?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 18
+              },
               {
                 "code": "category",
                 "valueString": "GONFIORE DELLA PANCIA"
@@ -667,6 +744,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il GONFIORE DELLA PANCIA nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 19
+              },
+              {
                 "code": "category",
                 "valueString": "GONFIORE DELLA PANCIA"
               },
@@ -700,6 +781,10 @@
             "code": "PROCTC-0020",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto il SINGHIOZZO?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 20
+              },
               {
                 "code": "category",
                 "valueString": "SINGHIOZZO"
@@ -735,6 +820,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il SINGHIOZZO nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 21
+              },
+              {
                 "code": "category",
                 "valueString": "SINGHIOZZO"
               },
@@ -768,6 +857,10 @@
             "code": "PROCTC-0022",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la STITICHEZZA nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 22
+              },
               {
                 "code": "category",
                 "valueString": "STITICHEZZA"
@@ -803,6 +896,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha notato FECI MOLLI O ACQUOSE (DIARREA)?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 23
+              },
+              {
                 "code": "category",
                 "valueString": "FECI MOLLI O ACQUOSE (DIARREA)"
               },
@@ -836,6 +933,10 @@
             "code": "PROCTC-0024",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto MAL DI PANCIA?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 24
+              },
               {
                 "code": "category",
                 "valueString": "MAL DI PANCIA"
@@ -871,6 +972,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il MAL DI PANCIA nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 25
+              },
+              {
                 "code": "category",
                 "valueString": "MAL DI PANCIA"
               },
@@ -904,6 +1009,10 @@
             "code": "PROCTC-0026",
             "display": "Negli ultimi 7 giorni, in che misura il MAL DI PANCIA HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 26
+              },
               {
                 "code": "category",
                 "valueString": "MAL DI PANCIA"
@@ -939,6 +1048,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto PERDITE DI FECI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 27
+              },
+              {
                 "code": "category",
                 "valueString": "PERDITE DI FECI"
               },
@@ -972,6 +1085,10 @@
             "code": "PROCTC-0028",
             "display": "Negli ultimi 7 giorni, in che misura le PERDITE DI FECI HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 28
+              },
               {
                 "code": "category",
                 "valueString": "PERDITE DI FECI"
@@ -1007,6 +1124,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la MANCANZA DI FIATO nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 29
+              },
+              {
                 "code": "category",
                 "valueString": "MANCANZA DI FIATO"
               },
@@ -1040,6 +1161,10 @@
             "code": "PROCTC-0030",
             "display": "Negli ultimi 7 giorni, in che misura la MANCANZA DI FIATO ha INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 30
+              },
               {
                 "code": "category",
                 "valueString": "MANCANZA DI FIATO"
@@ -1075,6 +1200,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la TOSSE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 31
+              },
+              {
                 "code": "category",
                 "valueString": "TOSSE"
               },
@@ -1108,6 +1237,10 @@
             "code": "PROCTC-0032",
             "display": "Negli ultimi 7 giorni, in che misura la TOSSE HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 32
+              },
               {
                 "code": "category",
                 "valueString": "TOSSE"
@@ -1143,6 +1276,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il RESPIRO SIBILANTE (EMISSIONE DI UN FISCHIO QUANDO SI RESPIRA) nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 33
+              },
+              {
                 "code": "category",
                 "valueString": "RESPIRO SIBILANTE (EMISSIONE DI UN FISCHIO QUANDO SI RESPIRA)"
               },
@@ -1176,6 +1313,10 @@
             "code": "PROCTC-0034",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto GONFIORE ALLE BRACCIA O ALLE GAMBE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 34
+              },
               {
                 "code": "category",
                 "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
@@ -1211,6 +1352,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il GONFIORE ALLE BRACCIA O ALLE GAMBE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 35
+              },
+              {
                 "code": "category",
                 "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
               },
@@ -1244,6 +1389,10 @@
             "code": "PROCTC-0036",
             "display": "Negli ultimi 7 giorni, in che misura il GONFIORE ALLE BRACCIA O ALLE GAMBE HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 36
+              },
               {
                 "code": "category",
                 "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
@@ -1279,6 +1428,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito PALPITAZIONI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 37
+              },
+              {
                 "code": "category",
                 "valueString": "PALPITAZIONI"
               },
@@ -1312,6 +1465,10 @@
             "code": "PROCTC-0038",
             "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le PALPITAZIONI nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 38
+              },
               {
                 "code": "category",
                 "valueString": "PALPITAZIONI"
@@ -1347,6 +1504,10 @@
             "display": "Negli ultimi 7 giorni, ha avuto qualche IRRITAZIONE DELLA PELLE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 39
+              },
+              {
                 "code": "category",
                 "valueString": "IRRITAZIONE DELLA PELLE"
               },
@@ -1368,6 +1529,10 @@
             "code": "PROCTC-0040",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SECCHEZZA DELLA PELLE nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 40
+              },
               {
                 "code": "category",
                 "valueString": "SECCHEZZA DELLA PELLE"
@@ -1403,6 +1568,10 @@
             "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i BRUFOLI (ACNE) SUL VOLTO O SUL TORACE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 41
+              },
+              {
                 "code": "category",
                 "valueString": "BRUFOLI (ACNE) SUL VOLTO O SUL TORACE"
               },
@@ -1436,6 +1605,10 @@
             "code": "PROCTC-0042",
             "display": "Negli ultimi 7 giorni, ha PERSO I CAPELLI?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 42
+              },
               {
                 "code": "category",
                 "valueString": "PERDITA DEI CAPELLI"
@@ -1471,6 +1644,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il PRURITO nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 43
+              },
+              {
                 "code": "category",
                 "valueString": "PRURITO"
               },
@@ -1505,6 +1682,10 @@
             "display": "Negli ultimi 7 giorni, ha sviluppato ORTICARIA  (BOLLE ROSSE che provocano prurito) sulla pelle?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 44
+              },
+              {
                 "code": "category",
                 "valueString": "ORTICARIA (BOLLE ROSSE che provocano prurito SULLA PELLE)"
               },
@@ -1526,6 +1707,10 @@
             "code": "PROCTC-0045",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SINDROME MANO-PIEDE (IRRITAZIONE DELLE MANI O DEI PIEDI CHE PUÒ CAUSARE SCREPOLATURE, SPELLATURE, ROSSORE O DOLORE) nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 45
+              },
               {
                 "code": "category",
                 "valueString": "SINDROME MANO-PIEDE (IRRITAZIONE DELLE MANI O DEI PIEDI CHE PUÒ CAUSARE SCREPOLATURE, SPELLATURE, ROSSORE O DOLORE)"
@@ -1561,6 +1746,10 @@
             "display": "Negli ultimi 7 giorni, ha PERSO DELLE UNGHIE DELLE MANI O DEI PIEDI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 46
+              },
+              {
                 "code": "category",
                 "valueString": "PERDITA DI UNGHIE DELLE MANI O DEI PIEDI"
               },
@@ -1582,6 +1771,10 @@
             "code": "PROCTC-0047",
             "display": "Negli ultimi 7 giorni, ha notato la presenza di ISPESSIMENTI O SOLCHI SULLE UNGHIE DELLE MANI O DEI PIEDI?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 47
+              },
               {
                 "code": "category",
                 "valueString": "ISPESSIMENTI O SOLCHI SULLE UNGHIE DELLE MANI O DEI PIEDI"
@@ -1605,6 +1798,10 @@
             "display": "Negli ultimi 7 giorni, ha notato una VARIAZIONE DI COLORE DELLE UNGHIE DELLE MANI O DEI PIEDI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 48
+              },
+              {
                 "code": "category",
                 "valueString": "VARIAZIONE DI COLORE DELLE UNGHIE DELLE MANI O DEI PIEDI"
               },
@@ -1626,6 +1823,10 @@
             "code": "PROCTC-0049",
             "display": "Negli ultimi 7 giorni, ha notato una MAGGIOR SENSIBILITÀ DELLA PELLE AI RAGGI SOLARI?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 49
+              },
               {
                 "code": "category",
                 "valueString": "MAGGIOR SENSIBILITÀ DELLA PELLE AI RAGGI SOLARI"
@@ -1649,6 +1850,10 @@
             "display": "Negli ultimi 7 giorni, ha avuto PIAGHE DA DECUBITO?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 50
+              },
+              {
                 "code": "category",
                 "valueString": "PIAGHE DA DECUBITO"
               },
@@ -1670,6 +1875,10 @@
             "code": "PROCTC-0051",
             "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le BRUCIATURE DELLA PELLE IN CONSEGUENZA DELLA RADIOTERAPIA nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 51
+              },
               {
                 "code": "category",
                 "valueString": "BRUCIATURE DELLA PELLE IN CONSEGUENZA DELLA RADIOTERAPIA"
@@ -1709,6 +1918,10 @@
             "display": "Negli ultimi 7 giorni, ha notato un INSOLITO INSCURIMENTO DELLA PELLE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 52
+              },
+              {
                 "code": "category",
                 "valueString": "INSOLITO INSCURIMENTO DELLA PELLE"
               },
@@ -1731,6 +1944,10 @@
             "display": "Negli ultimi 7 giorni, ha notato la presenza di SMAGLIATURE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 53
+              },
+              {
                 "code": "category",
                 "valueString": "SMAGLIATURE"
               },
@@ -1752,6 +1969,10 @@
             "code": "PROCTC-0054",
             "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, quanto è stato GRAVE l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 54
+              },
               {
                 "code": "category",
                 "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
@@ -1787,6 +2008,10 @@
             "display": "Negli ultimi 7 giorni, in che misura l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 55
+              },
+              {
                 "code": "category",
                 "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
               },
@@ -1820,6 +2045,10 @@
             "code": "PROCTC-0056",
             "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i GIRAMENTI DI TESTA nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 56
+              },
               {
                 "code": "category",
                 "valueString": "GIRAMENTI DI TESTA"
@@ -1855,6 +2084,10 @@
             "display": "Negli ultimi 7 giorni, in che misura i GIRAMENTI DI TESTA HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 57
+              },
+              {
                 "code": "category",
                 "valueString": "GIRAMENTI DI TESTA"
               },
@@ -1888,6 +2121,10 @@
             "code": "PROCTC-0058",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE l''APPANN!MENTO DELLA VISTA nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 58
+              },
               {
                 "code": "category",
                 "valueString": "APPANNAMENTO DELLA VISTA"
@@ -1923,6 +2160,10 @@
             "display": "Negli ultimi 7 giorni, in che misura  l'' APPANNAMENTO DELLA VISTA HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 59
+              },
+              {
                 "code": "category",
                 "valueString": "APPANNAMENTO DELLA VISTA"
               },
@@ -1957,6 +2198,10 @@
             "display": "Negli ultimi 7 giorni, ha notato la comparsa di LAMPI DAVANTI AGLI OCCHI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 60
+              },
+              {
                 "code": "category",
                 "valueString": "LAMPI DAVANTI AGLI OCCHI"
               },
@@ -1979,6 +2224,10 @@
             "display": "Negli ultimi 7 giorni, ha avvertito la presenza di MOSCHE VOLANTI DAVANTI AGLI OCCHI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 61
+              },
+              {
                 "code": "category",
                 "valueString": "MOSCHE VOLANTI DAVANTI AGLI OCCHI"
               },
@@ -2000,6 +2249,10 @@
             "code": "PROCTC-0062",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l''ECCESSIVA LACRIMAZIONE nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 62
+              },
               {
                 "code": "category",
                 "valueString": "ECCESSIVA LACRIMAZIONE"
@@ -2035,6 +2288,10 @@
             "display": "Negli ultimi 7 giorni, in che misura l''ECCESSIVA LACRIMAZIONE HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 63
+              },
+              {
                 "code": "category",
                 "valueString": "ECCESSIVA LACRIMAZIONE"
               },
@@ -2068,6 +2325,10 @@
             "code": "PROCTC-0064",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il RONZIO NELLE ORECCHIE nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 64
+              },
               {
                 "code": "category",
                 "valueString": "RONZIO NELLE ORECCHIE"
@@ -2103,6 +2364,10 @@
             "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i PROBLEMI DI CONCENTRAZIONE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 65
+              },
+              {
                 "code": "category",
                 "valueString": "PROBLEMI DI CONCENTRAZIONE"
               },
@@ -2136,6 +2401,10 @@
             "code": "PROCTC-0066",
             "display": "Negli ultimi 7 giorni, in che misura i PROBLEMI DI CONCENTRAZIONE HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 66
+              },
               {
                 "code": "category",
                 "valueString": "PROBLEMI DI CONCENTRAZIONE"
@@ -2171,6 +2440,10 @@
             "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i PROBLEMI DI MEMORIA nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 67
+              },
+              {
                 "code": "category",
                 "valueString": "PROBLEMI DI MEMORIA"
               },
@@ -2204,6 +2477,10 @@
             "code": "PROCTC-0068",
             "display": "Negli ultimi 7 giorni, in che misura i PROBLEMI DI MEMORIA HANNO INTERFERITO con le Sue attivitàabituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 68
+              },
               {
                 "code": "category",
                 "valueString": "PROBLEMI DI MEMORIA"
@@ -2239,6 +2516,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE FISICO?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 69
+              },
+              {
                 "code": "category",
                 "valueString": "DOLORE FISICO"
               },
@@ -2272,6 +2553,10 @@
             "code": "PROCTC-0070",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE FISICO nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 70
+              },
               {
                 "code": "category",
                 "valueString": "DOLORE FISICO"
@@ -2307,6 +2592,10 @@
             "display": "Negli ultimi 7 giorni, in che misura il DOLORE FISICO HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 71
+              },
+              {
                 "code": "category",
                 "valueString": "DOLORE FISICO"
               },
@@ -2340,6 +2629,10 @@
             "code": "PROCTC-0072",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto MAL DI TESTA?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 72
+              },
               {
                 "code": "category",
                 "valueString": "MAL DI TESTA"
@@ -2375,6 +2668,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il MAL DI TESTA nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 73
+              },
+              {
                 "code": "category",
                 "valueString": "MAL DI TESTA"
               },
@@ -2408,6 +2705,10 @@
             "code": "PROCTC-0074",
             "display": "Negli ultimi 7 giorni, in che misura il MAL DI TESTA HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 74
+              },
               {
                 "code": "category",
                 "valueString": "MAL DI TESTA"
@@ -2443,6 +2744,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE AI MUSCOLI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 75
+              },
+              {
                 "code": "category",
                 "valueString": "DOLORE AI MUSCOLI"
               },
@@ -2476,6 +2781,10 @@
             "code": "PROCTC-0076",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE AI MUSCOLI nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 76
+              },
               {
                 "code": "category",
                 "valueString": "DOLORE AI MUSCOLI"
@@ -2511,6 +2820,10 @@
             "display": "Negli ultimi 7 giorni, in che misura il DOLORE AI MUSCOLI HA INTEREFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 77
+              },
+              {
                 "code": "category",
                 "valueString": "DOLORE AI MUSCOLI"
               },
@@ -2544,6 +2857,10 @@
             "code": "PROCTC-0078",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 78
+              },
               {
                 "code": "category",
                 "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
@@ -2579,6 +2896,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE) nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 79
+              },
+              {
                 "code": "category",
                 "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
               },
@@ -2612,6 +2933,10 @@
             "code": "PROCTC-0080",
             "display": "Negli ultimi 7 giorni, in che misura il DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE) HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 80
+              },
               {
                 "code": "category",
                 "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
@@ -2647,6 +2972,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 81
+              },
+              {
                 "code": "category",
                 "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
               },
@@ -2680,6 +3009,10 @@
             "code": "PROCTC-0082",
             "display": "Negli ultimi 7 giorni, in che misura l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 82
+              },
               {
                 "code": "category",
                 "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
@@ -2715,6 +3048,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 83
+              },
+              {
                 "code": "category",
                 "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
               },
@@ -2748,6 +3085,10 @@
             "code": "PROCTC-0084",
             "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, in che misura il SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA HA INTERFERITO con le sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 84
+              },
               {
                 "code": "category",
                 "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
@@ -2783,6 +3124,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto ANSIA?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 85
+              },
+              {
                 "code": "category",
                 "valueString": "ANSIA"
               },
@@ -2816,6 +3161,10 @@
             "code": "PROCTC-0086",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l''ANSIA nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 86
+              },
               {
                 "code": "category",
                 "valueString": "ANSIA"
@@ -2851,6 +3200,10 @@
             "display": "Negli ultimi 7 giorni, in che misura l''ANSIA HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 87
+              },
+              {
                 "code": "category",
                 "valueString": "ANSIA"
               },
@@ -2884,6 +3237,10 @@
             "code": "PROCTC-0088",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 88
+              },
               {
                 "code": "category",
                 "valueString": "STATO D''ANIMO"
@@ -2919,6 +3276,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE, nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 89
+              },
+              {
                 "code": "category",
                 "valueString": "STATO D''ANIMO"
               },
@@ -2952,6 +3313,10 @@
             "code": "PROCTC-0090",
             "display": "Negli ultimi 7 giorni, in che misura la SENSAZIONE CHE NULLA POTESSE TIRARLA SU DI MORALE HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 90
+              },
               {
                 "code": "category",
                 "valueString": "STATO D’ANIMO"
@@ -2987,6 +3352,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha provato TRISTEZZA o INFELICITÀ?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 91
+              },
+              {
                 "code": "category",
                 "valueString": "TRISTEZZA"
               },
@@ -3020,6 +3389,10 @@
             "code": "PROCTC-0092",
             "display": "Negli ultimi 7 giorni, quanto sono state GRAVI la TRISTEZZA o l’INFELICITÀ nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 92
+              },
               {
                 "code": "category",
                 "valueString": "TRISTEZZA"
@@ -3055,6 +3428,10 @@
             "display": "Negli ultimi 7 giorni, in che misura TRISTEZZA o INFELICITÀ HANNO INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 93
+              },
+              {
                 "code": "category",
                 "valueString": "TRISTEZZA"
               },
@@ -3089,6 +3466,10 @@
             "display": "Negli ultimi 7 giorni, ha avuto MESTRUAZIONI IRREGOLARI?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 94
+              },
+              {
                 "code": "category",
                 "valueString": "MESTRUAZIONI IRREGOLARI"
               },
@@ -3115,6 +3496,10 @@
             "display": "Negli ultimi 7 giorni, ha saltato un CICLO MESTRUALE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 95
+              },
+              {
                 "code": "category",
                 "valueString": "REGOLARITÀ DELLE MESTRUAZIONI"
               },
@@ -3140,6 +3525,10 @@
             "code": "PROCTC-0096",
             "display": "Negli ultimi 7 giorni, ha notato la presenza di INSOLITE PERDITE VAGINALI?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 96
+              },
               {
                 "code": "category",
                 "valueString": "INSOLITE PERDITE VAGINALI"
@@ -3175,6 +3564,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la SECCHEZZA VAGINALE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 97
+              },
+              {
                 "code": "category",
                 "valueString": "SECCHEZZA VAGINALE"
               },
@@ -3208,6 +3601,10 @@
             "code": "PROCTC-0098",
             "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI il DOLORE O BRUCIORE NELL''URINARE, nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 98
+              },
               {
                 "code": "category",
                 "valueString": "DOLORE O BRUCIORE NELL'URINARE"
@@ -3243,6 +3640,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito un BISOGNO URGENTE DI URINARE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 99
+              },
+              {
                 "code": "category",
                 "valueString": "BISOGNO URGENTE DI URINARE"
               },
@@ -3276,6 +3677,10 @@
             "code": "PROCTC-0100",
             "display": "Negli ultimi 7 giorni, in che misura il BISOGNO URGENTE DI URINARE HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 100
+              },
               {
                 "code": "category",
                 "valueString": "BISOGNO URGENTE DI URINARE"
@@ -3311,6 +3716,10 @@
             "display": "Negli ultimi 7 giorni, ci sono state volte in cui ha avvertito un BISOGNO FREQUENTE DI URINARE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 101
+              },
+              {
                 "code": "category",
                 "valueString": "BISOGNO FREQUENTE DI URINARE"
               },
@@ -3344,6 +3753,10 @@
             "code": "PROCTC-0102",
             "display": "Negli ultimi 7 giorni, in che misura il BISOGNO FREQUENTE DI URINARE HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 102
+              },
               {
                 "code": "category",
                 "valueString": "BISOGNO FREQUENTE DI URINARE"
@@ -3379,6 +3792,10 @@
             "display": "Negli ultimi 7 giorni, ha notato una VARIAZIONE DI COLORE DELLE URINE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 103
+              },
+              {
                 "code": "category",
                 "valueString": "VARIAZIONE DI COLORE DELLE URINE"
               },
@@ -3400,6 +3817,10 @@
             "code": "PROCTC-0104",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha notato PERDITE DI URINA?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 104
+              },
               {
                 "code": "category",
                 "valueString": "PERDITE DI URINA"
@@ -3435,6 +3856,10 @@
             "display": "Negli ultimi 7 giorni, in che misura le PERDITE DI URINA HANNO INTERFERITO con le Sue attività abituali oquotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 105
+              },
+              {
                 "code": "category",
                 "valueString": "PERDITE DI URINA"
               },
@@ -3468,6 +3893,10 @@
             "code": "PROCTC-0106",
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la DIFFICOLTA A RAGGIUNGERE O MANTENERE L''EREZIONE nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 106
+              },
               {
                 "code": "category",
                 "valueString": "DIFFICOLTÀ A RAGGIUNGERE O MANTENERE L''EREZIONE"
@@ -3511,6 +3940,10 @@
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha PROBLEMI DI EIACULAZIONE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 107
+              },
+              {
                 "code": "category",
                 "valueString": "PROBLEMI DI EIACULAZIONE"
               },
@@ -3552,6 +3985,10 @@
             "code": "PROCTC-0108",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DEL DESIDERIO SESSUALE nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 108
+              },
               {
                 "code": "category",
                 "valueString": "CALO DEL DESIDERIO SESSUALE"
@@ -3595,6 +4032,10 @@
             "display": "Negli ultimi 7 giorni, Le è sembrato che ci volesse TROPPO TEMPO PER RAGGIUNGERE L’ORGASMO?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 109
+              },
+              {
                 "code": "category",
                 "valueString": "TROPPO TEMPO PER RAGGIUNGERE L''ORGASMO"
               },
@@ -3625,6 +4066,10 @@
             "display": "Negli ultimi 7 giorni, ha avvertito INCAPACITÀ A RAGGIUNGERE L''ORGASMO?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 110
+              },
+              {
                 "code": "category",
                 "valueString": "INCAPACITÀ A RAGGIUNGERE L''ORGASMO"
               },
@@ -3654,6 +4099,10 @@
             "code": "PROCTC-0111",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il DOLORE DURANTE IL RAPPORTO VAGINALE nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 111
+              },
               {
                 "code": "category",
                 "valueString": "DOLORE DURANTE IL RAPPORTO VAGINALE"
@@ -3697,6 +4146,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE l''AUMENTO DI VOLUME O TENSIONE DELLE MAMMELLE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 112
+              },
+              {
                 "code": "category",
                 "valueString": "AUMENTO DI VOLUME O TENSIONE DELLE MAMMELLE"
               },
@@ -3731,6 +4184,10 @@
             "display": "Negli ultimi 7 giorni, si è PROCURATO LIVIDI FACILMENTE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 113
+              },
+              {
                 "code": "category",
                 "valueString": "LIVIDI"
               },
@@ -3752,6 +4209,10 @@
             "code": "PROCTC-0114",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avvertito TREMORI O BRIVIDI?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 114
+              },
               {
                 "code": "category",
                 "valueString": "TREMORI O BRIVIDI"
@@ -3787,6 +4248,10 @@
             "display": "Negli ultimi 7 giorni, quanto sono stati GRAVI i TREMORI O BRIVIDI nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 115
+              },
+              {
                 "code": "category",
                 "valueString": "TREMORI O BRIVIDI"
               },
@@ -3820,6 +4285,10 @@
             "code": "PROCTC-0116",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha sviluppato INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 116
+              },
               {
                 "code": "category",
                 "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
@@ -3855,6 +4324,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE, nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 117
+              },
+              {
                 "code": "category",
                 "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
               },
@@ -3889,6 +4362,10 @@
             "display": "Negli ultimi 7 giorni, ha notato un CALO DELLA SUDORAZIONE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 118
+              },
+              {
                 "code": "category",
                 "valueString": "CALO DELLA SUDORAZIONE"
               },
@@ -3910,6 +4387,10 @@
             "code": "PROCTC-0119",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto VAMPATE DI CALORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 119
+              },
               {
                 "code": "category",
                 "valueString": "VAMPATE DI CALORE"
@@ -3945,6 +4426,10 @@
             "display": "Negli ultimi 7 giorni, quanto sono state GRAVI le VAMPATE DI CALORE nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 120
+              },
+              {
                 "code": "category",
                 "valueString": "VAMPATE DI CALORE"
               },
@@ -3978,6 +4463,10 @@
             "code": "PROCTC-0121",
             "display": "Negli ultimi 7 giorni, con quale FREQUENZA ha avuto perdita di SANGUE DAL NASO?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 121
+              },
               {
                 "code": "category",
                 "valueString": "SANGUE DAL NASO"
@@ -4013,6 +4502,10 @@
             "display": "Negli ultimi 7 giorni, quanto è stata GRAVE la perdita di SANGUE DAL NASO nel momento PEGGIORE?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 122
+              },
+              {
                 "code": "category",
                 "valueString": "SANGUE DAL NASO"
               },
@@ -4047,6 +4540,10 @@
             "display": "Negli ultimi 7 giorni, ha sviluppato DOLORE, GONFIORE, ROSSORE NEL PUNTO IN CUI È STATA SOMMINISTRATA LA TERAPIA?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 123
+              },
+              {
                 "code": "category",
                 "valueString": "DOLORE, GONFIORE, ROSSORE NEL PUNTO IN CUI È STATA SOMMINISTRATA LA TERAPIA"
               },
@@ -4072,6 +4569,10 @@
             "code": "PROCTC-0124",
             "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il problema dell’ODORE CORPOREO nel momento PEGGIORE?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 124
+              },
               {
                 "code": "category",
                 "valueString": "ODORE CORPOREO"
@@ -4106,6 +4607,10 @@
             "code": "PROCTC-0125",
             "display": "Descriva il sintomo e quanto è stato grave nel momento peggiore",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 125
+              },
               {
                 "code": "macrogroup",
                 "valueString": "ALTRI SINTOMI"
@@ -4150,13 +4655,13 @@
     {
       "resource": {
         "resourceType": "ValueSet",
-        "id": "proctc-v1-items",
-        "url": "https://healthcaredelivery.cancer.gov/pro-ctcae-items",
+        "id": "proctc-v1-adverse-events",
+        "url": "https://healthcaredelivery.cancer.gov/pro-ctcae-adverse-events",
         "version": "1.0",
-        "name": "PRO_CTCAEv1Items",
-        "title": "PRO-CTCAE v1 Items ValueSet",
+        "name": "PRO_CTCAEv1AdverseEvents",
+        "title": "PRO-CTCAE v1 Adverse Events ValueSet",
         "status": "active",
-        "date": "2026-05-20",
+        "date": "2026-06-25",
         "description": "Tutti i 125 termini PRO-CTCAE v1",
         "compose": {
           "include": [
@@ -4670,7 +5175,7 @@
       },
       "request": {
         "method": "PUT",
-        "url": "ValueSet/proctc-v1-items"
+        "url": "ValueSet/proctc-v1-adverse-events"
       }
     },
     {
@@ -4682,7 +5187,7 @@
         "name": "PRO_CTCAEv1GradeSeverity",
         "title": "PRO-CTCAE v1 Grade Severity Extension",
         "status": "active",
-        "date": "2026-05-20",
+        "date": "2026-06-25",
         "kind": "complex-type",
         "abstract": false,
         "context": [

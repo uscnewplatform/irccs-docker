@@ -94,6 +94,7 @@ python3 importCrfLibraries/eortc-v1/import-eortc-v1.py "eortc-qlq-c30.xlsx" --bu
 
 | Proprietà | v4 | v5 | v6 | Descrizione |
 |---|---|---|---|---|
+| `number` | ✓ | ✓ | ✓ | Numero progressivo 1..N (valueInteger, continuo sul file) |
 | `soc` | ✓ | ✓ | ✓ | System Organ Class MedDRA |
 | `grade1`–`grade5` | ✓ | ✓ | ✓ | Descrizione grado |
 | `navNote` | — | ✓ | ✓ | Nota navigazionale NCI |
@@ -104,6 +105,7 @@ python3 importCrfLibraries/eortc-v1/import-eortc-v1.py "eortc-qlq-c30.xlsx" --bu
 
 | Proprietà | Descrizione |
 |---|---|
+| `number` | Numero progressivo 1..N (valueInteger, continuo sul file) |
 | `macrogroup` | Macrogruppo sintomatologico |
 | `category` | Categoria di sintomo (usata per raggruppamento UI) |
 | `interface` | Tipo di interfaccia UI |
@@ -113,6 +115,7 @@ python3 importCrfLibraries/eortc-v1/import-eortc-v1.py "eortc-qlq-c30.xlsx" --bu
 
 | Proprietà | Descrizione |
 |---|---|
+| `number` | Numero progressivo 1..N (valueInteger, continuo sul file) |
 | `head` | Sezione / dominio (usata per raggruppamento UI) |
 | `answ1`–`answ7` | Opzioni di risposta |
 

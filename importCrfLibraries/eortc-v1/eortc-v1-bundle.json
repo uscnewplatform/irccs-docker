@@ -12,11 +12,16 @@
         "title": "EORTC QLQ-C30 Quality of Life Questionnaire",
         "status": "active",
         "content": "complete",
-        "date": "2026-05-20",
+        "date": "2026-06-25",
         "description": "European Organisation for Research and Treatment of Cancer Quality of Life Questionnaire Core 30 (QLQ-C30). 30 items.",
         "publisher": "EORTC / IRCCS Pascale",
         "copyright": "EORTC QLQ-C30",
         "property": [
+          {
+            "code": "number",
+            "description": "Numero progressivo della domanda (1..N)",
+            "type": "integer"
+          },
           {
             "code": "head",
             "description": "Sezione / dominio del questionario",
@@ -64,6 +69,10 @@
             "display": "Ha difficoltà nel fare lavori faticosi, come portare una borsa della spesa pesante o una valigia?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 1
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -89,6 +98,10 @@
             "code": "2",
             "display": "Ha difficoltà nel fare una lunga passeggiata?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 2
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -116,6 +129,10 @@
             "display": "Ha difficoltà nel fare una breve passeggiata fuori casa?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 3
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -141,6 +158,10 @@
             "code": "4",
             "display": "Ha bisogno di stare a letto o su una sedia durante il giorno?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 4
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -168,6 +189,10 @@
             "display": "Ha bisogno di aiuto per mangiare, vestirsi, lavarsi o andare in bagno?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 5
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -193,6 +218,10 @@
             "code": "6",
             "display": "Ha avuto limitazioni nel fare il Suo lavoro o i lavori di casa?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 6
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -220,6 +249,10 @@
             "display": "Ha avuto limitazioni nel praticare i Suoi passatempi-hobby o altre attività di divertimento o svago?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 7
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -245,6 +278,10 @@
             "code": "8",
             "display": "Le è mancato il fiato?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 8
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -272,6 +309,10 @@
             "display": "Ha avuto dolore?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 9
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -297,6 +338,10 @@
             "code": "10",
             "display": "Ha avuto bisogno di riposo?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 10
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -324,6 +369,10 @@
             "display": "Ha avuto difficoltà a dormire?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 11
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -349,6 +398,10 @@
             "code": "12",
             "display": "Si è sentito debole?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 12
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -376,6 +429,10 @@
             "display": "Le è mancato l'appetito?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 13
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -401,6 +458,10 @@
             "code": "14",
             "display": "Ha avuto un senso di nausea?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 14
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -428,6 +489,10 @@
             "display": "Ha vomitato?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 15
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -453,6 +518,10 @@
             "code": "16",
             "display": "Ha avuto problemi di stitichezza?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 16
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -480,6 +549,10 @@
             "display": "Ha avuto problemi di diarrea?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 17
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -505,6 +578,10 @@
             "code": "18",
             "display": "Si è sentito stanco?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 18
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -532,6 +609,10 @@
             "display": "Il dolore ha interferito con le Sue attività quotidiane?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 19
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -557,6 +638,10 @@
             "code": "20",
             "display": "Ha avuto difficoltà a concentrarsi su cose come leggere un giornale o guardare la televisione?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 20
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -584,6 +669,10 @@
             "display": "Si è sentito teso?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 21
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -609,6 +698,10 @@
             "code": "22",
             "display": "Si è preoccupato?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 22
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -636,6 +729,10 @@
             "display": "Si è sentito irritabile?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 23
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -661,6 +758,10 @@
             "code": "24",
             "display": "Si è sentito depresso?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 24
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -688,6 +789,10 @@
             "display": "Ha avuto difficoltà a ricordare le cose?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 25
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -713,6 +818,10 @@
             "code": "26",
             "display": "Le Sue condizioni fisiche o il Suo trattamento medico hanno interferito con la Sua vita familiare?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 26
+              },
               {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
@@ -740,6 +849,10 @@
             "display": "Le Sue condizioni fisiche o il Suo trattamento medico hanno interferito con le Sue attività sociali?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 27
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -766,6 +879,10 @@
             "display": "Le Sue condizioni fisiche o il Suo trattamento medico Le hanno causato difficoltà finanziarie?",
             "property": [
               {
+                "code": "number",
+                "valueInteger": 28
+              },
+              {
                 "code": "head",
                 "valueString": "Durante gli ultimi sette giorni:"
               },
@@ -791,6 +908,10 @@
             "code": "29",
             "display": "Come valuterebbe in generale la Sua salute durante gli ultimi sette giorni?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 29
+              },
               {
                 "code": "head",
                 "valueString": "Per le seguenti domande indichi un numero da 1 a 7 che meglio corrisponde alla Sua risposta"
@@ -829,6 +950,10 @@
             "code": "30",
             "display": "Come valuterebbe in generale la Sua qualità di vita durante gli ultimi sette giorni?",
             "property": [
+              {
+                "code": "number",
+                "valueInteger": 30
+              },
               {
                 "code": "head",
                 "valueString": "Per le seguenti domande indichi un numero da 1 a 7 che meglio corrisponde alla Sua risposta"
@@ -879,7 +1004,7 @@
         "name": "EORTCQLQv1Items",
         "title": "EORTC QLQ-C30 Items ValueSet",
         "status": "active",
-        "date": "2026-05-20",
+        "date": "2026-06-25",
         "description": "Tutti i 30 item EORTC QLQ-C30",
         "compose": {
           "include": [
@@ -1025,7 +1150,7 @@
         "name": "EORTCv1GradeSeverity",
         "title": "EORTC QLQ-C30 v1 Grade Severity Extension",
         "status": "active",
-        "date": "2026-05-20",
+        "date": "2026-06-25",
         "kind": "complex-type",
         "abstract": false,
         "context": [

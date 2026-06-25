@@ -118,6 +118,10 @@ def build_codesystem(termini: list[dict]) -> dict:
             "property": props,
         })
 
+    # Numero progressivo 1..N della domanda, continuo sull'intero file (ordine dei concept).
+    for _n, _c in enumerate(concetti, 1):
+        _c.setdefault("property", []).insert(0, {"code": "number", "valueInteger": _n})
+
     return {
         "resourceType": "CodeSystem",
         "id":           "eortc-v1",
@@ -136,6 +140,7 @@ def build_codesystem(termini: list[dict]) -> dict:
         "publisher":    "EORTC / IRCCS Pascale",
         "copyright":    "EORTC QLQ-C30",
         "property": [
+            {"code": "number", "description": "Numero progressivo della domanda (1..N)", "type": "integer"},
             {"code": "head",  "description": "Sezione / dominio del questionario", "type": "string"},
             {"code": "answ1", "description": "Risposta 1",                         "type": "string"},
             {"code": "answ2", "description": "Risposta 2",                         "type": "string"},
