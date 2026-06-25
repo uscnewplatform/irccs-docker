@@ -44,7 +44,7 @@ bash irccs-docker/importCrfLibraries/eortc-v1/install-eortc-v1.sh http://localho
 ## Rigenera bundle da Excel
 
 ```bash
-# Richiede: pip install openpyxl requests
+# Richiede: pip install -r requirements.txt
 
 python3 importCrfLibraries/ctcae-v4/import-ctcae-v4.py "CTCAE_4.03_2010-06-14.xlsx" --bundle-only
 python3 importCrfLibraries/ctcae-v5/import-ctcae-v5.py "CTCAE_v5.0_2017-11-27.xlsx" --bundle-only

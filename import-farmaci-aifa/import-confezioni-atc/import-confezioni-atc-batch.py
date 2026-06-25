@@ -18,10 +18,11 @@ Risorse FHIR (URL NUOVI, content not-present — separati dalla versione complet
     CodeSystem  https://aifa.gov.it/fhir/CodeSystem/farmaci-confezioni-atc-np
     ValueSet    https://aifa.gov.it/fhir/ValueSet/farmaci-confezioni-atc-np
 
-Concept (come la versione complete):
-    code        = CODICE_AIC
-    display     = "PA — DENOMINAZIONE DESCRIZIONE"
-    designation = principio-attivo (PA), forma (FORMA), atc (CODICE_ATC)
+Concept:
+    code     = CODICE_AIC
+    display  = "PA — DENOMINAZIONE DESCRIZIONE"  (ricerca via $expand?filter sul display)
+    property = principio-attivo (PA), forma (FORMA), atc (CODICE_ATC)  (lette via $lookup)
+    NB: delta-add scarta le designation ma tiene le property → si usano le property.
 
 Uso:
     python3 import-confezioni-atc-batch.py [HAPI_URL] [--csv PATH] [--version YYYY-MM]
@@ -77,8 +78,7 @@ def resolve_csv(arg, version):
         return arg
     candidates = [
         os.path.join(SCRIPT_DIR, version, "confezioni.csv"),
-        os.path.join(SCRIPT_DIR, "..", "import-atc-principi-attivi", version, "confezioni.csv"),
-        os.path.join(SCRIPT_DIR, "..", "import-atc-principi-attivi", "2026-06", "confezioni.csv"),
+        os.path.join(SCRIPT_DIR, "2026-06", "confezioni.csv"),
     ]
     for c in candidates:
         if os.path.exists(c):
