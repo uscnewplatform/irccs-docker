@@ -9,11 +9,16 @@ Per caricare su HAPI basta lo script shell. Per rigenerare da un nuovo Excel, se
 
 ```
 importCrfLibraries/ctcae-v6/
-├── import-ctcae-v6.py        ← script Python (legge Excel + push su HAPI)
-├── install-ctcae-v6.sh       ← push curl del bundle pre-generato
-├── ctcae-v6-bundle.json      ← bundle FHIR pre-generato (committed nel repo)
+├── import-ctcae-v6.py            ← script Python (legge Excel + push su HAPI)
+├── install-ctcae-v6.sh          ← carica bundle, o (--source excel) rigenera da Excel
+├── CTCAE_v6.0_Final_Jan2026.xlsx ← Excel sorgente versionato
+├── ctcae-v6-bundle.json         ← bundle FHIR pre-generato (committed nel repo)
 └── README.md
 ```
+
+> Per le opzioni comuni a tutte le CRF (`--source bundle|excel`, Excel versionati,
+> property `number` 1..N e numerazione domande nei PDF) vedi il
+> [README della cartella padre](../README.md).
 
 ## Prerequisiti
 
@@ -43,7 +48,7 @@ bash importCrfLibraries/ctcae-v6/install-ctcae-v6.sh http://localhost:8080/fhir
 ### Carica su HAPI locale (genera bundle + push)
 
 ```bash
-python3 import-ctcae-v6.py "CTCAE v6.0 Final Clean-Tracked-Mapping_w_OS_Jan2026.xlsx"
+python3 import-ctcae-v6.py "CTCAE_v6.0_Final_Jan2026.xlsx"
 ```
 
 ### Carica su HAPI remoto
@@ -149,7 +154,8 @@ Le risorse v6 rimangono invariate su HAPI; i questionari esistenti continuano a 
 
 ## Fonte dati
 
-Excel NCI: **CTCAE v6.0 Final Clean-Tracked-Mapping_w_OS_Jan2026.xlsx**
+Excel NCI originale: **CTCAE v6.0 Final Clean-Tracked-Mapping_w_OS_Jan2026.xlsx**
+(versionato nel repo come `CTCAE_v6.0_Final_Jan2026.xlsx`).
 Distribuito da [NCI CTCAE](https://ctep.cancer.gov/protocolDevelopment/electronic_applications/ctc.htm)
 Licenza: dominio pubblico NCI/NIH.
 

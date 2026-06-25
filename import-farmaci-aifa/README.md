@@ -224,6 +224,29 @@ Il CSV (`2026-06/confezioni.csv`) viene risolto automaticamente; usa `--csv PATH
 | `--skip N` | `0` | salta i primi N (ripartenza) |
 | `--cs-url URL` / `--vs-url URL` | URL `*-np` di default | override URL canonici |
 
+## Ripartenza & auto-heal (HAPI-0389)
+
+Se un run viene interrotto a metà, il CodeSystem può restare con **concept corrotti**
+(`TermConcept` orfani da transazione non committata). Ri-eseguendo, HAPI risponde:
+
+```
+HTTP 500 — HAPI-0389: ... org.hibernate.TransientObjectException:
+persistent instance references an unsaved transient instance of 'TermConcept'
+```
+
+Non è un problema di timing né di `--batch-size`: `delta-add` è idempotente sui code **sani**
+(ri-aggiungerli → 200), ma su un code **corrotto** già presente lancia HAPI-0389 e fa fallire
+l'intero lotto.
+
+Lo script è **auto-healing**: su quell'errore fa `$apply-codesystem-delta-remove` del lotto
+(purga i corrotti/esistenti, tollera i code assenti) e ritenta la `delta-add`. Sul happy-path
+(code nuovi) il remove non scatta mai. Quindi:
+
+- **ambiente nuovo** (CS mai usato) → carica diretto, nessun heal;
+- **ripartenza** (`--skip N`) o **CS sporco** → l'auto-heal ripulisce e prosegue da solo.
+
+Niente azione manuale: rilancia lo stesso comando (eventualmente con lo `--skip` che lo script stampa).
+
 ## Modello del concept
 
 | Campo FHIR | Valore | Note |

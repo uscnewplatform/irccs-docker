@@ -58,13 +58,22 @@ importCrfLibraries/
 
 ## Utilizzo rapido
 
+Sostituisci l'URL con quello dell'ambiente target (locale/preprod/nuovo server).
+Default `--source bundle` = solo `curl`, nessuna dipendenza Python.
+
 ```bash
-bash irccs-docker/importCrfLibraries/ctcae-v4/install-ctcae-v4.sh http://localhost:8080/fhir
-bash irccs-docker/importCrfLibraries/ctcae-v5/install-ctcae-v5.sh http://localhost:8080/fhir
-bash irccs-docker/importCrfLibraries/ctcae-v6/install-ctcae-v6.sh http://localhost:8080/fhir
-bash irccs-docker/importCrfLibraries/proctc-v1/install-proctc-v1.sh http://localhost:8080/fhir
-bash irccs-docker/importCrfLibraries/eortc-v1/install-eortc-v1.sh http://localhost:8080/fhir
+HAPI=http://localhost:8080/fhir   # ← cambia per l'ambiente nuovo
+
+bash irccs-docker/importCrfLibraries/ctcae-v4/install-ctcae-v4.sh   "$HAPI"
+bash irccs-docker/importCrfLibraries/ctcae-v5/install-ctcae-v5.sh   "$HAPI"
+bash irccs-docker/importCrfLibraries/ctcae-v6/install-ctcae-v6.sh   "$HAPI"
+bash irccs-docker/importCrfLibraries/proctc-v1/install-proctc-v1.sh "$HAPI"
+bash irccs-docker/importCrfLibraries/eortc-v1/install-eortc-v1.sh   "$HAPI"
 ```
+
+Note ambiente nuovo: HAPI dev'essere raggiungibile dalla macchina che lancia; questi script
+sono **standalone** (niente Nexus/irccs-common). CS/VS con stessa url già presenti → `PUT`
+idempotente, si può ri-lanciare senza duplicati.
 
 ## Rigenera bundle da Excel
 
@@ -73,7 +82,7 @@ bash irccs-docker/importCrfLibraries/eortc-v1/install-eortc-v1.sh http://localho
 
 python3 importCrfLibraries/ctcae-v4/import-ctcae-v4.py "CTCAE_4.03_2010-06-14.xlsx" --bundle-only
 python3 importCrfLibraries/ctcae-v5/import-ctcae-v5.py "CTCAE_v5.0_2017-11-27.xlsx" --bundle-only
-python3 importCrfLibraries/ctcae-v6/import-ctcae-v6.py "CTCAE v6.0 Final Clean-Tracked-Mapping_w_OS_Jan2026.xlsx" --bundle-only
+python3 importCrfLibraries/ctcae-v6/import-ctcae-v6.py "CTCAE_v6.0_Final_Jan2026.xlsx" --bundle-only
 python3 importCrfLibraries/proctc-v1/import-proctc-v1.py "uosc_proctcaev1.xlsx" --bundle-only
 python3 importCrfLibraries/eortc-v1/import-eortc-v1.py "eortc-qlq-c30.xlsx" --bundle-only
 ```
@@ -119,6 +128,26 @@ python3 importCrfLibraries/eortc-v1/import-eortc-v1.py "eortc-qlq-c30.xlsx" --bu
 | `head` | Sezione / dominio (usata per raggruppamento UI) |
 | `answ1`–`answ7` | Opzioni di risposta |
 
+## Numerazione domande (1..N) nei PDF
+
+La property `number` (valueInteger, 1..N continuo sul file) serve a numerare le domande nei PDF di stampa CRF. Catena:
+
+```
+CodeSystem concept.property `number`        (questo repo, import-*.py)
+  → QuestionnaireItem.prefix = String(number)  (dashboard, build*Questionnaire al momento dell'import CRF)
+    → PDF: "N. testo domanda"                   (dashboard, makeCrfPdf.ts + Crf/makeHistoryPdf.ts)
+```
+
+Nei PDF convivono **due numerazioni indipendenti**, a livelli diversi:
+- **sezione** (gruppo SOC / head / category) → `1.`, `2.`… progressivo sulle sezioni;
+- **domanda** → `number` del file (1..N continuo, **non** riparte per sezione → dentro una sezione può iniziare da un valore > 1).
+
+> ⚠️ Il numero arriva nell'item **al momento dell'import** del CRF dal CodeSystem. I CRF
+> importati **prima** dell'introduzione di `number` non hanno il `prefix`: vanno re-importati
+> (o ripopolati) per vederlo nei PDF.
+
+`number` è ordine dei concept nel file Excel: se cambia l'ordine Excel cambia la numerazione (rigenera con `--source excel`).
+
 ## Architettura
 
 Tutte le terminologie sono gestite via HAPI FHIR (CodeSystem + ValueSet).
@@ -128,3 +157,5 @@ La UI legge i CodeSystem direttamente da HAPI tramite:
 - `CtcaeV6Service.ts` → CTCAE v4/v5/v6
 - `ProctcV1Service.ts` → PRO-CTCAE v1
 - `EortcV1Service.ts` → EORTC QLQ-C30
+
+Ognuno imposta `QuestionnaireItem.prefix` dalla property `number` (vedi sopra).
