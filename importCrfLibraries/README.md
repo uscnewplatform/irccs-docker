@@ -2,32 +2,57 @@
 
 Carica CTCAE, PRO-CTCAE e EORTC come risorse FHIR su HAPI FHIR.
 
-Ogni versione è indipendente. I bundle JSON pre-generati sono già nel repo.
+Ogni versione è indipendente. Sia il bundle JSON pre-generato sia l'Excel sorgente
+sono versionati nella cartella della CRF.
+
+## Due sorgenti di import
+
+`install-*.sh` accetta `--source`:
+
+| `--source` | Cosa fa |
+|---|---|
+| `bundle` (default) | carica il `*-bundle.json` pre-generato e committato (solo `curl`, zero dipendenze) |
+| `excel` | rigenera il bundle dall'Excel versionato (`import-*.py --bundle-only`, serve `openpyxl`) e poi lo carica |
+
+```bash
+bash ctcae-v5/install-ctcae-v5.sh http://localhost:8080/fhir                 # da bundle
+bash ctcae-v5/install-ctcae-v5.sh http://localhost:8080/fhir --source excel  # rigenera da Excel + carica
+```
+
+Con `--source excel` il `*-bundle.json` viene riscritto (cambia solo il campo `date`).
+Se vuoi che il bundle aggiornato resti nel repo, committalo dopo.
 
 ## Struttura
 
 ```
 importCrfLibraries/
+├── _lib.sh                       ← helper condiviso degli install-*.sh (parse args, rigenera, push)
+├── requirements.txt              ← deps per --source excel (openpyxl, requests)
 ├── ctcae-v4/
 │   ├── import-ctcae-v4.py        ← genera bundle da Excel + push su HAPI
-│   ├── install-ctcae-v4.sh       ← push curl del bundle pre-generato
+│   ├── install-ctcae-v4.sh       ← carica bundle o (─-source excel) rigenera da Excel
+│   ├── CTCAE_4.03_2010-06-14.xlsx ← Excel sorgente versionato
 │   └── ctcae-v4-bundle.json      ← 790 termini, 26 SOC
 ├── ctcae-v5/
 │   ├── import-ctcae-v5.py
 │   ├── install-ctcae-v5.sh
+│   ├── CTCAE_v5.0_2017-11-27.xlsx
 │   └── ctcae-v5-bundle.json      ← 837 termini, 26 SOC
 ├── ctcae-v6/
 │   ├── import-ctcae-v6.py
 │   ├── install-ctcae-v6.sh
+│   ├── CTCAE_v6.0_Final_Jan2026.xlsx
 │   ├── ctcae-v6-bundle.json      ← 850 termini, 26 SOC
 │   └── README.md
 ├── proctc-v1/
 │   ├── import-proctc-v1.py
 │   ├── install-proctc-v1.sh
+│   ├── uosc_proctcaev1.xlsx
 │   └── proctc-v1-bundle.json     ← 125 termini PRO-CTCAE v1
 └── eortc-v1/
     ├── import-eortc-v1.py
     ├── install-eortc-v1.sh
+    ├── eortc-qlq-c30.xlsx
     └── eortc-v1-bundle.json      ← 30 item EORTC QLQ-C30
 ```
 
