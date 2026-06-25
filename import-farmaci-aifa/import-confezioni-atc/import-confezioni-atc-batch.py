@@ -209,8 +209,7 @@ def put_valueset(hapi, version):
     print(f"  ValueSet OK  HTTP {st}")
 
 
-def delta_add(hapi, concepts):
-    """POST $apply-codesystem-delta-add con un lotto di concept."""
+def _delta(hapi, op, concepts):
     params = {
         "resourceType": "Parameters",
         "parameter": [
@@ -219,8 +218,30 @@ def delta_add(hapi, concepts):
              "resource": {"resourceType": "CodeSystem", "concept": concepts}},
         ],
     }
-    st, txt = http_json("POST", f"{hapi}/CodeSystem/$apply-codesystem-delta-add",
-                        body=json.dumps(params), timeout=BATCH_TIMEOUT)
+    return http_json("POST", f"{hapi}/CodeSystem/$apply-codesystem-delta-{op}",
+                     body=json.dumps(params), timeout=BATCH_TIMEOUT)
+
+
+def delta_remove(hapi, concepts):
+    """Rimuove i concept (per code) dal CodeSystem. Tollera code assenti (HTTP 200)."""
+    return _delta(hapi, "remove", concepts)
+
+
+def delta_add(hapi, concepts):
+    """POST $apply-codesystem-delta-add con un lotto di concept.
+
+    Auto-heal: se HAPI risponde HTTP 500 con il TransientObjectException su TermConcept
+    (HAPI-0389), significa che uno o più code del lotto sono già presenti ma in stato
+    corrotto da un run precedente interrotto. delta-remove li purga (tollera gli assenti),
+    poi si ritenta la delta-add. Sul happy-path (code nuovi) il remove non scatta mai.
+    """
+    st, txt = _delta(hapi, "add", concepts)
+    if st == 500 and "TransientObjectException" in txt:
+        print("    [auto-heal] HAPI-0389: purge code corrotti/esistenti + retry...", flush=True)
+        rst, rtxt = delta_remove(hapi, concepts)
+        if rst not in (200, 201):
+            return rst, rtxt
+        st, txt = _delta(hapi, "add", concepts)
     return st, txt
 
 
