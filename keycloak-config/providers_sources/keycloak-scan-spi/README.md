@@ -56,6 +56,12 @@ cp target/keycloak-scan-spi-1.0.0.jar /opt/keycloak/providers/
 In the target realm, create a user (e.g. `scanner-service`) that will own all scan sessions.
 Copy its Keycloak user-id (UUID) — you'll need it when generating tokens.
 
+> **Per-environment.** This UUID is **not portable across realms/environments** (dev,
+> preprod, prod each have a different one). The dashboard sends it as `scannerUserId`,
+> read from `VITE_SCAN_SESSION_SCANNER_USER_ID` (see [Frontend integration](#frontend-integration)).
+> If the value doesn't match a user in the target realm the endpoint returns
+> `{"error":"scannerUserId not found in realm"}` (see [Troubleshooting](#troubleshooting)).
+
 ### 2. Create the `scanner-client` OIDC client
 
 - Client ID: `scanner-client`
@@ -157,6 +163,44 @@ curl -H "Authorization: Bearer <access_token>" \
 ```
 
 Your resource server validates the JWT and reads `patientId` / `studyId` from claims.
+
+---
+
+## Frontend integration
+
+The React dashboard (`irccs-react-dashboard`) calls `POST {ms-host}/scan-session/generate`
+when opening a patient page. The request body is built from runtime config
+(`window.APP_CONFIG` in `httpd-config/config.js`, fallback `import.meta.env`,
+fallback hardcoded dev defaults in `src/fhir/config.ts`):
+
+| Body field      | Config key                          | Note |
+|-----------------|-------------------------------------|------|
+| `scannerUserId` | `VITE_SCAN_SESSION_SCANNER_USER_ID` | **Must** be the scanner user UUID of *this* environment's realm (step 1). |
+| `clientId`      | `VITE_SCAN_SESSION_CLIENT_ID`       | OIDC client (default `irccs`). |
+| `redirectUri`   | `VITE_SCAN_SESSION_REDIRECT_URI`    | Viewer callback URL. |
+| `expiresIn`     | `VITE_SCAN_SESSION_EXPIRES_IN`      | Token TTL seconds (default 3600). |
+| `state`         | `VITE_SCAN_SESSION_STATE`           | Default `scan-session`. |
+
+**Per environment** set these in the deployed `config.js`:
+- prod: `irccs-docker/httpd-config/config-prod.js`
+- local: `pascale-local/httpd-config/config-local.js`
+
+An empty `VITE_SCAN_SESSION_SCANNER_USER_ID` falls back to the dev default UUID,
+which will not exist in a prod realm.
+
+---
+
+## Troubleshooting
+
+**`{"error":"scannerUserId not found in realm"}`** when opening a patient page.
+
+The `scannerUserId` sent by the dashboard has no matching user in the target realm.
+Cause: `VITE_SCAN_SESSION_SCANNER_USER_ID` is unset (→ dev default UUID) or stale.
+
+Fix:
+1. In the target realm, find the scanner service-account user (step 1) and copy its UUID.
+2. Set `VITE_SCAN_SESSION_SCANNER_USER_ID` to that UUID in the environment's `config.js`.
+3. Reload the dashboard (no rebuild needed — runtime config).
 
 ---
 
