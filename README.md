@@ -186,7 +186,7 @@ PWA_ENVIRONMENT=staging
 PWA_ENFORCE_HTTPS=false
 
 # Origini CORS ammesse (porta admin + eventuale dominio pubblico)
-# Esempio: http://10.99.88.204:8092,https://pwa.irccs.infocube.it
+# Esempio: http://10.99.88.240:8092,https://pwa.irccs.infocube.it
 PWA_CORS_ORIGINS=
 ```
 

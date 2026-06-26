@@ -6,7 +6,7 @@ farmacovigilanza: realm role Keycloak + `Group.code` sui gruppi esistenti + grup
 
 Idempotente: rilanciabile. Token admin passato direttamente (no user/pass).
 
-> Riferimento stato/decisioni: memoria `opened-sae-email-group`. Ambiente 10.99.88.204
+> Riferimento stato/decisioni: memoria `opened-sae-email-group`. Ambiente 10.99.88.240
 > gia' allineato (modello di verifica usato qui sotto).
 
 ---
