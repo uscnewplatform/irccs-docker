@@ -47,14 +47,14 @@ docker compose logs -f     # log in tempo reale
 
 == Configurazione condivisa microservizi
 
-Il file `microservice-config/application.properties` viene montato come volume in tutti i microservizi (eccetto CTCAE) e sovrascrive le proprietà del JAR:
+Il file `microservice-config/application.properties` viene montato come volume in tutti i microservizi (eccetto Notification) e sovrascrive le proprietà del JAR:
 
 [source,properties]
 ----
 quarkus.rest-client.auth-microservice-client.url=http://irccs-auth:8080
 quarkus.rest-client.group-microservice-client.url=http://irccs-centro-ricerca:8080
 quarkus.rest-client.practitioner-microservice-client.url=http://irccs-practitioner:8080
-quarkus.rest-client.redis-microservice-client.url=http://irccs-ctcae:8080
+quarkus.rest-client.redis-microservice-client.url=http://irccs-notification:8080
 org.quarkus.irccs.fhir-server=http://irccs-hapi-fhir:8080/fhir
 org.quarkus.irccs.query.limit=100
 keycloak-base-url=http://irccs-keycloak
@@ -63,7 +63,7 @@ quarkus.keycloak.policy-enforcer.enable=true
 quarkus.keycloak.policy-enforcer.http-method-as-scope=true
 ----
 
-`microservice-config-ctcae/application.properties` estende la configurazione con:
+`microservice-config-notification/application.properties` estende la configurazione con:
 
 * path OTP (`/totp/generate`, `/totp/verify`) con `enforcement-mode=DISABLED`
 * configurazione Redis e mailer OTP

@@ -14,7 +14,7 @@
 | irccs-microservice-anagrafica-pazienti | `2.0.0` | `2.0.0-SNAPSHOT` | SNAPSHOT |
 | irccs-microservice-centro-ricerca | `2.0.0` | `2.1.0-SNAPSHOT` | SNAPSHOT |
 | irccs-microservice-clinical-reasoning | `2.0.0` | `2.1.0-SNAPSHOT` | SNAPSHOT |
-| irccs-microservice-ctcae | `2.0.0` | `2.1.0-SNAPSHOT` | SNAPSHOT |
+| irccs-microservice-notification | `2.0.0` | `2.1.0-SNAPSHOT` | SNAPSHOT |
 | irccs-microservice-practitioner | `2.0.0` | `2.1.0-SNAPSHOT` | SNAPSHOT |
 | irccs-microservice-studio-clinico | `2.0.0` | `2.1.0-SNAPSHOT` | SNAPSHOT |
 | irccs-microservice-patient-interview | *(mai taggato)* | `2.1.0-SNAPSHOT` | SNAPSHOT — primo rilascio atteso |
@@ -57,7 +57,7 @@
 * Esternalizzazione configurazione messaggi via MicroProfile Config
 * Aggiunto servizio traduzioni
 
-**irccs-microservice-ctcae** (`2.1.0-SNAPSHOT`)
+**irccs-microservice-notification** (`2.1.0-SNAPSHOT`)
 * Rimozione gestione librerie CRF locali: migrate a ValueSet/CodeSystem su HAPI FHIR
 * Migrazione invio email al modulo `i3-mail`
 

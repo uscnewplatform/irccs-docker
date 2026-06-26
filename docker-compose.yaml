@@ -31,11 +31,11 @@ services:
         condition: service_healthy
     restart: always
 
-  irccs-microservice-ctcae:
-    image: nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:${IRCCS_CTCAE_VERSION}
-    container_name: irccs-ctcae
+  irccs-microservice-notification:
+    image: nexus.infocube.it/org.quarkus/irccs-microservice-notification:${IRCCS_NOTIFICATION_VERSION}
+    container_name: irccs-notification
     volumes:
-      - ./microservice-config-ctcae/application.properties:/deployments/config/application.properties
+      - ./microservice-config-notification/application.properties:/deployments/config/application.properties
     env_file:
       - .env
     ports:

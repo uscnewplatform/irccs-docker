@@ -32,7 +32,7 @@
 | `irccs-microservice-studio-clinico` | interno | Studi clinici, CRF
 | `irccs-microservice-centro-ricerca` | interno | Centri ricerca, organizzazioni
 | `irccs-microservice-practitioner` | interno | Operatori sanitari
-| `irccs-microservice-ctcae` | interno | CTCAE, OTP, export Excel
+| `irccs-microservice-notification` | interno | OTP, notifiche email, export Excel
 | `irccs-microservice-crf-tac` | interno | Upload DICOM
 | `irccs-microservice-clinical-reasoning` | interno | Clinical Decision Support
 | `irccs-microservice-zammad` | interno | Integrazione ticketing
@@ -50,8 +50,8 @@
 /fhir/ResearchStudy/   → irccs-microservice-studio-clinico
 /fhir/Organization/    → irccs-microservice-centro-ricerca
 /fhir/Practitioner/    → irccs-microservice-practitioner
-/api/service/          → irccs-microservice-ctcae
-/totp/                 → irccs-microservice-ctcae
+/api/service/          → irccs-microservice-notification
+/totp/                 → irccs-microservice-notification
 /dicom/                → irccs-microservice-crf-tac
 /fhir/zammad/          → irccs-microservice-zammad
 ----

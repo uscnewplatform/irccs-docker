@@ -151,7 +151,7 @@ Nei PDF convivono **due numerazioni indipendenti**, a livelli diversi:
 ## Architettura
 
 Tutte le terminologie sono gestite via HAPI FHIR (CodeSystem + ValueSet).
-Il microservizio `irccs-microservice-ctcae` **non espone più endpoint terminologici** — gestisce solo OTP/TOTP.
+Il microservizio `irccs-microservice-notification` **non espone più endpoint terminologici** — gestisce solo OTP/TOTP.
 
 La UI legge i CodeSystem direttamente da HAPI tramite:
 - `CtcaeV6Service.ts` → CTCAE v4/v5/v6

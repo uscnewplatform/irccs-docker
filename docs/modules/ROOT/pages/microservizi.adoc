@@ -4,7 +4,7 @@
 == Panoramica
 
 I microservizi sono applicazioni **Quarkus** pubblicate sul registro privato `nexus.infocube.it` e orchestrate tramite Docker Compose.
-Tutti i microservizi (eccetto CTCAE) condividono la stessa configurazione base in `microservice-config/application.properties`, che sovrascrive e integra le proprietà interne (`application.properties` embedded nell'immagine).
+Tutti i microservizi (eccetto Notification) condividono la stessa configurazione base in `microservice-config/application.properties`, che sovrascrive e integra le proprietà interne (`application.properties` embedded nell'immagine).
 
 [NOTE]
 ====
@@ -19,7 +19,7 @@ Tutti i microservizi condividono le seguenti configurazioni (`microservice-confi
 * **URL Auth microservice**: `http://irccs-auth:8080`
 * **URL Centro Ricerca microservice**: `http://irccs-centro-ricerca:8080`
 * **URL Practitioner microservice**: `http://irccs-practitioner:8080`
-* **URL CTCAE microservice (Redis)**: `http://irccs-ctcae:8080`
+* **URL Notification microservice (Redis)**: `http://irccs-notification:8080`
 * **Keycloak base URL**: `http://irccs-keycloak:8080`
 * **Query limit FHIR**: 1000 risorse
 * **Timeout connessione**: 120 secondi
@@ -60,17 +60,17 @@ Gli endpoint di autenticazione sono esclusi dalla policy enforcement Keycloak (`
 
 Gestisce il **ragionamento clinico** tramite CQL (Clinical Quality Language) integrato con HAPI FHIR. Supporta la randomizzazione e la minimizzazione dei pazienti negli studi clinici (Patient Journey J-LI).
 
-=== irccs-microservice-ctcae
+=== irccs-microservice-notification
 
 [cols="1,3"]
 |===
-|Container |`irccs-ctcae`
-|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-ctcae:2.0.1-SNAPSHOT`
+|Container |`irccs-notification`
+|Immagine |`nexus.infocube.it/org.quarkus/irccs-microservice-notification:2.0.1-SNAPSHOT`
 |Porta esposta |`8987`
-|Config |`microservice-config-ctcae/application.properties`
+|Config |`microservice-config-notification/application.properties`
 |===
 
-Gestisce gli **eventi avversi CTCAE** (Common Terminology Criteria for Adverse Events). Implementa la verifica tramite **OTP via email** per la segnalazione sicura degli eventi avversi.
+Gestisce **OTP via email** e notifiche per la segnalazione sicura degli eventi avversi.
 
 Configurazione SMTP dedicata (variabili d'ambiente):
 
