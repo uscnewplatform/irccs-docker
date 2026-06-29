@@ -1,57 +1,35 @@
-#!/bin/bash
-# Carica CodeSystem + ValueSet + StructureDefinition CTCAE v5.0 su HAPI FHIR
-# usando il bundle JSON pre-generato (ctcae-v5-bundle.json).
+#!/usr/bin/env bash
+# Carica CTCAE v5.0 (CodeSystem + ValueSet + StructureDefinition) su HAPI FHIR.
 #
-# Uso:
-#   bash install-ctcae-v5.sh [HAPI_FHIR_URL]
+# Due sorgenti possibili:
+#   --source bundle  (default)  carica il ctcae-v5-bundle.json pre-generato/committato
+#   --source excel              rigenera il bundle dall'Excel versionato, poi carica
 #
-# Esempio:
+# Esempi:
 #   bash install-ctcae-v5.sh http://localhost:8080/fhir
-#   bash install-ctcae-v5.sh https://hapi.irccs.infocube.it/fhir
-#
-# Alternativa Python (genera bundle aggiornato + push):
-#   python3 import-ctcae-v5.py "CTCAE_v5.0_2017-11-27.xlsx"
+#   bash install-ctcae-v5.sh https://hapi.irccs.infocube.it/fhir --source excel
+set -euo pipefail
 
-set -e
-
-HAPI_URL="${1:-http://localhost:8080/fhir}"
-HAPI_URL="${HAPI_URL%/}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUNDLE_FILE="$SCRIPT_DIR/ctcae-v5-bundle.json"
+source "$SCRIPT_DIR/../_lib.sh"
 
-if [ ! -f "$BUNDLE_FILE" ]; then
-  echo "ERRORE: $BUNDLE_FILE non trovato."
-  echo "Genera il bundle prima:"
-  echo "  python3 import-ctcae-v5.py <percorso_excel> --bundle-only"
-  exit 1
-fi
+IMPORT_PY="$SCRIPT_DIR/import-ctcae-v5.py"
+BUNDLE_FILE="$SCRIPT_DIR/ctcae-v5-bundle.json"
+EXCEL_FILE="$SCRIPT_DIR/CTCAE_v5.0_2017-11-27.xlsx"
+
+crf_parse_args "$@"
 
 echo "─────────────────────────────────────────────────"
 echo "  CTCAE v5.0 → HAPI FHIR"
-echo "  URL: $HAPI_URL"
-echo "  Bundle: $(du -h "$BUNDLE_FILE" | cut -f1)"
+echo "  URL     : $HAPI_URL"
+echo "  Sorgente: $SOURCE"
 echo "─────────────────────────────────────────────────"
-echo ""
-echo "Caricamento in corso (CodeSystem + ValueSet + StructureDefinition)..."
-echo ""
 
-HTTP_STATUS=$(curl -s -o /tmp/ctcae_v5_response.json \
-  -w "%{http_code}" \
-  -X POST "$HAPI_URL" \
-  -H "Content-Type: application/fhir+json" \
-  --data-binary @"$BUNDLE_FILE")
+crf_resolve_bundle
+crf_push
 
 echo ""
-if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
-  echo "✓ Caricamento completato (HTTP $HTTP_STATUS)"
-  echo ""
-  echo "Risorse disponibili:"
-  echo "  CodeSystem          → $HAPI_URL/CodeSystem/ctcae-v5"
-  echo "  ValueSet            → $HAPI_URL/ValueSet/ctcae-v5-adverse-events"
-  echo "  StructureDefinition → $HAPI_URL/StructureDefinition/ctcae-grade-severity"
-else
-  echo "✗ Errore HTTP $HTTP_STATUS"
-  echo "Risposta HAPI:"
-  cat /tmp/ctcae_v5_response.json 2>/dev/null || echo "(nessuna risposta)"
-  exit 1
-fi
+echo "Risorse disponibili:"
+echo "  CodeSystem          → $HAPI_URL/CodeSystem/ctcae-v5"
+echo "  ValueSet            → $HAPI_URL/ValueSet/ctcae-v5-adverse-events"
+echo "  StructureDefinition → $HAPI_URL/StructureDefinition/ctcae-grade-severity"

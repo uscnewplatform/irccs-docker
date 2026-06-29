@@ -113,6 +113,10 @@ def build_codesystem(termini: list[dict]) -> dict:
             c["definition"] = t["definition"]
         concetti.append(c)
 
+    # Numero progressivo 1..N della domanda, continuo sull'intero file (ordine dei concept).
+    for _n, _c in enumerate(concetti, 1):
+        _c.setdefault("property", []).insert(0, {"code": "number", "valueInteger": _n})
+
     return {
         "resourceType": "CodeSystem",
         "id":           "ctcae-v5",
@@ -130,6 +134,7 @@ def build_codesystem(termini: list[dict]) -> dict:
         "publisher":    "NCI / IRCCS Pascale",
         "copyright":    "NCI CTCAE v5.0 – November 2017",
         "property": [
+            {"code": "number",   "description": "Numero progressivo della domanda (1..N)", "type": "integer"},
             {"code": "soc",      "description": "System Organ Class MedDRA",  "type": "string"},
             {"code": "grade1",   "description": "Grade 1 description",         "type": "string"},
             {"code": "grade2",   "description": "Grade 2 description",         "type": "string"},

@@ -1,33 +1,35 @@
 #!/usr/bin/env bash
-# Push PRO-CTCAE v1 bundle su HAPI FHIR
-# Uso: bash install-proctc-v1.sh [HAPI_URL]
-# Default: http://localhost:8080/fhir
-
+# Carica PRO-CTCAE v1 (CodeSystem + ValueSet + StructureDefinition) su HAPI FHIR.
+#
+# Due sorgenti possibili:
+#   --source bundle  (default)  carica il proctc-v1-bundle.json pre-generato/committato
+#   --source excel              rigenera il bundle dall'Excel versionato, poi carica
+#
+# Esempi:
+#   bash install-proctc-v1.sh http://localhost:8080/fhir
+#   bash install-proctc-v1.sh https://hapi.irccs.infocube.it/fhir --source excel
 set -euo pipefail
-HAPI="${1:-http://localhost:8080/fhir}"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUNDLE="$SCRIPT_DIR/proctc-v1-bundle.json"
+source "$SCRIPT_DIR/../_lib.sh"
+
+IMPORT_PY="$SCRIPT_DIR/import-proctc-v1.py"
+BUNDLE_FILE="$SCRIPT_DIR/proctc-v1-bundle.json"
+EXCEL_FILE="$SCRIPT_DIR/uosc_proctcaev1.xlsx"
+
+crf_parse_args "$@"
 
 echo "─────────────────────────────────────────────────────"
 echo "  PRO-CTCAE v1 → HAPI FHIR"
-echo "  URL: $HAPI"
+echo "  URL     : $HAPI_URL"
+echo "  Sorgente: $SOURCE"
 echo "─────────────────────────────────────────────────────"
 
-HTTP_CODE=$(curl -s -o /tmp/proctc_response.json -w "%{http_code}" \
-  -X POST "$HAPI" \
-  -H "Content-Type: application/fhir+json" \
-  --data-binary "@$BUNDLE")
+crf_resolve_bundle
+crf_push
 
-if [[ "$HTTP_CODE" == "200" || "$HTTP_CODE" == "201" ]]; then
-  echo "  ✓ Caricamento completato (HTTP $HTTP_CODE)"
-  echo ""
-  echo "  Risorse caricate:"
-  echo "    CodeSystem         → $HAPI/CodeSystem/proctc-v1"
-  echo "    ValueSet           → $HAPI/ValueSet/proctc-v1-items"
-  echo "    StructureDefinition→ $HAPI/StructureDefinition/proctc-v1-grade-severity"
-else
-  echo "  ✗ Errore HTTP $HTTP_CODE"
-  cat /tmp/proctc_response.json
-  exit 1
-fi
-echo "─────────────────────────────────────────────────────"
+echo ""
+echo "Risorse caricate:"
+echo "  CodeSystem          → $HAPI_URL/CodeSystem/proctc-v1"
+echo "  ValueSet            → $HAPI_URL/ValueSet/proctc-v1-items"
+echo "  StructureDefinition → $HAPI_URL/StructureDefinition/proctc-v1-grade-severity"

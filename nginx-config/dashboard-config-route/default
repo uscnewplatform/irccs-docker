@@ -3,7 +3,7 @@ server {
     server_name irccs.staging.infocube.it;
 
     location / {
-        proxy_pass http://10.99.88.146:80/;
+        proxy_pass http://10.99.88.246:80/;
         client_max_body_size 2000M;
     }
 }

@@ -11,7 +11,7 @@ Uso:
 
 Esempi:
     python3 import-loinc-panels.py
-    python3 import-loinc-panels.py --hapi-url http://10.99.88.204:8080/fhir
+    python3 import-loinc-panels.py --hapi-url http://10.99.88.240:8080/fhir
     python3 import-loinc-panels.py --loinc-zip /path/to/loinc.zip --prefix Loinc_2.83
 """
 

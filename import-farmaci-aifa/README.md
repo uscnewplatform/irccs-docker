@@ -1,21 +1,30 @@
 # Import Farmaci AIFA → HAPI FHIR
 
 Carica il catalogo farmaci AIFA come risorse FHIR Terminology (CodeSystem + ValueSet) su HAPI FHIR.
-Supporta versionamento annuale: versioni diverse coesistono, nessun duplicato.
 
-## Struttura cartella
+Due pipeline **indipendenti**, con URL canonici diversi → coesistono sullo stesso HAPI:
+
+| Pipeline | Cartella | Granularità | CodeSystem | Quando |
+|---|---|---|---|---|
+| **Per classi** (A/H) | `import-aifa-per-classi/` | 1 concept = farmaco per nome commerciale | `farmaci` | catalogo Classe A/H, ~12.9k, versionato per snapshot |
+| **Confezioni (ATC)** | `import-confezioni-atc/` | 1 concept = confezione (AIC) | `farmaci-confezioni-atc-np` | catalogo completo confezioni, ~159k, ricerca per principio attivo |
+
+## Struttura cartelle
 
 ```
 import-farmaci-aifa/
-├── import-aifa-farmaci.py       ← script di import (non toccare)
 ├── README.md
-├── 2026-05/                     ← snapshot maggio 2026 (incluso nel repo)
-│   ├── aifa_classe_a.csv
-│   ├── aifa_classe_h.csv
-│   └── aifa_equivalenti.csv
-└── 2026-10/                     ← esempio prossima versione (da creare)
-    ├── aifa_classe_a.csv
-    ├── ...
+├── requirements.txt                       ← dipendenze Python (requests)
+├── import-aifa-per-classi/                ← PIPELINE A: Classe A/H
+│   ├── import-aifa-farmaci.py             ← script di import (non toccare)
+│   └── 2026-05/                           ← snapshot maggio 2026 (incluso nel repo)
+│       ├── aifa_classe_a.csv
+│       ├── aifa_classe_h.csv
+│       └── aifa_equivalenti.csv
+└── import-confezioni-atc/                 ← PIPELINE B: confezioni
+    ├── import-confezioni-atc-batch.py     ← script di import a lotti (non toccare)
+    └── 2026-06/
+        └── confezioni.csv                 ← catalogo confezioni AIFA (~159k righe)
 ```
 
 Ogni sottocartella `YYYY-MM` contiene i CSV del relativo snapshot AIFA.
@@ -24,16 +33,23 @@ Il nome della cartella coincide con la versione usata nelle risorse FHIR.
 ## Prerequisiti
 
 - Python 3.10+
-- Libreria `requests`:
+- Dipendenze Python:
   ```bash
-  pip install requests
+  pip install -r requirements.txt
   ```
 - HAPI FHIR raggiungibile (locale o remoto)
+
+---
+
+# Pipeline A — Farmaci per classi (A/H)
+
+Catalogo AIFA Classe A/H come `CodeSystem farmaci` + ValueSet versionati.
+Supporta versionamento annuale: versioni diverse coesistono, nessun duplicato.
 
 ## Utilizzo
 
 ```bash
-cd irccs-docker/import-farmaci-aifa
+cd import-aifa-per-classi
 
 # Import della cartella 2026-05 già presente
 python3 import-aifa-farmaci.py http://localhost:8080/fhir --version 2026-05
@@ -53,7 +69,7 @@ python3 import-aifa-farmaci.py http://localhost:8080/fhir --version 2026-05 --fo
 ### 1. Crea la nuova cartella
 
 ```bash
-mkdir import-farmaci-aifa/2026-10
+mkdir import-aifa-per-classi/2026-10
 ```
 
 ### 2. Scarica i nuovi CSV da AIFA e salvali nella cartella
@@ -164,6 +180,107 @@ curl "http://localhost:8080/fhir/CodeSystem/\$validate-code?url=https://aifa.gov
 curl "http://localhost:8080/fhir/CodeSystem?url=https://aifa.gov.it/fhir/CodeSystem/farmaci&_elements=version,date,count"
 ```
 
+---
+
+# Pipeline B — Confezioni (catalogo completo)
+
+Catalogo completo AIFA a livello di **confezione** (~159k, da `confezioni.csv`), usato come
+`answerValueSet` di una multichoice nel CRF: si cerca per **principio attivo** e si seleziona la confezione.
+
+## Perché a lotti (non una PUT unica)
+
+`content=complete` con 159k concept in **una sola PUT** (~122MB) non regge su HAPI (OOM/timeout,
+transazione che non committa). Lo script carica i concept a **lotti via `$apply-codesystem-delta-add`**:
+tante transazioni piccole, progresso visibile, ripartenza con `--skip`.
+
+Il CodeSystem è quindi `content=not-present` (delta-add lo richiede).
+
+## Utilizzo
+
+```bash
+cd import-confezioni-atc
+
+# Smoke test (primi 2000 concept) — verifica connettività + HAPI
+python3 import-confezioni-atc-batch.py http://localhost:8080/fhir --limit 2000
+
+# Carico completo (~159k, lotti da 2000)
+python3 import-confezioni-atc-batch.py http://localhost:8080/fhir
+
+# Ripartenza dopo interruzione (lo skip da usare lo stampa lo script stesso)
+python3 import-confezioni-atc-batch.py http://localhost:8080/fhir --skip 40000
+```
+
+Il CSV (`2026-06/confezioni.csv`) viene risolto automaticamente; usa `--csv PATH` per sovrascriverlo.
+
+### Opzioni
+
+| Opzione | Default | Descrizione |
+|---|---|---|
+| `HAPI_URL` (posizionale) | `http://localhost:8080/fhir` | endpoint FHIR |
+| `--csv PATH` | auto (`2026-06/confezioni.csv`) | CSV sorgente |
+| `--version YYYY-MM` | mese corrente | versione delle risorse FHIR |
+| `--batch-size N` | `2000` | concept per lotto |
+| `--limit N` | — | carica solo i primi N (test) |
+| `--skip N` | `0` | salta i primi N (ripartenza) |
+| `--cs-url URL` / `--vs-url URL` | URL `*-np` di default | override URL canonici |
+
+## Ripartenza & auto-heal (HAPI-0389)
+
+Se un run viene interrotto a metà, il CodeSystem può restare con **concept corrotti**
+(`TermConcept` orfani da transazione non committata). Ri-eseguendo, HAPI risponde:
+
+```
+HTTP 500 — HAPI-0389: ... org.hibernate.TransientObjectException:
+persistent instance references an unsaved transient instance of 'TermConcept'
+```
+
+Non è un problema di timing né di `--batch-size`: `delta-add` è idempotente sui code **sani**
+(ri-aggiungerli → 200), ma su un code **corrotto** già presente lancia HAPI-0389 e fa fallire
+l'intero lotto.
+
+Lo script è **auto-healing**: su quell'errore fa `$apply-codesystem-delta-remove` del lotto
+(purga i corrotti/esistenti, tollera i code assenti) e ritenta la `delta-add`. Sul happy-path
+(code nuovi) il remove non scatta mai. Quindi:
+
+- **ambiente nuovo** (CS mai usato) → carica diretto, nessun heal;
+- **ripartenza** (`--skip N`) o **CS sporco** → l'auto-heal ripulisce e prosegue da solo.
+
+Niente azione manuale: rilancia lo stesso comando (eventualmente con lo `--skip` che lo script stampa).
+
+## Modello del concept
+
+| Campo FHIR | Valore | Note |
+|---|---|---|
+| `code` | `CODICE_AIC` | codice AIFA univoco della confezione |
+| `display` | `"PA — DENOMINAZIONE DESCRIZIONE"` | usato per la ricerca via `$expand?filter` |
+| `property principio-attivo` | PA (valueString) | letto via `$lookup` |
+| `property forma` | FORMA (valueString) | formulazione, read-only nel CRF |
+| `property atc` | CODICE_ATC (valueString) | |
+
+> ⚠️ `$apply-codesystem-delta-add` **scarta le designation ma tiene le property**, e `$expand`
+> ritorna le designation ma **non** le property. Quindi col `not-present`:
+> - **ricerca** per principio attivo = via **display** (il PA è in testa al display, `$expand?filter` lo matcha) — richiede pre-espansione (`pre_expand_value_sets: true` su HAPI);
+> - **forma / atc / pa** = property, recuperate dal frontend con **`$lookup`** alla selezione del farmaco (non da `$expand`).
+
+## Risorse FHIR create
+
+| Risorsa | URL canonica (default) |
+|---|---|
+| CodeSystem | `https://aifa.gov.it/fhir/CodeSystem/farmaci-confezioni-atc-np` |
+| ValueSet | `https://aifa.gov.it/fhir/ValueSet/farmaci-confezioni-atc-np` |
+
+## API HAPI FHIR
+
+```bash
+# Ricerca per principio attivo (match sul display)
+curl "http://localhost:8080/fhir/ValueSet/\$expand?url=https://aifa.gov.it/fhir/ValueSet/farmaci-confezioni-atc-np&filter=metformina&count=20"
+
+# Dettagli confezione (forma, atc, principio-attivo) — property via $lookup
+curl "http://localhost:8080/fhir/CodeSystem/\$lookup?system=https://aifa.gov.it/fhir/CodeSystem/farmaci-confezioni-atc-np&code=043658032"
+```
+
+---
+
 ## Fonti dati AIFA
 
 Licenza: [CC BY 3.0 IT](https://creativecommons.org/licenses/by/3.0/it/) — AIFA Open Data.
@@ -172,3 +289,4 @@ Licenza: [CC BY 3.0 IT](https://creativecommons.org/licenses/by/3.0/it/) — AIF
 |---|---|
 | Classe A / H | https://www.aifa.gov.it/en/liste-farmaci-a-h |
 | Lista Trasparenza (con ATC) | https://www.aifa.gov.it/en/liste-di-trasparenza |
+| Confezioni (catalogo completo) | https://www.aifa.gov.it/en/liste-di-trasparenza |

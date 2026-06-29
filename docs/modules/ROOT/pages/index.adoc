@@ -17,6 +17,6 @@ irccs-docker/
 ├── docker-compose-monitoring.yaml
 ├── zammad-ticketing/docker-compose.yaml
 ├── microservice-config/application.properties     ← config condivisa
-├── microservice-config-ctcae/application.properties ← config CTCAE
+├── microservice-config-notification/application.properties ← config Notification
 └── keycloak-config/realm-export/pascale-realm_2.0.json
 ----

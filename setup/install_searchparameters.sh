@@ -192,7 +192,7 @@ EOF
         -d "$JSON_BODY"
 done
 
-# Enrollment SearchParameter
+# Enrollment SearchParameter (string — ricerca per ID stringa)
 JSON_BODY=$(cat <<EOF
 {
   "resourceType": "SearchParameter",
@@ -208,6 +208,27 @@ JSON_BODY=$(cat <<EOF
   "expression": "ResearchStudy.enrollment.reference",
   "processingMode": "normal",
   "modifier": ["exact"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# Enrollment-group SearchParameter (reference type — per _revinclude:iterate)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "name": "enrollment-group",
+  "title": "enrollment-group",
+  "status": "active",
+  "publisher": "Infocube",
+  "description": "Reference search on ResearchStudy.enrollment for _revinclude",
+  "code": "enrollment-group",
+  "base": ["ResearchStudy"],
+  "type": "reference",
+  "expression": "ResearchStudy.enrollment",
+  "target": ["Group"]
 }
 EOF
 )
@@ -277,6 +298,26 @@ curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -H "Content-Type: application/json" \
       -d "$JSON_BODY"
 
+# PlanDefinition.action.definitionCanonical SearchParameter (per _revinclude da ActivityDefinition)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://your.fhir.server/SearchParameter/PlanDefinition-action-definition",
+  "name": "action-definition",
+  "status": "active",
+  "description": "ActivityDefinition or PlanDefinition referenced in PlanDefinition.action.definitionCanonical or action.definition",
+  "code": "action-definition",
+  "base": ["PlanDefinition"],
+  "type": "reference",
+  "expression": "PlanDefinition.action.definitionCanonical | PlanDefinition.action.definition",
+  "target": ["ActivityDefinition", "PlanDefinition"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
 # Group name SearchParameter
 JSON_BODY=$(cat <<EOF
 {
@@ -336,6 +377,25 @@ curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -d "$JSON_BODY"
 
 
+# Group questionnaire SearchParameter
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://yourserver/SearchParameter/group-questionnaire",
+  "name": "group-questionnaire",
+  "status": "active",
+  "code": "questionnaire",
+  "base": ["Group"],
+  "type": "reference",
+  "expression": "Group.characteristic.where(code.coding.code='questionnaire').value.ofType(Reference)",
+  "target": ["Questionnaire"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
 # Create ADMIN first User inHAPI FHIR
 JSON_BODY=$(cat <<EOF
 {
@@ -358,5 +418,51 @@ JSON_BODY=$(cat <<EOF
 EOF
 )
 curl -s -X POST "http://$HOSTNAME_PORT/fhir/Practitioner" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# ── Consent ─────────────────────────────────────────────────────────────────
+# La dashboard cerca i consensi con `Consent?patient=<id>&status=active`
+# (vedi ConsentClient.fetchActiveConsents). Su alcuni HAPI questi param non sono
+# attivi di default → la ricerca torna vuota anche se la risorsa esiste.
+# Una volta installati, ogni salvataggio successivo viene indicizzato in automatico;
+# per i consensi gia esistenti serve un $reindex una-tantum.
+
+# Consent.patient (reference)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://irccs.pascale.it/SearchParameter/Consent-patient",
+  "name": "patient",
+  "status": "active",
+  "description": "Search Consent by patient reference",
+  "code": "patient",
+  "base": ["Consent"],
+  "type": "reference",
+  "expression": "Consent.patient",
+  "target": ["Patient"]
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
+
+# Consent.status (token)
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://irccs.pascale.it/SearchParameter/Consent-status",
+  "name": "status",
+  "status": "active",
+  "description": "Search Consent by status",
+  "code": "status",
+  "base": ["Consent"],
+  "type": "token",
+  "expression": "Consent.status"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -H "Content-Type: application/json" \
       -d "$JSON_BODY"

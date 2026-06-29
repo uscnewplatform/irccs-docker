@@ -153,6 +153,19 @@ chmod +x install_jli.sh
 
 Verificare che l'utente di servizio `service-account-irccs` nel realm `pascale` abbia il ruolo `/admin` (necessario per le operazioni di signup).
 
+=== 7. Installazione tipi di consenso (registry)
+
+I tipi di consenso sono un *registry dinamico* persistito come `CodeSystem` FHIR (`urn:irccs:consent-type`). Lo script precarica i 9 tipi base con terminologia HL7 (scope `consentscope`, category `consentcategorycodes`). È necessario per far comparire i tipi nel designer e per garantire che il tipo `privacy` esista (gli studi che lo richiedono lo usano per valorizzare `Consent.scope`/`category`).
+
+[source,bash]
+----
+cd setup
+chmod +x install_consent_types.sh
+bash install_consent_types.sh <hostname>:<port>
+----
+
+Idempotente (PUT conditional `?url=`): può essere rilanciato senza creare duplicati. Successivamente i tipi sono gestibili a runtime dalla dashboard (Back-office → Tipi di consenso, solo SuperAdmin).
+
 === 6. Import terminologia LOINC (opzionale)
 
 Per abilitare la validazione e ricerca di codici LOINC nel server FHIR è necessario importare la terminologia.

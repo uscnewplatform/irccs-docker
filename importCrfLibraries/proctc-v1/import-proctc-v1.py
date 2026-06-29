@@ -109,6 +109,10 @@ def build_codesystem(termini: list[dict]) -> dict:
             "property": props,
         })
 
+    # Numero progressivo 1..N della domanda, continuo sull'intero file (ordine dei concept).
+    for _n, _c in enumerate(concetti, 1):
+        _c.setdefault("property", []).insert(0, {"code": "number", "valueInteger": _n})
+
     return {
         "resourceType": "CodeSystem",
         "id":           "proctc-v1",
@@ -126,6 +130,7 @@ def build_codesystem(termini: list[dict]) -> dict:
         "publisher":    "NCI / IRCCS Pascale",
         "copyright":    "NCI PRO-CTCAE v1",
         "property": [
+            {"code": "number",     "description": "Numero progressivo della domanda (1..N)", "type": "integer"},
             {"code": "macrogroup", "description": "Macrogruppo sintomatologico", "type": "string"},
             {"code": "category",   "description": "Categoria di sintomo",        "type": "string"},
             {"code": "interface",  "description": "Tipo di interfaccia UI",      "type": "string"},

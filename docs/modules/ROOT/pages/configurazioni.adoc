@@ -114,7 +114,7 @@ Il file **non deve mai essere versionato** su Git.
 |Intervallo di polling dei ticket (secondi)
 |===
 
-=== CTCAE / OTP Email
+=== Notification / OTP Email
 
 [cols="2,3"]
 |===
@@ -249,7 +249,7 @@ I file `httpd-config/irccs.conf` e `httpd-config/httpd.conf` configurano il virt
 
 Posizione: `microservice-config/application.properties`
 
-Questo file è condiviso da tutti i microservizi (eccetto CTCAE, TAC e Zammad che hanno cartelle dedicate):
+Questo file è condiviso da tutti i microservizi (eccetto Notification, TAC e Zammad che hanno cartelle dedicate):
 
 [source,properties]
 ----
@@ -271,6 +271,6 @@ quarkus.oidc.token.issuer=${OIDC_TOKEN_ISSUER}
 
 === Configurazioni specifiche
 
-* `microservice-config-ctcae/` — configurazione per CTCAE (OTP email)
+* `microservice-config-notification/` — configurazione per Notification (OTP email)
 * `microservice-config-tac/` — configurazione per TAC (DICOM)
 * `microservice-config-zammad/` — configurazione per integrazione Zammad
