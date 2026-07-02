@@ -114,9 +114,13 @@ def build_codesystem(termini: list[dict]) -> dict:
             c["definition"] = t["definition"]
         concetti.append(c)
 
-    # Numero progressivo 1..N della domanda, continuo sull'intero file (ordine dei concept).
+    # number = codice MedDRA del concept (fallback: ordine 1..N se il code non è numerico).
     for _n, _c in enumerate(concetti, 1):
-        _c.setdefault("property", []).insert(0, {"code": "number", "valueInteger": _n})
+        try:
+            _num = int(str(_c["code"]).strip())
+        except (ValueError, TypeError):
+            _num = _n
+        _c.setdefault("property", []).insert(0, {"code": "number", "valueInteger": _num})
 
     return {
         "resourceType": "CodeSystem",
@@ -135,7 +139,7 @@ def build_codesystem(termini: list[dict]) -> dict:
         "publisher":    "NCI / IRCCS Pascale",
         "copyright":    "NCI CTCAE v6.0 – January 2026",
         "property": [
-            {"code": "number",   "description": "Numero progressivo della domanda (1..N)", "type": "integer"},
+            {"code": "number",   "description": "Numero della domanda (= codice MedDRA)", "type": "integer"},
             {"code": "soc",      "description": "System Organ Class MedDRA",  "type": "string"},
             {"code": "grade1",   "description": "Grade 1 description",         "type": "string"},
             {"code": "grade2",   "description": "Grade 2 description",         "type": "string"},

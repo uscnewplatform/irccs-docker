@@ -12,14 +12,14 @@
         "title": "PRO-CTCAE v1 Patient-Reported Outcomes",
         "status": "active",
         "content": "complete",
-        "date": "2026-06-25",
-        "description": "NCI Patient-Reported Outcomes version of CTCAE (PRO-CTCAE) v1. 125 termini.",
+        "date": "2026-07-02",
+        "description": "NCI Patient-Reported Outcomes version of CTCAE (PRO-CTCAE) v1. 126 termini.",
         "publisher": "NCI / IRCCS Pascale",
         "copyright": "NCI PRO-CTCAE v1",
         "property": [
           {
             "code": "number",
-            "description": "Numero progressivo della domanda (1..N)",
+            "description": "Numero della domanda (da numquest)",
             "type": "integer"
           },
           {
@@ -30,11 +30,6 @@
           {
             "code": "category",
             "description": "Categoria di sintomo",
-            "type": "string"
-          },
-          {
-            "code": "interface",
-            "description": "Tipo di interfaccia UI",
             "type": "string"
           },
           {
@@ -88,12 +83,12 @@
                 "valueInteger": 1
               },
               {
-                "code": "category",
-                "valueString": "SENSAZIONE DI BOCCA SECCA"
+                "code": "macrogroup",
+                "valueString": "Dry_Mouth_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SENSAZIONE DI BOCCA SECCA"
               },
               {
                 "code": "answ1",
@@ -126,12 +121,12 @@
                 "valueInteger": 2
               },
               {
-                "code": "category",
-                "valueString": "DIFFICOLTA A DEGLUTIRE"
+                "code": "macrogroup",
+                "valueString": "Swallowing_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DIFFICOLTA A DEGLUTIRE"
               },
               {
                 "code": "answ1",
@@ -164,12 +159,12 @@
                 "valueInteger": 3
               },
               {
-                "code": "category",
-                "valueString": "PIAGHE IN BOCCA O IN GOLA"
+                "code": "macrogroup",
+                "valueString": "Sore_mouth_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PIAGHE IN BOCCA O IN GOLA"
               },
               {
                 "code": "answ1",
@@ -202,12 +197,12 @@
                 "valueInteger": 4
               },
               {
-                "code": "category",
-                "valueString": "PIAGHE IN BOCCA O IN GOLA"
+                "code": "macrogroup",
+                "valueString": "Sore_mouth_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PIAGHE IN BOCCA O IN GOLA"
               },
               {
                 "code": "answ1",
@@ -240,12 +235,12 @@
                 "valueInteger": 5
               },
               {
-                "code": "category",
-                "valueString": "SCREPOLATURE AGLI ANGOLI DELLA BOCCA"
+                "code": "macrogroup",
+                "valueString": "Mouth_corners_cracking_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SCREPOLATURE AGLI ANGOLI DELLA BOCCA"
               },
               {
                 "code": "answ1",
@@ -278,12 +273,12 @@
                 "valueInteger": 6
               },
               {
-                "code": "category",
-                "valueString": "MODIFICAZIONI DELLA VOCE"
+                "code": "macrogroup",
+                "valueString": "Voice_changes_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MODIFICAZIONI DELLA VOCE"
               },
               {
                 "code": "answ1",
@@ -304,12 +299,12 @@
                 "valueInteger": 7
               },
               {
-                "code": "category",
-                "valueString": "VOCE RAUCA"
+                "code": "macrogroup",
+                "valueString": "Hoarse_voice_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "VOCE RAUCA"
               },
               {
                 "code": "answ1",
@@ -342,12 +337,12 @@
                 "valueInteger": 8
               },
               {
-                "code": "category",
-                "valueString": "DIFFICOLTÀ A SENTIRE IL SAPORE DI CIBI O BEVANDE"
+                "code": "macrogroup",
+                "valueString": "Dysgeusia_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DIFFICOLTÀ A SENTIRE IL SAPORE DI CIBI O BEVANDE"
               },
               {
                 "code": "answ1",
@@ -373,19 +368,19 @@
           },
           {
             "code": "PROCTC-0009",
-            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DELL’APPETITO nel momento PEGGIORE?",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DELL'APPETITO nel momento PEGGIORE?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 9
               },
               {
-                "code": "category",
-                "valueString": "CALO DELL'’APPETITO"
+                "code": "macrogroup",
+                "valueString": "Appetite_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "CALO DELL'APPETITO"
               },
               {
                 "code": "answ1",
@@ -411,19 +406,19 @@
           },
           {
             "code": "PROCTC-0010",
-            "display": "Negli ultimi 7 giorni, in che misura il CALO DELL’APPETITO HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "display": "Negli ultimi 7 giorni, in che misura il CALO DELL'APPETITO HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 10
               },
               {
-                "code": "category",
-                "valueString": "CALO DELL'’APPETITO"
+                "code": "macrogroup",
+                "valueString": "Appetite_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "CALO DELL'APPETITO"
               },
               {
                 "code": "answ1",
@@ -456,12 +451,12 @@
                 "valueInteger": 11
               },
               {
-                "code": "category",
-                "valueString": "NAUSEA (senso di malessere allo stomaco)"
+                "code": "macrogroup",
+                "valueString": "Nausea_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "NAUSEA (senso di malessere allo stomaco)"
               },
               {
                 "code": "answ1",
@@ -494,12 +489,12 @@
                 "valueInteger": 12
               },
               {
-                "code": "category",
-                "valueString": "NAUSEA (senso di malessere allo stomaco)"
+                "code": "macrogroup",
+                "valueString": "Nausea_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "NAUSEA (senso di malessere allo stomaco)"
               },
               {
                 "code": "answ1",
@@ -532,12 +527,12 @@
                 "valueInteger": 13
               },
               {
-                "code": "category",
-                "valueString": "VOMITO"
+                "code": "macrogroup",
+                "valueString": "Vomiting_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "VOMITO"
               },
               {
                 "code": "answ1",
@@ -570,12 +565,12 @@
                 "valueInteger": 14
               },
               {
-                "code": "category",
-                "valueString": "VOMITO"
+                "code": "macrogroup",
+                "valueString": "Vomiting_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "VOMITO"
               },
               {
                 "code": "answ1",
@@ -608,12 +603,12 @@
                 "valueInteger": 15
               },
               {
-                "code": "category",
-                "valueString": "BRUCIORE DI STOMACO"
+                "code": "macrogroup",
+                "valueString": "Heartburn_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BRUCIORE DI STOMACO"
               },
               {
                 "code": "answ1",
@@ -646,12 +641,12 @@
                 "valueInteger": 16
               },
               {
-                "code": "category",
-                "valueString": "BRUCIORE DI STOMACO"
+                "code": "macrogroup",
+                "valueString": "Heartburn_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BRUCIORE DI STOMACO"
               },
               {
                 "code": "answ1",
@@ -684,12 +679,12 @@
                 "valueInteger": 17
               },
               {
-                "code": "category",
-                "valueString": "MAGGIOR PRODUZIONE DI ARIA INTESTINALE (FLATULENZA)"
+                "code": "macrogroup",
+                "valueString": "Flatulence_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAGGIOR PRODUZIONE DI ARIA INTESTINALE (FLATULENZA)"
               },
               {
                 "code": "answ1",
@@ -710,12 +705,12 @@
                 "valueInteger": 18
               },
               {
-                "code": "category",
-                "valueString": "GONFIORE DELLA PANCIA"
+                "code": "macrogroup",
+                "valueString": "Bloating_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "GONFIORE DELLA PANCIA"
               },
               {
                 "code": "answ1",
@@ -748,12 +743,12 @@
                 "valueInteger": 19
               },
               {
-                "code": "category",
-                "valueString": "GONFIORE DELLA PANCIA"
+                "code": "macrogroup",
+                "valueString": "Bloating_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "GONFIORE DELLA PANCIA"
               },
               {
                 "code": "answ1",
@@ -786,12 +781,12 @@
                 "valueInteger": 20
               },
               {
-                "code": "category",
-                "valueString": "SINGHIOZZO"
+                "code": "macrogroup",
+                "valueString": "Hiccups_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SINGHIOZZO"
               },
               {
                 "code": "answ1",
@@ -824,12 +819,12 @@
                 "valueInteger": 21
               },
               {
-                "code": "category",
-                "valueString": "SINGHIOZZO"
+                "code": "macrogroup",
+                "valueString": "Hiccups_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SINGHIOZZO"
               },
               {
                 "code": "answ1",
@@ -862,12 +857,12 @@
                 "valueInteger": 22
               },
               {
-                "code": "category",
-                "valueString": "STITICHEZZA"
+                "code": "macrogroup",
+                "valueString": "Constipation_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "STITICHEZZA"
               },
               {
                 "code": "answ1",
@@ -900,12 +895,12 @@
                 "valueInteger": 23
               },
               {
-                "code": "category",
-                "valueString": "FECI MOLLI O ACQUOSE (DIARREA)"
+                "code": "macrogroup",
+                "valueString": "Diarrhoea_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "FECI MOLLI O ACQUOSE (DIARREA)"
               },
               {
                 "code": "answ1",
@@ -938,12 +933,12 @@
                 "valueInteger": 24
               },
               {
-                "code": "category",
-                "valueString": "MAL DI PANCIA"
+                "code": "macrogroup",
+                "valueString": "Abdominal_pain_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAL DI PANCIA"
               },
               {
                 "code": "answ1",
@@ -976,12 +971,12 @@
                 "valueInteger": 25
               },
               {
-                "code": "category",
-                "valueString": "MAL DI PANCIA"
+                "code": "macrogroup",
+                "valueString": "Abdominal_pain_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAL DI PANCIA"
               },
               {
                 "code": "answ1",
@@ -1014,12 +1009,12 @@
                 "valueInteger": 26
               },
               {
-                "code": "category",
-                "valueString": "MAL DI PANCIA"
+                "code": "macrogroup",
+                "valueString": "Abdominal_pain_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAL DI PANCIA"
               },
               {
                 "code": "answ1",
@@ -1052,12 +1047,12 @@
                 "valueInteger": 27
               },
               {
-                "code": "category",
-                "valueString": "PERDITE DI FECI"
+                "code": "macrogroup",
+                "valueString": "Fecal_incontinence_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PERDITE DI FECI"
               },
               {
                 "code": "answ1",
@@ -1090,12 +1085,12 @@
                 "valueInteger": 28
               },
               {
-                "code": "category",
-                "valueString": "PERDITE DI FECI"
+                "code": "macrogroup",
+                "valueString": "Fecal_incontinence_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PERDITE DI FECI"
               },
               {
                 "code": "answ1",
@@ -1128,12 +1123,12 @@
                 "valueInteger": 29
               },
               {
-                "code": "category",
-                "valueString": "MANCANZA DI FIATO"
+                "code": "macrogroup",
+                "valueString": "Dyspnoea_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MANCANZA DI FIATO"
               },
               {
                 "code": "answ1",
@@ -1166,12 +1161,12 @@
                 "valueInteger": 30
               },
               {
-                "code": "category",
-                "valueString": "MANCANZA DI FIATO"
+                "code": "macrogroup",
+                "valueString": "Dyspnoea_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MANCANZA DI FIATO"
               },
               {
                 "code": "answ1",
@@ -1204,12 +1199,12 @@
                 "valueInteger": 31
               },
               {
-                "code": "category",
-                "valueString": "TOSSE"
+                "code": "macrogroup",
+                "valueString": "Cough_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TOSSE"
               },
               {
                 "code": "answ1",
@@ -1242,12 +1237,12 @@
                 "valueInteger": 32
               },
               {
-                "code": "category",
-                "valueString": "TOSSE"
+                "code": "macrogroup",
+                "valueString": "Cough_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TOSSE"
               },
               {
                 "code": "answ1",
@@ -1280,12 +1275,12 @@
                 "valueInteger": 33
               },
               {
-                "code": "category",
-                "valueString": "RESPIRO SIBILANTE (EMISSIONE DI UN FISCHIO QUANDO SI RESPIRA)"
+                "code": "macrogroup",
+                "valueString": "Wheezing_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "RESPIRO SIBILANTE (EMISSIONE DI UN FISCHIO QUANDO SI RESPIRA)"
               },
               {
                 "code": "answ1",
@@ -1318,12 +1313,12 @@
                 "valueInteger": 34
               },
               {
-                "code": "category",
-                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
+                "code": "macrogroup",
+                "valueString": "Arm/leg_swelling_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
               },
               {
                 "code": "answ1",
@@ -1356,12 +1351,12 @@
                 "valueInteger": 35
               },
               {
-                "code": "category",
-                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
+                "code": "macrogroup",
+                "valueString": "Arm/leg_swelling_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
               },
               {
                 "code": "answ1",
@@ -1394,12 +1389,12 @@
                 "valueInteger": 36
               },
               {
-                "code": "category",
-                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
+                "code": "macrogroup",
+                "valueString": "Arm/leg_swelling_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "GONFIORE ALLE BRACCIA O ALLE GAMBE"
               },
               {
                 "code": "answ1",
@@ -1432,12 +1427,12 @@
                 "valueInteger": 37
               },
               {
-                "code": "category",
-                "valueString": "PALPITAZIONI"
+                "code": "macrogroup",
+                "valueString": "Palpitations_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PALPITAZIONI"
               },
               {
                 "code": "answ1",
@@ -1470,12 +1465,12 @@
                 "valueInteger": 38
               },
               {
-                "code": "category",
-                "valueString": "PALPITAZIONI"
+                "code": "macrogroup",
+                "valueString": "Palpitations_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PALPITAZIONI"
               },
               {
                 "code": "answ1",
@@ -1508,12 +1503,12 @@
                 "valueInteger": 39
               },
               {
-                "code": "category",
-                "valueString": "IRRITAZIONE DELLA PELLE"
+                "code": "macrogroup",
+                "valueString": "Rash_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "IRRITAZIONE DELLA PELLE"
               },
               {
                 "code": "answ1",
@@ -1534,12 +1529,12 @@
                 "valueInteger": 40
               },
               {
-                "code": "category",
-                "valueString": "SECCHEZZA DELLA PELLE"
+                "code": "macrogroup",
+                "valueString": "Dry_Skin_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SECCHEZZA DELLA PELLE"
               },
               {
                 "code": "answ1",
@@ -1572,12 +1567,12 @@
                 "valueInteger": 41
               },
               {
-                "code": "category",
-                "valueString": "BRUFOLI (ACNE) SUL VOLTO O SUL TORACE"
+                "code": "macrogroup",
+                "valueString": "Acne_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BRUFOLI (ACNE) SUL VOLTO O SUL TORACE"
               },
               {
                 "code": "answ1",
@@ -1610,12 +1605,12 @@
                 "valueInteger": 42
               },
               {
-                "code": "category",
-                "valueString": "PERDITA DEI CAPELLI"
+                "code": "macrogroup",
+                "valueString": "Hair_loss_(A)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PERDITA DEI CAPELLI"
               },
               {
                 "code": "answ1",
@@ -1648,12 +1643,12 @@
                 "valueInteger": 43
               },
               {
-                "code": "category",
-                "valueString": "PRURITO"
+                "code": "macrogroup",
+                "valueString": "Itchy_skin_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PRURITO"
               },
               {
                 "code": "answ1",
@@ -1686,12 +1681,12 @@
                 "valueInteger": 44
               },
               {
-                "code": "category",
-                "valueString": "ORTICARIA (BOLLE ROSSE che provocano prurito SULLA PELLE)"
+                "code": "macrogroup",
+                "valueString": "Hives_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ORTICARIA (BOLLE ROSSE che provocano prurito SULLA PELLE)"
               },
               {
                 "code": "answ1",
@@ -1712,12 +1707,12 @@
                 "valueInteger": 45
               },
               {
-                "code": "category",
-                "valueString": "SINDROME MANO-PIEDE (IRRITAZIONE DELLE MANI O DEI PIEDI CHE PUÒ CAUSARE SCREPOLATURE, SPELLATURE, ROSSORE O DOLORE)"
+                "code": "macrogroup",
+                "valueString": "Hand/foot_syndrome_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SINDROME MANO-PIEDE (IRRITAZIONE DELLE MANI O DEI PIEDI CHE PUÒ CAUSARE SCREPOLATURE, SPELLATURE, ROSSORE O DOLORE)"
               },
               {
                 "code": "answ1",
@@ -1750,12 +1745,12 @@
                 "valueInteger": 46
               },
               {
-                "code": "category",
-                "valueString": "PERDITA DI UNGHIE DELLE MANI O DEI PIEDI"
+                "code": "macrogroup",
+                "valueString": "Loss_of_nails_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PERDITA DI UNGHIE DELLE MANI O DEI PIEDI"
               },
               {
                 "code": "answ1",
@@ -1776,12 +1771,12 @@
                 "valueInteger": 47
               },
               {
-                "code": "category",
-                "valueString": "ISPESSIMENTI O SOLCHI SULLE UNGHIE DELLE MANI O DEI PIEDI"
+                "code": "macrogroup",
+                "valueString": "Ridges/bumps_of_nails_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ISPESSIMENTI O SOLCHI SULLE UNGHIE DELLE MANI O DEI PIEDI"
               },
               {
                 "code": "answ1",
@@ -1802,12 +1797,12 @@
                 "valueInteger": 48
               },
               {
-                "code": "category",
-                "valueString": "VARIAZIONE DI COLORE DELLE UNGHIE DELLE MANI O DEI PIEDI"
+                "code": "macrogroup",
+                "valueString": "Color_of_nails_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "VARIAZIONE DI COLORE DELLE UNGHIE DELLE MANI O DEI PIEDI"
               },
               {
                 "code": "answ1",
@@ -1828,12 +1823,12 @@
                 "valueInteger": 49
               },
               {
-                "code": "category",
-                "valueString": "MAGGIOR SENSIBILITÀ DELLA PELLE AI RAGGI SOLARI"
+                "code": "macrogroup",
+                "valueString": "Sunlight_sensitivity_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAGGIOR SENSIBILITÀ DELLA PELLE AI RAGGI SOLARI"
               },
               {
                 "code": "answ1",
@@ -1854,12 +1849,12 @@
                 "valueInteger": 50
               },
               {
-                "code": "category",
-                "valueString": "PIAGHE DA DECUBITO"
+                "code": "macrogroup",
+                "valueString": "Bed_sores_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PIAGHE DA DECUBITO"
               },
               {
                 "code": "answ1",
@@ -1880,12 +1875,12 @@
                 "valueInteger": 51
               },
               {
-                "code": "category",
-                "valueString": "BRUCIATURE DELLA PELLE IN CONSEGUENZA DELLA RADIOTERAPIA"
+                "code": "macrogroup",
+                "valueString": "Radiodermitis_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BRUCIATURE DELLA PELLE IN CONSEGUENZA DELLA RADIOTERAPIA"
               },
               {
                 "code": "answ1",
@@ -1922,12 +1917,12 @@
                 "valueInteger": 52
               },
               {
-                "code": "category",
-                "valueString": "INSOLITO INSCURIMENTO DELLA PELLE"
+                "code": "macrogroup",
+                "valueString": "Skin_darkening_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INSOLITO INSCURIMENTO DELLA PELLE"
               },
               {
                 "code": "answ1",
@@ -1948,12 +1943,12 @@
                 "valueInteger": 53
               },
               {
-                "code": "category",
-                "valueString": "SMAGLIATURE"
+                "code": "macrogroup",
+                "valueString": "Stretch_marks_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SMAGLIATURE"
               },
               {
                 "code": "answ1",
@@ -1967,19 +1962,19 @@
           },
           {
             "code": "PROCTC-0054",
-            "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, quanto è stato GRAVE l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI?",
+            "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, quanto è stato GRAVE l'INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 54
               },
               {
-                "code": "category",
-                "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
+                "code": "macrogroup",
+                "valueString": "Hand/foot_neuropathy_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
               },
               {
                 "code": "answ1",
@@ -2005,19 +2000,19 @@
           },
           {
             "code": "PROCTC-0055",
-            "display": "Negli ultimi 7 giorni, in che misura l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "display": "Negli ultimi 7 giorni, in che misura l'INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 55
               },
               {
-                "code": "category",
-                "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
+                "code": "macrogroup",
+                "valueString": "Hand/foot_neuropathy_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI"
               },
               {
                 "code": "answ1",
@@ -2050,12 +2045,12 @@
                 "valueInteger": 56
               },
               {
-                "code": "category",
-                "valueString": "GIRAMENTI DI TESTA"
+                "code": "macrogroup",
+                "valueString": "Dizziness_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "GIRAMENTI DI TESTA"
               },
               {
                 "code": "answ1",
@@ -2088,12 +2083,12 @@
                 "valueInteger": 57
               },
               {
-                "code": "category",
-                "valueString": "GIRAMENTI DI TESTA"
+                "code": "macrogroup",
+                "valueString": "Dizziness_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "GIRAMENTI DI TESTA"
               },
               {
                 "code": "answ1",
@@ -2126,12 +2121,12 @@
                 "valueInteger": 58
               },
               {
-                "code": "category",
-                "valueString": "APPANNAMENTO DELLA VISTA"
+                "code": "macrogroup",
+                "valueString": "Blurry_vision_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "APPANNAMENTO DELLA VISTA"
               },
               {
                 "code": "answ1",
@@ -2164,12 +2159,12 @@
                 "valueInteger": 59
               },
               {
-                "code": "category",
-                "valueString": "APPANNAMENTO DELLA VISTA"
+                "code": "macrogroup",
+                "valueString": "Blurry_vision_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "APPANNAMENTO DELLA VISTA"
               },
               {
                 "code": "answ1",
@@ -2202,12 +2197,12 @@
                 "valueInteger": 60
               },
               {
-                "code": "category",
-                "valueString": "LAMPI DAVANTI AGLI OCCHI"
+                "code": "macrogroup",
+                "valueString": "Ocular_flashes_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "LAMPI DAVANTI AGLI OCCHI"
               },
               {
                 "code": "answ1",
@@ -2228,12 +2223,12 @@
                 "valueInteger": 61
               },
               {
-                "code": "category",
-                "valueString": "MOSCHE VOLANTI DAVANTI AGLI OCCHI"
+                "code": "macrogroup",
+                "valueString": "Ocular_spots/lines/floaters_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MOSCHE VOLANTI DAVANTI AGLI OCCHI"
               },
               {
                 "code": "answ1",
@@ -2254,12 +2249,12 @@
                 "valueInteger": 62
               },
               {
-                "code": "category",
-                "valueString": "ECCESSIVA LACRIMAZIONE"
+                "code": "macrogroup",
+                "valueString": "Watery_eyes_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ECCESSIVA LACRIMAZIONE"
               },
               {
                 "code": "answ1",
@@ -2292,12 +2287,12 @@
                 "valueInteger": 63
               },
               {
-                "code": "category",
-                "valueString": "ECCESSIVA LACRIMAZIONE"
+                "code": "macrogroup",
+                "valueString": "Watery_eyes_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ECCESSIVA LACRIMAZIONE"
               },
               {
                 "code": "answ1",
@@ -2330,12 +2325,12 @@
                 "valueInteger": 64
               },
               {
-                "code": "category",
-                "valueString": "RONZIO NELLE ORECCHIE"
+                "code": "macrogroup",
+                "valueString": "Ringing_in_ears_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "RONZIO NELLE ORECCHIE"
               },
               {
                 "code": "answ1",
@@ -2368,12 +2363,12 @@
                 "valueInteger": 65
               },
               {
-                "code": "category",
-                "valueString": "PROBLEMI DI CONCENTRAZIONE"
+                "code": "macrogroup",
+                "valueString": "Concentration_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PROBLEMI DI CONCENTRAZIONE"
               },
               {
                 "code": "answ1",
@@ -2406,12 +2401,12 @@
                 "valueInteger": 66
               },
               {
-                "code": "category",
-                "valueString": "PROBLEMI DI CONCENTRAZIONE"
+                "code": "macrogroup",
+                "valueString": "Concentration_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PROBLEMI DI CONCENTRAZIONE"
               },
               {
                 "code": "answ1",
@@ -2444,12 +2439,12 @@
                 "valueInteger": 67
               },
               {
-                "code": "category",
-                "valueString": "PROBLEMI DI MEMORIA"
+                "code": "macrogroup",
+                "valueString": "Memory_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PROBLEMI DI MEMORIA"
               },
               {
                 "code": "answ1",
@@ -2482,12 +2477,12 @@
                 "valueInteger": 68
               },
               {
-                "code": "category",
-                "valueString": "PROBLEMI DI MEMORIA"
+                "code": "macrogroup",
+                "valueString": "Memory_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PROBLEMI DI MEMORIA"
               },
               {
                 "code": "answ1",
@@ -2520,12 +2515,12 @@
                 "valueInteger": 69
               },
               {
-                "code": "category",
-                "valueString": "DOLORE FISICO"
+                "code": "macrogroup",
+                "valueString": "Pain_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE FISICO"
               },
               {
                 "code": "answ1",
@@ -2558,12 +2553,12 @@
                 "valueInteger": 70
               },
               {
-                "code": "category",
-                "valueString": "DOLORE FISICO"
+                "code": "macrogroup",
+                "valueString": "Pain_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE FISICO"
               },
               {
                 "code": "answ1",
@@ -2596,12 +2591,12 @@
                 "valueInteger": 71
               },
               {
-                "code": "category",
-                "valueString": "DOLORE FISICO"
+                "code": "macrogroup",
+                "valueString": "Pain_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE FISICO"
               },
               {
                 "code": "answ1",
@@ -2634,12 +2629,12 @@
                 "valueInteger": 72
               },
               {
-                "code": "category",
-                "valueString": "MAL DI TESTA"
+                "code": "macrogroup",
+                "valueString": "Headache_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAL DI TESTA"
               },
               {
                 "code": "answ1",
@@ -2672,12 +2667,12 @@
                 "valueInteger": 73
               },
               {
-                "code": "category",
-                "valueString": "MAL DI TESTA"
+                "code": "macrogroup",
+                "valueString": "Headache_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAL DI TESTA"
               },
               {
                 "code": "answ1",
@@ -2710,12 +2705,12 @@
                 "valueInteger": 74
               },
               {
-                "code": "category",
-                "valueString": "MAL DI TESTA"
+                "code": "macrogroup",
+                "valueString": "Headache_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MAL DI TESTA"
               },
               {
                 "code": "answ1",
@@ -2748,12 +2743,12 @@
                 "valueInteger": 75
               },
               {
-                "code": "category",
-                "valueString": "DOLORE AI MUSCOLI"
+                "code": "macrogroup",
+                "valueString": "Muscle_pain_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE AI MUSCOLI"
               },
               {
                 "code": "answ1",
@@ -2786,12 +2781,12 @@
                 "valueInteger": 76
               },
               {
-                "code": "category",
-                "valueString": "DOLORE AI MUSCOLI"
+                "code": "macrogroup",
+                "valueString": "Muscle_pain_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE AI MUSCOLI"
               },
               {
                 "code": "answ1",
@@ -2824,12 +2819,12 @@
                 "valueInteger": 77
               },
               {
-                "code": "category",
-                "valueString": "DOLORE AI MUSCOLI"
+                "code": "macrogroup",
+                "valueString": "Muscle_pain_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE AI MUSCOLI"
               },
               {
                 "code": "answ1",
@@ -2862,12 +2857,12 @@
                 "valueInteger": 78
               },
               {
-                "code": "category",
-                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
+                "code": "macrogroup",
+                "valueString": "Joint_pain_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
               },
               {
                 "code": "answ1",
@@ -2900,12 +2895,12 @@
                 "valueInteger": 79
               },
               {
-                "code": "category",
-                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
+                "code": "macrogroup",
+                "valueString": "Joint_pain_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
               },
               {
                 "code": "answ1",
@@ -2938,12 +2933,12 @@
                 "valueInteger": 80
               },
               {
-                "code": "category",
-                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
+                "code": "macrogroup",
+                "valueString": "Joint_pain_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE ALLE ARTICOLAZIONI (ES. GOMITI, GINOCCHIA, SPALLE)"
               },
               {
                 "code": "answ1",
@@ -2969,19 +2964,19 @@
           },
           {
             "code": "PROCTC-0081",
-            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) nel momento PEGGIORE?",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE L'INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) nel momento PEGGIORE?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 81
               },
               {
-                "code": "category",
-                "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
+                "code": "macrogroup",
+                "valueString": "Insomnia_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
               },
               {
                 "code": "answ1",
@@ -3007,19 +3002,19 @@
           },
           {
             "code": "PROCTC-0082",
-            "display": "Negli ultimi 7 giorni, in che misura l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) HA INTERFERITO con le Sue attività abituali o quotidiane?",
+            "display": "Negli ultimi 7 giorni, in che misura l'INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) HA INTERFERITO con le Sue attività abituali o quotidiane?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 82
               },
               {
-                "code": "category",
-                "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
+                "code": "macrogroup",
+                "valueString": "Insomnia_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INSONNIA (DIFFICOLTÀ DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO)"
               },
               {
                 "code": "answ1",
@@ -3052,12 +3047,12 @@
                 "valueInteger": 83
               },
               {
-                "code": "category",
-                "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
+                "code": "macrogroup",
+                "valueString": "Fatigue_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
               },
               {
                 "code": "answ1",
@@ -3090,12 +3085,12 @@
                 "valueInteger": 84
               },
               {
-                "code": "category",
-                "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
+                "code": "macrogroup",
+                "valueString": "Fatigue_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SENSO DI FATICA, STANCHEZZA O MANCANZA DI ENERGIA"
               },
               {
                 "code": "answ1",
@@ -3128,12 +3123,12 @@
                 "valueInteger": 85
               },
               {
-                "code": "category",
-                "valueString": "ANSIA"
+                "code": "macrogroup",
+                "valueString": "Anxiety_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ANSIA"
               },
               {
                 "code": "answ1",
@@ -3166,12 +3161,12 @@
                 "valueInteger": 86
               },
               {
-                "code": "category",
-                "valueString": "ANSIA"
+                "code": "macrogroup",
+                "valueString": "Anxiety_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ANSIA"
               },
               {
                 "code": "answ1",
@@ -3204,12 +3199,12 @@
                 "valueInteger": 87
               },
               {
-                "code": "category",
-                "valueString": "ANSIA"
+                "code": "macrogroup",
+                "valueString": "Anxiety_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ANSIA"
               },
               {
                 "code": "answ1",
@@ -3242,12 +3237,12 @@
                 "valueInteger": 88
               },
               {
-                "code": "category",
-                "valueString": "STATO D''ANIMO"
+                "code": "macrogroup",
+                "valueString": "Depression_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "STATO D'ANIMO"
               },
               {
                 "code": "answ1",
@@ -3280,12 +3275,12 @@
                 "valueInteger": 89
               },
               {
-                "code": "category",
-                "valueString": "STATO D''ANIMO"
+                "code": "macrogroup",
+                "valueString": "Depression_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "STATO D'ANIMO"
               },
               {
                 "code": "answ1",
@@ -3318,12 +3313,12 @@
                 "valueInteger": 90
               },
               {
-                "code": "category",
-                "valueString": "STATO D’ANIMO"
+                "code": "macrogroup",
+                "valueString": "Depression_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "STATO D'ANIMO"
               },
               {
                 "code": "answ1",
@@ -3356,12 +3351,12 @@
                 "valueInteger": 91
               },
               {
-                "code": "category",
-                "valueString": "TRISTEZZA"
+                "code": "macrogroup",
+                "valueString": "Sadness_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TRISTEZZA"
               },
               {
                 "code": "answ1",
@@ -3387,19 +3382,19 @@
           },
           {
             "code": "PROCTC-0092",
-            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI la TRISTEZZA o l’INFELICITÀ nel momento PEGGIORE?",
+            "display": "Negli ultimi 7 giorni, quanto sono state GRAVI la TRISTEZZA o l'INFELICITÀ nel momento PEGGIORE?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 92
               },
               {
-                "code": "category",
-                "valueString": "TRISTEZZA"
+                "code": "macrogroup",
+                "valueString": "Sadness_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TRISTEZZA"
               },
               {
                 "code": "answ1",
@@ -3432,12 +3427,12 @@
                 "valueInteger": 93
               },
               {
-                "code": "category",
-                "valueString": "TRISTEZZA"
+                "code": "macrogroup",
+                "valueString": "Sadness_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TRISTEZZA"
               },
               {
                 "code": "answ1",
@@ -3470,12 +3465,12 @@
                 "valueInteger": 94
               },
               {
-                "code": "category",
-                "valueString": "MESTRUAZIONI IRREGOLARI"
+                "code": "macrogroup",
+                "valueString": "Irregular_menses_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "MESTRUAZIONI IRREGOLARI"
               },
               {
                 "code": "answ1",
@@ -3500,12 +3495,12 @@
                 "valueInteger": 95
               },
               {
-                "code": "category",
-                "valueString": "REGOLARITÀ DELLE MESTRUAZIONI"
+                "code": "macrogroup",
+                "valueString": "Missed_menses_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "REGOLARITÀ DELLE MESTRUAZIONI"
               },
               {
                 "code": "answ1",
@@ -3530,12 +3525,12 @@
                 "valueInteger": 96
               },
               {
-                "code": "category",
-                "valueString": "INSOLITE PERDITE VAGINALI"
+                "code": "macrogroup",
+                "valueString": "Vaginal_discharge_(A)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INSOLITE PERDITE VAGINALI"
               },
               {
                 "code": "answ1",
@@ -3568,12 +3563,12 @@
                 "valueInteger": 97
               },
               {
-                "code": "category",
-                "valueString": "SECCHEZZA VAGINALE"
+                "code": "macrogroup",
+                "valueString": "Vaginal_dryness_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SECCHEZZA VAGINALE"
               },
               {
                 "code": "answ1",
@@ -3606,12 +3601,12 @@
                 "valueInteger": 98
               },
               {
-                "code": "category",
-                "valueString": "DOLORE O BRUCIORE NELL'URINARE"
+                "code": "macrogroup",
+                "valueString": "Painful_urination_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE O BRUCIORE NELL'URINARE"
               },
               {
                 "code": "answ1",
@@ -3644,12 +3639,12 @@
                 "valueInteger": 99
               },
               {
-                "code": "category",
-                "valueString": "BISOGNO URGENTE DI URINARE"
+                "code": "macrogroup",
+                "valueString": "Urgent_urination_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BISOGNO URGENTE DI URINARE"
               },
               {
                 "code": "answ1",
@@ -3682,12 +3677,12 @@
                 "valueInteger": 100
               },
               {
-                "code": "category",
-                "valueString": "BISOGNO URGENTE DI URINARE"
+                "code": "macrogroup",
+                "valueString": "Urgent_urination_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BISOGNO URGENTE DI URINARE"
               },
               {
                 "code": "answ1",
@@ -3720,12 +3715,12 @@
                 "valueInteger": 101
               },
               {
-                "code": "category",
-                "valueString": "BISOGNO FREQUENTE DI URINARE"
+                "code": "macrogroup",
+                "valueString": "Frequent_urination_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BISOGNO FREQUENTE DI URINARE"
               },
               {
                 "code": "answ1",
@@ -3758,12 +3753,12 @@
                 "valueInteger": 102
               },
               {
-                "code": "category",
-                "valueString": "BISOGNO FREQUENTE DI URINARE"
+                "code": "macrogroup",
+                "valueString": "Frequent_urination_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "BISOGNO FREQUENTE DI URINARE"
               },
               {
                 "code": "answ1",
@@ -3796,12 +3791,12 @@
                 "valueInteger": 103
               },
               {
-                "code": "category",
-                "valueString": "VARIAZIONE DI COLORE DELLE URINE"
+                "code": "macrogroup",
+                "valueString": "Urine_color_change_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "VARIAZIONE DI COLORE DELLE URINE"
               },
               {
                 "code": "answ1",
@@ -3822,12 +3817,12 @@
                 "valueInteger": 104
               },
               {
-                "code": "category",
-                "valueString": "PERDITE DI URINA"
+                "code": "macrogroup",
+                "valueString": "Urinary_incontinence_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PERDITE DI URINA"
               },
               {
                 "code": "answ1",
@@ -3860,12 +3855,12 @@
                 "valueInteger": 105
               },
               {
-                "code": "category",
-                "valueString": "PERDITE DI URINA"
+                "code": "macrogroup",
+                "valueString": "Urinary_incontinence_(I)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PERDITE DI URINA"
               },
               {
                 "code": "answ1",
@@ -3898,12 +3893,12 @@
                 "valueInteger": 106
               },
               {
-                "code": "category",
-                "valueString": "DIFFICOLTÀ A RAGGIUNGERE O MANTENERE L''EREZIONE"
+                "code": "macrogroup",
+                "valueString": "Erectyl_disfunction_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DIFFICOLTÀ A RAGGIUNGERE O MANTENERE L''EREZIONE"
               },
               {
                 "code": "answ1",
@@ -3944,12 +3939,12 @@
                 "valueInteger": 107
               },
               {
-                "code": "category",
-                "valueString": "PROBLEMI DI EIACULAZIONE"
+                "code": "macrogroup",
+                "valueString": "Ejaculation_problems_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "PROBLEMI DI EIACULAZIONE"
               },
               {
                 "code": "answ1",
@@ -3990,12 +3985,12 @@
                 "valueInteger": 108
               },
               {
-                "code": "category",
-                "valueString": "CALO DEL DESIDERIO SESSUALE"
+                "code": "macrogroup",
+                "valueString": "Libido_loss_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "CALO DEL DESIDERIO SESSUALE"
               },
               {
                 "code": "answ1",
@@ -4029,19 +4024,19 @@
           },
           {
             "code": "PROCTC-0109",
-            "display": "Negli ultimi 7 giorni, Le è sembrato che ci volesse TROPPO TEMPO PER RAGGIUNGERE L’ORGASMO?",
+            "display": "Negli ultimi 7 giorni, Le è sembrato che ci volesse TROPPO TEMPO PER RAGGIUNGERE L'ORGASMO?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 109
               },
               {
-                "code": "category",
-                "valueString": "TROPPO TEMPO PER RAGGIUNGERE L''ORGASMO"
+                "code": "macrogroup",
+                "valueString": "Late_orgasm_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TROPPO TEMPO PER RAGGIUNGERE L''ORGASMO"
               },
               {
                 "code": "answ1",
@@ -4070,12 +4065,12 @@
                 "valueInteger": 110
               },
               {
-                "code": "category",
-                "valueString": "INCAPACITÀ A RAGGIUNGERE L''ORGASMO"
+                "code": "macrogroup",
+                "valueString": "Unable_to_orgasm_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INCAPACITÀ A RAGGIUNGERE L''ORGASMO"
               },
               {
                 "code": "answ1",
@@ -4104,12 +4099,12 @@
                 "valueInteger": 111
               },
               {
-                "code": "category",
-                "valueString": "DOLORE DURANTE IL RAPPORTO VAGINALE"
+                "code": "macrogroup",
+                "valueString": "Painful_Intercourse_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE DURANTE IL RAPPORTO SESSUALE"
               },
               {
                 "code": "answ1",
@@ -4150,12 +4145,12 @@
                 "valueInteger": 112
               },
               {
-                "code": "category",
-                "valueString": "AUMENTO DI VOLUME O TENSIONE DELLE MAMMELLE"
+                "code": "macrogroup",
+                "valueString": "Breast_tenderness_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "AUMENTO DI VOLUME O TENSIONE DELLE MAMMELLE"
               },
               {
                 "code": "answ1",
@@ -4188,12 +4183,12 @@
                 "valueInteger": 113
               },
               {
-                "code": "category",
-                "valueString": "LIVIDI"
+                "code": "macrogroup",
+                "valueString": "Bruise_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "LIVIDI"
               },
               {
                 "code": "answ1",
@@ -4214,12 +4209,12 @@
                 "valueInteger": 114
               },
               {
-                "code": "category",
-                "valueString": "TREMORI O BRIVIDI"
+                "code": "macrogroup",
+                "valueString": "Chills_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TREMORI O BRIVIDI"
               },
               {
                 "code": "answ1",
@@ -4252,12 +4247,12 @@
                 "valueInteger": 115
               },
               {
-                "code": "category",
-                "valueString": "TREMORI O BRIVIDI"
+                "code": "macrogroup",
+                "valueString": "Chills_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "TREMORI O BRIVIDI"
               },
               {
                 "code": "answ1",
@@ -4290,12 +4285,12 @@
                 "valueInteger": 116
               },
               {
-                "code": "category",
-                "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
+                "code": "macrogroup",
+                "valueString": "Excessive_sweating_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
               },
               {
                 "code": "answ1",
@@ -4321,19 +4316,19 @@
           },
           {
             "code": "PROCTC-0117",
-            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE, nel momento PEGGIORE?",
+            "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l'INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE, nel momento PEGGIORE?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 117
               },
               {
-                "code": "category",
-                "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
+                "code": "macrogroup",
+                "valueString": "Excessive_sweating_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE (NON CORRELATA ALLE VAMPATE DI CALORE)"
               },
               {
                 "code": "answ1",
@@ -4366,12 +4361,12 @@
                 "valueInteger": 118
               },
               {
-                "code": "category",
-                "valueString": "CALO DELLA SUDORAZIONE"
+                "code": "macrogroup",
+                "valueString": "Decreased_sweating_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "CALO DELLA SUDORAZIONE"
               },
               {
                 "code": "answ1",
@@ -4392,12 +4387,12 @@
                 "valueInteger": 119
               },
               {
-                "code": "category",
-                "valueString": "VAMPATE DI CALORE"
+                "code": "macrogroup",
+                "valueString": "Hot_flushes_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "VAMPATE DI CALORE"
               },
               {
                 "code": "answ1",
@@ -4430,12 +4425,12 @@
                 "valueInteger": 120
               },
               {
-                "code": "category",
-                "valueString": "VAMPATE DI CALORE"
+                "code": "macrogroup",
+                "valueString": "Hot_flushes_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "VAMPATE DI CALORE"
               },
               {
                 "code": "answ1",
@@ -4468,12 +4463,12 @@
                 "valueInteger": 121
               },
               {
-                "code": "category",
-                "valueString": "SANGUE DAL NASO"
+                "code": "macrogroup",
+                "valueString": "Epistaxis_(F)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SANGUE DAL NASO"
               },
               {
                 "code": "answ1",
@@ -4506,12 +4501,12 @@
                 "valueInteger": 122
               },
               {
-                "code": "category",
-                "valueString": "SANGUE DAL NASO"
+                "code": "macrogroup",
+                "valueString": "Epistaxis_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "SANGUE DAL NASO"
               },
               {
                 "code": "answ1",
@@ -4544,12 +4539,12 @@
                 "valueInteger": 123
               },
               {
-                "code": "category",
-                "valueString": "DOLORE, GONFIORE, ROSSORE NEL PUNTO IN CUI È STATA SOMMINISTRATA LA TERAPIA"
+                "code": "macrogroup",
+                "valueString": "Injection_site_problems_(P)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "DOLORE, GONFIORE, ROSSORE NEL PUNTO IN CUI È STATA SOMMINISTRATA LA TERAPIA"
               },
               {
                 "code": "answ1",
@@ -4567,19 +4562,19 @@
           },
           {
             "code": "PROCTC-0124",
-            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il problema dell’ODORE CORPOREO nel momento PEGGIORE?",
+            "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il problema dell'ODORE CORPOREO nel momento PEGGIORE?",
             "property": [
               {
                 "code": "number",
                 "valueInteger": 124
               },
               {
-                "code": "category",
-                "valueString": "ODORE CORPOREO"
+                "code": "macrogroup",
+                "valueString": "Body_odor_(S)"
               },
               {
-                "code": "interface",
-                "valueString": "radio"
+                "code": "category",
+                "valueString": "ODORE CORPOREO"
               },
               {
                 "code": "answ1",
@@ -4613,15 +4608,11 @@
               },
               {
                 "code": "macrogroup",
-                "valueString": "ALTRI SINTOMI"
+                "valueString": "ALTRI_SINTOMI"
               },
               {
                 "code": "category",
                 "valueString": "ALTRI SINTOMI"
-              },
-              {
-                "code": "interface",
-                "valueString": "radio"
               },
               {
                 "code": "answ1",
@@ -4644,6 +4635,24 @@
                 "valueString": "Moltissimo"
               }
             ]
+          },
+          {
+            "code": "PROCTC-0126",
+            "display": "La preghiamo di rispondere alle seguenti domande ponendo un segno sulla voce che ritiene più appropriata. Non esiste una risposta -giusta- o -sbagliata-. Le Sue informazioni verranno tenute strettamente riservate. Per quelle non pertinenti, risponda -Non applicabile-.",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 126
+              },
+              {
+                "code": "category",
+                "valueString": "Quando una persona è in terapia per un tumore, talvolta può sviluppare diversi sintomi ed effetti collaterali, alcuni dei quali possono riguardare la sfera sessuale. La raccolta delle seguenti informazioni può essere utile ai fini di una valutazione clinica accurata e per garantire l'accesso ai servizi di prevenzione, diagnosi e cura. Inoltre può essere uno strumento per avviare una conversazione con gli specialisti per discutere delle opzioni di trattamento e migliorare la salute sessuale e la qualità della vita."
+              },
+              {
+                "code": "answ1",
+                "valueString": "OK"
+              }
+            ]
           }
         ]
       },
@@ -4661,8 +4670,8 @@
         "name": "PRO_CTCAEv1AdverseEvents",
         "title": "PRO-CTCAE v1 Adverse Events ValueSet",
         "status": "active",
-        "date": "2026-06-25",
-        "description": "Tutti i 125 termini PRO-CTCAE v1",
+        "date": "2026-07-02",
+        "description": "Tutti i 126 item (PRO-CTCAE v1 Patient-Reported Outcomes)",
         "compose": {
           "include": [
             {
@@ -4702,11 +4711,11 @@
                 },
                 {
                   "code": "PROCTC-0009",
-                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DELL’APPETITO nel momento PEGGIORE?"
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il CALO DELL'APPETITO nel momento PEGGIORE?"
                 },
                 {
                   "code": "PROCTC-0010",
-                  "display": "Negli ultimi 7 giorni, in che misura il CALO DELL’APPETITO HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                  "display": "Negli ultimi 7 giorni, in che misura il CALO DELL'APPETITO HA INTERFERITO con le Sue attività abituali o quotidiane?"
                 },
                 {
                   "code": "PROCTC-0011",
@@ -4882,11 +4891,11 @@
                 },
                 {
                   "code": "PROCTC-0054",
-                  "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, quanto è stato GRAVE l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI?"
+                  "display": "Negli ultimi 7 giorni, nel momento PEGGIORE, quanto è stato GRAVE l'INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI?"
                 },
                 {
                   "code": "PROCTC-0055",
-                  "display": "Negli ultimi 7 giorni, in che misura l’INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                  "display": "Negli ultimi 7 giorni, in che misura l'INTORPIDIMENTO O FORMICOLIO ALLE MANI O AI PIEDI HA INTERFERITO con le Sue attività abituali o quotidiane?"
                 },
                 {
                   "code": "PROCTC-0056",
@@ -4990,11 +4999,11 @@
                 },
                 {
                   "code": "PROCTC-0081",
-                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) nel momento PEGGIORE?"
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE L'INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) nel momento PEGGIORE?"
                 },
                 {
                   "code": "PROCTC-0082",
-                  "display": "Negli ultimi 7 giorni, in che misura l’INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) HA INTERFERITO con le Sue attività abituali o quotidiane?"
+                  "display": "Negli ultimi 7 giorni, in che misura l'INSONNIA (DIFFICOLTA DI ADDORMENTARSI O A MANTENERE IL SONNO, O TENDENZA A SVEGLIARSI PRESTO) HA INTERFERITO con le Sue attività abituali o quotidiane?"
                 },
                 {
                   "code": "PROCTC-0083",
@@ -5034,7 +5043,7 @@
                 },
                 {
                   "code": "PROCTC-0092",
-                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI la TRISTEZZA o l’INFELICITÀ nel momento PEGGIORE?"
+                  "display": "Negli ultimi 7 giorni, quanto sono state GRAVI la TRISTEZZA o l'INFELICITÀ nel momento PEGGIORE?"
                 },
                 {
                   "code": "PROCTC-0093",
@@ -5102,7 +5111,7 @@
                 },
                 {
                   "code": "PROCTC-0109",
-                  "display": "Negli ultimi 7 giorni, Le è sembrato che ci volesse TROPPO TEMPO PER RAGGIUNGERE L’ORGASMO?"
+                  "display": "Negli ultimi 7 giorni, Le è sembrato che ci volesse TROPPO TEMPO PER RAGGIUNGERE L'ORGASMO?"
                 },
                 {
                   "code": "PROCTC-0110",
@@ -5134,7 +5143,7 @@
                 },
                 {
                   "code": "PROCTC-0117",
-                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l’INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE, nel momento PEGGIORE?"
+                  "display": "Negli ultimi 7 giorni, quanto è stata GRAVE l'INSOLITA O ECCESSIVA SUDORAZIONE DURANTE IL GIORNO O LA NOTTE, nel momento PEGGIORE?"
                 },
                 {
                   "code": "PROCTC-0118",
@@ -5162,11 +5171,15 @@
                 },
                 {
                   "code": "PROCTC-0124",
-                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il problema dell’ODORE CORPOREO nel momento PEGGIORE?"
+                  "display": "Negli ultimi 7 giorni, quanto è stato GRAVE il problema dell'ODORE CORPOREO nel momento PEGGIORE?"
                 },
                 {
                   "code": "PROCTC-0125",
                   "display": "Descriva il sintomo e quanto è stato grave nel momento peggiore"
+                },
+                {
+                  "code": "PROCTC-0126",
+                  "display": "La preghiamo di rispondere alle seguenti domande ponendo un segno sulla voce che ritiene più appropriata. Non esiste una risposta -giusta- o -sbagliata-. Le Sue informazioni verranno tenute strettamente riservate. Per quelle non pertinenti, risponda -Non applicabile-."
                 }
               ]
             }
@@ -5187,7 +5200,7 @@
         "name": "PRO_CTCAEv1GradeSeverity",
         "title": "PRO-CTCAE v1 Grade Severity Extension",
         "status": "active",
-        "date": "2026-06-25",
+        "date": "2026-07-02",
         "kind": "complex-type",
         "abstract": false,
         "context": [
@@ -5199,13 +5212,13 @@
         "type": "Extension",
         "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
         "derivation": "constraint",
-        "description": "Estensione su QuestionnaireItem per PRO-CTCAE v1: macrogruppo, categoria, interfaccia UI e opzioni di risposta 1-8.",
+        "description": "Estensione su QuestionnaireItem per PRO-CTCAE v1: macrogruppo, categoria e opzioni di risposta.",
         "differential": {
           "element": [
             {
               "id": "Extension",
               "path": "Extension",
-              "short": "Metadati PRO-CTCAE v1 su QuestionnaireItem"
+              "short": "Metadati PRO-CTCAE v1 Patient-Reported Outcomes su QuestionnaireItem"
             },
             {
               "id": "Extension.extension",
@@ -5257,28 +5270,6 @@
             },
             {
               "id": "Extension.extension:category.value[x]",
-              "path": "Extension.extension.value[x]",
-              "type": [
-                {
-                  "code": "string"
-                }
-              ]
-            },
-            {
-              "id": "Extension.extension:interface",
-              "path": "Extension.extension",
-              "sliceName": "interface",
-              "short": "Tipo di interfaccia UI",
-              "min": 0,
-              "max": "1"
-            },
-            {
-              "id": "Extension.extension:interface.url",
-              "path": "Extension.extension.url",
-              "fixedUri": "interface"
-            },
-            {
-              "id": "Extension.extension:interface.value[x]",
               "path": "Extension.extension.value[x]",
               "type": [
                 {
