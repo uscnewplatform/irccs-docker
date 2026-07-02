@@ -124,9 +124,12 @@ Origine di `number` per libreria:
 Tutte le terminologie sono gestite via HAPI FHIR (CodeSystem + ValueSet + StructureDefinition).
 Il microservizio `irccs-microservice-notification` non espone endpoint terminologici.
 
-La UI legge i CodeSystem direttamente da HAPI e imposta `QuestionnaireItem.prefix`
-dalla property `number`.
+La UI **scopre le library automaticamente da HAPI** (`useCrfLibraries` +
+`classifyCodeSystem` in `src/fhir/service/Terminology/CrfLibraryService.ts`):
+un CodeSystem con property `grade1` è classificato CTCAE (gradi, gruppo `soc`),
+con `category`/`macrogroup` PRO-CTCAE-like, con `answ*` EORTC-like (gruppo `head`).
+Caricata una nuova library su HAPI, il bottone di import compare nel Questionnaire
+builder **senza modifiche al codice frontend**. `QuestionnaireItem.prefix` viene
+impostato dalla property `number`.
 
-> Le tre library nuove (`eortc-hcc18`, `euroqol-eq5d5l`, `usc-proffit`) richiedono,
-> lato dashboard, un service di lettura dedicato (pattern `EortcV1Service.ts`) per
-> essere renderizzate — non incluso in questa cartella di import.
+Documentazione completa: `irccs-docker/docs/modules/ROOT/pages/librerie-crf.adoc`.

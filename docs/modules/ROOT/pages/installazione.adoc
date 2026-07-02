@@ -225,7 +225,7 @@ Per aggiornare a una versione LOINC successiva, aggiornare il prefisso di versio
 
 === 7. Installazione librerie CRF su HAPI FHIR
 
-Le librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE v1, EORTC QLQ-C30) sono distribuite come `CodeSystem` FHIR nella cartella `importCrfLibraries/`.
+Le librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE v1, EORTC QLQ-C30/HCC18, EuroQol EQ-5D-5L, USC PROFFIT) sono distribuite come `CodeSystem` FHIR nella cartella `importCrfLibraries/`.
 Ogni sotto-cartella contiene uno script di installazione che esegue il push del bundle FHIR su HAPI.
 
 [source,bash]
@@ -245,13 +245,23 @@ bash ctcae-v6/install-ctcae-v6.sh http://irccs-hapi-fhir:8080/fhir
 bash proctc-v1/install-proctc-v1.sh http://irccs-hapi-fhir:8080/fhir
 
 # EORTC QLQ-C30
-bash eortc-v1/install-eortc-v1.sh http://irccs-hapi-fhir:8080/fhir
+bash eortc-qlq-c30/install-eortc-v1.sh http://irccs-hapi-fhir:8080/fhir
+
+# EORTC QLQ-HCC18
+bash eortc_hcc18/install-eortc-hcc18.sh http://irccs-hapi-fhir:8080/fhir
+
+# EuroQol EQ-5D-5L
+bash euroqol_eq5d5l/install-euroqol-eq5d5l.sh http://irccs-hapi-fhir:8080/fhir
+
+# USC PROFFIT
+bash usc_proffit/install-usc-proffit.sh http://irccs-hapi-fhir:8080/fhir
 ----
 
 [NOTE]
 ====
 Gli script inviano il bundle FHIR tramite `curl` in modalità `transaction`. +
 Se HAPI FHIR restituisce `200 OK` con un `Bundle` di risposta, l'installazione è riuscita. +
+Il frontend scopre le librerie automaticamente da HAPI: dopo l'installazione il bottone di import compare nel Questionnaire builder senza modifiche al codice. +
 Per i dettagli sull'architettura e la struttura delle librerie, vedere xref:librerie-crf.adoc[Librerie CRF — Gestione e Import].
 ====
 
