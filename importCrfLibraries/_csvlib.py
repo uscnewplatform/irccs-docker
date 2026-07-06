@@ -13,6 +13,17 @@ dove:
     colonne testo property stringa aggiuntive (es. head, macrogroup, category)
     answ1..N      opzioni di risposta → property answ1..N
 
+Colonne opzionali (sotto-domande condizionali e tipo risposta):
+    code          code esplicito del concept (es. "8.1"); se assente si usa
+                  code_fmt su numquest. Obbligatorio se numquest è vuoto.
+    parent        code della domanda madre → property `parent`: la domanda
+                  diventa una sotto-domanda condizionale (enableWhen all'import
+                  CRF nel designer)
+    showif        codici risposta della madre che rendono visibile la
+                  sotto-domanda, separati da | (es. "2|3|4") → property `showif`
+    answerType    multichoice | choice | open-choice | number → property
+                  `answerType` (tipo di risposta all'import CRF)
+
 Risorse generate: CodeSystem + ValueSet + StructureDefinition, impacchettate in
 un Bundle transaction (PUT idempotenti). Push su HAPI via requests, oppure
 `--bundle-only` per rigenerare solo il *-bundle.json committato.
@@ -20,6 +31,7 @@ un Bundle transaction (PUT idempotenti). Push su HAPI via requests, oppure
 
 import csv
 import json
+import re
 import sys
 import argparse
 from pathlib import Path
@@ -86,15 +98,10 @@ def _numquest(val):
 
 
 def _answ_headers(fieldnames) -> list:
-    """Colonne answ1..N presenti nell'intestazione, ordinate per indice."""
-    ans = [h for h in fieldnames if h and h.lower().startswith("answ")]
-
-    def _idx(h):
-        try:
-            return int(h[4:])
-        except ValueError:
-            return 0
-    return sorted(ans, key=_idx)
+    """Colonne answ1..N presenti nell'intestazione, ordinate per indice.
+    Solo answ<numero>: esclude p.es. la colonna opzionale answerType."""
+    ans = [h for h in fieldnames if h and re.fullmatch(r"answ\d+", h.lower())]
+    return sorted(ans, key=lambda h: int(h[4:]))
 
 
 # ─── Lettura CSV ──────────────────────────────────────────────────────────────
@@ -111,7 +118,8 @@ def leggi_csv(percorso_csv: str, cfg: LibConfig) -> tuple:
             if not display:
                 continue
             n = _numquest(row.get("numquest"))
-            if n is None:
+            explicit_code = _testo(row.get("code"))
+            if n is None and not explicit_code:
                 continue
             props = []
             for prop_code, header, _desc in cfg.text_props:
@@ -121,12 +129,14 @@ def leggi_csv(percorso_csv: str, cfg: LibConfig) -> tuple:
             answers = [_testo(row.get(h)) for h in answ_cols]
             termini.append({
                 "number":  n,
-                "code":    cfg.code_fmt.format(n=n),
+                "code":    explicit_code or cfg.code_fmt.format(n=n),
                 "display": display,
                 "props":   props,
                 "answers": answers,
+                "parent":      _testo(row.get("parent")),
+                "showif":      _testo(row.get("showif")),
+                "answer_type": _testo(row.get("answerType")),
             })
-    gruppi = set(v for t in termini for _c, v in t["props"])
     print(f"  {cfg.item_label.capitalize()} lette: {len(termini)} "
           f"(colonne risposta: {len(answ_cols)})")
     return termini, len(answ_cols)
@@ -137,12 +147,20 @@ def leggi_csv(percorso_csv: str, cfg: LibConfig) -> tuple:
 def build_codesystem(termini: list, n_answ: int, cfg: LibConfig) -> dict:
     concetti = []
     for t in termini:
-        props = [{"code": "number", "valueInteger": t["number"]}]
+        props = []
+        if t["number"] is not None:
+            props.append({"code": "number", "valueInteger": t["number"]})
         for prop_code, v in t["props"]:
             props.append({"code": prop_code, "valueString": v})
         for i, ans in enumerate(t["answers"], 1):
             if ans:
                 props.append({"code": f"answ{i}", "valueString": ans})
+        if t["parent"]:
+            props.append({"code": "parent", "valueString": t["parent"]})
+        if t["showif"]:
+            props.append({"code": "showif", "valueString": t["showif"]})
+        if t["answer_type"]:
+            props.append({"code": "answerType", "valueString": t["answer_type"]})
         concetti.append({
             "code":     t["code"],
             "display":  t["display"],
@@ -156,6 +174,17 @@ def build_codesystem(termini: list, n_answ: int, cfg: LibConfig) -> dict:
         property_defs.append({"code": prop_code, "description": desc, "type": "string"})
     for i in range(1, n_answ + 1):
         property_defs.append({"code": f"answ{i}", "description": f"Risposta {i}", "type": "string"})
+    if any(t["parent"] for t in termini):
+        property_defs.append({"code": "parent",
+                              "description": "Code della domanda madre (sotto-domanda condizionale)",
+                              "type": "string"})
+        property_defs.append({"code": "showif",
+                              "description": "Codici risposta della domanda madre che rendono visibile la sotto-domanda (separati da |)",
+                              "type": "string"})
+    if any(t["answer_type"] for t in termini):
+        property_defs.append({"code": "answerType",
+                              "description": "Tipo di risposta all'import CRF (multichoice | choice | open-choice | number)",
+                              "type": "string"})
 
     return {
         "resourceType": "CodeSystem",

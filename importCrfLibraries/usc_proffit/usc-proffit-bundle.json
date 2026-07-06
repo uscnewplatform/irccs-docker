@@ -12,8 +12,8 @@
         "title": "USC PROFFIT",
         "status": "active",
         "content": "complete",
-        "date": "2026-07-02",
-        "description": "PROFFIT - Patient Reported Outcome for Fighting FInancial Toxicity. 16 items.",
+        "date": "2026-07-06",
+        "description": "PROFFIT - Patient Reported Outcome for Fighting FInancial Toxicity. 33 items.",
         "publisher": "IRCCS Pascale",
         "copyright": "PROFFIT - Patient Reported Outcome for Fighting FInancial Toxicity",
         "property": [
@@ -85,6 +85,21 @@
           {
             "code": "answ12",
             "description": "Risposta 12",
+            "type": "string"
+          },
+          {
+            "code": "parent",
+            "description": "Code della domanda madre (sotto-domanda condizionale)",
+            "type": "string"
+          },
+          {
+            "code": "showif",
+            "description": "Codici risposta della domanda madre che rendono visibile la sotto-domanda (separati da |)",
+            "type": "string"
+          },
+          {
+            "code": "answerType",
+            "description": "Tipo di risposta all'import CRF (multichoice | choice | open-choice | number)",
             "type": "string"
           }
         ],
@@ -302,6 +317,72 @@
             ]
           },
           {
+            "code": "8.1",
+            "display": "Indichi per quali voci ha sostenuto spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Ho speso per esami radiologici"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Ho speso per esami di laboratorio"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Ho speso per test genetici"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Ho speso per interventi chirurgici (per rimuovere il tumore)"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Ho speso per chirurgia ricostruttiva o estetica"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Ho speso per radioterapia"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Ho speso per riabilitazione"
+              },
+              {
+                "code": "answ8",
+                "valueString": "Ho speso per assistenza medica domiciliare"
+              },
+              {
+                "code": "answ9",
+                "valueString": "Ho speso per assistenza infermieristica domiciliare"
+              },
+              {
+                "code": "answ10",
+                "valueString": "Ho speso per tutori o protesi"
+              },
+              {
+                "code": "answ11",
+                "valueString": "Ho speso per parrucca"
+              },
+              {
+                "code": "answ12",
+                "valueString": "Ho speso per altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "8"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
             "code": "9",
             "display": "Ho sostenuto spese per una o più visite private per la mia malattia",
             "property": [
@@ -324,6 +405,40 @@
               {
                 "code": "answ4",
                 "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "9.1",
+            "display": "Indichi per quali visite private ha sostenuto spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Ho speso per visite mediche"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Ho speso per visite chirurgiche"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Ho speso per visite radioterapiche"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Ho speso per altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "9"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
               }
             ]
           },
@@ -354,6 +469,374 @@
             ]
           },
           {
+            "code": "10.1",
+            "display": "Indichi per quali farmaci o integratori ha sostenuto spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Ho speso per farmaci per il dolore"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Ho speso per farmaci per la cura degli effetti collaterali"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Ho speso per farmaci per il controllo dei sintomi"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Ho speso per vitamine"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Ho speso per integratori alimentari"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Ho speso per pomate o altri prodotti per la pelle"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Ho speso per prodotti omeopatici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.1",
+            "display": "Farmaci per il dolore — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "1"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.2",
+            "display": "Farmaci per la cura degli effetti collaterali — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "2"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.3",
+            "display": "Farmaci per il controllo dei sintomi — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "3"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.4",
+            "display": "Vitamine — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.5",
+            "display": "Integratori alimentari — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "5"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.6",
+            "display": "Pomate o altri prodotti per la pelle — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "6"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.7",
+            "display": "Prodotti omeopatici — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "7"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
             "code": "11",
             "display": "Devo sostenere spese per cure integrative a mio carico (es. fisioterapia, psicoterapia, cure odontoiatriche)",
             "property": [
@@ -376,6 +859,52 @@
               {
                 "code": "answ4",
                 "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "11.1",
+            "display": "Indichi per quali cure integrative sostiene spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Sostengo spese per fisioterapia o fisiatria"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Sostengo spese per supporto psicologico, psichiatrico o psicoterapia"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Sostengo spese per cure odontoiatriche"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Sostengo spese per visite oculistiche"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Sostengo spese per visite con dietologi/nutrizionisti"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Sostengo spese per consulenze genetiche"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Sostengo spese per altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "11"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
               }
             ]
           },
@@ -406,6 +935,76 @@
             ]
           },
           {
+            "code": "12.1",
+            "display": "Quanti chilometri dista il centro di cura dalla sua abitazione?",
+            "property": [
+              {
+                "code": "parent",
+                "valueString": "12"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "number"
+              }
+            ]
+          },
+          {
+            "code": "12.2",
+            "display": "È stato necessario farsi accompagnare?",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Sì"
+              },
+              {
+                "code": "parent",
+                "valueString": "12"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "choice"
+              }
+            ]
+          },
+          {
+            "code": "12.3",
+            "display": "È stato necessario pernottare fuori casa?",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Sì"
+              },
+              {
+                "code": "parent",
+                "valueString": "12"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "choice"
+              }
+            ]
+          },
+          {
             "code": "13",
             "display": "Ho dovuto sostenere rilevanti costi di trasporto per curarmi",
             "property": [
@@ -428,6 +1027,84 @@
               {
                 "code": "answ4",
                 "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "13.1",
+            "display": "Che mezzi di trasporto ha dovuto utilizzare? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Auto propria"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Taxi/autista"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Autobus"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Treno"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Aereo"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "13"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "13.2",
+            "display": "Quanto ha speso approssimativamente per trasporti negli ultimi due mesi?",
+            "property": [
+              {
+                "code": "parent",
+                "valueString": "13"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "number"
+              }
+            ]
+          },
+          {
+            "code": "13.3",
+            "display": "Oltre alle sue spese, ci sono state spese aggiuntive per eventuali accompagnatori? (importo)",
+            "property": [
+              {
+                "code": "parent",
+                "valueString": "13"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "number"
               }
             ]
           },
@@ -525,8 +1202,8 @@
         "name": "USCPROFFITItems",
         "title": "USC PROFFIT Items ValueSet",
         "status": "active",
-        "date": "2026-07-02",
-        "description": "Tutti i 16 item (USC PROFFIT)",
+        "date": "2026-07-06",
+        "description": "Tutti i 33 item (USC PROFFIT)",
         "compose": {
           "include": [
             {
@@ -565,24 +1242,92 @@
                   "display": "Il Servizio Sanitario Nazionale copre tutti i costi sanitari associati alla mia malattia"
                 },
                 {
+                  "code": "8.1",
+                  "display": "Indichi per quali voci ha sostenuto spese (più risposte possibili)"
+                },
+                {
                   "code": "9",
                   "display": "Ho sostenuto spese per una o più visite private per la mia malattia"
+                },
+                {
+                  "code": "9.1",
+                  "display": "Indichi per quali visite private ha sostenuto spese (più risposte possibili)"
                 },
                 {
                   "code": "10",
                   "display": "Ho sostenuto spese per farmaci supplementari o integratori per la mia malattia"
                 },
                 {
+                  "code": "10.1",
+                  "display": "Indichi per quali farmaci o integratori ha sostenuto spese (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.1",
+                  "display": "Farmaci per il dolore — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.2",
+                  "display": "Farmaci per la cura degli effetti collaterali — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.3",
+                  "display": "Farmaci per il controllo dei sintomi — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.4",
+                  "display": "Vitamine — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.5",
+                  "display": "Integratori alimentari — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.6",
+                  "display": "Pomate o altri prodotti per la pelle — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.7",
+                  "display": "Prodotti omeopatici — su indicazione di chi? (più risposte possibili)"
+                },
+                {
                   "code": "11",
                   "display": "Devo sostenere spese per cure integrative a mio carico (es. fisioterapia, psicoterapia, cure odontoiatriche)"
+                },
+                {
+                  "code": "11.1",
+                  "display": "Indichi per quali cure integrative sostiene spese (più risposte possibili)"
                 },
                 {
                   "code": "12",
                   "display": "Il centro di cura è lontano dalla mia abitazione"
                 },
                 {
+                  "code": "12.1",
+                  "display": "Quanti chilometri dista il centro di cura dalla sua abitazione?"
+                },
+                {
+                  "code": "12.2",
+                  "display": "È stato necessario farsi accompagnare?"
+                },
+                {
+                  "code": "12.3",
+                  "display": "È stato necessario pernottare fuori casa?"
+                },
+                {
                   "code": "13",
                   "display": "Ho dovuto sostenere rilevanti costi di trasporto per curarmi"
+                },
+                {
+                  "code": "13.1",
+                  "display": "Che mezzi di trasporto ha dovuto utilizzare? (più risposte possibili)"
+                },
+                {
+                  "code": "13.2",
+                  "display": "Quanto ha speso approssimativamente per trasporti negli ultimi due mesi?"
+                },
+                {
+                  "code": "13.3",
+                  "display": "Oltre alle sue spese, ci sono state spese aggiuntive per eventuali accompagnatori? (importo)"
                 },
                 {
                   "code": "14",
@@ -615,7 +1360,7 @@
         "name": "USCPROFFITMetadata",
         "title": "USC PROFFIT Metadata Extension",
         "status": "active",
-        "date": "2026-07-02",
+        "date": "2026-07-06",
         "kind": "complex-type",
         "abstract": false,
         "context": [

@@ -78,6 +78,49 @@ Ogni concept porta la property `number` (valueInteger), copiata su `Questionnair
 
 IMPORTANT: Il numero arriva nell'item **al momento dell'import** del CRF dal CodeSystem. I CRF importati prima dell'introduzione o modifica di `number` vanno re-importati per vederlo aggiornato nei PDF.
 
+=== Proprietà `answerType` (tipo di risposta della domanda)
+
+Ogni concept può portare la property opzionale `answerType` (valueString) che pilota il **tipo di domanda** generato all'import della libreria nel Questionnaire builder (`crfAnswerTypeFields` in `CtcaeV6Service.ts`, usata da entrambi i builder):
+
+[cols="1,3"]
+|===
+| Valore | Item generato
+
+| _(assente / vuoto)_ | `open-choice` + itemControl `dynamic` — scelta multipla "dynamic", il display type di default del designer (**fallback**)
+| `multichoice` | `open-choice` + itemControl `check-box` — checkbox a selezione multipla
+| `choice` | `choice` — radio a selezione singola
+| `open-choice` | `open-choice` — radio a selezione singola con risposta libera
+| `number` | `integer` — input numerico intero, **senza** `answerOption`
+|===
+
+La property si imposta per singolo concept dalla UI admin *Terminologie* (colonna "Tipo risposta" nell'editor concetti, vedi manuale dashboard) oppure nel CSV/bundle sorgente.
+
+IMPORTANT: Come per `number`, il tipo vale **al momento dell'import**: i CRF già importati mantengono il tipo con cui sono nati e vanno re-importati per recepire la modifica.
+
+NOTE: Le domande aggiunte **a mano** nel designer (fuori dall'import) non hanno `item.code`: per agganciarle a un concept di libreria usare il pannello *Codes* della domanda → "Cerca codice" — oltre a LOINC/SNOMED/NCIT il selettore offre tutte le librerie CRF scoperte da HAPI (`CodingSearch.tsx`).
+
+=== Proprietà `parent` + `showif` (sotto-domande condizionali)
+
+Un concept può essere una **sotto-domanda condizionale** di un altro (es. USC PROFFIT: le domande di approfondimento 8.1, 9.1, 10.1, 10.1.1–10.1.7, 11.1 si aprono solo con risposta positiva alla domanda madre). Due property opzionali (valueString):
+
+[cols="1,3"]
+|===
+| Property | Significato
+
+| `parent` | code del concept della domanda madre (es. `8`). Anche una sotto-domanda può avere sotto-domande (`10.1.1` ha parent `10.1`).
+| `showif` | codici risposta della madre che rendono visibile la sotto-domanda, separati da `\|` (es. `2\|3\|4` = indici delle `answ*` della madre). Più codici = basta una risposta corrispondente (`enableBehavior: any`).
+|===
+
+All'import il builder generico (`buildCrfLibraryQuestionnaire`) traduce le property in **`enableWhen` FHIR standard**: la sotto-domanda viene accodata subito dopo la madre nel suo stesso gruppo, con `enableWhen[].question` = linkId della madre (deterministico, seed `csUrl|code`) e `answerCoding` = codice risposta. Il renderer di compilazione (`QuestionnaireBuilderNew`) valuta già `enableWhen` nativamente (anche per checkbox multi-selezione e gruppi ripetibili); i PDF (stampa CRF compilato e storico) saltano le sotto-domande non attivate.
+
+Nel CSV sorgente le sotto-domande sono righe con le colonne opzionali `code` (obbligatoria: es. `8.1`, `numquest` resta vuoto → nessun prefisso numerico), `parent`, `showif` e tipicamente `answerType=multichoice` (blocco "risposte multiple vero/falso" = una domanda checkbox; l'opzione "altro (specificare)" è coperta dal testo libero dell'`open-choice`).
+
+Nella dialog di import la selezione della domanda madre **trascina automaticamente** le sue sotto-domande; una sotto-domanda selezionata senza la madre viene scartata (non sarebbe mai visibile).
+
+Le property si impostano anche per singolo concept dalla UI admin *Terminologie* (campi "Domanda madre (code)" e "Visibile se risposta" nel dettaglio del concetto), senza toccare CSV/bundle.
+
+IMPORTANT: Come per `number` e `answerType`, le condizioni valgono **al momento dell'import**: i CRF già importati vanno re-importati per recepire sotto-domande nuove o modificate.
+
 == Come il frontend recupera le librerie (discovery automatica)
 
 Il frontend React non ha una lista hardcoded delle librerie: le **scopre da HAPI** a runtime.
