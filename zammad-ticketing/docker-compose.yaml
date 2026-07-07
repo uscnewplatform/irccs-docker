@@ -35,7 +35,7 @@ x-shared:
       NGINX_SERVER_SCHEME:
       RAILS_TRUSTED_PROXIES:
       ZAMMAD_HTTP_TYPE: "https"
-      ZAMMAD_FQDN: ${ZAMMAD_FQDN:-zammad.infocube.it}
+      ZAMMAD_FQDN: ${ZAMMAD_FQDN:-zammad.istitutotumori.na.it}
       ZAMMAD_WEB_CONCURRENCY:
       ZAMMAD_PROCESS_SESSIONS_JOBS_WORKERS:
       ZAMMAD_PROCESS_SCHEDULED_JOBS_WORKERS:
@@ -97,11 +97,14 @@ services:
   zammad-nginx:
     <<: *zammad-service
     command: ["zammad-nginx"]
-    ports:
-      - "8989:8080"
     depends_on:
       - zammad-railsserver
-    
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-nginx
+
   zammad-postgresql:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-zammad_production}
@@ -133,6 +136,11 @@ services:
     command: ["zammad-websocket"]
     ports: 
       - "6042:6042"
+
+networks:
+  irccs:
+    name: irccs
+    external: true
 
 volumes:
   elasticsearch-data:

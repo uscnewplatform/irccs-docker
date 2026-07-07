@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
     VITE_APP_STAGING_MS_HOST: "",
     VITE_APP_STAGING_AUTH_HOST: "",
-    VITE_APP_ZAMMAD_HOST: "https://zammad.infocube.it",
+    VITE_APP_ZAMMAD_HOST: "https://zammad.istitutotumori.na.it",
     VITE_APP_ZAMMAD_POLL_INTERVAL_SECONDS: "120",
     VITE_APP_ZAMMAD_TICKET_ANNUNCE_STATE_ID: "7",
 

@@ -1,5 +1,6 @@
 networks:
   irccs:
+    name: irccs
     driver: bridge
 
 services:
