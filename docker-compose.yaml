@@ -163,6 +163,7 @@ services:
       KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: forwarded
       KC_HTTP_RELATIVE_PATH: /backoffice
+      KC_HTTP_MANAGEMENT_RELATIVE_PATH: /
     env_file:
       - .env
     restart: always
