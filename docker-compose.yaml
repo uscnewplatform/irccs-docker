@@ -156,13 +156,14 @@ services:
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
       PROXY_ADDRESS_FORWARDING: "true"
       KC_HOSTNAME: ${KC_HOSTNAME}
-      KC_HOSTNAME_ADMIN: ${KC_HOSTNAME_ADMIN}
       #KC_HOSTNAME_STRICT: true
       #KC_PROXY: edge
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "false"
       KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: forwarded
+      KC_HTTP_RELATIVE_PATH: /backoffice
+      KC_HTTP_MANAGEMENT_RELATIVE_PATH: /
     env_file:
       - .env
     restart: always
@@ -170,7 +171,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname ${KC_HOSTNAME} --hostname-backchannel-dynamic false --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname ${KC_HOSTNAME} --http-relative-path /backoffice --hostname-backchannel-dynamic false --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
       - "127.0.0.1:9445:8080"
