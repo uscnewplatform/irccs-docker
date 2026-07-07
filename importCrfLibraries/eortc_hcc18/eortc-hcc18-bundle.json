@@ -1,0 +1,1084 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "CodeSystem",
+        "id": "eortc-hcc18",
+        "url": "https://www.eortc.org/qlq-hcc18",
+        "version": "1.0",
+        "name": "EORTCHCC18",
+        "title": "EORTC QLQ-HCC18 Hepatocellular Carcinoma Module",
+        "status": "active",
+        "content": "complete",
+        "date": "2026-07-02",
+        "description": "EORTC Quality of Life Questionnaire Hepatocellular Carcinoma module (QLQ-HCC18). 18 items.",
+        "publisher": "EORTC / IRCCS Pascale",
+        "copyright": "EORTC QLQ-HCC18",
+        "property": [
+          {
+            "code": "number",
+            "description": "Numero della domanda (da numquest)",
+            "type": "integer"
+          },
+          {
+            "code": "head",
+            "description": "Sezione / dominio del questionario",
+            "type": "string"
+          },
+          {
+            "code": "answ1",
+            "description": "Risposta 1",
+            "type": "string"
+          },
+          {
+            "code": "answ2",
+            "description": "Risposta 2",
+            "type": "string"
+          },
+          {
+            "code": "answ3",
+            "description": "Risposta 3",
+            "type": "string"
+          },
+          {
+            "code": "answ4",
+            "description": "Risposta 4",
+            "type": "string"
+          },
+          {
+            "code": "answ5",
+            "description": "Risposta 5",
+            "type": "string"
+          },
+          {
+            "code": "answ6",
+            "description": "Risposta 6",
+            "type": "string"
+          },
+          {
+            "code": "answ7",
+            "description": "Risposta 7",
+            "type": "string"
+          },
+          {
+            "code": "answ8",
+            "description": "Risposta 8",
+            "type": "string"
+          },
+          {
+            "code": "answ9",
+            "description": "Risposta 9",
+            "type": "string"
+          },
+          {
+            "code": "answ10",
+            "description": "Risposta 10",
+            "type": "string"
+          },
+          {
+            "code": "answ11",
+            "description": "Risposta 11",
+            "type": "string"
+          },
+          {
+            "code": "answ12",
+            "description": "Risposta 12",
+            "type": "string"
+          }
+        ],
+        "concept": [
+          {
+            "code": "31",
+            "display": "Ha avuto sete?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 31
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "32",
+            "display": "Ha avuto problemi col senso del gusto?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 32
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "33",
+            "display": "Ha perso tono muscolare nelle braccia o nelle gambe?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 33
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "34",
+            "display": "Ha avuto gonfiore addominale?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 34
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "35",
+            "display": "Ha avuto preoccupazioni per l'aspetto dell'addome?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 35
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "36",
+            "display": "Ha avuto preoccupazioni per il colore giallo (ittero) assunto dalla pelle o dagli occhi?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 36
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "37",
+            "display": "Ha avuto prurito?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 37
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "38",
+            "display": "Ha avuto dolori alla spalla?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 38
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "39",
+            "display": "Ha avuto dolori addominali?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 39
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "40",
+            "display": "Ha avuto la febbre?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 40
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "41",
+            "display": "Ha avuto brividi?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 41
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "42",
+            "display": "Si è preoccupato di assumere nutrimento sufficiente?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 42
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "43",
+            "display": "Ha provato sazietà troppo presto dopo aver iniziato a mangiare?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 43
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "44",
+            "display": "Ha avuto preoccupazioni riguardo a un eccessivo calo di peso?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 44
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "45",
+            "display": "È stato(a) meno attivo(a) di quanto avrebbe voluto essere?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 45
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "46",
+            "display": "Ha trovato difficile portare a termine le attività?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 46
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "47",
+            "display": "Ha avuto bisogno di dormire durante il giorno?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 47
+              },
+              {
+                "code": "head",
+                "valueString": "La settimana scorsa:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "48",
+            "display": "La malattia o la terapia hanno avuto effetti sulla Sua vita sessuale?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 48
+              },
+              {
+                "code": "head",
+                "valueString": "Durante le ultime quattro settimane:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "CodeSystem/eortc-hcc18"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "ValueSet",
+        "id": "eortc-hcc18-items",
+        "url": "https://www.eortc.org/qlq-hcc18-items",
+        "version": "1.0",
+        "name": "EORTCHCC18Items",
+        "title": "EORTC QLQ-HCC18 Items ValueSet",
+        "status": "active",
+        "date": "2026-07-02",
+        "description": "Tutti i 18 item (EORTC QLQ-HCC18 Hepatocellular Carcinoma Module)",
+        "compose": {
+          "include": [
+            {
+              "system": "https://www.eortc.org/qlq-hcc18",
+              "concept": [
+                {
+                  "code": "31",
+                  "display": "Ha avuto sete?"
+                },
+                {
+                  "code": "32",
+                  "display": "Ha avuto problemi col senso del gusto?"
+                },
+                {
+                  "code": "33",
+                  "display": "Ha perso tono muscolare nelle braccia o nelle gambe?"
+                },
+                {
+                  "code": "34",
+                  "display": "Ha avuto gonfiore addominale?"
+                },
+                {
+                  "code": "35",
+                  "display": "Ha avuto preoccupazioni per l'aspetto dell'addome?"
+                },
+                {
+                  "code": "36",
+                  "display": "Ha avuto preoccupazioni per il colore giallo (ittero) assunto dalla pelle o dagli occhi?"
+                },
+                {
+                  "code": "37",
+                  "display": "Ha avuto prurito?"
+                },
+                {
+                  "code": "38",
+                  "display": "Ha avuto dolori alla spalla?"
+                },
+                {
+                  "code": "39",
+                  "display": "Ha avuto dolori addominali?"
+                },
+                {
+                  "code": "40",
+                  "display": "Ha avuto la febbre?"
+                },
+                {
+                  "code": "41",
+                  "display": "Ha avuto brividi?"
+                },
+                {
+                  "code": "42",
+                  "display": "Si è preoccupato di assumere nutrimento sufficiente?"
+                },
+                {
+                  "code": "43",
+                  "display": "Ha provato sazietà troppo presto dopo aver iniziato a mangiare?"
+                },
+                {
+                  "code": "44",
+                  "display": "Ha avuto preoccupazioni riguardo a un eccessivo calo di peso?"
+                },
+                {
+                  "code": "45",
+                  "display": "È stato(a) meno attivo(a) di quanto avrebbe voluto essere?"
+                },
+                {
+                  "code": "46",
+                  "display": "Ha trovato difficile portare a termine le attività?"
+                },
+                {
+                  "code": "47",
+                  "display": "Ha avuto bisogno di dormire durante il giorno?"
+                },
+                {
+                  "code": "48",
+                  "display": "La malattia o la terapia hanno avuto effetti sulla Sua vita sessuale?"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "ValueSet/eortc-hcc18-items"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "eortc-hcc18-metadata",
+        "url": "https://irccs-pascale.it/fhir/StructureDefinition/eortc-hcc18-metadata",
+        "version": "1.0",
+        "name": "EORTCHCC18Metadata",
+        "title": "EORTC QLQ-HCC18 Metadata Extension",
+        "status": "active",
+        "date": "2026-07-02",
+        "kind": "complex-type",
+        "abstract": false,
+        "context": [
+          {
+            "type": "element",
+            "expression": "QuestionnaireItem"
+          }
+        ],
+        "type": "Extension",
+        "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+        "derivation": "constraint",
+        "description": "Estensione su QuestionnaireItem per EORTC QLQ-HCC18: sezione e opzioni di risposta.",
+        "differential": {
+          "element": [
+            {
+              "id": "Extension",
+              "path": "Extension",
+              "short": "Metadati EORTC QLQ-HCC18 Hepatocellular Carcinoma Module su QuestionnaireItem"
+            },
+            {
+              "id": "Extension.extension",
+              "path": "Extension.extension",
+              "slicing": {
+                "discriminator": [
+                  {
+                    "type": "value",
+                    "path": "url"
+                  }
+                ],
+                "rules": "open"
+              }
+            },
+            {
+              "id": "Extension.extension:head",
+              "path": "Extension.extension",
+              "sliceName": "head",
+              "short": "Sezione / dominio del questionario",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:head.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "head"
+            },
+            {
+              "id": "Extension.extension:head.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ1",
+              "path": "Extension.extension",
+              "sliceName": "answ1",
+              "short": "Risposta 1",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ1.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ1"
+            },
+            {
+              "id": "Extension.extension:answ1.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ2",
+              "path": "Extension.extension",
+              "sliceName": "answ2",
+              "short": "Risposta 2",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ2.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ2"
+            },
+            {
+              "id": "Extension.extension:answ2.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ3",
+              "path": "Extension.extension",
+              "sliceName": "answ3",
+              "short": "Risposta 3",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ3.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ3"
+            },
+            {
+              "id": "Extension.extension:answ3.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ4",
+              "path": "Extension.extension",
+              "sliceName": "answ4",
+              "short": "Risposta 4",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ4.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ4"
+            },
+            {
+              "id": "Extension.extension:answ4.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ5",
+              "path": "Extension.extension",
+              "sliceName": "answ5",
+              "short": "Risposta 5",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ5.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ5"
+            },
+            {
+              "id": "Extension.extension:answ5.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ6",
+              "path": "Extension.extension",
+              "sliceName": "answ6",
+              "short": "Risposta 6",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ6.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ6"
+            },
+            {
+              "id": "Extension.extension:answ6.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ7",
+              "path": "Extension.extension",
+              "sliceName": "answ7",
+              "short": "Risposta 7",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ7.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ7"
+            },
+            {
+              "id": "Extension.extension:answ7.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ8",
+              "path": "Extension.extension",
+              "sliceName": "answ8",
+              "short": "Risposta 8",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ8.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ8"
+            },
+            {
+              "id": "Extension.extension:answ8.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ9",
+              "path": "Extension.extension",
+              "sliceName": "answ9",
+              "short": "Risposta 9",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ9.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ9"
+            },
+            {
+              "id": "Extension.extension:answ9.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ10",
+              "path": "Extension.extension",
+              "sliceName": "answ10",
+              "short": "Risposta 10",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ10.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ10"
+            },
+            {
+              "id": "Extension.extension:answ10.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ11",
+              "path": "Extension.extension",
+              "sliceName": "answ11",
+              "short": "Risposta 11",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ11.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ11"
+            },
+            {
+              "id": "Extension.extension:answ11.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ12",
+              "path": "Extension.extension",
+              "sliceName": "answ12",
+              "short": "Risposta 12",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ12.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ12"
+            },
+            {
+              "id": "Extension.extension:answ12.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.url",
+              "path": "Extension.url",
+              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/eortc-hcc18-metadata"
+            },
+            {
+              "id": "Extension.value[x]",
+              "path": "Extension.value[x]",
+              "max": "0"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "StructureDefinition/eortc-hcc18-metadata"
+      }
+    }
+  ]
+}

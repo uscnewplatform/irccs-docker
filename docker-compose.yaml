@@ -110,12 +110,14 @@ services:
     image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:${IRCCS_HTTPD_VERSION}
     container_name: irccs-httpd-dashboard
     ports:
-      - "80:80"
+      - "443:443"
     volumes:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
       - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
+      - /cert-pasc-2026.crt:/usr/local/apache2/conf/ssl/cert-pasc-2026.crt:ro
+      - /cert-pasc-2026.key:/usr/local/apache2/conf/ssl/cert-pasc-2026.key:ro
     networks:
       - irccs
   postgres-keycloak:

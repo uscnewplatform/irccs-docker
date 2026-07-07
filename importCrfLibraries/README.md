@@ -1,161 +1,135 @@
-# Import terminologie → HAPI FHIR
+# Import terminologie CRF → HAPI FHIR
 
-Carica CTCAE, PRO-CTCAE e EORTC come risorse FHIR su HAPI FHIR.
+Carica le CRF library (CTCAE, PRO-CTCAE, EORTC, EuroQol, PROFFIT) come risorse
+FHIR su HAPI FHIR: **CodeSystem + ValueSet + StructureDefinition**.
 
-Ogni versione è indipendente. Sia il bundle JSON pre-generato sia l'Excel sorgente
-sono versionati nella cartella della CRF.
+Ogni libreria è indipendente e ha un `*-bundle.json` committato = **unica sorgente
+per l'install** (solo `curl`, zero dipendenze). Nessun id Excel collegato:
+l'install non richiama né rigenera da Excel.
 
-## Due sorgenti di import
+Il bundle si **rigenera dalla sorgente della libreria** con il rispettivo
+`import-*.py --bundle-only`:
 
-`install-*.sh` accetta `--source`:
-
-| `--source` | Cosa fa |
+| Sorgente di rigenerazione | Librerie |
 |---|---|
-| `bundle` (default) | carica il `*-bundle.json` pre-generato e committato (solo `curl`, zero dipendenze) |
-| `excel` | rigenera il bundle dall'Excel versionato (`import-*.py --bundle-only`, serve `openpyxl`) e poi lo carica |
+| **CSV** (committato in cartella) | `proctc-v1`, `eortc_hcc18`, `euroqol_eq5d5l`, `usc_proffit` |
+| **Excel** (committato in cartella) | `ctcae-v4`, `ctcae-v5`, `ctcae-v6`, `eortc-qlq-c30` |
+
+Le library CSV usano l'helper condiviso `_csvlib.py`; le CTCAE/EORTC-C30 leggono
+il proprio `.xlsx` (import dedicato). In entrambi i casi l'output è lo stesso:
+un Bundle transaction con PUT idempotenti.
+
+## Utilizzo rapido (install = push del bundle)
 
 ```bash
-bash ctcae-v5/install-ctcae-v5.sh http://localhost:8080/fhir                 # da bundle
-bash ctcae-v5/install-ctcae-v5.sh http://localhost:8080/fhir --source excel  # rigenera da Excel + carica
+HAPI=http://localhost:8080/fhir   # ← cambia per l'ambiente target
+
+bash ctcae-v4/install-ctcae-v4.sh            "$HAPI"
+bash ctcae-v5/install-ctcae-v5.sh            "$HAPI"
+bash ctcae-v6/install-ctcae-v6.sh            "$HAPI"
+bash proctc-v1/install-proctc-v1.sh          "$HAPI"
+bash eortc-qlq-c30/install-eortc-v1.sh       "$HAPI"
+bash eortc_hcc18/install-eortc-hcc18.sh      "$HAPI"
+bash euroqol_eq5d5l/install-euroqol-eq5d5l.sh "$HAPI"
+bash usc_proffit/install-usc-proffit.sh      "$HAPI"
 ```
 
-Con `--source excel` il `*-bundle.json` viene riscritto (cambia solo il campo `date`).
-Se vuoi che il bundle aggiornato resti nel repo, committalo dopo.
+Gli install sono **standalone** (niente Nexus/irccs-common) e idempotenti:
+CS/VS/SD con stessa url → `PUT`, ri-lanciabili senza duplicati.
+
+## Rigenera un bundle dalla sorgente
+
+```bash
+# Library CSV (richiede: pip install requests)
+python3 proctc-v1/import-proctc-v1.py            --bundle-only
+python3 eortc_hcc18/import-eortc-hcc18.py         --bundle-only
+python3 euroqol_eq5d5l/import-euroqol-eq5d5l.py   --bundle-only
+python3 usc_proffit/import-usc-proffit.py         --bundle-only
+
+# Library Excel (richiede: pip install openpyxl requests)
+python3 ctcae-v4/import-ctcae-v4.py "ctcae-v4/CTCAE_4.03_2010-06-14.xlsx" --bundle-only
+python3 ctcae-v5/import-ctcae-v5.py "ctcae-v5/CTCAE_v5.0_2017-11-27.xlsx" --bundle-only
+python3 ctcae-v6/import-ctcae-v6.py "ctcae-v6/CTCAE_v6.0_Final_Jan2026.xlsx" --bundle-only
+python3 eortc-qlq-c30/import-eortc-v1.py "eortc-qlq-c30/eortc-qlq-c30.xlsx" --bundle-only
+```
+
+Se rigeneri e vuoi che il bundle aggiornato resti nel repo, committalo dopo.
 
 ## Struttura
 
 ```
 importCrfLibraries/
-├── _lib.sh                       ← helper condiviso degli install-*.sh (parse args, rigenera, push)
-├── requirements.txt              ← deps per --source excel (openpyxl, requests)
-├── ctcae-v4/
-│   ├── import-ctcae-v4.py        ← genera bundle da Excel + push su HAPI
-│   ├── install-ctcae-v4.sh       ← carica bundle o (─-source excel) rigenera da Excel
-│   ├── CTCAE_4.03_2010-06-14.xlsx ← Excel sorgente versionato
-│   └── ctcae-v4-bundle.json      ← 790 termini, 26 SOC
-├── ctcae-v5/
-│   ├── import-ctcae-v5.py
-│   ├── install-ctcae-v5.sh
-│   ├── CTCAE_v5.0_2017-11-27.xlsx
-│   └── ctcae-v5-bundle.json      ← 837 termini, 26 SOC
-├── ctcae-v6/
-│   ├── import-ctcae-v6.py
-│   ├── install-ctcae-v6.sh
-│   ├── CTCAE_v6.0_Final_Jan2026.xlsx
-│   ├── ctcae-v6-bundle.json      ← 850 termini, 26 SOC
-│   └── README.md
-├── proctc-v1/
-│   ├── import-proctc-v1.py
-│   ├── install-proctc-v1.sh
-│   ├── uosc_proctcaev1.xlsx
-│   └── proctc-v1-bundle.json     ← 125 termini PRO-CTCAE v1
-└── eortc-v1/
-    ├── import-eortc-v1.py
-    ├── install-eortc-v1.sh
-    ├── eortc-qlq-c30.xlsx
-    └── eortc-v1-bundle.json      ← 30 item EORTC QLQ-C30
+├── _lib.sh                      ← helper install (parse HAPI_URL + push bundle)
+├── _csvlib.py                   ← helper import per le library CSV (CSV → CS+VS+SD+bundle)
+├── requirements.txt             ← deps per rigenerare i bundle (requests, openpyxl)
+├── ctcae-v4/  … ctcae-v6/       ← Excel + import-ctcae-vN.py + install + *-bundle.json
+├── eortc-qlq-c30/               ← Excel + import-eortc-v1.py + install + eortc-v1-bundle.json
+├── proctc-v1/                   ← proctcae-v1.csv + import-proctc-v1.py + install + bundle
+├── eortc_hcc18/                 ← eortc_hcc18.csv + import-eortc-hcc18.py + install + bundle
+├── euroqol_eq5d5l/              ← euroqol_eq5d5l.csv + import-euroqol-eq5d5l.py + install + bundle
+└── usc_proffit/                 ← usc_proffit.csv + import-usc-proffit.py + install + bundle
 ```
 
-## Utilizzo rapido
+## Risorse create per libreria
 
-Sostituisci l'URL con quello dell'ambiente target (locale/preprod/nuovo server).
-Default `--source bundle` = solo `curl`, nessuna dipendenza Python.
-
-```bash
-HAPI=http://localhost:8080/fhir   # ← cambia per l'ambiente nuovo
-
-bash irccs-docker/importCrfLibraries/ctcae-v4/install-ctcae-v4.sh   "$HAPI"
-bash irccs-docker/importCrfLibraries/ctcae-v5/install-ctcae-v5.sh   "$HAPI"
-bash irccs-docker/importCrfLibraries/ctcae-v6/install-ctcae-v6.sh   "$HAPI"
-bash irccs-docker/importCrfLibraries/proctc-v1/install-proctc-v1.sh "$HAPI"
-bash irccs-docker/importCrfLibraries/eortc-v1/install-eortc-v1.sh   "$HAPI"
-```
-
-Note ambiente nuovo: HAPI dev'essere raggiungibile dalla macchina che lancia; questi script
-sono **standalone** (niente Nexus/irccs-common). CS/VS con stessa url già presenti → `PUT`
-idempotente, si può ri-lanciare senza duplicati.
-
-## Rigenera bundle da Excel
-
-```bash
-# Richiede: pip install -r requirements.txt
-
-python3 importCrfLibraries/ctcae-v4/import-ctcae-v4.py "CTCAE_4.03_2010-06-14.xlsx" --bundle-only
-python3 importCrfLibraries/ctcae-v5/import-ctcae-v5.py "CTCAE_v5.0_2017-11-27.xlsx" --bundle-only
-python3 importCrfLibraries/ctcae-v6/import-ctcae-v6.py "CTCAE_v6.0_Final_Jan2026.xlsx" --bundle-only
-python3 importCrfLibraries/proctc-v1/import-proctc-v1.py "uosc_proctcaev1.xlsx" --bundle-only
-python3 importCrfLibraries/eortc-v1/import-eortc-v1.py "eortc-qlq-c30.xlsx" --bundle-only
-```
-
-## Risorse create per versione
-
-| Versione | CodeSystem ID | ValueSet ID | Termini |
+| Libreria | CodeSystem id | ValueSet id | Concept |
 |---|---|---|---|
 | CTCAE v4.03 | `ctcae-v4` | `ctcae-v4-adverse-events` | 790 |
 | CTCAE v5.0 | `ctcae-v5` | `ctcae-v5-adverse-events` | 837 |
 | CTCAE v6.0 | `ctcae-v6` | `ctcae-v6-adverse-events` | 850 |
-| PRO-CTCAE v1 | `proctc-v1` | `proctc-v1-adverse-events` | 125 |
+| PRO-CTCAE v1 | `proctc-v1` | `proctc-v1-adverse-events` | 126 |
 | EORTC QLQ-C30 | `eortc-v1` | `eortc-v1-items` | 30 |
+| EORTC QLQ-HCC18 | `eortc-hcc18` | `eortc-hcc18-items` | 18 |
+| EuroQol EQ-5D-5L | `euroqol-eq5d5l` | `euroqol-eq5d5l-items` | 5 |
+| USC PROFFIT | `usc-proffit` | `usc-proffit-items` | 16 |
 
-## Proprietà CodeSystem per concetto
+## Formato CSV (library CSV)
 
-### CTCAE (v4/v5/v6)
-
-| Proprietà | v4 | v5 | v6 | Descrizione |
-|---|---|---|---|---|
-| `number` | ✓ | ✓ | ✓ | Numero progressivo 1..N (valueInteger, continuo sul file) |
-| `soc` | ✓ | ✓ | ✓ | System Organ Class MedDRA |
-| `grade1`–`grade5` | ✓ | ✓ | ✓ | Descrizione grado |
-| `navNote` | — | ✓ | ✓ | Nota navigazionale NCI |
-| `v5change` | — | ✓ | — | Variazioni rispetto a v4 |
-| `v6change` | — | — | ✓ | Variazioni rispetto a v5 |
-
-### PRO-CTCAE v1
-
-| Proprietà | Descrizione |
-|---|---|
-| `number` | Numero progressivo 1..N (valueInteger, continuo sul file) |
-| `macrogroup` | Macrogruppo sintomatologico |
-| `category` | Categoria di sintomo (usata per raggruppamento UI) |
-| `interface` | Tipo di interfaccia UI |
-| `answ1`–`answ8` | Opzioni di risposta |
-
-### EORTC QLQ-C30
-
-| Proprietà | Descrizione |
-|---|---|
-| `number` | Numero progressivo 1..N (valueInteger, continuo sul file) |
-| `head` | Sezione / dominio (usata per raggruppamento UI) |
-| `answ1`–`answ7` | Opzioni di risposta |
-
-## Numerazione domande (1..N) nei PDF
-
-La property `number` (valueInteger, 1..N continuo sul file) serve a numerare le domande nei PDF di stampa CRF. Catena:
+Intestazione sulla prima riga. Colonne:
 
 ```
-CodeSystem concept.property `number`        (questo repo, import-*.py)
-  → QuestionnaireItem.prefix = String(number)  (dashboard, build*Questionnaire al momento dell'import CRF)
-    → PDF: "N. testo domanda"                   (dashboard, makeCrfPdf.ts + Crf/makeHistoryPdf.ts)
+numquest, <display>, [colonne testo...], answ1, answ2, ...
 ```
 
-Nei PDF convivono **due numerazioni indipendenti**, a livelli diversi:
-- **sezione** (gruppo SOC / head / category) → `1.`, `2.`… progressivo sulle sezioni;
-- **domanda** → `number` del file (1..N continuo, **non** riparte per sezione → dentro una sezione può iniziare da un valore > 1).
+- `numquest` → property `number` (numerazione domande, vedi sotto)
+- `<display>` → `concept.display` (`term` per PRO-CTCAE, `quest` per gli altri)
+- colonne testo → property stringa (`macrogroup`/`category` per PRO-CTCAE, `head` per gli altri)
+- `answ1..N` → property `answ1..N` (numero di colonne answ letto dall'intestazione)
 
-> ⚠️ Il numero arriva nell'item **al momento dell'import** del CRF dal CodeSystem. I CRF
-> importati **prima** dell'introduzione di `number` non hanno il `prefix`: vanno re-importati
-> (o ripopolati) per vederlo nei PDF.
+Il concept `code` è `numquest` per le library QLQ-like, `PROCTC-<numquest a 4 cifre>` per PRO-CTCAE.
 
-`number` è ordine dei concept nel file Excel: se cambia l'ordine Excel cambia la numerazione (rigenera con `--source excel`).
+## Numerazione domande (`number`) nei PDF
+
+La property `number` (valueInteger) numera le domande nei PDF di stampa CRF. Catena:
+
+```
+CodeSystem concept.property `number`
+  → QuestionnaireItem.prefix = String(number)   (dashboard, al momento dell'import CRF)
+    → PDF: "N. testo domanda"                    (dashboard, makeCrfPdf.ts + Crf/makeHistoryPdf.ts)
+```
+
+Origine di `number` per libreria:
+
+| Libreria | `number` = |
+|---|---|
+| CTCAE v4/v5/v6 | **codice MedDRA** del concept (fallback: ordine 1..N se non numerico) |
+| eortc-qlq-c30, proctc-v1, eortc_hcc18, euroqol_eq5d5l, usc_proffit | valore **`numquest`** del file |
+
+> ⚠️ Il numero arriva nell'item **al momento dell'import** del CRF dal CodeSystem.
+> I CRF importati prima dell'introduzione/modifica di `number` vanno re-importati
+> per vederlo aggiornato nei PDF.
 
 ## Architettura
 
-Tutte le terminologie sono gestite via HAPI FHIR (CodeSystem + ValueSet).
-Il microservizio `irccs-microservice-notification` **non espone più endpoint terminologici** — gestisce solo OTP/TOTP.
+Tutte le terminologie sono gestite via HAPI FHIR (CodeSystem + ValueSet + StructureDefinition).
+Il microservizio `irccs-microservice-notification` non espone endpoint terminologici.
 
-La UI legge i CodeSystem direttamente da HAPI tramite:
-- `CtcaeV6Service.ts` → CTCAE v4/v5/v6
-- `ProctcV1Service.ts` → PRO-CTCAE v1
-- `EortcV1Service.ts` → EORTC QLQ-C30
+La UI **scopre le library automaticamente da HAPI** (`useCrfLibraries` +
+`classifyCodeSystem` in `src/fhir/service/Terminology/CrfLibraryService.ts`):
+un CodeSystem con property `grade1` è classificato CTCAE (gradi, gruppo `soc`),
+con `category`/`macrogroup` PRO-CTCAE-like, con `answ*` EORTC-like (gruppo `head`).
+Caricata una nuova library su HAPI, il bottone di import compare nel Questionnaire
+builder **senza modifiche al codice frontend**. `QuestionnaireItem.prefix` viene
+impostato dalla property `number`.
 
-Ognuno imposta `QuestionnaireItem.prefix` dalla property `number` (vedi sopra).
+Documentazione completa: `irccs-docker/docs/modules/ROOT/pages/librerie-crf.adoc`.

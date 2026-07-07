@@ -1,29 +1,20 @@
 #!/usr/bin/env python3
 """
-Import CTCAE v5.0 come CodeSystem, ValueSet e StructureDefinition su HAPI FHIR.
+Import EORTC QLQ-C30 v1 come CodeSystem, ValueSet e StructureDefinition su HAPI FHIR.
 
 Uso:
-    python3 import-ctcae-v5.py <excel> [HAPI_URL] [--bundle-only] [--list]
+    python3 import-eortc-v1.py <excel> [HAPI_URL] [--bundle-only] [--list]
 
 Argomenti:
-    excel               Percorso del file Excel NCI CTCAE v5
-                        (es. "CTCAE_v5.0_2017-11-27.xlsx")
+    excel               Percorso del file Excel EORTC QLQ-C30
+                        (es. "eortc-qlq-c30.xlsx")
     HAPI_URL            URL base di HAPI FHIR (default: http://localhost:8080/fhir)
-    --bundle-only       Genera solo ctcae-v5-bundle.json senza caricare su HAPI
-    --list              Mostra le risorse CTCAE v5 già caricate su HAPI ed esce
+    --bundle-only       Genera solo eortc-v1-bundle.json senza caricare su HAPI
+    --list              Mostra le risorse EORTC v1 già caricate su HAPI ed esce
 
 Esempi:
-    # Genera bundle e carica su HAPI locale
-    python3 import-ctcae-v5.py "CTCAE_v5.0_2017-11-27.xlsx"
-
-    # Carica su HAPI remoto
-    python3 import-ctcae-v5.py ctcae.xlsx https://hapi.irccs.infocube.it/fhir
-
-    # Solo bundle JSON, niente push
-    python3 import-ctcae-v5.py ctcae.xlsx --bundle-only
-
-    # Verifica cosa è già caricato su HAPI
-    python3 import-ctcae-v5.py ctcae.xlsx --list
+    python3 import-eortc-v1.py eortc-qlq-c30.xlsx --bundle-only
+    python3 import-eortc-v1.py eortc-qlq-c30.xlsx https://hapi.irccs.infocube.it/fhir
 
 Richiede:
     pip install openpyxl requests
@@ -48,55 +39,67 @@ except ImportError:
 
 # ─── URL canoniche FHIR ───────────────────────────────────────────────────────
 
-CS_URL = "https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5"
-VS_URL = "https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5-adverse-events"
-SD_URL = "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v5-grade-severity"
+CS_URL = "https://www.eortc.org/qlq-c30"
+VS_URL = "https://www.eortc.org/qlq-c30-items"
+SD_URL = "https://irccs-pascale.it/fhir/StructureDefinition/eortc-v1-grade-severity"
 
-VERSION = "5.0"
+VERSION = "1.0"
 
 # ─── Lettura Excel ────────────────────────────────────────────────────────────
+
+_EMPTY = {"-", "–", "null", "NULL", "NULL\n", " -", ""}
+
 
 def _testo(val) -> str:
     if val is None:
         return ""
     s = str(val).strip()
-    return "" if s in ("-", "–", "null", "NULL", " -") else s
+    return "" if s in _EMPTY else s
+
+
+def _code(val) -> str:
+    """Normalizza numquest (può essere float 1.0) → stringa '1'."""
+    if val is None:
+        return ""
+    s = str(val).strip()
+    if s in _EMPTY:
+        return ""
+    try:
+        return str(int(float(s)))
+    except (ValueError, OverflowError):
+        return s
 
 
 def leggi_termini(percorso_excel: str) -> list[dict]:
     print(f"  Lettura Excel: {percorso_excel}")
     wb = openpyxl.load_workbook(percorso_excel, read_only=True, data_only=True)
-    # CTCAE v5 è nel primo foglio (indice 0)
     ws = wb.worksheets[0]
     termini = []
     for i, row in enumerate(ws.iter_rows(values_only=True)):
         if i == 0:
             continue  # intestazione
-        code, soc, term, g1, g2, g3, g4, g5, defin, nav_note, change = (
-            row[0], row[1], row[2], row[3], row[4],
-            row[5], row[6], row[7], row[8], row[9], row[10]
-        )
-        code_str = ""
-        if code is not None:
-            code_str = _testo(str(int(float(str(code)))) if str(code).replace(".", "").isdigit() else code)
-        if not code_str:
+        code  = _code(row[0] if len(row) > 0 else None)
+        head  = _testo(row[1] if len(row) > 1 else None)
+        quest = _testo(row[2] if len(row) > 2 else None)
+        if not quest:
             continue
+        if not code:
+            continue
+        answs = []
+        for col in range(3, 10):
+            answs.append(_testo(row[col] if len(row) > col else None))
+
         termini.append({
-            "code":       code_str,
-            "soc":        _testo(soc),
-            "term":       _testo(term),
-            "grade1":     _testo(g1),
-            "grade2":     _testo(g2),
-            "grade3":     _testo(g3),
-            "grade4":     _testo(g4),
-            "grade5":     _testo(g5),
-            "definition": _testo(defin),
-            "navNote":    _testo(nav_note),
-            "v5change":   _testo(change),
+            "code":    code,
+            "head":    head,
+            "quest":   quest,
+            "answers": answs,
         })
     wb.close()
-    print(f"  Termini letti: {len(termini)} (da {len(set(t['soc'] for t in termini))} SOC)")
+    heads = set(t["head"] for t in termini if t["head"])
+    print(f"  Termini letti: {len(termini)} (da {len(heads)} sezioni)")
     return termini
+
 
 # ─── Costruzione risorse FHIR ─────────────────────────────────────────────────
 
@@ -104,16 +107,18 @@ def build_codesystem(termini: list[dict]) -> dict:
     concetti = []
     for t in termini:
         props = []
-        for campo in ("soc", "grade1", "grade2", "grade3", "grade4", "grade5",
-                      "navNote", "v5change"):
-            if t[campo]:
-                props.append({"code": campo, "valueString": t[campo]})
-        c = {"code": t["code"], "display": t["term"], "property": props}
-        if t["definition"]:
-            c["definition"] = t["definition"]
-        concetti.append(c)
+        if t["head"]:
+            props.append({"code": "head", "valueString": t["head"]})
+        for i, ans in enumerate(t["answers"], 1):
+            if ans:
+                props.append({"code": f"answ{i}", "valueString": ans})
+        concetti.append({
+            "code":     t["code"],
+            "display":  t["quest"],
+            "property": props,
+        })
 
-    # number = codice MedDRA del concept (fallback: ordine 1..N se il code non è numerico).
+    # number = numquest del concept (fallback: ordine 1..N se non numerico).
     for _n, _c in enumerate(concetti, 1):
         try:
             _num = int(str(_c["code"]).strip())
@@ -123,30 +128,31 @@ def build_codesystem(termini: list[dict]) -> dict:
 
     return {
         "resourceType": "CodeSystem",
-        "id":           "ctcae-v5",
+        "id":           "eortc-v1",
         "url":          CS_URL,
         "version":      VERSION,
-        "name":         "CTCAEv5",
-        "title":        "CTCAE v5.0 Adverse Events",
+        "name":         "EORTCQLQv1",
+        "title":        "EORTC QLQ-C30 Quality of Life Questionnaire",
         "status":       "active",
         "content":      "complete",
         "date":         str(date.today()),
         "description":  (
-            f"NCI Common Terminology Criteria for Adverse Events v5.0 (Novembre 2017). "
-            f"{len(concetti)} termini."
+            f"European Organisation for Research and Treatment of Cancer "
+            f"Quality of Life Questionnaire Core 30 (QLQ-C30). "
+            f"{len(concetti)} items."
         ),
-        "publisher":    "NCI / IRCCS Pascale",
-        "copyright":    "NCI CTCAE v5.0 – November 2017",
+        "publisher":    "EORTC / IRCCS Pascale",
+        "copyright":    "EORTC QLQ-C30",
         "property": [
-            {"code": "number",   "description": "Numero della domanda (= codice MedDRA)", "type": "integer"},
-            {"code": "soc",      "description": "System Organ Class MedDRA",  "type": "string"},
-            {"code": "grade1",   "description": "Grade 1 description",         "type": "string"},
-            {"code": "grade2",   "description": "Grade 2 description",         "type": "string"},
-            {"code": "grade3",   "description": "Grade 3 description",         "type": "string"},
-            {"code": "grade4",   "description": "Grade 4 description",         "type": "string"},
-            {"code": "grade5",   "description": "Grade 5 (Death)",             "type": "string"},
-            {"code": "navNote",  "description": "Navigational Note",           "type": "string"},
-            {"code": "v5change", "description": "CTCAE v5.0 Change vs v4",     "type": "string"},
+            {"code": "number", "description": "Numero della domanda (numquest)", "type": "integer"},
+            {"code": "head",  "description": "Sezione / dominio del questionario", "type": "string"},
+            {"code": "answ1", "description": "Risposta 1",                         "type": "string"},
+            {"code": "answ2", "description": "Risposta 2",                         "type": "string"},
+            {"code": "answ3", "description": "Risposta 3",                         "type": "string"},
+            {"code": "answ4", "description": "Risposta 4",                         "type": "string"},
+            {"code": "answ5", "description": "Risposta 5",                         "type": "string"},
+            {"code": "answ6", "description": "Risposta 6",                         "type": "string"},
+            {"code": "answ7", "description": "Risposta 7",                         "type": "string"},
         ],
         "concept": concetti,
     }
@@ -154,19 +160,19 @@ def build_codesystem(termini: list[dict]) -> dict:
 
 def build_valueset(termini: list[dict]) -> dict:
     concetti_vs = [
-        {"code": t["code"], "display": t["term"]}
-        for t in termini if t["code"] and t["term"]
+        {"code": t["code"], "display": t["quest"]}
+        for t in termini if t["code"] and t["quest"]
     ]
     return {
         "resourceType": "ValueSet",
-        "id":           "ctcae-v5-adverse-events",
+        "id":           "eortc-v1-items",
         "url":          VS_URL,
         "version":      VERSION,
-        "name":         "CTCAEv5AdverseEvents",
-        "title":        "CTCAE v5.0 Adverse Events ValueSet",
+        "name":         "EORTCQLQv1Items",
+        "title":        "EORTC QLQ-C30 Items ValueSet",
         "status":       "active",
         "date":         str(date.today()),
-        "description":  f"Tutti i {len(concetti_vs)} termini CTCAE v5.0",
+        "description":  f"Tutti i {len(concetti_vs)} item EORTC QLQ-C30",
         "compose": {
             "include": [{"system": CS_URL, "concept": concetti_vs}]
         },
@@ -174,7 +180,6 @@ def build_valueset(termini: list[dict]) -> dict:
 
 
 def build_structuredefinition() -> dict:
-    """StructureDefinition CTCAE v5.0 — grade1-5, soc, navNote, v5change."""
     def slice_str(name: str, short: str) -> list[dict]:
         return [
             {"id": f"Extension.extension:{name}", "path": "Extension.extension",
@@ -187,15 +192,13 @@ def build_structuredefinition() -> dict:
 
     elementi = [
         {"id": "Extension", "path": "Extension",
-         "short": "Metadati CTCAE v5.0 su QuestionnaireItem"},
+         "short": "Metadati EORTC QLQ-C30 su QuestionnaireItem"},
         {"id": "Extension.extension", "path": "Extension.extension",
          "slicing": {"discriminator": [{"type": "value", "path": "url"}], "rules": "open"}},
     ]
-    for i in range(1, 6):
-        elementi += slice_str(f"grade{i}", f"Grade {i} – descrizione CTCAE v5.0")
-    elementi += slice_str("soc",      "System Organ Class MedDRA")
-    elementi += slice_str("navNote",  "Nota navigazionale NCI")
-    elementi += slice_str("v5change", "Tipo variazione rispetto a CTCAE v4")
+    elementi += slice_str("head", "Sezione / dominio del questionario")
+    for i in range(1, 8):
+        elementi += slice_str(f"answ{i}", f"Risposta {i}")
     elementi += [
         {"id": "Extension.url",      "path": "Extension.url",      "fixedUri": SD_URL},
         {"id": "Extension.value[x]", "path": "Extension.value[x]", "max": "0"},
@@ -203,11 +206,11 @@ def build_structuredefinition() -> dict:
 
     return {
         "resourceType": "StructureDefinition",
-        "id":           "ctcae-v5-grade-severity",
+        "id":           "eortc-v1-grade-severity",
         "url":          SD_URL,
         "version":      "1.0",
-        "name":         "CtcaeV5GradeSeverity",
-        "title":        "CTCAE v5.0 Grade Severity Extension",
+        "name":         "EORTCv1GradeSeverity",
+        "title":        "EORTC QLQ-C30 v1 Grade Severity Extension",
         "status":       "active",
         "date":         str(date.today()),
         "kind":         "complex-type",
@@ -216,9 +219,8 @@ def build_structuredefinition() -> dict:
         "type":         "Extension",
         "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
         "derivation":   "constraint",
-        "description": (
-            "Estensione su QuestionnaireItem per CTCAE v5.0: gradi 1-5, SOC MedDRA, "
-            "nota navigazionale e variazioni rispetto a v4."
+        "description":  (
+            "Estensione su QuestionnaireItem per EORTC QLQ-C30: sezione (head) e opzioni di risposta 1-7."
         ),
         "differential": {"element": elementi},
     }
@@ -253,9 +255,9 @@ def push_to_hapi(bundle: dict, hapi_url: str) -> None:
     if r.status_code in (200, 201):
         print(f"  ✓ Caricamento completato (HTTP {r.status_code})")
         print(f"\n  Risorse caricate:")
-        print(f"    CodeSystem         → {url}/CodeSystem/ctcae-v5")
-        print(f"    ValueSet           → {url}/ValueSet/ctcae-v5-adverse-events")
-        print(f"    StructureDefinition→ {url}/StructureDefinition/ctcae-grade-severity")
+        print(f"    CodeSystem         → {url}/CodeSystem/eortc-v1")
+        print(f"    ValueSet           → {url}/ValueSet/eortc-v1-items")
+        print(f"    StructureDefinition→ {url}/StructureDefinition/eortc-v1-grade-severity")
     else:
         print(f"  ✗ Errore HTTP {r.status_code}")
         try:
@@ -272,12 +274,12 @@ def list_hapi(hapi_url: str) -> None:
         sys.exit(1)
 
     url = hapi_url.rstrip("/")
-    print(f"\nRisorse CTCAE v5 su {url}:\n")
+    print(f"\nRisorse EORTC v1 su {url}:\n")
 
     for tipo, res_id in [
-        ("CodeSystem",          "ctcae-v5"),
-        ("ValueSet",            "ctcae-v5-adverse-events"),
-        ("StructureDefinition", "ctcae-grade-severity"),
+        ("CodeSystem",          "eortc-v1"),
+        ("ValueSet",            "eortc-v1-items"),
+        ("StructureDefinition", "eortc-v1-grade-severity"),
     ]:
         r = requests.get(
             f"{url}/{tipo}/{res_id}",
@@ -300,11 +302,11 @@ def list_hapi(hapi_url: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Import CTCAE v5.0 → HAPI FHIR (CodeSystem + ValueSet + StructureDefinition)",
+        description="Import EORTC QLQ-C30 → HAPI FHIR (CodeSystem + ValueSet + StructureDefinition)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    parser.add_argument("excel",     help="Percorso file Excel CTCAE v5.0 NCI")
+    parser.add_argument("excel",     help="Percorso file Excel EORTC QLQ-C30")
     parser.add_argument("hapi_url",  nargs="?", default="http://localhost:8080/fhir",
                         help="URL base HAPI FHIR (default: http://localhost:8080/fhir)")
     parser.add_argument("--bundle-only", action="store_true",
@@ -319,7 +321,7 @@ def main() -> None:
         return
 
     print("─" * 60)
-    print("  CTCAE v5.0 → HAPI FHIR")
+    print("  EORTC QLQ-C30 v1 → HAPI FHIR")
     print("─" * 60)
 
     termini = leggi_termini(args.excel)
@@ -331,7 +333,7 @@ def main() -> None:
     bundle = build_bundle(cs, vs, sd)
 
     script_dir = Path(__file__).parent
-    bundle_out = script_dir / "ctcae-v5-bundle.json"
+    bundle_out = script_dir / "eortc-v1-bundle.json"
     bundle_out.write_text(json.dumps(bundle, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"  Bundle salvato: {bundle_out}  ({bundle_out.stat().st_size // 1024} KB)")
 

@@ -1,0 +1,1701 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "CodeSystem",
+        "id": "usc-proffit",
+        "url": "https://irccs-pascale.it/fhir/CodeSystem/usc-proffit",
+        "version": "1.0",
+        "name": "USCPROFFIT",
+        "title": "USC PROFFIT",
+        "status": "active",
+        "content": "complete",
+        "date": "2026-07-06",
+        "description": "PROFFIT - Patient Reported Outcome for Fighting FInancial Toxicity. 33 items.",
+        "publisher": "IRCCS Pascale",
+        "copyright": "PROFFIT - Patient Reported Outcome for Fighting FInancial Toxicity",
+        "property": [
+          {
+            "code": "number",
+            "description": "Numero della domanda (da numquest)",
+            "type": "integer"
+          },
+          {
+            "code": "head",
+            "description": "Sezione / dominio del questionario",
+            "type": "string"
+          },
+          {
+            "code": "answ1",
+            "description": "Risposta 1",
+            "type": "string"
+          },
+          {
+            "code": "answ2",
+            "description": "Risposta 2",
+            "type": "string"
+          },
+          {
+            "code": "answ3",
+            "description": "Risposta 3",
+            "type": "string"
+          },
+          {
+            "code": "answ4",
+            "description": "Risposta 4",
+            "type": "string"
+          },
+          {
+            "code": "answ5",
+            "description": "Risposta 5",
+            "type": "string"
+          },
+          {
+            "code": "answ6",
+            "description": "Risposta 6",
+            "type": "string"
+          },
+          {
+            "code": "answ7",
+            "description": "Risposta 7",
+            "type": "string"
+          },
+          {
+            "code": "answ8",
+            "description": "Risposta 8",
+            "type": "string"
+          },
+          {
+            "code": "answ9",
+            "description": "Risposta 9",
+            "type": "string"
+          },
+          {
+            "code": "answ10",
+            "description": "Risposta 10",
+            "type": "string"
+          },
+          {
+            "code": "answ11",
+            "description": "Risposta 11",
+            "type": "string"
+          },
+          {
+            "code": "answ12",
+            "description": "Risposta 12",
+            "type": "string"
+          },
+          {
+            "code": "parent",
+            "description": "Code della domanda madre (sotto-domanda condizionale)",
+            "type": "string"
+          },
+          {
+            "code": "showif",
+            "description": "Codici risposta della domanda madre che rendono visibile la sotto-domanda (separati da |)",
+            "type": "string"
+          },
+          {
+            "code": "answerType",
+            "description": "Tipo di risposta all'import CRF (multichoice | choice | open-choice | number)",
+            "type": "string"
+          }
+        ],
+        "concept": [
+          {
+            "code": "1",
+            "display": "Sono in grado di sostenere le mie spese mensili senza difficoltà (ad esempio per affitto, elettricità, telefono…)",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 1
+              },
+              {
+                "code": "head",
+                "valueString": "Gentile Signora/Signore, per ognuna delle seguenti affermazioni Le chiediamo di segnare la risposta che meglio descrive la Sua esperienza."
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "2",
+            "display": "La mia malattia ha ridotto le mie disponibilità economiche",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 2
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "3",
+            "display": "Sono preoccupato dei problemi economici che potrei avere in futuro a causa della mia malattia",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 3
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "4",
+            "display": "La mia condizione economica incide sulle mie possibilità di curarmi",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 4
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "5",
+            "display": "Ho ridotto le spese per attività ricreative come vacanze, ristoranti o spettacoli per affrontare le spese della mia malattia",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 5
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "6",
+            "display": "Ho ridotto le spese per acquisti essenziali (ad esempio il cibo) per affrontare le spese per la mia malattia",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 6
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "7",
+            "display": "Sono preoccupato/a di non riuscire a lavorare a causa della mia malattia",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 7
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "8",
+            "display": "Il Servizio Sanitario Nazionale copre tutti i costi sanitari associati alla mia malattia",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 8
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "8.1",
+            "display": "Indichi per quali voci ha sostenuto spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Ho speso per esami radiologici"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Ho speso per esami di laboratorio"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Ho speso per test genetici"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Ho speso per interventi chirurgici (per rimuovere il tumore)"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Ho speso per chirurgia ricostruttiva o estetica"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Ho speso per radioterapia"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Ho speso per riabilitazione"
+              },
+              {
+                "code": "answ8",
+                "valueString": "Ho speso per assistenza medica domiciliare"
+              },
+              {
+                "code": "answ9",
+                "valueString": "Ho speso per assistenza infermieristica domiciliare"
+              },
+              {
+                "code": "answ10",
+                "valueString": "Ho speso per tutori o protesi"
+              },
+              {
+                "code": "answ11",
+                "valueString": "Ho speso per parrucca"
+              },
+              {
+                "code": "answ12",
+                "valueString": "Ho speso per altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "8"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "9",
+            "display": "Ho sostenuto spese per una o più visite private per la mia malattia",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 9
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "9.1",
+            "display": "Indichi per quali visite private ha sostenuto spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Ho speso per visite mediche"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Ho speso per visite chirurgiche"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Ho speso per visite radioterapiche"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Ho speso per altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "9"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10",
+            "display": "Ho sostenuto spese per farmaci supplementari o integratori per la mia malattia",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 10
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "10.1",
+            "display": "Indichi per quali farmaci o integratori ha sostenuto spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Ho speso per farmaci per il dolore"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Ho speso per farmaci per la cura degli effetti collaterali"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Ho speso per farmaci per il controllo dei sintomi"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Ho speso per vitamine"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Ho speso per integratori alimentari"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Ho speso per pomate o altri prodotti per la pelle"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Ho speso per prodotti omeopatici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.1",
+            "display": "Farmaci per il dolore — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "1"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.2",
+            "display": "Farmaci per la cura degli effetti collaterali — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "2"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.3",
+            "display": "Farmaci per il controllo dei sintomi — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "3"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.4",
+            "display": "Vitamine — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.5",
+            "display": "Integratori alimentari — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "5"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.6",
+            "display": "Pomate o altri prodotti per la pelle — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "6"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "10.1.7",
+            "display": "Prodotti omeopatici — su indicazione di chi? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Su indicazione dell’oncologo medico"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Su indicazione del chirurgo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Su indicazione del radioterapista"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Su indicazione del medico di medicina generale"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Su indicazione di altro personale sanitario (specificare)"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Per scelta personale"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Su consiglio di familiari/amici"
+              },
+              {
+                "code": "parent",
+                "valueString": "10.1"
+              },
+              {
+                "code": "showif",
+                "valueString": "7"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "11",
+            "display": "Devo sostenere spese per cure integrative a mio carico (es. fisioterapia, psicoterapia, cure odontoiatriche)",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 11
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "11.1",
+            "display": "Indichi per quali cure integrative sostiene spese (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Sostengo spese per fisioterapia o fisiatria"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Sostengo spese per supporto psicologico, psichiatrico o psicoterapia"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Sostengo spese per cure odontoiatriche"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Sostengo spese per visite oculistiche"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Sostengo spese per visite con dietologi/nutrizionisti"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Sostengo spese per consulenze genetiche"
+              },
+              {
+                "code": "answ7",
+                "valueString": "Sostengo spese per altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "11"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "12",
+            "display": "Il centro di cura è lontano dalla mia abitazione",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 12
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "12.1",
+            "display": "Quanti chilometri dista il centro di cura dalla sua abitazione?",
+            "property": [
+              {
+                "code": "parent",
+                "valueString": "12"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "number"
+              }
+            ]
+          },
+          {
+            "code": "12.2",
+            "display": "È stato necessario farsi accompagnare?",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Sì"
+              },
+              {
+                "code": "parent",
+                "valueString": "12"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "choice"
+              }
+            ]
+          },
+          {
+            "code": "12.3",
+            "display": "È stato necessario pernottare fuori casa?",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Sì"
+              },
+              {
+                "code": "parent",
+                "valueString": "12"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "choice"
+              }
+            ]
+          },
+          {
+            "code": "13",
+            "display": "Ho dovuto sostenere rilevanti costi di trasporto per curarmi",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 13
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "13.1",
+            "display": "Che mezzi di trasporto ha dovuto utilizzare? (più risposte possibili)",
+            "property": [
+              {
+                "code": "answ1",
+                "valueString": "Auto propria"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Taxi/autista"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Autobus"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Treno"
+              },
+              {
+                "code": "answ5",
+                "valueString": "Aereo"
+              },
+              {
+                "code": "answ6",
+                "valueString": "Altro (specificare)"
+              },
+              {
+                "code": "parent",
+                "valueString": "13"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "multichoice"
+              }
+            ]
+          },
+          {
+            "code": "13.2",
+            "display": "Quanto ha speso approssimativamente per trasporti negli ultimi due mesi?",
+            "property": [
+              {
+                "code": "parent",
+                "valueString": "13"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "number"
+              }
+            ]
+          },
+          {
+            "code": "13.3",
+            "display": "Oltre alle sue spese, ci sono state spese aggiuntive per eventuali accompagnatori? (importo)",
+            "property": [
+              {
+                "code": "parent",
+                "valueString": "13"
+              },
+              {
+                "code": "showif",
+                "valueString": "2|3|4"
+              },
+              {
+                "code": "answerType",
+                "valueString": "number"
+              }
+            ]
+          },
+          {
+            "code": "14",
+            "display": "Il personale sanitario (cioè medici, infermieri, etc.) ha agevolato il percorso di cura",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 14
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "15",
+            "display": "Il personale ospedaliero amministrativo (cioè centro di prenotazione, segreterie, etc.) ha agevolato il percorso di cura",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 15
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          },
+          {
+            "code": "16",
+            "display": "C’è stata comunicazione tra i vari medici e le strutture sanitarie che mi seguono",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 16
+              },
+              {
+                "code": "answ1",
+                "valueString": "Per niente d’accordo"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un po’ d’accordo"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Abbastanza d’accordo"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo d’accordo"
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "CodeSystem/usc-proffit"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "ValueSet",
+        "id": "usc-proffit-items",
+        "url": "https://irccs-pascale.it/fhir/ValueSet/usc-proffit-items",
+        "version": "1.0",
+        "name": "USCPROFFITItems",
+        "title": "USC PROFFIT Items ValueSet",
+        "status": "active",
+        "date": "2026-07-06",
+        "description": "Tutti i 33 item (USC PROFFIT)",
+        "compose": {
+          "include": [
+            {
+              "system": "https://irccs-pascale.it/fhir/CodeSystem/usc-proffit",
+              "concept": [
+                {
+                  "code": "1",
+                  "display": "Sono in grado di sostenere le mie spese mensili senza difficoltà (ad esempio per affitto, elettricità, telefono…)"
+                },
+                {
+                  "code": "2",
+                  "display": "La mia malattia ha ridotto le mie disponibilità economiche"
+                },
+                {
+                  "code": "3",
+                  "display": "Sono preoccupato dei problemi economici che potrei avere in futuro a causa della mia malattia"
+                },
+                {
+                  "code": "4",
+                  "display": "La mia condizione economica incide sulle mie possibilità di curarmi"
+                },
+                {
+                  "code": "5",
+                  "display": "Ho ridotto le spese per attività ricreative come vacanze, ristoranti o spettacoli per affrontare le spese della mia malattia"
+                },
+                {
+                  "code": "6",
+                  "display": "Ho ridotto le spese per acquisti essenziali (ad esempio il cibo) per affrontare le spese per la mia malattia"
+                },
+                {
+                  "code": "7",
+                  "display": "Sono preoccupato/a di non riuscire a lavorare a causa della mia malattia"
+                },
+                {
+                  "code": "8",
+                  "display": "Il Servizio Sanitario Nazionale copre tutti i costi sanitari associati alla mia malattia"
+                },
+                {
+                  "code": "8.1",
+                  "display": "Indichi per quali voci ha sostenuto spese (più risposte possibili)"
+                },
+                {
+                  "code": "9",
+                  "display": "Ho sostenuto spese per una o più visite private per la mia malattia"
+                },
+                {
+                  "code": "9.1",
+                  "display": "Indichi per quali visite private ha sostenuto spese (più risposte possibili)"
+                },
+                {
+                  "code": "10",
+                  "display": "Ho sostenuto spese per farmaci supplementari o integratori per la mia malattia"
+                },
+                {
+                  "code": "10.1",
+                  "display": "Indichi per quali farmaci o integratori ha sostenuto spese (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.1",
+                  "display": "Farmaci per il dolore — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.2",
+                  "display": "Farmaci per la cura degli effetti collaterali — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.3",
+                  "display": "Farmaci per il controllo dei sintomi — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.4",
+                  "display": "Vitamine — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.5",
+                  "display": "Integratori alimentari — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.6",
+                  "display": "Pomate o altri prodotti per la pelle — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "10.1.7",
+                  "display": "Prodotti omeopatici — su indicazione di chi? (più risposte possibili)"
+                },
+                {
+                  "code": "11",
+                  "display": "Devo sostenere spese per cure integrative a mio carico (es. fisioterapia, psicoterapia, cure odontoiatriche)"
+                },
+                {
+                  "code": "11.1",
+                  "display": "Indichi per quali cure integrative sostiene spese (più risposte possibili)"
+                },
+                {
+                  "code": "12",
+                  "display": "Il centro di cura è lontano dalla mia abitazione"
+                },
+                {
+                  "code": "12.1",
+                  "display": "Quanti chilometri dista il centro di cura dalla sua abitazione?"
+                },
+                {
+                  "code": "12.2",
+                  "display": "È stato necessario farsi accompagnare?"
+                },
+                {
+                  "code": "12.3",
+                  "display": "È stato necessario pernottare fuori casa?"
+                },
+                {
+                  "code": "13",
+                  "display": "Ho dovuto sostenere rilevanti costi di trasporto per curarmi"
+                },
+                {
+                  "code": "13.1",
+                  "display": "Che mezzi di trasporto ha dovuto utilizzare? (più risposte possibili)"
+                },
+                {
+                  "code": "13.2",
+                  "display": "Quanto ha speso approssimativamente per trasporti negli ultimi due mesi?"
+                },
+                {
+                  "code": "13.3",
+                  "display": "Oltre alle sue spese, ci sono state spese aggiuntive per eventuali accompagnatori? (importo)"
+                },
+                {
+                  "code": "14",
+                  "display": "Il personale sanitario (cioè medici, infermieri, etc.) ha agevolato il percorso di cura"
+                },
+                {
+                  "code": "15",
+                  "display": "Il personale ospedaliero amministrativo (cioè centro di prenotazione, segreterie, etc.) ha agevolato il percorso di cura"
+                },
+                {
+                  "code": "16",
+                  "display": "C’è stata comunicazione tra i vari medici e le strutture sanitarie che mi seguono"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "ValueSet/usc-proffit-items"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "usc-proffit-metadata",
+        "url": "https://irccs-pascale.it/fhir/StructureDefinition/usc-proffit-metadata",
+        "version": "1.0",
+        "name": "USCPROFFITMetadata",
+        "title": "USC PROFFIT Metadata Extension",
+        "status": "active",
+        "date": "2026-07-06",
+        "kind": "complex-type",
+        "abstract": false,
+        "context": [
+          {
+            "type": "element",
+            "expression": "QuestionnaireItem"
+          }
+        ],
+        "type": "Extension",
+        "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+        "derivation": "constraint",
+        "description": "Estensione su QuestionnaireItem per USC PROFFIT: sezione e opzioni di risposta.",
+        "differential": {
+          "element": [
+            {
+              "id": "Extension",
+              "path": "Extension",
+              "short": "Metadati USC PROFFIT su QuestionnaireItem"
+            },
+            {
+              "id": "Extension.extension",
+              "path": "Extension.extension",
+              "slicing": {
+                "discriminator": [
+                  {
+                    "type": "value",
+                    "path": "url"
+                  }
+                ],
+                "rules": "open"
+              }
+            },
+            {
+              "id": "Extension.extension:head",
+              "path": "Extension.extension",
+              "sliceName": "head",
+              "short": "Sezione / dominio del questionario",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:head.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "head"
+            },
+            {
+              "id": "Extension.extension:head.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ1",
+              "path": "Extension.extension",
+              "sliceName": "answ1",
+              "short": "Risposta 1",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ1.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ1"
+            },
+            {
+              "id": "Extension.extension:answ1.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ2",
+              "path": "Extension.extension",
+              "sliceName": "answ2",
+              "short": "Risposta 2",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ2.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ2"
+            },
+            {
+              "id": "Extension.extension:answ2.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ3",
+              "path": "Extension.extension",
+              "sliceName": "answ3",
+              "short": "Risposta 3",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ3.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ3"
+            },
+            {
+              "id": "Extension.extension:answ3.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ4",
+              "path": "Extension.extension",
+              "sliceName": "answ4",
+              "short": "Risposta 4",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ4.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ4"
+            },
+            {
+              "id": "Extension.extension:answ4.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ5",
+              "path": "Extension.extension",
+              "sliceName": "answ5",
+              "short": "Risposta 5",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ5.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ5"
+            },
+            {
+              "id": "Extension.extension:answ5.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ6",
+              "path": "Extension.extension",
+              "sliceName": "answ6",
+              "short": "Risposta 6",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ6.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ6"
+            },
+            {
+              "id": "Extension.extension:answ6.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ7",
+              "path": "Extension.extension",
+              "sliceName": "answ7",
+              "short": "Risposta 7",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ7.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ7"
+            },
+            {
+              "id": "Extension.extension:answ7.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ8",
+              "path": "Extension.extension",
+              "sliceName": "answ8",
+              "short": "Risposta 8",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ8.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ8"
+            },
+            {
+              "id": "Extension.extension:answ8.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ9",
+              "path": "Extension.extension",
+              "sliceName": "answ9",
+              "short": "Risposta 9",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ9.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ9"
+            },
+            {
+              "id": "Extension.extension:answ9.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ10",
+              "path": "Extension.extension",
+              "sliceName": "answ10",
+              "short": "Risposta 10",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ10.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ10"
+            },
+            {
+              "id": "Extension.extension:answ10.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ11",
+              "path": "Extension.extension",
+              "sliceName": "answ11",
+              "short": "Risposta 11",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ11.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ11"
+            },
+            {
+              "id": "Extension.extension:answ11.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ12",
+              "path": "Extension.extension",
+              "sliceName": "answ12",
+              "short": "Risposta 12",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ12.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ12"
+            },
+            {
+              "id": "Extension.extension:answ12.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.url",
+              "path": "Extension.url",
+              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/usc-proffit-metadata"
+            },
+            {
+              "id": "Extension.value[x]",
+              "path": "Extension.value[x]",
+              "max": "0"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "StructureDefinition/usc-proffit-metadata"
+      }
+    }
+  ]
+}

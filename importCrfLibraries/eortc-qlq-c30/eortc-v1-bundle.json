@@ -1,0 +1,1381 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "CodeSystem",
+        "id": "eortc-v1",
+        "url": "https://www.eortc.org/qlq-c30",
+        "version": "1.0",
+        "name": "EORTCQLQv1",
+        "title": "EORTC QLQ-C30 Quality of Life Questionnaire",
+        "status": "active",
+        "content": "complete",
+        "date": "2026-07-02",
+        "description": "European Organisation for Research and Treatment of Cancer Quality of Life Questionnaire Core 30 (QLQ-C30). 30 items.",
+        "publisher": "EORTC / IRCCS Pascale",
+        "copyright": "EORTC QLQ-C30",
+        "property": [
+          {
+            "code": "number",
+            "description": "Numero della domanda (numquest)",
+            "type": "integer"
+          },
+          {
+            "code": "head",
+            "description": "Sezione / dominio del questionario",
+            "type": "string"
+          },
+          {
+            "code": "answ1",
+            "description": "Risposta 1",
+            "type": "string"
+          },
+          {
+            "code": "answ2",
+            "description": "Risposta 2",
+            "type": "string"
+          },
+          {
+            "code": "answ3",
+            "description": "Risposta 3",
+            "type": "string"
+          },
+          {
+            "code": "answ4",
+            "description": "Risposta 4",
+            "type": "string"
+          },
+          {
+            "code": "answ5",
+            "description": "Risposta 5",
+            "type": "string"
+          },
+          {
+            "code": "answ6",
+            "description": "Risposta 6",
+            "type": "string"
+          },
+          {
+            "code": "answ7",
+            "description": "Risposta 7",
+            "type": "string"
+          }
+        ],
+        "concept": [
+          {
+            "code": "1",
+            "display": "Ha difficoltà nel fare lavori faticosi, come portare una borsa della spesa pesante o una valigia?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 1
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "2",
+            "display": "Ha difficoltà nel fare una lunga passeggiata?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 2
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "3",
+            "display": "Ha difficoltà nel fare una breve passeggiata fuori casa?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 3
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "4",
+            "display": "Ha bisogno di stare a letto o su una sedia durante il giorno?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 4
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "5",
+            "display": "Ha bisogno di aiuto per mangiare, vestirsi, lavarsi o andare in bagno?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 5
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "6",
+            "display": "Ha avuto limitazioni nel fare il Suo lavoro o i lavori di casa?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 6
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "7",
+            "display": "Ha avuto limitazioni nel praticare i Suoi passatempi-hobby o altre attività di divertimento o svago?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 7
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "8",
+            "display": "Le è mancato il fiato?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 8
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "9",
+            "display": "Ha avuto dolore?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 9
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "10",
+            "display": "Ha avuto bisogno di riposo?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 10
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "11",
+            "display": "Ha avuto difficoltà a dormire?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 11
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "12",
+            "display": "Si è sentito debole?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 12
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "13",
+            "display": "Le è mancato l'appetito?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 13
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "14",
+            "display": "Ha avuto un senso di nausea?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 14
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "15",
+            "display": "Ha vomitato?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 15
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "16",
+            "display": "Ha avuto problemi di stitichezza?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 16
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "17",
+            "display": "Ha avuto problemi di diarrea?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 17
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "18",
+            "display": "Si è sentito stanco?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 18
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "19",
+            "display": "Il dolore ha interferito con le Sue attività quotidiane?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 19
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "20",
+            "display": "Ha avuto difficoltà a concentrarsi su cose come leggere un giornale o guardare la televisione?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 20
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "21",
+            "display": "Si è sentito teso?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 21
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "22",
+            "display": "Si è preoccupato?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 22
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "23",
+            "display": "Si è sentito irritabile?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 23
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "24",
+            "display": "Si è sentito depresso?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 24
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "25",
+            "display": "Ha avuto difficoltà a ricordare le cose?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 25
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "26",
+            "display": "Le Sue condizioni fisiche o il Suo trattamento medico hanno interferito con la Sua vita familiare?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 26
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "27",
+            "display": "Le Sue condizioni fisiche o il Suo trattamento medico hanno interferito con le Sue attività sociali?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 27
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "28",
+            "display": "Le Sue condizioni fisiche o il Suo trattamento medico Le hanno causato difficoltà finanziarie?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 28
+              },
+              {
+                "code": "head",
+                "valueString": "Durante gli ultimi sette giorni:"
+              },
+              {
+                "code": "answ1",
+                "valueString": "No"
+              },
+              {
+                "code": "answ2",
+                "valueString": "Un poco"
+              },
+              {
+                "code": "answ3",
+                "valueString": "Parecchio"
+              },
+              {
+                "code": "answ4",
+                "valueString": "Moltissimo"
+              }
+            ]
+          },
+          {
+            "code": "29",
+            "display": "Come valuterebbe in generale la Sua salute durante gli ultimi sette giorni?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 29
+              },
+              {
+                "code": "head",
+                "valueString": "Per le seguenti domande indichi un numero da 1 a 7 che meglio corrisponde alla Sua risposta"
+              },
+              {
+                "code": "answ1",
+                "valueString": "1 Pessima"
+              },
+              {
+                "code": "answ2",
+                "valueString": "2"
+              },
+              {
+                "code": "answ3",
+                "valueString": "3"
+              },
+              {
+                "code": "answ4",
+                "valueString": "4"
+              },
+              {
+                "code": "answ5",
+                "valueString": "5"
+              },
+              {
+                "code": "answ6",
+                "valueString": "6"
+              },
+              {
+                "code": "answ7",
+                "valueString": "7 Ottima"
+              }
+            ]
+          },
+          {
+            "code": "30",
+            "display": "Come valuterebbe in generale la Sua qualità di vita durante gli ultimi sette giorni?",
+            "property": [
+              {
+                "code": "number",
+                "valueInteger": 30
+              },
+              {
+                "code": "head",
+                "valueString": "Per le seguenti domande indichi un numero da 1 a 7 che meglio corrisponde alla Sua risposta"
+              },
+              {
+                "code": "answ1",
+                "valueString": "1 Pessima"
+              },
+              {
+                "code": "answ2",
+                "valueString": "2"
+              },
+              {
+                "code": "answ3",
+                "valueString": "3"
+              },
+              {
+                "code": "answ4",
+                "valueString": "4"
+              },
+              {
+                "code": "answ5",
+                "valueString": "5"
+              },
+              {
+                "code": "answ6",
+                "valueString": "6"
+              },
+              {
+                "code": "answ7",
+                "valueString": "7 Ottima"
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "CodeSystem/eortc-v1"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "ValueSet",
+        "id": "eortc-v1-items",
+        "url": "https://www.eortc.org/qlq-c30-items",
+        "version": "1.0",
+        "name": "EORTCQLQv1Items",
+        "title": "EORTC QLQ-C30 Items ValueSet",
+        "status": "active",
+        "date": "2026-07-02",
+        "description": "Tutti i 30 item EORTC QLQ-C30",
+        "compose": {
+          "include": [
+            {
+              "system": "https://www.eortc.org/qlq-c30",
+              "concept": [
+                {
+                  "code": "1",
+                  "display": "Ha difficoltà nel fare lavori faticosi, come portare una borsa della spesa pesante o una valigia?"
+                },
+                {
+                  "code": "2",
+                  "display": "Ha difficoltà nel fare una lunga passeggiata?"
+                },
+                {
+                  "code": "3",
+                  "display": "Ha difficoltà nel fare una breve passeggiata fuori casa?"
+                },
+                {
+                  "code": "4",
+                  "display": "Ha bisogno di stare a letto o su una sedia durante il giorno?"
+                },
+                {
+                  "code": "5",
+                  "display": "Ha bisogno di aiuto per mangiare, vestirsi, lavarsi o andare in bagno?"
+                },
+                {
+                  "code": "6",
+                  "display": "Ha avuto limitazioni nel fare il Suo lavoro o i lavori di casa?"
+                },
+                {
+                  "code": "7",
+                  "display": "Ha avuto limitazioni nel praticare i Suoi passatempi-hobby o altre attività di divertimento o svago?"
+                },
+                {
+                  "code": "8",
+                  "display": "Le è mancato il fiato?"
+                },
+                {
+                  "code": "9",
+                  "display": "Ha avuto dolore?"
+                },
+                {
+                  "code": "10",
+                  "display": "Ha avuto bisogno di riposo?"
+                },
+                {
+                  "code": "11",
+                  "display": "Ha avuto difficoltà a dormire?"
+                },
+                {
+                  "code": "12",
+                  "display": "Si è sentito debole?"
+                },
+                {
+                  "code": "13",
+                  "display": "Le è mancato l'appetito?"
+                },
+                {
+                  "code": "14",
+                  "display": "Ha avuto un senso di nausea?"
+                },
+                {
+                  "code": "15",
+                  "display": "Ha vomitato?"
+                },
+                {
+                  "code": "16",
+                  "display": "Ha avuto problemi di stitichezza?"
+                },
+                {
+                  "code": "17",
+                  "display": "Ha avuto problemi di diarrea?"
+                },
+                {
+                  "code": "18",
+                  "display": "Si è sentito stanco?"
+                },
+                {
+                  "code": "19",
+                  "display": "Il dolore ha interferito con le Sue attività quotidiane?"
+                },
+                {
+                  "code": "20",
+                  "display": "Ha avuto difficoltà a concentrarsi su cose come leggere un giornale o guardare la televisione?"
+                },
+                {
+                  "code": "21",
+                  "display": "Si è sentito teso?"
+                },
+                {
+                  "code": "22",
+                  "display": "Si è preoccupato?"
+                },
+                {
+                  "code": "23",
+                  "display": "Si è sentito irritabile?"
+                },
+                {
+                  "code": "24",
+                  "display": "Si è sentito depresso?"
+                },
+                {
+                  "code": "25",
+                  "display": "Ha avuto difficoltà a ricordare le cose?"
+                },
+                {
+                  "code": "26",
+                  "display": "Le Sue condizioni fisiche o il Suo trattamento medico hanno interferito con la Sua vita familiare?"
+                },
+                {
+                  "code": "27",
+                  "display": "Le Sue condizioni fisiche o il Suo trattamento medico hanno interferito con le Sue attività sociali?"
+                },
+                {
+                  "code": "28",
+                  "display": "Le Sue condizioni fisiche o il Suo trattamento medico Le hanno causato difficoltà finanziarie?"
+                },
+                {
+                  "code": "29",
+                  "display": "Come valuterebbe in generale la Sua salute durante gli ultimi sette giorni?"
+                },
+                {
+                  "code": "30",
+                  "display": "Come valuterebbe in generale la Sua qualità di vita durante gli ultimi sette giorni?"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "ValueSet/eortc-v1-items"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "StructureDefinition",
+        "id": "eortc-v1-grade-severity",
+        "url": "https://irccs-pascale.it/fhir/StructureDefinition/eortc-v1-grade-severity",
+        "version": "1.0",
+        "name": "EORTCv1GradeSeverity",
+        "title": "EORTC QLQ-C30 v1 Grade Severity Extension",
+        "status": "active",
+        "date": "2026-07-02",
+        "kind": "complex-type",
+        "abstract": false,
+        "context": [
+          {
+            "type": "element",
+            "expression": "QuestionnaireItem"
+          }
+        ],
+        "type": "Extension",
+        "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+        "derivation": "constraint",
+        "description": "Estensione su QuestionnaireItem per EORTC QLQ-C30: sezione (head) e opzioni di risposta 1-7.",
+        "differential": {
+          "element": [
+            {
+              "id": "Extension",
+              "path": "Extension",
+              "short": "Metadati EORTC QLQ-C30 su QuestionnaireItem"
+            },
+            {
+              "id": "Extension.extension",
+              "path": "Extension.extension",
+              "slicing": {
+                "discriminator": [
+                  {
+                    "type": "value",
+                    "path": "url"
+                  }
+                ],
+                "rules": "open"
+              }
+            },
+            {
+              "id": "Extension.extension:head",
+              "path": "Extension.extension",
+              "sliceName": "head",
+              "short": "Sezione / dominio del questionario",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:head.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "head"
+            },
+            {
+              "id": "Extension.extension:head.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ1",
+              "path": "Extension.extension",
+              "sliceName": "answ1",
+              "short": "Risposta 1",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ1.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ1"
+            },
+            {
+              "id": "Extension.extension:answ1.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ2",
+              "path": "Extension.extension",
+              "sliceName": "answ2",
+              "short": "Risposta 2",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ2.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ2"
+            },
+            {
+              "id": "Extension.extension:answ2.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ3",
+              "path": "Extension.extension",
+              "sliceName": "answ3",
+              "short": "Risposta 3",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ3.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ3"
+            },
+            {
+              "id": "Extension.extension:answ3.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ4",
+              "path": "Extension.extension",
+              "sliceName": "answ4",
+              "short": "Risposta 4",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ4.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ4"
+            },
+            {
+              "id": "Extension.extension:answ4.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ5",
+              "path": "Extension.extension",
+              "sliceName": "answ5",
+              "short": "Risposta 5",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ5.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ5"
+            },
+            {
+              "id": "Extension.extension:answ5.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ6",
+              "path": "Extension.extension",
+              "sliceName": "answ6",
+              "short": "Risposta 6",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ6.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ6"
+            },
+            {
+              "id": "Extension.extension:answ6.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.extension:answ7",
+              "path": "Extension.extension",
+              "sliceName": "answ7",
+              "short": "Risposta 7",
+              "min": 0,
+              "max": "1"
+            },
+            {
+              "id": "Extension.extension:answ7.url",
+              "path": "Extension.extension.url",
+              "fixedUri": "answ7"
+            },
+            {
+              "id": "Extension.extension:answ7.value[x]",
+              "path": "Extension.extension.value[x]",
+              "type": [
+                {
+                  "code": "string"
+                }
+              ]
+            },
+            {
+              "id": "Extension.url",
+              "path": "Extension.url",
+              "fixedUri": "https://irccs-pascale.it/fhir/StructureDefinition/eortc-v1-grade-severity"
+            },
+            {
+              "id": "Extension.value[x]",
+              "path": "Extension.value[x]",
+              "max": "0"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "StructureDefinition/eortc-v1-grade-severity"
+      }
+    }
+  ]
+}

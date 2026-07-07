@@ -1,10 +1,10 @@
 = Librerie CRF — Gestione e Import
-:description: Architettura delle librerie CRF (CTCAE, PRO-CTCAE, EORTC) come CodeSystem FHIR su HAPI.
+:description: Architettura delle librerie CRF (CTCAE, PRO-CTCAE, EORTC, EuroQol, PROFFIT) come CodeSystem FHIR su HAPI, con discovery automatica lato frontend.
 
 == Panoramica
 
 Le librerie CRF (Case Report Form) utilizzate dalla piattaforma sono distribuite come risorse FHIR standard importate su HAPI FHIR durante l'installazione iniziale.
-Il frontend recupera i vocabolari direttamente da HAPI, senza passare da microservizi intermedi.
+Il frontend recupera i vocabolari direttamente da HAPI, senza passare da microservizi intermedi, e **scopre automaticamente** le librerie disponibili: caricare una nuova libreria su HAPI fa comparire il relativo bottone di import nel Questionnaire builder senza modifiche al codice.
 
 [cols="1,2,2,2"]
 |===
@@ -13,8 +13,11 @@ Il frontend recupera i vocabolari direttamente da HAPI, senza passare da microse
 | CTCAE v4 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4-adverse-events` | `importCrfLibraries/ctcae-v4/`
 | CTCAE v5 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5-adverse-events` | `importCrfLibraries/ctcae-v5/`
 | CTCAE v6 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6-adverse-events` | `importCrfLibraries/ctcae-v6/`
-| PRO-CTCAE v1 | `https://healthcaredelivery.cancer.gov/pro-ctcae` | `https://healthcaredelivery.cancer.gov/pro-ctcae-items` | `importCrfLibraries/proctc-v1/`
-| EORTC QLQ-C30 | `https://www.eortc.org/qlq-c30` | `https://www.eortc.org/qlq-c30-items` | `importCrfLibraries/eortc-v1/`
+| PRO-CTCAE v1 | `https://healthcaredelivery.cancer.gov/pro-ctcae` | `https://healthcaredelivery.cancer.gov/pro-ctcae-adverse-events` | `importCrfLibraries/proctc-v1/`
+| EORTC QLQ-C30 | `https://www.eortc.org/qlq-c30` | `https://www.eortc.org/qlq-c30-items` | `importCrfLibraries/eortc-qlq-c30/`
+| EORTC QLQ-HCC18 | `https://www.eortc.org/qlq-hcc18` | `https://www.eortc.org/qlq-hcc18-items` | `importCrfLibraries/eortc_hcc18/`
+| EuroQol EQ-5D-5L | `https://euroqol.org/eq-5d-5l` | `https://euroqol.org/eq-5d-5l-items` | `importCrfLibraries/euroqol_eq5d5l/`
+| USC PROFFIT | `https://irccs-pascale.it/fhir/CodeSystem/usc-proffit` | `https://irccs-pascale.it/fhir/ValueSet/usc-proffit-items` | `importCrfLibraries/usc_proffit/`
 |===
 
 == Struttura di ogni libreria
@@ -24,157 +27,164 @@ Ogni cartella contiene:
 [source]
 ----
 importCrfLibraries/<libreria>/
-├── import-<libreria>.py       # script Python che genera il bundle FHIR da Excel
-├── install-<libreria>.sh      # script curl che invia il bundle a HAPI FHIR
-└── <libreria>-bundle.json     # bundle FHIR pre-generato (committato)
+├── <sorgente>                  # CSV (librerie nuove) oppure Excel (CTCAE, EORTC QLQ-C30)
+├── import-<libreria>.py        # genera il bundle FHIR dalla sorgente
+├── install-<libreria>.sh       # push del bundle su HAPI (solo curl)
+└── <libreria>-bundle.json      # bundle FHIR pre-generato (committato) = sorgente dell'install
 ----
 
-Il bundle FHIR è di tipo `transaction` e contiene:
+Il bundle FHIR è di tipo `transaction` (PUT idempotenti, ri-eseguibile senza duplicati) e contiene:
 
-* `CodeSystem` — termini con proprietà estese (SOC, gradi, codici interni)
+* `CodeSystem` — termini con proprietà estese (`number`, SOC/head/category, gradi o risposte)
 * `ValueSet` — tutti i codici del CodeSystem (usato per la ricerca server-side con `$expand?filter=`)
 * `StructureDefinition` — profilo FHIR per i questionari che usano la libreria
 
-== Generazione del bundle (solo se necessario aggiornare)
+Gli `install-*.sh` caricano **solo** il bundle committato (nessuna dipendenza Python, nessun riferimento alla sorgente).
+L'helper condiviso è `importCrfLibraries/_lib.sh`.
 
-I bundle JSON sono già generati e committati nel repository.
-Per rigenerare da un nuovo file Excel:
+== Sorgenti e rigenerazione del bundle
 
-[source,bash]
-----
-cd importCrfLibraries/<libreria>
-python3 import-<libreria>.py /path/to/file.xlsx
-----
+[cols="1,1,2"]
+|===
+| Sorgente | Librerie | Comando di rigenerazione
 
-Il file `<libreria>-bundle.json` viene sovrascritto.
-Committare il file aggiornato e rieseguire lo script di installazione.
+| CSV (committato in cartella)
+| `proctc-v1`, `eortc_hcc18`, `euroqol_eq5d5l`, `usc_proffit`
+| `python3 import-<libreria>.py --bundle-only`
 
-=== Requisiti Python
+| Excel (committato in cartella)
+| `ctcae-v4`, `ctcae-v5`, `ctcae-v6`, `eortc-qlq-c30`
+| `python3 import-<libreria>.py <file.xlsx> --bundle-only`
+|===
 
-[source,bash]
-----
-pip install openpyxl
-----
+Le librerie CSV condividono l'helper `importCrfLibraries/_csvlib.py` (parsing CSV → CodeSystem + ValueSet + StructureDefinition + bundle).
+Formato CSV: intestazione `numquest, <display>, [colonne testo...], answ1..N`.
 
-== Come il frontend recupera le librerie
+Requisiti Python: `pip install requests` (CSV) oppure `pip install openpyxl requests` (Excel).
 
-Il frontend React (TypeScript) non usa endpoint di microservizio per i vocabolari CRF.
+Dopo la rigenerazione, committare il `*-bundle.json` aggiornato e rieseguire lo script di installazione.
 
-=== URL centralizzati
+=== Proprietà `number` (numerazione domande nei PDF)
 
-Tutti gli URL (CodeSystem e ValueSet) sono centralizzati in un unico file:
-
-[source]
-----
-src/fhir/service/Terminology/CrfConfig.ts
-----
-
-Esporta `CRF_CS_URL` e `CRF_VS_URL`, entrambe `Partial<Record<QuestionnaireTypeKey, string>>`.
-Ogni altro file del frontend importa da qui — nessun URL hardcoded altrove.
-
-=== Service per tipo
-
-CTCAE v4/v5/v6 condividono un unico service (`CtcaeV6Service.ts`) che accetta l'URL come parametro.
-PRO-CTCAE e EORTC hanno service separati.
+Ogni concept porta la property `number` (valueInteger), copiata su `QuestionnaireItem.prefix` dai builder del frontend e resa come "N. domanda" nei PDF CRF:
 
 [cols="1,2"]
 |===
-| File | Librerie gestite
+| Libreria | Valore di `number`
 
-| `src/fhir/service/Terminology/CtcaeV6Service.ts` | CTCAE v4, v5, v6
-| `src/fhir/service/Terminology/ProctcV1Service.ts` | PRO-CTCAE v1
-| `src/fhir/service/Terminology/EortcV1Service.ts` | EORTC QLQ-C30
+| CTCAE v4/v5/v6 | codice MedDRA del concept (fallback: ordine 1..N se non numerico)
+| Tutte le altre | colonna `numquest` del file sorgente
 |===
 
-Ogni service:
+IMPORTANT: Il numero arriva nell'item **al momento dell'import** del CRF dal CodeSystem. I CRF importati prima dell'introduzione o modifica di `number` vanno re-importati per vederlo aggiornato nei PDF.
 
-. Interroga HAPI FHIR con `GET /CodeSystem?url=<CS_URL>`
-. Raggruppa i concetti per sezione (SOC / categoria / head)
-. Costruisce un oggetto `Questionnaire` FHIR in memoria
-. Il `Questionnaire` viene renderizzato nei componenti CRF (builder e questionario paziente)
+=== Proprietà `answerType` (tipo di risposta della domanda)
 
-Il hook `useCtcae` (`src/fhir/hooks/questionnaire/useCtcae.ts`) orchestra la chiamata al service corretto in base al tipo di questionario selezionato.
+Ogni concept può portare la property opzionale `answerType` (valueString) che pilota il **tipo di domanda** generato all'import della libreria nel Questionnaire builder (`crfAnswerTypeFields` in `CtcaeV6Service.ts`, usata da entrambi i builder):
 
-=== Ricerca server-side
+[cols="1,3"]
+|===
+| Valore | Item generato
 
-Il dialog di import CRF (`CtcImportDialog`) effettua ricerche tramite `ValueSet/$expand?filter=<testo>` su HAPI usando il `ValueSet URL` della libreria.
-Se HAPI non ha Lucene indexing attivo, viene applicato un post-filtro client-side sul `display` dei concetti restituiti.
+| _(assente / vuoto)_ | `open-choice` + itemControl `dynamic` — scelta multipla "dynamic", il display type di default del designer (**fallback**)
+| `multichoice` | `open-choice` + itemControl `check-box` — checkbox a selezione multipla
+| `choice` | `choice` — radio a selezione singola
+| `open-choice` | `open-choice` — radio a selezione singola con risposta libera
+| `number` | `integer` — input numerico intero, **senza** `answerOption`
+|===
 
-== Aggiungere una nuova libreria CRF (es. CTCAE v7)
+La property si imposta per singolo concept dalla UI admin *Terminologie* (colonna "Tipo risposta" nell'editor concetti, vedi manuale dashboard) oppure nel CSV/bundle sorgente.
 
-=== 1. Bundle FHIR (irccs-docker)
+IMPORTANT: Come per `number`, il tipo vale **al momento dell'import**: i CRF già importati mantengono il tipo con cui sono nati e vanno re-importati per recepire la modifica.
 
-. Creare la cartella `importCrfLibraries/ctcae-v7/`
-. Copiare lo script Python da `ctcae-v6/` e adattarlo ai nuovi URL e al formato Excel v7
-. Eseguire lo script per generare `ctcae-v7-bundle.json`
-. Creare `install-ctcae-v7.sh` seguendo il modello degli altri script
-. Committare bundle JSON e script
-. Aggiungere il passo di installazione in xref:installazione.adoc[Installazione e Setup]
+NOTE: Le domande aggiunte **a mano** nel designer (fuori dall'import) non hanno `item.code`: per agganciarle a un concept di libreria usare il pannello *Codes* della domanda → "Cerca codice" — oltre a LOINC/SNOMED/NCIT il selettore offre tutte le librerie CRF scoperte da HAPI (`CodingSearch.tsx`).
 
-=== 2. Configurazione URL (irccs-react-dashboard)
+=== Proprietà `parent` + `showif` (sotto-domande condizionali)
 
-In `src/fhir/service/Terminology/CrfConfig.ts`, aggiungere le entry per il nuovo tipo:
+Un concept può essere una **sotto-domanda condizionale** di un altro (es. USC PROFFIT: le domande di approfondimento 8.1, 9.1, 10.1, 10.1.1–10.1.7, 11.1 si aprono solo con risposta positiva alla domanda madre). Due property opzionali (valueString):
 
-[source,typescript]
-----
-export const CRF_CS_URL: Partial<Record<QuestionnaireTypeKey, string>> = {
-    // ... esistenti ...
-    CTC_V7: 'https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v7',
-};
+[cols="1,3"]
+|===
+| Property | Significato
 
-export const CRF_VS_URL: Partial<Record<QuestionnaireTypeKey, string>> = {
-    // ... esistenti ...
-    CTC_V7: 'https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v7-adverse-events',
-};
-----
+| `parent` | code del concept della domanda madre (es. `8`). Anche una sotto-domanda può avere sotto-domande (`10.1.1` ha parent `10.1`).
+| `showif` | codici risposta della madre che rendono visibile la sotto-domanda, separati da `\|` (es. `2\|3\|4` = indici delle `answ*` della madre). Più codici = basta una risposta corrispondente (`enableBehavior: any`).
+|===
 
-=== 3. Tipo questionario (irccs-react-dashboard)
+All'import il builder generico (`buildCrfLibraryQuestionnaire`) traduce le property in **`enableWhen` FHIR standard**: la sotto-domanda viene accodata subito dopo la madre nel suo stesso gruppo, con `enableWhen[].question` = linkId della madre (deterministico, seed `csUrl|code`) e `answerCoding` = codice risposta. Il renderer di compilazione (`QuestionnaireBuilderNew`) valuta già `enableWhen` nativamente (anche per checkbox multi-selezione e gruppi ripetibili); i PDF (stampa CRF compilato e storico) saltano le sotto-domande non attivate.
 
-In `src/fhir/models/Questionnaire.ts`, aggiungere il nuovo tipo all'enum `QuestionnaireType`:
+Nel CSV sorgente le sotto-domande sono righe con le colonne opzionali `code` (obbligatoria: es. `8.1`, `numquest` resta vuoto → nessun prefisso numerico), `parent`, `showif` e tipicamente `answerType=multichoice` (blocco "risposte multiple vero/falso" = una domanda checkbox; l'opzione "altro (specificare)" è coperta dal testo libero dell'`open-choice`).
 
-[source,typescript]
-----
-export enum QuestionnaireType {
-    // ... esistenti ...
-    "CTC_V7" = "CTC - V7",
-}
-----
+Nella dialog di import la selezione della domanda madre **trascina automaticamente** le sue sotto-domande; una sotto-domanda selezionata senza la madre viene scartata (non sarebbe mai visibile).
 
-E aggiungere il relativo identificatore in `QuestionnaireIdentifier`:
+Le property si impostano anche per singolo concept dalla UI admin *Terminologie* (campi "Domanda madre (code)" e "Visibile se risposta" nel dettaglio del concetto), senza toccare CSV/bundle.
 
-[source,typescript]
-----
-"CTC_V7": {
-    system: "CTCAE",
-    value:  "CTC_V7",
-    name:   "CTC_V7"
-},
-----
+IMPORTANT: Come per `number` e `answerType`, le condizioni valgono **al momento dell'import**: i CRF già importati vanno re-importati per recepire sotto-domande nuove o modificate.
 
-=== 4. Service (irccs-react-dashboard)
+== Come il frontend recupera le librerie (discovery automatica)
 
-CTCAE v7 può riutilizzare `CtcaeV6Service.ts` che già gestisce v4/v5/v6.
-Aggiungere solo la costante URL e la funzione export:
+Il frontend React non ha una lista hardcoded delle librerie: le **scopre da HAPI** a runtime.
 
-[source,typescript]
-----
-// In CtcaeV6Service.ts
-const CS_URL_V7 = CRF_CS_URL.CTC_V7!;
+=== Discovery
 
-export async function buildCtcaeV7Questionnaire(): Promise<Questionnaire> {
-    return buildCtcaeQuestionnaire(CS_URL_V7);
-}
-----
+Il hook `useCrfLibraries` (`src/fhir/hooks/questionnaire/useCrfLibraries.ts`):
 
-=== 5. Hook (irccs-react-dashboard)
+. Interroga `GET /CodeSystem?_elements=url,name,title,property` e `GET /ValueSet?_elements=url,compose`
+. `classifyCodeSystem` (`src/fhir/service/Terminology/CrfLibraryService.ts`) classifica ogni CodeSystem dalle sue property-definition:
++
+[cols="1,1,1"]
+|===
+| Property presenti | Stile | Raggruppamento
 
-In `src/fhir/hooks/questionnaire/useCtcae.ts`, aggiungere il caso nel `queryFn`:
+| `grade1` | `ctcae` (gradi 1–5) | `soc`
+| `category` / `macrogroup` | `proctc` (risposte) | `category` (fallback `macrogroup`)
+| `answ*` | `eortc` (risposte) | `head`
+|===
+. Ogni libreria riconosciuta diventa un `CrfLibraryDescriptor` (`id`, `label`, `csUrl`, `vsUrl`, `style`, `groupProp`) — la ValueSet viene agganciata tramite `compose.include[].system`.
 
-[source,typescript]
-----
-if (type === 'CTC_V7') return buildCtcaeV7Questionnaire();
-----
+I CodeSystem senza property `grade1`/`answ*` (es. terminologie generiche) vengono ignorati.
 
-=== 6. Aggiornare questa pagina
+=== Costruzione del template
+
+`buildQuestionnaireFromDescriptor` costruisce il `Questionnaire` in memoria:
+
+* stile `ctcae` → `buildCtcaeQuestionnaire` (`CtcaeV6Service.ts`), sezioni per SOC e gradi come `answerOption`
+* altri stili → builder generico `buildCrfLibraryQuestionnaire` (`CrfLibraryService.ts`), sezioni per `groupProp` e risposte `answ1..N` auto-rilevate
+
+Il hook `useCrfTemplate` orchestra la costruzione a partire dal descriptor.
+
+=== Bottoni di import nel builder
+
+* *QuestionnaireEditor*: un bottone per ogni libreria scoperta (`crfLibraries.map`) — nuova libreria su HAPI = nuovo bottone, zero codice.
+* *QuestionnaireBuilderNew*: il binding di una ValueSet a una domanda viene risolto con `resolveCrfDescriptor(vsUrl, crfLibraries)` (match esatto su url + fallback tollerante sul segmento finale); il bottone di re-import usa il descriptor risolto.
+
+=== Dialog di import (`CtcImportDialog`)
+
+* Ogni domanda mostra `prefix.` (numquest / codice MedDRA) in grassetto e, se diverso, il codice concept tra parentesi quadre.
+* La barra di ricerca filtra su **testo, prefix (numquest) e codice**; se la libreria ha una ValueSet, viene usata anche la ricerca server-side `$expand?filter=` con post-filtro client.
+
+=== Compatibilità legacy
+
+Le 5 librerie storiche (CTCAE v4/v5/v6, PRO-CTCAE v1, EORTC QLQ-C30) conservano le voci `QuestionnaireType` / `QuestionnaireIdentifier` per i questionari già salvati con quel tipo.
+`CRF_CS_URL` (`CrfConfig.ts`) resta come mappa url per questa compatibilità.
+Le librerie nuove **non hanno** voci enum: esistono solo tramite discovery.
+
+== Aggiungere una nuova libreria CRF
+
+=== 1. Bundle FHIR (irccs-docker) — unico passo obbligatorio
+
+. Creare la cartella `importCrfLibraries/<nuova-libreria>/` con il CSV sorgente (`numquest, head|category, quest|term, answ1..N`)
+. Creare `import-<nuova-libreria>.py` sul modello di `usc_proffit/import-usc-proffit.py` (definisce solo la `LibConfig`, il resto è in `_csvlib.py`)
+. Generare il bundle: `python3 import-<nuova-libreria>.py --bundle-only`
+. Creare `install-<nuova-libreria>.sh` sul modello degli altri
+. Committare CSV, script e bundle
+. Eseguire l'install sull'ambiente target e aggiungere il passo in xref:installazione.adoc[Installazione e Setup]
+
+=== 2. Frontend — nessuna modifica
+
+Il bottone di import compare automaticamente al primo caricamento della libreria su HAPI (discovery).
+Serve solo che il CodeSystem esponga le property `answ*` (o `grade1` per stile CTCAE) e un `title` leggibile, e che la ValueSet includa il CodeSystem in `compose.include[].system`.
+
+=== 3. Aggiornare questa pagina
 
 Aggiungere la nuova libreria alla tabella in cima.

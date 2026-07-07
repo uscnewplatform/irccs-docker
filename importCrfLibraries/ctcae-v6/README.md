@@ -9,16 +9,16 @@ Per caricare su HAPI basta lo script shell. Per rigenerare da un nuovo Excel, se
 
 ```
 importCrfLibraries/ctcae-v6/
-├── import-ctcae-v6.py            ← script Python (legge Excel + push su HAPI)
-├── install-ctcae-v6.sh          ← carica bundle, o (--source excel) rigenera da Excel
+├── import-ctcae-v6.py            ← script Python (legge Excel, genera bundle, push su HAPI)
+├── install-ctcae-v6.sh          ← carica il bundle committato su HAPI (solo curl)
 ├── CTCAE_v6.0_Final_Jan2026.xlsx ← Excel sorgente versionato
 ├── ctcae-v6-bundle.json         ← bundle FHIR pre-generato (committed nel repo)
 └── README.md
 ```
 
-> Per le opzioni comuni a tutte le CRF (`--source bundle|excel`, Excel versionati,
-> property `number` 1..N e numerazione domande nei PDF) vedi il
-> [README della cartella padre](../README.md).
+> Per le convenzioni comuni a tutte le CRF library (bundle committato come unica
+> sorgente install, rigenerazione via `import-*.py --bundle-only`, property `number`
+> e numerazione domande nei PDF) vedi il [README della cartella padre](../README.md).
 
 ## Prerequisiti
 
@@ -75,7 +75,7 @@ Risorse CTCAE v6 su http://localhost:8080/fhir:
 
   ✓ CodeSystem            id=ctcae-v6               versione=6.0  data=2026-05-15
   ✓ ValueSet              id=ctcae-v6-adverse-events versione=6.0  data=2026-05-15
-  ✓ StructureDefinition   id=ctcae-grade-severity    versione=1.0  data=2026-05-15
+  ✓ StructureDefinition   id=ctcae-v6-grade-severity versione=1.0  data=2026-05-15
 ```
 
 ---
@@ -86,12 +86,13 @@ Risorse CTCAE v6 su http://localhost:8080/fhir:
 |---|---|---|
 | CodeSystem | `ctcae-v6` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6` |
 | ValueSet | `ctcae-v6-adverse-events` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6-adverse-events` |
-| StructureDefinition | `ctcae-grade-severity` | `https://irccs-pascale.it/fhir/StructureDefinition/ctcae-grade-severity` |
+| StructureDefinition | `ctcae-v6-grade-severity` | `https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v6-grade-severity` |
 
 ### CodeSystem — proprietà per concetto
 
 | Proprietà | Tipo | Descrizione |
 |---|---|---|
+| `number` | integer | Numero della domanda (= codice MedDRA) |
 | `soc` | string | System Organ Class MedDRA 28.0 |
 | `grade1` | string | Descrizione Grade 1 |
 | `grade2` | string | Descrizione Grade 2 |
@@ -101,14 +102,14 @@ Risorse CTCAE v6 su http://localhost:8080/fhir:
 | `navNote` | string | Nota navigazionale NCI |
 | `v6change` | string | Tipo di variazione rispetto a CTCAE v5 |
 
-### StructureDefinition — `ctcae-grade-severity`
+### StructureDefinition — `ctcae-v6-grade-severity`
 
 Estensione FHIR su `QuestionnaireItem` per profilare le domande che derivano da CTCAE v6.
 Porta i metadati clinici del termine (gradi 1-5, SOC, nota navigazionale) direttamente nell'item.
 
 ```json
 {
-  "url": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-grade-severity",
+  "url": "https://irccs-pascale.it/fhir/StructureDefinition/ctcae-v6-grade-severity",
   "extension": [
     { "url": "grade1", "valueString": "Hemoglobin (Hgb) <LLN - 10.0 g/dL..." },
     { "url": "grade2", "valueString": "Hgb <10.0 - 8.0 g/dL..." },
