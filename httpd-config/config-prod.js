@@ -11,7 +11,7 @@ window.APP_CONFIG = {
     // ricadere sul default di sviluppo -> errore "scannerUserId not found in realm".
     VITE_SCAN_SESSION_SCANNER_USER_ID: "",
     VITE_SCAN_SESSION_CLIENT_ID: "irccs",
-    VITE_SCAN_SESSION_REDIRECT_URI: "https://pj.istitutotumori.na.it",
+    VITE_SCAN_SESSION_REDIRECT_URI: "https://pj.istitutotumori.na.it/app/",
     VITE_SCAN_SESSION_EXPIRES_IN: "3600",
     VITE_SCAN_SESSION_STATE: "scan-session"
 };
