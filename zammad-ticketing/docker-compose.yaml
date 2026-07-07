@@ -99,11 +99,6 @@ services:
     command: ["zammad-nginx"]
     depends_on:
       - zammad-railsserver
-    networks:
-      default: {}
-      irccs:
-        aliases:
-          - irccs-zammad-nginx
 
   zammad-postgresql:
     environment:
@@ -118,8 +113,20 @@ services:
   zammad-railsserver:
     <<: *zammad-service
     command: ["zammad-railsserver"]
-    ports: 
-      - "3000:3000"
+    # Bypassa il nginx interno di Zammad (immagine ufficiale): quel nginx fa
+    # sempre `proxy_set_header X-Forwarded-Proto $scheme;`, cioe' sovrascrive
+    # con lo scheme locale (http, dato che Apache->nginx-zammad e' plain
+    # http), buttando via l'X-Forwarded-Proto: https che Apache aveva
+    # settato. Risultato: Rack::Session vede request.scheme=http mentre
+    # Setting.http_type=https, il check `secure_flag?` fallisce e la
+    # sessione non viene mai confermata via cookie -> CSRF perenne.
+    # Puma/Rails invece legge X-Forwarded-Proto senza riscriverlo, quindi
+    # Apache va dritto qui.
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-railsserver
 
   zammad-redis:
     image: redis:${REDIS_VERSION:-7.4.6-alpine}
@@ -134,8 +141,11 @@ services:
   zammad-websocket:
     <<: *zammad-service
     command: ["zammad-websocket"]
-    ports: 
-      - "6042:6042"
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-websocket
 
 networks:
   irccs:
