@@ -97,6 +97,11 @@ services:
   zammad-nginx:
     <<: *zammad-service
     command: ["zammad-nginx"]
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-nginx
     depends_on:
       - zammad-railsserver
 
