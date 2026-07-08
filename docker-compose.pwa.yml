@@ -5,7 +5,7 @@
 # Prerequisiti: stack IRCCS già avviato per Keycloak e httpd.
 
 networks:
-  irccs-docker_irccs:
+  irccs:
     external: true
 
 volumes:
@@ -22,7 +22,7 @@ services:
     ports:
       - "8090:8080"
     networks:
-      - irccs-docker_irccs
+      - irccs
     depends_on:
       - irccs-pwa-backend
     restart: always
@@ -47,7 +47,7 @@ services:
     volumes:
       - pwa_db_data:/app/data
     networks:
-      - irccs-docker_irccs
+      - irccs
     restart: always
 
   irccs-pwa-admin:
@@ -55,5 +55,5 @@ services:
     container_name: irccs-pwa-admin
     hostname: irccs-pwa-admin
     networks:
-      - irccs-docker_irccs
+      - irccs
     restart: always
