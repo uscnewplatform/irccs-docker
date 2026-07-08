@@ -119,7 +119,7 @@ services:
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
       - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
-      - /home/savioadmin/cert-pasc-2026.crt:/usr/local/apache2/conf/ssl/cert-pasc-2026.crt:ro
+      - /home/savioadmin/cert-pasc-2026-fullchain.crt:/usr/local/apache2/conf/ssl/cert-pasc-2026.crt:ro
       - /home/savioadmin/cert-pasc-2026.key:/usr/local/apache2/conf/ssl/cert-pasc-2026.key:ro
     networks:
       - irccs
