@@ -113,6 +113,12 @@ services:
   zammad-railsserver:
     <<: *zammad-service
     command: ["zammad-railsserver"]
+    environment:
+      <<: *zammad-environment
+      # Bypassiamo zammad-nginx (vedi sotto): Puma deve servire da solo gli
+      # asset precompilati sotto /assets, altrimenti ogni richiesta cade
+      # nella route catch-all Rails e torna index.html (mismatch MIME).
+      RAILS_SERVE_STATIC_FILES: "true"
     # Bypassa il nginx interno di Zammad (immagine ufficiale): quel nginx fa
     # sempre `proxy_set_header X-Forwarded-Proto $scheme;`, cioe' sovrascrive
     # con lo scheme locale (http, dato che Apache->nginx-zammad e' plain
