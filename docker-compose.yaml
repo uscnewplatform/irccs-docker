@@ -165,7 +165,7 @@ services:
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_HTTP_ENABLED: "true"
-      KC_PROXY_HEADERS: forwarded
+      KC_PROXY_HEADERS: xforwarded
       KC_HTTP_RELATIVE_PATH: /backoffice
       KC_HTTP_MANAGEMENT_RELATIVE_PATH: /
     env_file:
