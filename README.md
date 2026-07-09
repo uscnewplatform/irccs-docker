@@ -51,6 +51,25 @@ docker-compose up -d
 
 ## CONFIGURAZIONI FHIR/KEYCLOAK
 
+### Sequenza prima installazione (ordine consigliato)
+
+Da eseguire **una volta** dopo `docker-compose up -d`, con lo stack sano
+(keycloak `healthy`, HAPI raggiungibile). `HAPI` = `http://irccs-hapi-fhir:8080/fhir`
+(dal container) o `http://localhost:8080/fhir` (dalla macchina host, porta esposta 8080).
+
+| # | Passo | Sezione |
+|---|-------|---------|
+| 1 | SearchParameters FHIR | [§1](#1-installazione-searchparameters-fhir) |
+| 2 | SMTP Keycloak | [§2](#2-configurazione-smtp-in-keycloak) |
+| 3 | Rigenera CLIENT_SECRET Keycloak | [§3-cambio-secret-keycloak](#3-cambio-secret-keycloak) |
+| 4 | Lingua IT + theme | [§4](#4-aggiunta-lingua-italiano-e-themes-customizzati) |
+| 5 | J-LI | [Installazione PJ J-LI](#installazione-pj-j-li) |
+| 6 | Tipi di consenso | [Installazione tipi di consenso](#installazione-tipi-di-consenso) |
+| 7 | CRF Libraries (CTCAE, EORTC, EuroQol…) | [Installazione CRF Libraries](#installazione-crf-libraries) |
+| 8 | Farmaci AIFA (opzionale) | [Import Farmaci AIFA](#import-farmaci-aifa) |
+
+> Tutti gli step sono **idempotenti** (PUT/POST conditional): ri-lanciabili senza duplicati.
+
 ## 1. Installazione SearchParameters FHIR
 
 Portarsi nella cartella setup ed eseguire il comando
@@ -116,6 +135,49 @@ bash install_consent_types.sh hostname:port
 ```
 Idempotente (PUT conditional). Gestione successiva da dashboard: Back-office → Tipi di consenso (SuperAdmin).
 
+## Installazione CRF Libraries
+Carica le terminologie CRF (CTCAE v4/v5/v6, PRO-CTCAE, EORTC QLQ-C30/HCC18, EuroQol EQ-5D-5L, USC PROFFIT)
+come `CodeSystem + ValueSet + StructureDefinition` su HAPI. Ogni libreria ha un `*-bundle.json`
+committato = unica sorgente (solo `curl`, zero dipendenze). Idempotenti (PUT per url).
+
+```bash
+cd importCrfLibraries
+HAPI=http://irccs-hapi-fhir:8080/fhir   # o http://localhost:8080/fhir dall'host
+
+bash ctcae-v4/install-ctcae-v4.sh             "$HAPI"
+bash ctcae-v5/install-ctcae-v5.sh             "$HAPI"
+bash ctcae-v6/install-ctcae-v6.sh             "$HAPI"
+bash proctc-v1/install-proctc-v1.sh           "$HAPI"
+bash eortc-qlq-c30/install-eortc-v1.sh        "$HAPI"
+bash eortc_hcc18/install-eortc-hcc18.sh       "$HAPI"
+bash euroqol_eq5d5l/install-euroqol-eq5d5l.sh "$HAPI"
+bash usc_proffit/install-usc-proffit.sh       "$HAPI"
+```
+
+La UI scopre le library **automaticamente** da HAPI: caricata una libreria, il bottone di import
+compare nel Questionnaire builder senza modifiche al frontend.
+Dettagli e rigenerazione bundle: `importCrfLibraries/README.md`.
+
+## Import Farmaci AIFA
+Catalogo farmaci AIFA come terminology FHIR. Due pipeline **indipendenti** (vedi
+`import-farmaci-aifa/README.md`). Richiede `requests` (usa un venv, PEP 668):
+
+```bash
+cd import-farmaci-aifa
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+HAPI=http://localhost:8080/fhir
+
+# Pipeline A — Classe A/H (~12.9k, snapshot committato)
+.venv/bin/python import-aifa-per-classi/import-aifa-farmaci.py "$HAPI" --version 2026-05
+
+# Pipeline B — Confezioni ATC (~159k, a lotti; prima uno smoke test)
+.venv/bin/python import-confezioni-atc/import-confezioni-atc-batch.py "$HAPI" --limit 2000
+.venv/bin/python import-confezioni-atc/import-confezioni-atc-batch.py "$HAPI"
+```
+
+La ricerca `$expand?filter` richiede la pre-espansione ValueSet (`pre_expand_value_sets: true`
+già attivo su HAPI): gira in background dopo l'import, nessun `$reindex` necessario.
+
 NOTE:
 
 Per attivare Keycloak in SSL è necessario:
@@ -168,6 +230,41 @@ docker exec -it postgres-keycloak psql -U "$POSTGRES_KEYCLOAK_USER" -d postgres 
 
 docker compose up -d irccs-webpush
 ```
+
+## Stack di Monitoraggio (Loki/Grafana/Alloy)
+
+Logging centralizzato: dettagli completi in `docs/modules/ROOT/pages/monitoraggio.adoc`.
+
+### Avvio
+
+Richiede la rete esterna `irccs` (creata dallo stack applicativo principale):
+
+```bash
+docker compose -f docker-compose-monitoring.yaml up -d
+```
+
+### Cron: archiviazione log oltre retention (3 mesi)
+
+Loki tiene i log interrogabili in Grafana per 3 mesi (`retention_period: 2160h` in
+`monitoring-config/loki-config.yml`), poi il compactor li cancella. Per non perderli,
+schedulare uno snapshot mensile del volume `loki_data` **prima** che scada la finestra
+di retention:
+
+```bash
+crontab -e
+```
+
+Aggiungere (esegue il giorno 1 di ogni mese alle 03:00, log dell'esecuzione in
+`/var/log/loki-archive.log`):
+
+```cron
+0 3 1 * * /path/to/irccs-docker/setup/archive_loki_snapshot.sh /var/backup/loki-archive >> /var/log/loki-archive.log 2>&1
+```
+
+Sostituire `/path/to/irccs-docker` con il path reale di checkout su questa macchina.
+Gli archivi (`.tar.gz`, uno per snapshot) non vengono mai cancellati automaticamente —
+pulizia a mano quando non servono più. Verificare periodicamente lo spazio disco in
+`/var/backup/loki-archive`.
 
 ## Stack PWA (stack separato)
 

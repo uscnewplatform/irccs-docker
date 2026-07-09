@@ -1,5 +1,11 @@
 version: "3.8"
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "50m"
+    max-file: "5"
+
 x-shared:
   zammad-service: &zammad-service
     environment: &zammad-environment
@@ -35,7 +41,7 @@ x-shared:
       NGINX_SERVER_SCHEME:
       RAILS_TRUSTED_PROXIES:
       ZAMMAD_HTTP_TYPE: "https"
-      ZAMMAD_FQDN: ${ZAMMAD_FQDN:-zammad.infocube.it}
+      ZAMMAD_FQDN: ${ZAMMAD_FQDN:-zammad.istitutotumori.na.it}
       ZAMMAD_WEB_CONCURRENCY:
       ZAMMAD_PROCESS_SESSIONS_JOBS_WORKERS:
       ZAMMAD_PROCESS_SCHEDULED_JOBS_WORKERS:
@@ -55,6 +61,7 @@ x-shared:
 
     image: ${IMAGE_REPO:-ghcr.io/zammad/zammad}:${VERSION:-6.5.2-22}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - zammad-storage:/opt/zammad/storage
     depends_on:
@@ -74,6 +81,7 @@ services:
   zammad-elasticsearch:
     image: elasticsearch:${ELASTICSEARCH_VERSION:-8.19.6}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     environment:
@@ -93,15 +101,19 @@ services:
     command: memcached -m 256M
     image: memcached:${MEMCACHE_VERSION:-1.6.39-alpine}
     restart: ${RESTART:-always}
+    logging: *default-logging
 
   zammad-nginx:
     <<: *zammad-service
     command: ["zammad-nginx"]
-    ports:
-      - "8989:8080"
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-nginx
     depends_on:
       - zammad-railsserver
-    
+
   zammad-postgresql:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-zammad_production}
@@ -109,18 +121,38 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASS:-zammad}
     image: postgres:${POSTGRES_VERSION:-17.6-alpine}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - postgresql-data:/var/lib/postgresql/data
 
   zammad-railsserver:
     <<: *zammad-service
     command: ["zammad-railsserver"]
-    ports: 
-      - "3000:3000"
+    environment:
+      <<: *zammad-environment
+      # Bypassiamo zammad-nginx (vedi sotto): Puma deve servire da solo gli
+      # asset precompilati sotto /assets, altrimenti ogni richiesta cade
+      # nella route catch-all Rails e torna index.html (mismatch MIME).
+      RAILS_SERVE_STATIC_FILES: "true"
+    # Bypassa il nginx interno di Zammad (immagine ufficiale): quel nginx fa
+    # sempre `proxy_set_header X-Forwarded-Proto $scheme;`, cioe' sovrascrive
+    # con lo scheme locale (http, dato che Apache->nginx-zammad e' plain
+    # http), buttando via l'X-Forwarded-Proto: https che Apache aveva
+    # settato. Risultato: Rack::Session vede request.scheme=http mentre
+    # Setting.http_type=https, il check `secure_flag?` fallisce e la
+    # sessione non viene mai confermata via cookie -> CSRF perenne.
+    # Puma/Rails invece legge X-Forwarded-Proto senza riscriverlo, quindi
+    # Apache va dritto qui.
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-railsserver
 
   zammad-redis:
     image: redis:${REDIS_VERSION:-7.4.6-alpine}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - redis-data:/data
 
@@ -131,8 +163,16 @@ services:
   zammad-websocket:
     <<: *zammad-service
     command: ["zammad-websocket"]
-    ports: 
-      - "6042:6042"
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-websocket
+
+networks:
+  irccs:
+    name: irccs
+    external: true
 
 volumes:
   elasticsearch-data:
