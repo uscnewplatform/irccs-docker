@@ -231,6 +231,41 @@ docker exec -it postgres-keycloak psql -U "$POSTGRES_KEYCLOAK_USER" -d postgres 
 docker compose up -d irccs-webpush
 ```
 
+## Stack di Monitoraggio (Loki/Grafana/Alloy)
+
+Logging centralizzato: dettagli completi in `docs/modules/ROOT/pages/monitoraggio.adoc`.
+
+### Avvio
+
+Richiede la rete esterna `irccs` (creata dallo stack applicativo principale):
+
+```bash
+docker compose -f docker-compose-monitoring.yaml up -d
+```
+
+### Cron: archiviazione log oltre retention (3 mesi)
+
+Loki tiene i log interrogabili in Grafana per 3 mesi (`retention_period: 2160h` in
+`monitoring-config/loki-config.yml`), poi il compactor li cancella. Per non perderli,
+schedulare uno snapshot mensile del volume `loki_data` **prima** che scada la finestra
+di retention:
+
+```bash
+crontab -e
+```
+
+Aggiungere (esegue il giorno 1 di ogni mese alle 03:00, log dell'esecuzione in
+`/var/log/loki-archive.log`):
+
+```cron
+0 3 1 * * /path/to/irccs-docker/setup/archive_loki_snapshot.sh /var/backup/loki-archive >> /var/log/loki-archive.log 2>&1
+```
+
+Sostituire `/path/to/irccs-docker` con il path reale di checkout su questa macchina.
+Gli archivi (`.tar.gz`, uno per snapshot) non vengono mai cancellati automaticamente —
+pulizia a mano quando non servono più. Verificare periodicamente lo spazio disco in
+`/var/backup/loki-archive`.
+
 ## Stack PWA (stack separato)
 
 La PWA questionari (`irccs-pwa`) gira in uno stack Docker separato che si aggancia alla rete `irccs-docker_irccs`.
