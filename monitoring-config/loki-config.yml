@@ -31,7 +31,7 @@ schema_config:
 limits_config:
   reject_old_samples: true
   reject_old_samples_max_age: 168h
-  retention_period: 360h
+  retention_period: 2160h # 3 mesi. Snapshot pre-cancellazione: setup/archive_loki_snapshot.sh (cron)
   max_query_series: 100000
   max_query_parallelism: 2
   volume_enabled: true

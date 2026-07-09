@@ -58,8 +58,26 @@ errori elevato nei log, provisionati da `monitoring-config/alerting/` (`contactp
 Sistema di aggregazione e indicizzazione dei log. Configurazione in `monitoring-config/loki-config.yml`.
 
 **Retention effettiva**: aggiunto blocco `compactor` (`retention_enabled: true`) — senza, la
-`retention_period: 360h` dichiarata nei `limits_config` non veniva mai applicata e i chunk restavano
-su disco a tempo indeterminato. `ingestion_rate_mb`/`ingestion_burst_size_mb` alzati per volume multi-servizio.
+`retention_period` dichiarata nei `limits_config` non veniva mai applicata e i chunk restavano su
+disco a tempo indeterminato. `ingestion_rate_mb`/`ingestion_burst_size_mb` alzati per volume multi-servizio.
+
+**Retention attuale: 3 mesi** (`retention_period: 2160h`). Oltre i 3 mesi il compactor cancella i
+chunk da `/loki/chunks` (dentro il volume `loki_data`) — dato non piu' interrogabile da Grafana.
+
+**Archiviazione oltre i 3 mesi**: `setup/archive_loki_snapshot.sh` — snapshot compresso dell'intero
+volume `loki_data` su disco host (default `/var/backup/loki-archive/`, path configurabile come primo
+argomento). Va schedulato via cron (mensile consigliato, prima che il compactor cancelli la finestra
+corrispondente):
+
+[source,cron]
+----
+0 3 1 * * /path/to/irccs-docker/setup/archive_loki_snapshot.sh /var/backup/loki-archive >> /var/log/loki-archive.log 2>&1
+----
+
+Nota: lo script copia l'intero storage ad ogni run (non solo i log in scadenza) — piu' robusto di
+un export selettivo (nessuna finestra persa se uno script salta un'esecuzione), ma gli archivi
+crescono nel tempo. Nessuna cancellazione automatica degli archivi: vanno ripuliti a mano o con una
+procedura separata quando non servono piu'.
 
 === Grafana Alloy
 
