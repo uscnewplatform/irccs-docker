@@ -11,6 +11,15 @@ Lo stack è composto da tre componenti:
 * **Loki** — Sistema di aggregazione dei log
 * **Grafana Alloy** — Agente di raccolta dati (metriche, log, trace, profiling)
 
+== Stato attuale (fase 1 — logging centralizzato)
+
+Attivo: raccolta log Docker (app stack + Zammad, cross-stack via socket, non serve rete condivisa),
+PII scrub, alerting su errori, log frontend via Faro, retention Loki reale (compactor).
+
+**Disattivato/commentato in `config.alloy`** (fase 2, non deployata): metriche via Mimir, trace via
+Tempo, profiling via Pyroscope. I blocchi restano nel file, commentati, con istruzioni per riattivarli
+quando quei servizi saranno aggiunti al compose. Vedi commenti in testa a `monitoring-config/config.alloy`.
+
 == Servizi
 
 === Grafana
@@ -18,43 +27,65 @@ Lo stack è composto da tre componenti:
 [cols="1,3"]
 |===
 |Immagine |`+grafana/grafana:${GRAFANA_VERSION}+`
-|Porta |`+${GRAFANA_PORT}+` (default: 3000)
+|Porta |nessuna esposta su host in prod — reverse proxy httpd, route `/grafana` (vedi `httpd-config/irccs.conf`)
 |===
 
 Dashboard di visualizzazione. Accede ai dati tramite datasource configurati in `monitoring-config/datasource/datasource.yaml`.
 
-Credenziali configurate tramite variabili d'ambiente:
+**Autenticazione obbligatoria**: `auth.anonymous` disabilitato in `grafana.ini` (era `enabled=true,
+org_role=Admin` — chiunque raggiungesse la porta era admin senza login, corretto). Credenziali via
+variabili d'ambiente:
 
 * `GF_SECURITY_ADMIN_USER`
 * `GF_SECURITY_ADMIN_PASSWORD`
-* `GF_USERS_ALLOW_SIGN_UP`
+* `GF_USERS_ALLOW_SIGN_UP` (`false` in prod)
+
+SSO Keycloak **non ancora implementato** (task separato, richiede client OIDC dedicato nel realm).
+
+**Alerting**: contact point email (stesso relay SMTP di `quarkus.mailer`, no auth) e regola su tasso
+errori elevato nei log, provisionati da `monitoring-config/alerting/` (`contactpoints.yaml`,
+`policies.yaml`, `rules.yaml`). Var d'ambiente: `GF_SMTP_HOST`, `GF_SMTP_FROM`, `ALERT_EMAIL_TO`.
 
 === Loki
 
 [cols="1,3"]
 |===
 |Immagine |`grafana/loki:3.5`
-|Porta |`+${LOKI_PORT}+`
+|Porta |nessuna esposta su host — raggiungibile solo da Grafana/Alloy sulla rete interna
 |Volume |`loki_data` (persistente)
 |===
 
-Sistema di aggregazione e indicizzazione dei log. La configurazione è in `monitoring-config/loki-config.yml`. I dati di log sono persistiti nel volume Docker `loki_data`.
+Sistema di aggregazione e indicizzazione dei log. Configurazione in `monitoring-config/loki-config.yml`.
+
+**Retention effettiva**: aggiunto blocco `compactor` (`retention_enabled: true`) — senza, la
+`retention_period: 360h` dichiarata nei `limits_config` non veniva mai applicata e i chunk restavano
+su disco a tempo indeterminato. `ingestion_rate_mb`/`ingestion_burst_size_mb` alzati per volume multi-servizio.
 
 === Grafana Alloy
 
 [cols="1,3"]
 |===
 |Immagine |`grafana/alloy:v1.11.3`
-|Porta |`+${AGENT_PORT}+`, `+${AGENT_PORT_APP_RECEIVER}+`, `+${ALLOY_OTEL_PORT}+`, `+${ALLOY_PYROSCOPE_PORT}+`
+|Porta |UI debug solo su `127.0.0.1` host; receiver Faro raggiungibile solo via httpd (`/faro-collector`)
 |Modalità |Privilegiata (`privileged: true`)
 |===
 
-Agente di raccolta dati che sostituisce il vecchio Grafana Agent. Raccoglie:
+Agente di raccolta dati. Attivo in questa fase:
 
-* **Log** dai container Docker → inviati a Loki
-* **Metriche** sistema (CPU, RAM, disco, rete) → inviati a Grafana
-* **Trace** OpenTelemetry (porta OTLP dedicata)
-* **Profiling** continuo (Pyroscope)
+* **Log Docker** — scoperta via socket (`discovery.docker`), copre **tutti** i container sull'host
+  indipendentemente da stack/rete (verificato: intercetta sia lo stack applicativo IRCCS sia Zammad
+  senza bisogno di join di rete).
+* **PII scrub** — `loki.process` redige email, codice fiscale italiano, IBAN da ogni log prima dello
+  storage in Loki (pattern regex, mitigazione best-effort — non sostituisce disciplina di logging lato
+  codice, vedi audit sotto). Implementato con `stage.regex` + `stage.template` (`regexReplaceAll`) +
+  `stage.output`: **`stage.replace` non riscrive la entry in questa versione di Alloy** (v1.11.3,
+  verificato empiricamente — bug/limite noto, non usare quello stage per redazione).
+* **Faro receiver** — riceve log/errori dal frontend React (`irccs-react-dashboard/src/faro.ts`),
+  li instrada nella stessa pipeline di scrub PII. Solo logs, non trace (Tempo non deployato).
+* **Syslog** — riceve log via TCP/UDP (porte interne, non esposte su host).
+
+Non attivo in questa fase (vedi blocchi commentati in `config.alloy`): cAdvisor/node_exporter → Mimir,
+faro traces → Tempo, profiling → Pyroscope.
 
 Monta i seguenti path di sistema in sola lettura per la raccolta dei dati:
 
@@ -70,6 +101,40 @@ Monta i seguenti path di sistema in sola lettura per la raccolta dei dati:
 ----
 
 La configurazione Alloy è in `monitoring-config/config.alloy`.
+
+== Log rotation host
+
+Tutti i container dei tre `docker-compose` (`docker-compose.yaml`, `docker-compose-monitoring.yaml`,
+`zammad-ticketing/docker-compose.yaml`) hanno `logging: {driver: json-file, max-size: 50m, max-file: 5}`
+via ancora YAML `x-logging` — senza, il logging driver Docker di default non ruota, rischio di riempire
+il disco host indipendentemente da Loki.
+
+== Logging lato microservizi (Quarkus)
+
+Tutti gli 11 microservizi Quarkus:
+
+* `quarkus-logging-json` — log JSON strutturato in prod (`quarkus.log.console.json=true`), testo
+  leggibile in dev (`%dev.quarkus.log.console.json=false`).
+* `RequestIdFilter` (in `irccs-common` → `i3-annotations`, v26.1.0+) — propaga/genera header
+  `X-Request-Id`, lo mette in MDC come `requestId` (incluso automaticamente nel JSON): permette di
+  correlare in Loki i log di tutti i microservizi coinvolti nella stessa richiesta HTTP.
+
+**Audit PII/secret nei log** (fatto una tantum, non automatizzato — da ripetere se si aggiunge nuovo
+codice di logging): trovati e corretti in `irccs-microservice-auth` — `exchangeToken`/`logout`
+loggavano access_token/refresh_token in chiaro, `updatePassword` loggava la nuova password in chiaro.
+Rimossi i dump completi, restano solo log di esito. Stesso pattern corretto lato frontend
+(`AuthContext.tsx`, dump del payload token exchange).
+Non corretti (decisione prodotto, restano nei log): body ticket Zammad (testo libero, può contenere
+riferimenti a pazienti) e bundle FHIR intero in log di errore TAC — mitigati solo dallo scrub email/
+CF/IBAN, non da prosa libera.
+
+== Logging frontend (Faro)
+
+`irccs-react-dashboard/src/faro.ts` inizializza `@grafana/faro-web-sdk` solo se
+`VITE_API_FARO_COLLECTOR_API` è configurato (via `window.APP_CONFIG`, vedi `httpd-config/config-prod.js`).
+Cattura console, errori non gestiti, web vitals. `captureConsole: true` significa che **ogni**
+`console.log`/`error` del codice frontend viene spedito a Loki — attenzione a non introdurre nuovi
+dump di dati sensibili in console.
 
 == Dashboard disponibili
 
@@ -215,13 +280,38 @@ Le principali variabili d'ambiente per il monitoraggio (da inserire nel file `.e
 
 |`ALLOY_CONFIG_PATH_LOCAL`
 |Path locale della configurazione Alloy
+
+|`GF_SMTP_HOST`
+|Relay SMTP per alerting Grafana (es. `10.1.253.151:25`, stesso di `quarkus.mailer`)
+
+|`GF_SMTP_FROM`
+|Mittente email alert
+
+|`ALERT_EMAIL_TO`
+|Destinatario email alert (ops)
+
+|`GRAFANA_DOMAIN`
+|Hostname pubblico per `root_url` Grafana (sub-path `/grafana`, reverse proxy httpd)
+
+|`GRAFANA_ALERTING_PATH_LOCAL`
+|Path locale cartella `monitoring-config/alerting/` (provisioning contact point/policy/rule)
 |===
+
+Vedi `.env_example` per l'elenco completo con tutti i path e default. Tutte le var sono
+obbligatorie per l'avvio (mount config file/dir falliscono senza — vedi nota sotto).
 
 == Avvio dello stack di monitoraggio
 
-Lo stack di monitoraggio si avvia separatamente dallo stack applicativo:
+Lo stack di monitoraggio si avvia separatamente dallo stack applicativo, ma **richiede la rete
+esterna `irccs`** (creata dallo stack applicativo principale, o manualmente con
+`docker network create irccs`) perché Grafana e Alloy vi si agganciano per essere raggiungibili
+dal reverse proxy httpd:
 
 [source,bash]
 ----
 docker compose -f docker-compose-monitoring.yaml up -d
 ----
+
+NOTA storica: i path `${X_CONFIG_PATH}` nel compose puntano a directory (es. `/etc/grafana`), mentre
+i mount sorgente sono singoli file — senza `/${X_CONFIG_FILE}` in coda al target del volume, Docker
+falliva il mount con "not a directory" per Loki/Grafana/Alloy. Corretto in tutti e tre i servizi.
