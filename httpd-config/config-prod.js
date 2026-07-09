@@ -13,5 +13,13 @@ window.APP_CONFIG = {
     VITE_SCAN_SESSION_CLIENT_ID: "irccs",
     VITE_SCAN_SESSION_REDIRECT_URI: "https://pj.istitutotumori.na.it/app/",
     VITE_SCAN_SESSION_EXPIRES_IN: "3600",
-    VITE_SCAN_SESSION_STATE: "scan-session"
+    VITE_SCAN_SESSION_STATE: "scan-session",
+
+    // Faro (log/errori frontend -> Loki via Alloy, vedi src/faro.ts).
+    // Vuoto = Faro disabilitato. api-key e' visibile lato browser (pagina
+    // pubblica): non e' un vero segreto, serve solo a filtrare traffico non
+    // intenzionale sul receiver. Deve combaciare con AGENT_KEY_APP_RECEIVER
+    // in irccs-docker/.env.
+    VITE_API_FARO_COLLECTOR_API: "https://pj.istitutotumori.na.it/faro-collector/collect",
+    VITE_API_FARO_API_KEY: "fe0ffe6e904e90b7e15d080ee2e1bf7df7a23dda4142ebff61462f90727692d2"
 };

@@ -1,5 +1,11 @@
 version: "3.8"
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "50m"
+    max-file: "5"
+
 x-shared:
   zammad-service: &zammad-service
     environment: &zammad-environment
@@ -55,6 +61,7 @@ x-shared:
 
     image: ${IMAGE_REPO:-ghcr.io/zammad/zammad}:${VERSION:-6.5.2-22}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - zammad-storage:/opt/zammad/storage
     depends_on:
@@ -74,6 +81,7 @@ services:
   zammad-elasticsearch:
     image: elasticsearch:${ELASTICSEARCH_VERSION:-8.19.6}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     environment:
@@ -93,6 +101,7 @@ services:
     command: memcached -m 256M
     image: memcached:${MEMCACHE_VERSION:-1.6.39-alpine}
     restart: ${RESTART:-always}
+    logging: *default-logging
 
   zammad-nginx:
     <<: *zammad-service
@@ -112,6 +121,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASS:-zammad}
     image: postgres:${POSTGRES_VERSION:-17.6-alpine}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - postgresql-data:/var/lib/postgresql/data
 
@@ -142,6 +152,7 @@ services:
   zammad-redis:
     image: redis:${REDIS_VERSION:-7.4.6-alpine}
     restart: ${RESTART:-always}
+    logging: *default-logging
     volumes:
       - redis-data:/data
 

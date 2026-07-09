@@ -3,6 +3,12 @@ networks:
     name: irccs
     driver: bridge
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "50m"
+    max-file: "5"
+
 services:
   irccs-microservice-clinical-reasoning:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-clinical-reasoning:${IRCCS_CLINICAL_REASONING_VERSION}
@@ -17,6 +23,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-auth:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-auth:${IRCCS_AUTH_VERSION}
@@ -31,6 +38,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-notification:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-notification:${IRCCS_NOTIFICATION_VERSION}
@@ -47,6 +55,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-practitioner:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:${IRCCS_PRACTITIONER_VERSION}
@@ -61,6 +70,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-centro-ricerca:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-centro-ricerca:${IRCCS_CENTRO_RICERCA_VERSION}
@@ -75,6 +85,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-studio-clinico:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:${IRCCS_STUDIO_CLINICO_VERSION}
@@ -90,6 +101,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:${IRCCS_ANAGRAFICA_VERSION}
@@ -106,6 +118,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-httpd:
     image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:${IRCCS_HTTPD_VERSION}
@@ -128,6 +141,7 @@ services:
     hostname: postgres
     container_name: postgres-keycloak
     restart: always
+    logging: *default-logging
     volumes:
       - postgres_data_keycloak:/var/lib/postgresql/data
       - ./microservice-config-webpush/postgres-init:/docker-entrypoint-initdb.d
@@ -171,6 +185,7 @@ services:
     env_file:
       - .env
     restart: always
+    logging: *default-logging
     entrypoint:
       [
         "/bin/sh",
@@ -217,6 +232,7 @@ services:
     hostname: postgres
     container_name: postgres-hapi-fhir
     restart: always
+    logging: *default-logging
     env_file:
       - .env
     volumes:
@@ -256,6 +272,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-zammad:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-zammad:${IRCCS_ZAMMAD_VERSION}
@@ -270,6 +287,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-microservice-webpush:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-webpush:${IRCCS_WEBPUSH_VERSION}
@@ -288,11 +306,13 @@ services:
       postgres-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
   irccs-antora-docs:
     image: nexus.infocube.it/i3/irccs/antora-docs:${IRCCS_ANTORA_DOCS_VERSION}
     container_name: irccs-antora-docs
     restart: always
+    logging: *default-logging
     networks:
       - irccs
 
@@ -342,6 +362,7 @@ services:
       irccs-keycloak:
         condition: service_healthy
     restart: always
+    logging: *default-logging
 
 volumes:
   postgres_data_hapi:

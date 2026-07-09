@@ -1,0 +1,38 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: irccs-log-errors
+    folder: 'Alerting'
+    interval: 1m
+    rules:
+      - uid: irccs-high-error-rate
+        title: 'Tasso errori elevato nei log container'
+        condition: threshold
+        for: 5m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Numero di log level=error/ERROR elevato negli ultimi 5 minuti'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({job=~".+"} |~ "(?i)level=?\\s*(error|err)" [5m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [20]
