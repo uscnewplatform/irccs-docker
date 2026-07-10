@@ -246,7 +246,7 @@ loki.process "logs_process_client" {
   // (e potenzialmente falsando l'alert sul tasso di errore). Wrappato in stage.match col
   // line-filter LogQL `!~ "^\\{"` cosi' si applica solo a log realmente in formato logfmt.
   stage.match {
-      selector = "{container_name=~\".+\"} !~ \"^\\\\{\""
+      selector = "{container_name=~\".+\"} !~ \"^\\{\""
 
       stage.logfmt {
           mapping = { "kind" = "", "service_name" = "", "app" = "" }
