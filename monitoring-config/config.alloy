@@ -228,11 +228,6 @@ loki.process "logs_process_client" {
 
   stage.template {
     source   = "redacted"
-    template = "{{ regexReplaceAll `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}` .Value `[REDACTED_EMAIL]` }}"
-  }
-
-  stage.template {
-    source   = "redacted"
     template = "{{ regexReplaceAll `(?i)[A-Z]{6}[0-9LMNPQRSTUV]{2}[A-EHLMPRT][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]` .Value `[REDACTED_CF]` }}"
   }
 
