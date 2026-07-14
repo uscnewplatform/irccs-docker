@@ -113,7 +113,7 @@ TokenIntrospectionTokenMapper {
     private void collectParentOrganizationIds(final GroupModel group, List<String> organizationIds) {
         if (group != null) {
             final String organizationId = group.getFirstAttribute("organizationId");
-            if (organizationId != null && !organizationIds.contains(organizationId)) {
+            if (organizationId != null && group.getParent() == null && !organizationIds.contains(organizationId)) {
                 HashMap<String, String> map = new HashMap<String, String>(){
                     {
                         this.put("\"fhirId\"", "\"" + organizationId + "\"");

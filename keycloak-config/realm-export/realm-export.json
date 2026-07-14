@@ -3045,6 +3045,8 @@
       "redirectUris": [
         "",
         "/fhir/*",
+        "/auth/*",
+        "http://localhost/auth/*",
         "http://localhost:3001"
       ],
       "webOrigins": [
@@ -11905,6 +11907,7 @@
       }
     ]
   },
+  "emailTheme": "pascale",
   "internationalizationEnabled": false,
   "supportedLocales": [],
   "authenticationFlows": [
