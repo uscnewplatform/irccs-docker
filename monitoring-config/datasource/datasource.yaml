@@ -9,7 +9,7 @@ datasources:
     type: 'loki'
     access: 'proxy'
     orgId: 1
-    url: 'http://${LOKI_HOST}:${LOKI_PORT}'
+    url: 'http://irccs-loki:3100'
     basicAuth: false
     isDefault: false
     version: 1

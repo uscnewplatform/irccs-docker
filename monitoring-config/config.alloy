@@ -228,11 +228,6 @@ loki.process "logs_process_client" {
 
   stage.template {
     source   = "redacted"
-    template = "{{ regexReplaceAll `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}` .Value `[REDACTED_EMAIL]` }}"
-  }
-
-  stage.template {
-    source   = "redacted"
     template = "{{ regexReplaceAll `(?i)[A-Z]{6}[0-9LMNPQRSTUV]{2}[A-EHLMPRT][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]` .Value `[REDACTED_CF]` }}"
   }
 
@@ -245,8 +240,20 @@ loki.process "logs_process_client" {
     source = "redacted"
   }
 
-  stage.logfmt {
-      mapping = { "kind" = "", "service_name" = "", "app" = "" }
+  // logfmt si applica solo ai container che effettivamente loggano in quel formato
+  // (lo stack di monitoring stesso). Tutti gli altri (microservizi Quarkus con
+  // quarkus-logging-json, Zammad/Rails) mandano JSON: applicarci stage.logfmt fa fallire
+  // il parser con "unexpected '\"'" su ogni riga, spammando i log di Alloy (e
+  // potenzialmente falsando l'alert sul tasso di errore). Whitelist esplicita invece di
+  // un line-filter regex: LogQL non accetta `\{` come char escape nella stringa selector
+  // (provato, "invalid char escape" al parsing), quindi matchare "non inizia con {" non
+  // è praticabile qui.
+  stage.match {
+      selector = "{container_name=~\"irccs-(loki|grafana|alloy)\"}"
+
+      stage.logfmt {
+          mapping = { "kind" = "", "service_name" = "", "app" = "" }
+      }
   }
 
   stage.labels {

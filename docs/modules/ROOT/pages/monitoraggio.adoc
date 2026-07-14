@@ -42,6 +42,20 @@ variabili d'ambiente:
 
 SSO Keycloak **non ancora implementato** (task separato, richiede client OIDC dedicato nel realm).
 
+**Reverse proxy sub-path `/grafana`** — due bug risolti (luglio 2026), entrambi causavano loop di
+redirect (`ERR_TOO_MANY_REDIRECTS` / 301 su se stesso):
+
+1. `grafana.ini`: `root_url = %(protocol)s://%(domain)s/grafana/` con `protocol` non settato
+   risolveva a `http://` anche dietro HTTPS (Apache termina TLS, backend interno resta http).
+   Fix: `protocol = http` esplicito + `root_url` con schema `https` hardcoded
+   (`root_url = https://%(domain)s/grafana/`), non derivato da `%(protocol)s`.
+2. `httpd-config/irccs.conf`: `ProxyPass /grafana http://irccs-grafana:3000` **strippa** il
+   prefisso `/grafana` — il backend riceveva `/login` invece di `/grafana/login`. Con
+   `serve_from_sub_path = true`, Grafana si aspetta il prefisso e redirige per "correggerlo",
+   ma Apache lo ristrippa alla richiesta successiva → loop infinito. Fix: target proxy deve
+   includere lo stesso prefisso (`ProxyPass /grafana http://irccs-grafana:3000/grafana`, idem
+   `ProxyPassReverse`).
+
 **Alerting**: contact point email (stesso relay SMTP di `quarkus.mailer`, no auth) e regola su tasso
 errori elevato nei log, provisionati da `monitoring-config/alerting/` (`contactpoints.yaml`,
 `policies.yaml`, `rules.yaml`). Var d'ambiente: `GF_SMTP_HOST`, `GF_SMTP_FROM`, `ALERT_EMAIL_TO`.
@@ -93,11 +107,15 @@ Agente di raccolta dati. Attivo in questa fase:
 * **Log Docker** — scoperta via socket (`discovery.docker`), copre **tutti** i container sull'host
   indipendentemente da stack/rete (verificato: intercetta sia lo stack applicativo IRCCS sia Zammad
   senza bisogno di join di rete).
-* **PII scrub** — `loki.process` redige email, codice fiscale italiano, IBAN da ogni log prima dello
+* **PII scrub** — `loki.process` redige codice fiscale italiano e IBAN da ogni log prima dello
   storage in Loki (pattern regex, mitigazione best-effort — non sostituisce disciplina di logging lato
   codice, vedi audit sotto). Implementato con `stage.regex` + `stage.template` (`regexReplaceAll`) +
   `stage.output`: **`stage.replace` non riscrive la entry in questa versione di Alloy** (v1.11.3,
   verificato empiricamente — bug/limite noto, non usare quello stage per redazione).
+  **Redazione email rimossa** (luglio 2026, richiesta operativa per correlare `userId` nei log
+  durante debug produzione): lo stage `regexReplaceAll` per email è stato tolto da
+  `config.alloy` — CF e IBAN restano redatti, le email compaiono in chiaro su Loki. Se serve
+  ripristinarla, il pattern era `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}` → `[REDACTED_EMAIL]`.
 * **Faro receiver** — riceve log/errori dal frontend React (`irccs-react-dashboard/src/faro.ts`),
   li instrada nella stessa pipeline di scrub PII. Solo logs, non trace (Tempo non deployato).
 * **Syslog** — riceve log via TCP/UDP (porte interne, non esposte su host).
@@ -333,3 +351,18 @@ docker compose -f docker-compose-monitoring.yaml up -d
 NOTA storica: i path `${X_CONFIG_PATH}` nel compose puntano a directory (es. `/etc/grafana`), mentre
 i mount sorgente sono singoli file — senza `/${X_CONFIG_FILE}` in coda al target del volume, Docker
 falliva il mount con "not a directory" per Loki/Grafana/Alloy. Corretto in tutti e tre i servizi.
+
+**Dopo qualsiasi modifica a `.env` (path, credenziali, versioni immagine): usare
+`docker compose -f docker-compose-monitoring.yaml up -d`, non `docker restart <container>`.**
+`restart` riavvia il processo nel container esistente senza rileggere `.env` né ricreare i
+mount — se un path `*_LOCAL` cambia, il container continua a usare il vecchio mount (o, se il
+vecchio source non esisteva più, Docker lo sostituisce silenziosamente con una directory vuota,
+mascherando il file atteso). Per forzare la ricreazione di un solo servizio:
+`docker compose -f docker-compose-monitoring.yaml up -d --force-recreate grafana` (o `loki`/`alloy`).
+
+**Troubleshooting datasource "Unable to retrieve metric names" / errore 500 su Loki**: verificare
+prima che il datasource provisionato da file sia effettivamente quello attivo — `GET
+/api/datasources` via API Grafana. Un datasource **creato manualmente da UI** con lo stesso nome
+ma URL vuoto/sbagliato convive con quello da file (match per `uid`, non per `name`) e può restare
+marcato come default, mascherando quello corretto. Vanno eliminati via
+`DELETE /api/datasources/uid/<uid-sbagliato>` prima di ricreare Grafana.
