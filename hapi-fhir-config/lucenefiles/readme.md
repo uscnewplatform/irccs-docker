@@ -1,1 +1,0 @@
-necessario per l'indicizzazione delle ontologie mediche e la loro ricerca
