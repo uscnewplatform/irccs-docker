@@ -4387,7 +4387,7 @@
             "attributes": {},
             "uris": [
               "/fhir/Observation",
-              "/fhir/Observation/*/$expunge"
+              "/fhir/Observation/{id}/$expunge"
             ],
             "scopes": [
               {
