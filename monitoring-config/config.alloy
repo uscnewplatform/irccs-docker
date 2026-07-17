@@ -256,6 +256,20 @@ loki.process "logs_process_client" {
       }
   }
 
+  // Log dal Faro receiver (frontend, src/faro.ts): non hanno container_name
+  // (non arrivano da loki.source.docker), quindi il match sopra li esclude e
+  // "kind" resta fermo al valore statico "frontend" impostato in
+  // faro.receiver.extra_log_labels. I dashboard di frontend-application.json
+  // filtrano pero' su kind="measurement"/"exception" (valore reale scritto nel
+  // body del log da Faro SDK): serve un secondo match dedicato per estrarlo.
+  stage.match {
+      selector = "{app=\"irccs-react-dashboard\"}"
+
+      stage.logfmt {
+          mapping = { "kind" = "", "service_name" = "" }
+      }
+  }
+
   stage.labels {
       values = { "kind" = "kind", "service_name" = "service_name", "app" = "app" }
   }

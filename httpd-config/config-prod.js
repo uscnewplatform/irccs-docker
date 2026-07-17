@@ -1,6 +1,4 @@
 window.APP_CONFIG = {
-    VITE_APP_STAGING_MS_HOST: "",
-    VITE_APP_STAGING_AUTH_HOST: "",
     VITE_APP_ZAMMAD_HOST: "https://pj.istitutotumori.na.it:8443",
     VITE_APP_ZAMMAD_POLL_INTERVAL_SECONDS: "120",
     VITE_APP_ZAMMAD_TICKET_ANNUNCE_STATE_ID: "7",
@@ -14,7 +12,7 @@ window.APP_CONFIG = {
     VITE_SCAN_SESSION_REDIRECT_URI: "https://pj.istitutotumori.na.it/app/",
     VITE_SCAN_SESSION_EXPIRES_IN: "3600",
     VITE_SCAN_SESSION_STATE: "scan-session",
-
+    VITE_APP_CHATBOT_ENABLED: false,
     // Faro (log/errori frontend -> Loki via Alloy, vedi src/faro.ts).
     // Vuoto = Faro disabilitato. api-key e' visibile lato browser (pagina
     // pubblica): non e' un vero segreto, serve solo a filtrare traffico non
