@@ -286,9 +286,17 @@ loki.source.docker "default" {
 // Solo logs: le trace non sono abilitate lato client (Tempo non deployato,
 // fase 2) quindi non serve un output traces qui.
 faro.receiver "integrations_app_agent_receiver" {
+	// Ricevitore condiviso da piu' app frontend (dashboard React, PWA
+	// Flutter). "app" resta statico per non rompere le dashboard/query
+	// Loki esistenti (frontend-application.json usa label_values(app), lo
+	// stage.match sotto seleziona app="irccs-react-dashboard"). "app_name"
+	// (stringa vuota = riconosciuto da Alloy) si popola invece dal campo
+	// app.name del payload Faro di ciascun client, per distinguere davvero
+	// dashboard e PWA senza toccare le dashboard esistenti.
 	extra_log_labels = {
-		app  = "irccs-react-dashboard",
-		kind = "frontend",
+		app      = "irccs-react-dashboard",
+		app_name = "",
+		kind     = "frontend",
 	}
 
 	server {
