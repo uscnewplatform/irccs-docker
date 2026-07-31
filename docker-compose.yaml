@@ -125,7 +125,6 @@ services:
     container_name: irccs-httpd-dashboard
     ports:
       - "443:443"
-      - "8443:8443"
     volumes:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/zammad.conf:/usr/local/apache2/conf/sites/zammad.conf

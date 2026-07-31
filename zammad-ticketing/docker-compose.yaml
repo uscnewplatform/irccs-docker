@@ -41,7 +41,7 @@ x-shared:
       NGINX_SERVER_SCHEME:
       RAILS_TRUSTED_PROXIES:
       ZAMMAD_HTTP_TYPE: "https"
-      ZAMMAD_FQDN: ${ZAMMAD_FQDN:-zammad.istitutotumori.na.it}
+      ZAMMAD_FQDN: ${ZAMMAD_FQDN:-pj-tk.istitutotumori.na.it}
       ZAMMAD_WEB_CONCURRENCY:
       ZAMMAD_PROCESS_SESSIONS_JOBS_WORKERS:
       ZAMMAD_PROCESS_SCHEDULED_JOBS_WORKERS:

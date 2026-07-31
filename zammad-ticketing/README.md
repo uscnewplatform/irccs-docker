@@ -14,36 +14,32 @@ Zammad gira come stack Docker separato (questa cartella) sulla stessa macchina d
 stack principale IRCCS, dietro lo stesso Apache httpd (`irccs-httpd-dashboard`) che
 termina già il certificato SSL wildcard `*.istitutotumori.na.it`.
 
-**Perché non un subdomain dedicato**: servirebbe un record DNS (A o CNAME) per
-`zammad.istitutotumori.na.it`, non ottenibile in questo ambiente (solo record A
-espliciti concessi, niente CNAME, e niente wildcard DNS disponibile).
-
 **Perché non un sub-path** (es. `pj.istitutotumori.na.it/zammad-ui/`): Zammad non
 supporta ufficialmente il deploy sotto sub-path (limite noto, non risolto nemmeno
 nelle versioni 6.x — il router client-side assume di girare in root `/`). Tentato
 inizialmente, causava schermata bianca/loading infinito e asset serviti come
 `index.html` (mismatch MIME).
 
-**Soluzione adottata: porta dedicata sullo stesso hostname.**
-Zammad UI è raggiungibile su:
+**Soluzione adottata: sottodominio dedicato, porta 443.**
+Inizialmente si era optato per una porta dedicata (`8443`) sullo stesso hostname
+`pj.istitutotumori.na.it`, perché non era disponibile un record DNS per un
+sottodominio. Ora è stato ottenuto il record A per `pj-tk.istitutotumori.na.it` e
+la porta 8443 non è comunque più raggiungibile dall'esterno per un problema di rete/
+firewall perimetrale, quindi si è passati al sottodominio dedicato su 443. Zammad UI
+è raggiungibile su:
 ```
-https://pj.istitutotumori.na.it:8443/
+https://pj-tk.istitutotumori.na.it/
 ```
-stesso dominio del resto della piattaforma, stesso certificato wildcard, nessun DNS
-aggiuntivo — solo una porta HTTPS in più aperta su Apache.
+stesso certificato wildcard del resto della piattaforma, nessuna porta aggiuntiva.
 
 ### Configurazione coinvolta
 
-- `httpd-config/httpd.conf` (repo principale): `Listen 8443` aggiunto accanto a `Listen 443`.
-- `httpd-config/zammad.conf` (repo principale, nuovo file): `VirtualHost *:8443`,
-  `ServerName pj.istitutotumori.na.it`, stesso cert wildcard, proxy diretto e pulito
+- `httpd-config/zammad.conf` (repo principale): `VirtualHost *:443`,
+  `ServerName pj-tk.istitutotumori.na.it`, stesso cert wildcard, proxy diretto e pulito
   verso `irccs-zammad-railsserver:3000` (root, niente hack referer/sub-path) + websocket
   (`/ws`, `/cable`).
-- `docker-compose.yaml` (repo principale): porta `8443:8443` esposta sul servizio
-  `irccs-httpd`, mount di `zammad.conf`.
 - `zammad-ticketing/.env`: `ZAMMAD_FQDN` e `NGINX_SERVER_NAME` puntano a
-  `pj.istitutotumori.na.it:8443` (fqdn con porta esplicita, necessaria perché non è
-  la 443 di default).
+  `pj-tk.istitutotumori.na.it` (nessuna porta esplicita, è la 443 di default).
 - `zammad-ticketing/docker-compose.yaml`:
   - `zammad-railsserver`: aggiunta `RAILS_SERVE_STATIC_FILES: "true"` — bypassando il
     nginx interno di Zammad (vedi sotto), Puma deve servire da solo gli asset
@@ -84,7 +80,7 @@ da Keycloak) e sincronizza periodicamente Keycloak → Zammad (`SyncScheduler`).
 
 - **Endpoint pubblico**: `https://pj.istitutotumori.na.it/zammad/*` (proxato da
   `irccs.conf` verso `irccs-zammad:8080/fhir/zammad/*`) — **non** l'interfaccia web
-  Zammad, quella è sulla porta 8443 separata.
+  Zammad, quella è sul sottodominio dedicato `pj-tk.istitutotumori.na.it` (vedi sopra).
 - **Config chiave** (`.env` principale): `ZAMMAD_BASE_URL` deve includere il suffisso
   `/api/v1/` (es. `http://irccs-zammad-nginx:8080/api/v1/`) perché il client REST del
   microservizio fa `@Path("/organizations")`, `@Path("/groups")` ecc. assumendo che il
@@ -122,10 +118,10 @@ separate.
 Nel realm `pascale`, client **pubblico** (no secret) chiamato `zammad`:
 - Client authentication: **Off**
 - Standard flow: **On** (unico flow abilitato)
-- Root URL: `https://pj.istitutotumori.na.it:8443`
-- Valid redirect URIs: `https://pj.istitutotumori.na.it:8443/auth/openid_connect/callback`
-- Valid post logout redirect URIs: `https://pj.istitutotumori.na.it:8443/*`
-- Web origins: `https://pj.istitutotumori.na.it:8443`
+- Root URL: `https://pj-tk.istitutotumori.na.it`
+- Valid redirect URIs: `https://pj-tk.istitutotumori.na.it/auth/openid_connect/callback`
+- Valid post logout redirect URIs: `https://pj-tk.istitutotumori.na.it/*`
+- Web origins: `https://pj-tk.istitutotumori.na.it`
 - Advanced → Proof Key for Code Exchange (PKCE): **S256**
 
 ### Zammad — Admin → Security → Third-party Applications → OpenID Connect
