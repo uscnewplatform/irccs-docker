@@ -44,7 +44,7 @@ services:
       ENVIRONMENT: ${PWA_ENVIRONMENT:-staging}
       ENFORCE_HTTPS: ${PWA_ENFORCE_HTTPS:-false}
       CORS_ORIGINS: ${PWA_CORS_ORIGINS:-}
-      IRCCS_API_BASE_URL: http://irccs-httpd
+      IRCCS_API_BASE_URL: ${IRCCS_API_BASE_URL:-}
       KEYCLOAK_REALM_URL: http://irccs-keycloak:8080/backoffice/realms/pascale
       WEB_APP_BASE_PATH: /app/
     volumes:
