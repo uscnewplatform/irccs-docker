@@ -5,7 +5,7 @@
 # Prerequisiti: stack IRCCS già avviato per Keycloak e httpd.
 
 networks:
-  irccs-docker_irccs:
+  irccs:
     external: true
 
 services:
@@ -15,6 +15,9 @@ services:
     hostname: irccs-pwa
     environment:
       NGINX_PORT: 8080
+      FARO_COLLECTOR_URL: ${FARO_COLLECTOR_URL:-}
+      FARO_API_KEY: ${FARO_API_KEY:-}
+      FARO_ENVIRONMENT: ${FARO_ENVIRONMENT:-}
     ports:
       - "8090:8080"
     networks:
