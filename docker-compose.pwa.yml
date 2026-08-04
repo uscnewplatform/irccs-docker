@@ -21,6 +21,6 @@ services:
     ports:
       - "8090:8080"
     networks:
-      - irccs-docker_irccs
+      - irccs
     restart: always
 
