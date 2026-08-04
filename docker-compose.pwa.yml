@@ -7,7 +7,7 @@
 # (vedi irccs-pwa/Dockerfile e irccs-pwa/backend/.env.example).
 
 networks:
-  irccs-docker_irccs:
+  irccs:
     external: true
 
 services:
@@ -30,5 +30,5 @@ services:
     ports:
       - "8090:8000"
     networks:
-      - irccs-docker_irccs
+      - irccs
     restart: always
