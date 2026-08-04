@@ -49,11 +49,3 @@ services:
     networks:
       - irccs-docker_irccs
     restart: always
-
-  irccs-pwa-admin:
-    image: nexus.infocube.it:443/i3/irccs/irccs-pwa-admin/develop:1.0.0
-    container_name: irccs-pwa-admin
-    hostname: irccs-pwa-admin
-    networks:
-      - irccs-docker_irccs
-    restart: always
