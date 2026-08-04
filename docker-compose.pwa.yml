@@ -3,9 +3,11 @@
 # Stop:  docker compose -f docker-compose.pwa.yml down
 #
 # Prerequisiti: stack IRCCS già avviato per Keycloak e httpd.
+# Immagine monolite: backend FastAPI + build Flutter web nello stesso container
+# (vedi irccs-pwa/Dockerfile e irccs-pwa/backend/.env.example).
 
 networks:
-  irccs:
+  irccs-docker_irccs:
     external: true
 
 services:
@@ -13,14 +15,20 @@ services:
     image: nexus.infocube.it:443/i3/irccs/irccs-pwa/develop:1.0.0
     container_name: irccs-pwa
     hostname: irccs-pwa
+    env_file:
+      - .env
     environment:
-      NGINX_PORT: 8080
-      FARO_COLLECTOR_URL: ${FARO_COLLECTOR_URL:-}
-      FARO_API_KEY: ${FARO_API_KEY:-}
-      FARO_ENVIRONMENT: ${FARO_ENVIRONMENT:-}
+      ENVIRONMENT: ${PWA_ENVIRONMENT:-staging}
+      SECRET_KEY: ${PWA_SECRET_KEY}
+      ENFORCE_HTTPS: ${PWA_ENFORCE_HTTPS:-false}
+      CORS_ORIGINS: ${PWA_CORS_ORIGINS:-}
+      API_BASE_PATH: /quest-inspire-api
+      IRCCS_API_BASE_URL: http://irccs-httpd
+      IRCCS_TOKEN_AZP: irccs
+      SYMPTOM_CLASSIFIER_ENABLED: ${PWA_SYMPTOM_CLASSIFIER_ENABLED:-false}
+      SYMPTOM_CLASSIFIER_URL: ${PWA_SYMPTOM_CLASSIFIER_URL:-http://symptom-classifier:8100}
     ports:
-      - "8090:8080"
+      - "8090:8000"
     networks:
-      - irccs
+      - irccs-docker_irccs
     restart: always
-
