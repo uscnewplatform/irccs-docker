@@ -23,7 +23,7 @@ services:
       ENFORCE_HTTPS: ${PWA_ENFORCE_HTTPS:-false}
       CORS_ORIGINS: ${PWA_CORS_ORIGINS:-}
       API_BASE_PATH: /quest-inspire-api
-      IRCCS_API_BASE_URL: http://irccs-httpd
+      IRCCS_API_BASE_URL: https://pj.istitutotumori.na.it
       IRCCS_TOKEN_AZP: irccs
       SYMPTOM_CLASSIFIER_ENABLED: ${PWA_SYMPTOM_CLASSIFIER_ENABLED:-false}
       SYMPTOM_CLASSIFIER_URL: ${PWA_SYMPTOM_CLASSIFIER_URL:-http://symptom-classifier:8100}
