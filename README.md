@@ -268,24 +268,7 @@ pulizia a mano quando non servono più. Verificare periodicamente lo spazio disc
 
 ## Stack PWA (stack separato)
 
-La PWA questionari (`irccs-pwa`) gira in uno stack Docker separato che si aggancia alla rete `irccs-docker_irccs`.
-
-### Prerequisiti
-
-Aggiungere al `.env` prima di avviare:
-
-```bash
-# OBBLIGATORIO: openssl rand -hex 32
-PWA_SECRET_KEY=
-
-# staging = no ENFORCE_HTTPS richiesto; production = richiede ENFORCE_HTTPS=true
-PWA_ENVIRONMENT=staging
-PWA_ENFORCE_HTTPS=false
-
-# Origini CORS ammesse (porta admin + eventuale dominio pubblico)
-# Esempio: http://10.99.88.240:8092,https://pwa.irccs.infocube.it
-PWA_CORS_ORIGINS=
-```
+La PWA questionari (`irccs-pwa`) gira in uno stack Docker separato che si aggancia alla rete `irccs-docker_irccs`. Il backend è integrato in `irccs-httpd` (non più un servizio separato).
 
 ### Build mode (HTTP vs HTTPS)
 
@@ -300,43 +283,26 @@ Per cambiare mode: triggera il job Jenkins `irccs-pwa` con parametro `BUILD_MODE
 
 ### Avvio completo (prima installazione)
 
-**1. Configura `.env`** (vedi sezione Prerequisiti sopra)
-
-**2. Avvia lo stack IRCCS principale** (se non già up):
+**1. Avvia lo stack IRCCS principale** (se non già up):
 ```bash
 docker-compose up -d
 ```
 
-**3. Avvia lo stack PWA:**
+**2. Avvia lo stack PWA:**
 ```bash
 docker-compose -f docker-compose.pwa.yml up -d
 ```
 
-**4. Verifica che i container siano up:**
+**3. Verifica che il container sia up:**
 ```bash
 docker-compose -f docker-compose.pwa.yml ps
-# tutti e 3 devono essere in stato "Up"
 ```
 
-**5. Seed iniziale — obbligatorio alla prima installazione:**
-```bash
-docker exec irccs-pwa-backend python seed.py
-```
-Crea l'utente admin PWA e i dati demo. **Senza questo step il login admin non funziona.**
-
-**6. Verifica backend:**
-```bash
-docker exec irccs-pwa-backend curl -s http://localhost:8000/health
-# atteso: {"status":"ok"}
-```
-
-**7. Apri nel browser:**
+**4. Apri nel browser:**
 
 | Servizio | URL |
 |----------|-----|
 | PWA paziente | http://\<IP\>:8090/app/ |
-| PWA admin panel | http://\<IP\>:8092/pwa-admin/ |
-| Backend API (Swagger) | http://\<IP\>:8091/docs |
 
 ### Aggiornamento immagini
 
@@ -354,8 +320,6 @@ docker-compose -f docker-compose.pwa.yml down
 ### Troubleshooting
 
 - **Flutter crasha con "API_BASE_URL deve essere HTTPS"** → le immagini sono state buildate con `BUILD_MODE=release`. Rebuildare con `BUILD_MODE=profile` (job Jenkins `irccs-pwa`).
-- **Login admin non funziona** → eseguire `docker exec irccs-pwa-backend python seed.py`.
-- **Backend non risponde** → `docker-compose -f docker-compose.pwa.yml logs --tail=50 irccs-pwa-backend`.
 - **Rete non trovata all'avvio** → lo stack IRCCS principale deve essere up prima (`docker-compose up -d`).
 
 ## Note application.properties MS
