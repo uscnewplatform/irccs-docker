@@ -162,7 +162,7 @@ hapi:
     mdm_rules_json_location: "mdm-rules.json"
     #    local_base_urls:
     #      - https://hapi.fhir.org/baseR4
-    defer_indexing_for_codesystems_of_size: 50000
+    defer_indexing_for_codesystems_of_size: 200000
     logical_urls:
       - http://terminology.hl7.org/*
       - https://terminology.hl7.org/*
