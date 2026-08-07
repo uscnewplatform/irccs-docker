@@ -72,6 +72,9 @@ hapi:
     ### designation (es. ricerca farmaci per principio attivo). Job schedulato in
     ### background, una tantum per (ri)caricamento del CodeSystem/ValueSet.
     pre_expand_value_sets: true
+    ### default HAPI = 1000: con CodeSystem farmaci AIFA (159k concept) la pre-expansion
+    ### scartava silenziosamente tutto (0 concept salvati). Va alzato oltre il volume reale.
+    maximum_expansion_size: 200000
     #  integrazione Snowstorm per SNOMED:
     external_terminology_server_url: 'http://snowstorm:8080/fhir'
 
@@ -144,7 +147,7 @@ hapi:
     #    enable_index_contained_resource: false
     ###  !!Extended Lucene/Elasticsearch Indexing is still a experimental feature, expect some features (e.g. _total=accurate) to not work as expected!!
     ###  more information here: https://hapifhir.io/hapi-fhir/docs/server_jpa/elastic.html
-    advanced_lucene_indexing: true
+    advanced_lucene_indexing: false
     bulk_export_enabled: false
     bulk_import_enabled: false
     #    enforce_referential_integrity_on_delete: false
@@ -162,7 +165,7 @@ hapi:
     mdm_rules_json_location: "mdm-rules.json"
     #    local_base_urls:
     #      - https://hapi.fhir.org/baseR4
-    defer_indexing_for_codesystems_of_size: 50000
+    defer_indexing_for_codesystems_of_size: 200000
     logical_urls:
       - http://terminology.hl7.org/*
       - https://terminology.hl7.org/*
