@@ -72,6 +72,9 @@ hapi:
     ### designation (es. ricerca farmaci per principio attivo). Job schedulato in
     ### background, una tantum per (ri)caricamento del CodeSystem/ValueSet.
     pre_expand_value_sets: true
+    ### default HAPI = 1000: con CodeSystem farmaci AIFA (159k concept) la pre-expansion
+    ### scartava silenziosamente tutto (0 concept salvati). Va alzato oltre il volume reale.
+    maximum_expansion_size: 200000
     #  integrazione Snowstorm per SNOMED:
     external_terminology_server_url: 'http://snowstorm:8080/fhir'
 
