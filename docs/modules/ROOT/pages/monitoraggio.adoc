@@ -80,18 +80,18 @@ chunk da `/loki/chunks` (dentro il volume `loki_data`) — dato non piu' interro
 
 **Archiviazione oltre i 3 mesi**: `setup/archive_loki_snapshot.sh` — snapshot compresso dell'intero
 volume `loki_data` su disco host (default `/var/backup/loki-archive/`, path configurabile come primo
-argomento). Va schedulato via cron (mensile consigliato, prima che il compactor cancelli la finestra
-corrispondente):
+argomento). Installazione della schedulazione automatica (idempotente):
 
-[source,cron]
+[source,bash]
 ----
-0 3 1 * * /path/to/irccs-docker/setup/archive_loki_snapshot.sh /var/backup/loki-archive >> /var/log/loki-archive.log 2>&1
+./setup/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
+# default: /var/backup/loki-archive, 12 mesi
 ----
 
-Nota: lo script copia l'intero storage ad ogni run (non solo i log in scadenza) — piu' robusto di
-un export selettivo (nessuna finestra persa se uno script salta un'esecuzione), ma gli archivi
-crescono nel tempo. Nessuna cancellazione automatica degli archivi: vanno ripuliti a mano o con una
-procedura separata quando non servono piu'.
+Installa in crontab l'esecuzione mensile (1 del mese, 03:00). Nota: lo script copia l'intero
+storage ad ogni run (non solo i log in scadenza) — piu' robusto di un export selettivo (nessuna
+finestra persa se uno script salta un'esecuzione). Gli archivi piu' vecchi della soglia
+`mesi_da_conservare` vengono cancellati automaticamente ad ogni run.
 
 === Grafana Alloy
 

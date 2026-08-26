@@ -247,24 +247,21 @@ docker compose -f docker-compose-monitoring.yaml up -d
 
 Loki tiene i log interrogabili in Grafana per 3 mesi (`retention_period: 2160h` in
 `monitoring-config/loki-config.yml`), poi il compactor li cancella. Per non perderli,
-schedulare uno snapshot mensile del volume `loki_data` **prima** che scada la finestra
-di retention:
+uno snapshot mensile del volume `loki_data` va eseguito **prima** che scada la finestra
+di retention. Installazione automatica (idempotente, sostituisce il vecchio
+`crontab -e` manuale — verificato durante l'audit trail Fase 3 che nessuno l'aveva mai
+effettivamente eseguito):
 
 ```bash
-crontab -e
+./setup/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
+# default: /var/backup/loki-archive, 12 mesi
 ```
 
-Aggiungere (esegue il giorno 1 di ogni mese alle 03:00, log dell'esecuzione in
-`/var/log/loki-archive.log`):
-
-```cron
-0 3 1 * * /path/to/irccs-docker/setup/archive_loki_snapshot.sh /var/backup/loki-archive >> /var/log/loki-archive.log 2>&1
-```
-
-Sostituire `/path/to/irccs-docker` con il path reale di checkout su questa macchina.
-Gli archivi (`.tar.gz`, uno per snapshot) non vengono mai cancellati automaticamente —
-pulizia a mano quando non servono più. Verificare periodicamente lo spazio disco in
-`/var/backup/loki-archive`.
+Schedula il giorno 1 di ogni mese alle 03:00 (log in `/var/log/loki-archive.log`).
+Gli archivi (`.tar.gz`, uno per snapshot) piu' vecchi della soglia `mesi_da_conservare`
+vengono cancellati automaticamente ad ogni run — prima non c'era alcuna pulizia, lo
+spazio disco cresceva senza limite. Verificare comunque periodicamente lo spazio in
+`directory_archivio` (default `/var/backup/loki-archive`).
 
 ## Stack PWA (stack separato)
 
