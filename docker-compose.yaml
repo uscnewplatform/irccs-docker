@@ -218,6 +218,11 @@ services:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
       - ./terminology:/terminology
       - ./hapi-fhir-config/lucenefiles:/lucenefiles
+      # Audit trail Fase 1: interceptor (partizione AUDIT + append-only + hash-chain).
+      # /app/extra-classes/ e' gia' in -Dloader.path nell'entrypoint dell'immagine
+      # hapiproject/hapi (LOADER_PATH come env NON basta). Il jar e' un artefatto buildato
+      # da irccs-common/hapi-audit-interceptor, committato qui come i provider Keycloak.
+      - ./hapi-fhir-config/interceptors/audit-partition-interceptor.jar:/app/extra-classes/audit-partition-interceptor.jar
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
     env_file:
