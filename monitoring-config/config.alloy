@@ -320,6 +320,22 @@ loki.process "logs_process_client" {
   stage.labels {
       values = { "kind" = "kind", "service_name" = "service_name", "app" = "app" }
   }
+
+  // Etichetta le righe di audit trail (quelle con il campo MDC "auditAction" emesso
+  // da FhirClient.createAuditEvent / AuditTrailService) con audit_trail="true", cosi'
+  // loki-config.yml puo' dargli una retention piu' lunga della retention operativa
+  // di 3 mesi (vedi retention_stream). NB: l'AuditEvent FHIR su HAPI - append-only -
+  // resta comunque il record di riferimento a lungo termine; questa e' la copia
+  // ridondante di corroborazione, non deve sparire dopo 3 mesi.
+  // Whitelist sui soli container che loggano JSON (i microservizi Quarkus): lo
+  // stage.json su una riga non-JSON fallisce e spamma i log di Alloy.
+  stage.match {
+      selector = "{container_name=~\"irccs-(auth|anagrafica-pazienti|centro-ricerca|studio-clinico|practitioner|clinical-reasoning|tac|patient-interview|notification|zammad)\"} |~ \"auditAction\""
+
+      stage.static_labels {
+          values = { "audit_trail" = "true" }
+      }
+  }
 }
 
 loki.source.docker "default" {

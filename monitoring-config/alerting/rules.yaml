@@ -36,3 +36,142 @@ groups:
                 - evaluator:
                     type: gt
                     params: [20]
+
+  # ---------------------------------------------------------------------------
+  # Accessi anomali ai dati paziente - richiesti dal provvedimento del Garante
+  # sul dossier sanitario (rilevazione accessi anomali per volume / fuori orario /
+  # fallimenti). Si basano sulla riga di log strutturata "AUDIT ..." emessa da
+  # FhirClient.createAuditEvent / AuditTrailService (campi MDC auditAction,
+  # auditOutcome, auditUser, auditResourceType), indipendente dall'AuditEvent FHIR.
+  # ---------------------------------------------------------------------------
+  - orgId: 1
+    name: irccs-audit-anomalie
+    folder: 'Alerting'
+    interval: 5m
+    rules:
+      - uid: irccs-audit-read-volume-per-user
+        title: 'Volume elevato di consultazioni dati paziente da un singolo utente'
+        condition: threshold
+        for: 10m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Un utente ha effettuato molte letture di dati clinici nell''ultima ora - possibile accesso massivo non pertinente'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'max(sum by (auditUser) (count_over_time({container_name=~"irccs-.+"} | json | auditAction=~"R|E" | auditOutcome="success" | auditUser!="" [1h])))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [500]
+
+      - uid: irccs-audit-off-hours-access
+        title: 'Accesso a dati paziente fuori orario di servizio'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Letture di dati clinici registrate tra le 21:00 e le 06:00 - verificare la pertinenza'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              # Nota: la finestra oraria "fuori servizio" va rifinita in base al fuso del
+              # server Grafana; qui e' un gate grezzo sul volume nella finestra di 5m,
+              # da abbinare a una silence programmata negli orari di servizio.
+              expr: 'sum(count_over_time({container_name=~"irccs-.+"} | json | auditAction=~"R|E" | auditOutcome="success" [5m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [50]
+
+      - uid: irccs-audit-write-failures
+        title: 'Fallimenti di scrittura AuditEvent'
+        condition: threshold
+        for: 5m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'createAuditEvent sta fallendo: alcune operazioni potrebbero non essere tracciate nell''AuditEvent FHIR (resta il log Loki)'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name=~"irccs-.+"} |~ "createAuditEvent: scrittura AuditEvent fallita|could not write AuditEvent" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-append-only-violation
+        title: 'Tentativo di modifica/cancellazione di un AuditEvent'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'AuditEventAppendOnlyInterceptor ha bloccato un update/delete/expunge su AuditEvent - possibile tentativo di alterazione dell''audit trail'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name=~"irccs-hapi.*"} |~ "AuditEvent e. append-only" [5m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
