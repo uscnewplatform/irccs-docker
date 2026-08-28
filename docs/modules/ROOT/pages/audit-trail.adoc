@@ -155,11 +155,20 @@ Regole Grafana in `monitoring-config/alerting/rules.yaml`, gruppo `irccs-audit-a
 
 == Accesso all'audit trail
 
-La dashboard consulta gli AuditEvent tramite `useAuditTrail.ts` con
-`AuditEvent?entity-identifier=...`. La lettura della partizione `AUDIT` **non è ancora**
-mediata da un endpoint microservizio con controllo di ruolo dedicato: è un punto aperto.
-La consultazione dell'audit trail va riservata a un ruolo specifico (es. auditor / DPO)
-via `AuthorizationInterceptor` partition-aware o endpoint dedicato.
+HAPI FHIR **non è esposto in rete** (`docker-compose.yaml`: bind su `127.0.0.1`, solo i
+microservizi sulla rete `irccs` e gli script di setup sull'host lo raggiungono). La
+partizione `AUDIT` non è quindi consultabile direttamente.
+
+La dashboard consulta gli AuditEvent tramite l'endpoint mediato
+**`GET /auth/audit-events`** del microservizio `auth` (`useAuditTrail.ts`):
+
+* richiede autenticazione + gruppo `/admin` (403 altrimenti);
+* inoltra i search param FHIR (`entity-identifier`, `_sort`, `_count`, …) a HAPI;
+* **ogni consultazione è a sua volta tracciata** con un AuditEvent
+  (`entity.what = urn:internal|AuditEvent/query`, meta-audit).
+
+Il reverse proxy instrada `/auth` → `irccs-auth:8080/fhir/auth`; non esiste alcuna rotta
+`/AuditEvent` verso HAPI.
 
 == Sincronizzazione degli orologi
 

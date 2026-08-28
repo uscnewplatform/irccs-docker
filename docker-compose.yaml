@@ -211,7 +211,11 @@ services:
     image: hapiproject/hapi:${HAPI_IMAGE_VERSION}
     container_name: irccs-hapi-fhir
     ports:
-      - "8080:8080"
+      # HAPI non e' esposto in rete: solo i microservizi (rete `irccs`) e gli script di
+      # setup sull'host lo raggiungono. Bind su 127.0.0.1 -> gli script set/reindex/
+      # install_searchparameters usano localhost:8080, ma nessun client esterno puo'
+      # arrivare a HAPI bypassando i microservizi e l'audit trail.
+      - "127.0.0.1:8080:8080"
     depends_on:
       - postgres-hapi-fhir
     volumes:

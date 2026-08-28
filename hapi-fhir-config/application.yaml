@@ -130,7 +130,11 @@ hapi:
     allowed_bundle_types: COLLECTION,DOCUMENT,MESSAGE,TRANSACTION,TRANSACTIONRESPONSE,BATCH,BATCHRESPONSE,HISTORY,SEARCHSET
     allow_cascading_deletes: true
     allow_contains_searches: true
-    allow_external_references: true
+    # allow_external_references permette di salvare Reference con URL assoluti verso server
+    # esterni. Nessun flusso applicativo noto lo richiede (le reference alle terminologie
+    # sono gestite da `logical_urls` sotto). Da mettere a `false` una volta verificato che
+    # nessun import lo usi - lasciato `true` come default per non rompere flussi non censiti.
+    allow_external_references: ${HAPI_ALLOW_EXTERNAL_REFERENCES:true}
     allow_multiple_delete: true
     allow_override_default_search_params: true
     #    auto_create_placeholder_reference_targets: false
@@ -186,8 +190,12 @@ hapi:
     cors:
       allow_Credentials: true
       # These are allowed_origin patterns, see: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/cors/CorsConfiguration.html#setAllowedOriginPatterns-java.util.List-
+      # HAPI non e' browser-facing (i client passano dai microservizi via il reverse proxy),
+      # quindi il CORS qui e' difesa in profondita': impostare HAPI_CORS_ALLOWED_ORIGIN
+      # nell'.env all'origin reale del deploy (es. https://pascale.example.it). Default '*'
+      # solo per non rompere gli ambienti di sviluppo.
       allowed_origin:
-        - '*'
+        - ${HAPI_CORS_ALLOWED_ORIGIN:*}
 
     # Search coordinator thread pool sizes
     search-coord-core-pool-size: 20
