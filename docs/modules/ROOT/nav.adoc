@@ -6,6 +6,7 @@
 * xref:microservizi.adoc[Microservizi]
 * xref:keycloak.adoc[Keycloak — Identità e Accessi]
 * xref:monitoraggio.adoc[Monitoraggio]
+* xref:audit-trail.adoc[Audit Trail]
 * xref:farmaci-aifa.adoc[Import Farmaci AIFA]
 * xref:librerie-crf.adoc[Librerie CRF — Gestione e Import]
 * xref:changelog.adoc[Changelog]

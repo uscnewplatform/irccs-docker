@@ -1,0 +1,169 @@
+= Audit Trail — Tracciabilità degli accessi e delle modifiche
+:toc: macro
+
+toc::[]
+
+Questa pagina descrive come è implementato l'audit trail della piattaforma IRCCS Pascale
+e le politiche operative (retention, immodificabilità, accesso, alerting) richieste dalla
+normativa in ambito sanitario/ricerca clinica.
+
+== Riferimenti normativi
+
+[cols="1,3"]
+|===
+| Norma | Requisito coperto
+
+| GDPR art. 5(1)(f), 30, 32
+| Tracciabilità e integrità dei trattamenti di dati particolari (art. 9)
+
+| Garante Privacy — provv. "Dossier sanitario" 4/6/2015
+| Log degli accessi *in consultazione* ai dati sanitari, conservazione ≥ 24 mesi,
+  log immodificabili, alert su accessi anomali
+
+| ICH GCP E6(R2) §5.5.3 / ALCOA+
+| Audit trail di ogni create/modify/delete dei dati di studio, attribuibile e non alterabile
+
+| EU CTR 536/2014 / TMF
+| Conservazione dei documenti essenziali dello studio (inclusi audit trail) per 25 anni
+
+| ISO/IEC 27001:2022 A.8.15–A.8.17
+| Logging protetto da manomissione, monitoraggio, sincronizzazione degli orologi
+|===
+
+== Cosa viene tracciato
+
+=== AuditEvent FHIR (record di riferimento)
+
+Generati da `FhirClient` (`irccs-common/i3-client`) su ogni operazione verso il server FHIR:
+
+* **Scritture** (create / update / delete / transaction): sempre, per qualunque resourceType.
+* **Consultazioni** (read / search / history): per i resourceType che contengono dati
+  sanitari o personali del paziente (`SENSITIVE_RESOURCE_TYPES` in `FhirClient`: Patient,
+  Observation, DiagnosticReport, DocumentReference, ImagingStudy, Condition, Procedure,
+  Consent, ResearchSubject, AdverseEvent, QuestionnaireResponse, CarePlan, Encounter,
+  Specimen, Media, MedicationStatement/Request, Immunization, AllergyIntolerance, …).
+* **Fallimenti**: sempre, per qualunque resourceType (`outcome = 4` Minor per errori
+  applicativi, `8` Serious riservato a guasti di sistema).
+* **Operazioni IAM Keycloak**: `KeycloakEventAuditPoller` (microservizio auth, schedulato
+  ogni 5 minuti) importa gli eventi Keycloak (login/logout, cambio password, modifiche MFA,
+  consensi, azioni admin) dall'Admin API come AuditEvent.
+
+Ogni AuditEvent contiene:
+
+* `agent.who` (identificativo utente), `agent.requestor`, `agent.type` = humanuser
+* `agent.network.address` = IP del chiamante (da `ClientIpFilter`, primo `X-Forwarded-For`)
+* `agent.extension[username|groups|realm_access|groupsId|organizations-id]` = claim JWT
+  verbatim al momento del fatto
+* `entity[0].what` = Identifier logico `urn:internal|{resourceType}/{id}` (non una Reference
+  risolvibile, per non vincolare la cancellazione della risorsa auditata)
+* `entity[1]` = riferimento al **paziente** (role 1) quando ricavabile dalla risorsa
+* `type` / `subtype` = CodeSystem HL7 `audit-event-type` / `restful-interaction`
+* `extension[audit-chain-prev|audit-chain-hash]` = catena di hash (vedi Immodificabilità)
+
+Interrogazione: `GET /fhir/AuditEvent?entity-identifier=urn:internal|{resourceType}/{id}`
+(SearchParameter custom `entity-identifier`, installato da `setup/install_searchparameters.sh`).
+
+=== Log strutturato (copia di corroborazione)
+
+In parallelo all'AuditEvent, ogni operazione emette una riga di log JSON con i campi MDC
+`auditAction`, `auditOutcome`, `auditUser`, `auditResourceType`, `auditResourceId`,
+`auditPatient`, `clientIp`. Questa riga:
+
+* sopravvive anche se la scrittura dell'AuditEvent FHIR fallisce (es. HAPI irraggiungibile);
+* viene etichettata `audit_trail="true"` da Alloy (`monitoring-config/config.alloy`);
+* ha retention dedicata in Loki (vedi sotto).
+
+Servizi non-FHIR che emettono la stessa riga strutturata: `notification` (generazione /
+verifica OTP), `zammad` (accessi ai ticket, che possono contenere dati paziente).
+
+== Immodificabilità
+
+L'isolamento e l'integrità degli AuditEvent sono garantiti da tre interceptor HAPI
+(`irccs-common/hapi-audit-interceptor`, jar montato in `/app/extra-classes/`):
+
+[cols="1,3"]
+|===
+| Interceptor | Funzione
+
+| `AuditPartitionInterceptor`
+| Instrada ogni AuditEvent sulla partizione logica HAPI `AUDIT`, separata dalla partizione
+  di default dei dati clinici. Le letture senza tipo di risorsa (batch `$reindex`) usano
+  `allPartitions()`.
+
+| `AuditEventAppendOnlyInterceptor`
+| Nega `UPDATE` / `DELETE` / `PATCH` / `$expunge` sugli AuditEvent — anche con la chiave
+  admin di HAPI (hook a livello storage + hook REST).
+
+| `AuditEventHashChainInterceptor`
+| Ogni AuditEvent porta l'hash del precedente + il proprio hash calcolato sui campi chiave.
+  Cancellare o alterare un evento (anche direttamente sul database) rompe la catena a
+  partire da quel punto, rilevabile ricalcolando la sequenza.
+|===
+
+.Limiti noti (rafforzamenti previsti)
+* La partizione `AUDIT` è isolamento *logico*: stesse tabelle Postgres, colonna
+  `PARTITION_ID` diversa. Un datasource Postgres dedicato (routing multi-datasource) con
+  account applicativo senza `DELETE` è il passo successivo.
+* La catena di hash non serializza "lettura ultimo + scrittura nuovo" a livello DB: sotto
+  scrittura concorrente due eventi possono agganciarsi allo stesso predecessore (lock solo
+  intra-istanza HAPI).
+
+== Retention
+
+[cols="1,1,2"]
+|===
+| Livello | Periodo | Note
+
+| AuditEvent FHIR su HAPI
+| **≥ 25 anni** (di fatto illimitato)
+| Record di riferimento. Append-only, non viene mai cancellato: nessun job di retention lo
+  tocca. Vincolo EU CTR 536/2014 / GCP per i documenti essenziali dello studio.
+
+| Righe di audit su Loki (`audit_trail="true"`)
+| 3 anni (`retention_stream` in `monitoring-config/loki-config.yml`)
+| Copia di corroborazione, indipendente dai permessi FHIR.
+
+| Eventi Keycloak nel DB Keycloak
+| 3 anni (`eventsExpiration` nel realm-export)
+| Vengono comunque importati come AuditEvent dal poller (retention ≥ 25 anni lì).
+
+| Log operativi generici su Loki
+| 3 mesi + snapshot (`archive_loki_snapshot.sh`, cron, conservati 12 mesi)
+| Non è audit trail.
+|===
+
+== Alerting su accessi anomali
+
+Regole Grafana in `monitoring-config/alerting/rules.yaml`, gruppo `irccs-audit-anomalie`:
+
+* volume elevato di consultazioni dati paziente da un singolo utente (soglia da tarare);
+* accesso a dati paziente fuori orario di servizio (gate sul volume, da abbinare a silence
+  programmata negli orari di servizio);
+* fallimenti di scrittura AuditEvent;
+* tentativi di modifica/cancellazione di un AuditEvent (bloccati dall'interceptor append-only).
+
+== Accesso all'audit trail
+
+La dashboard consulta gli AuditEvent tramite `useAuditTrail.ts` con
+`AuditEvent?entity-identifier=...`. La lettura della partizione `AUDIT` **non è ancora**
+mediata da un endpoint microservizio con controllo di ruolo dedicato: è un punto aperto.
+La consultazione dell'audit trail va riservata a un ruolo specifico (es. auditor / DPO)
+via `AuthorizationInterceptor` partition-aware o endpoint dedicato.
+
+== Sincronizzazione degli orologi
+
+`AuditEvent.recorded` usa l'orologio di sistema del container. Gli host che eseguono lo
+stack devono avere NTP attivo e sincronizzato (ISO 27001 A.8.17); i container ereditano
+l'orologio dell'host.
+
+== Attivazione (deploy)
+
+. Deploy dello stack `irccs-docker` (il jar interceptor e la config partitioning sono già
+  in `hapi-fhir-config/`).
+. `bash setup/setup_audit_partition.sh <host>:<port>` — crea la partizione `AUDIT` (una
+  tantum, dopo il primo avvio di HAPI; da rieseguire se il volume Postgres viene ricreato).
+. `bash setup/install_searchparameters.sh <host>:<port>` — installa il SearchParameter
+  `entity-identifier`.
+. `bash setup/reindex.sh <host>:<port>` — reindicizza gli AuditEvent preesistenti.
+. Verificare su traffico applicativo reale (bundle transaction, `_history`, ricerche
+  cross-resource) prima di considerare la Fase 1 conclusa.
