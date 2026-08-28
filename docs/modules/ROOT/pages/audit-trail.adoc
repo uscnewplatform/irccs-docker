@@ -98,12 +98,23 @@ L'isolamento e l'integrità degli AuditEvent sono garantiti da tre interceptor H
 | Ogni AuditEvent porta l'hash del precedente + il proprio hash calcolato sui campi chiave.
   Cancellare o alterare un evento (anche direttamente sul database) rompe la catena a
   partire da quel punto, rilevabile ricalcolando la sequenza.
+
+| Trigger Postgres (`setup/audit_db_protection.sql`)
+| A livello *database*: bloccano `DELETE` su `hfj_resource`/`hfj_res_ver` per gli AuditEvent,
+  l'`UPDATE` che valorizza `res_deleted_at` o incrementa `res_ver`, e la modifica del
+  contenuto (`res_text_vc`). Coprono chi ha accesso SQL diretto (amministratore di sistema).
+  `INSERT` e gli `UPDATE` di sola indicizzazione (`$reindex`) restano consentiti.
 |===
 
-.Limiti noti (rafforzamenti previsti)
+Difesa in profondità: interceptor REST → interceptor storage → catena di hash → trigger DB.
+
+.Limiti noti (rafforzamenti ulteriori)
 * La partizione `AUDIT` è isolamento *logico*: stesse tabelle Postgres, colonna
-  `PARTITION_ID` diversa. Un datasource Postgres dedicato (routing multi-datasource) con
-  account applicativo senza `DELETE` è il passo successivo.
+  `PARTITION_ID` diversa. I trigger DB danno l'immodificabilità storage-level; una
+  separazione *organizzativa* completa (secondo Postgres + istanza HAPI dedicata all'audit,
+  con account e backup indipendenti) resta un'opzione architetturale — la proprietà
+  `org.quarkus.irccs.audit-fhir-server` di `FhirClient` permette già di puntare gli
+  AuditEvent a un server FHIR diverso.
 * La catena di hash non serializza "lettura ultimo + scrittura nuovo" a livello DB: sotto
   scrittura concorrente due eventi possono agganciarsi allo stesso predecessore (lock solo
   intra-istanza HAPI).
@@ -162,6 +173,9 @@ l'orologio dell'host.
   in `hapi-fhir-config/`).
 . `bash setup/setup_audit_partition.sh <host>:<port>` — crea la partizione `AUDIT` (una
   tantum, dopo il primo avvio di HAPI; da rieseguire se il volume Postgres viene ricreato).
+. `bash setup/install_audit_db_protection.sh` — applica i trigger Postgres di
+  immodificabilità (dopo che HAPI ha creato lo schema; idempotente; da rieseguire se il
+  volume `postgres_data_hapi` viene ricreato).
 . `bash setup/install_searchparameters.sh <host>:<port>` — installa il SearchParameter
   `entity-identifier`.
 . `bash setup/reindex.sh <host>:<port>` — reindicizza gli AuditEvent preesistenti.
