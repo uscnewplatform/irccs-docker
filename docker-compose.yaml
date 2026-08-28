@@ -251,6 +251,47 @@ services:
     networks:
       - irccs
 
+  # ---- Audit trail: store FHIR fisicamente separato ------------------------
+  # Postgres + HAPI dedicati agli AuditEvent (storage, account, backup indipendenti
+  # da quelli clinici). I microservizi ci scrivono via org.quarkus.irccs.audit-fhir-server.
+  postgres-hapi-audit:
+    image: postgres:${POSTGRES_HAPI_VERSION}
+    hostname: postgres-audit
+    container_name: postgres-hapi-audit
+    restart: always
+    logging: *default-logging
+    env_file:
+      - .env
+    volumes:
+      - postgres_data_hapi_audit:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${HAPI_AUDIT_DB_NAME}
+      POSTGRES_USER: ${HAPI_AUDIT_DB_USER}
+      POSTGRES_PASSWORD: ${HAPI_AUDIT_DB_PASSWORD}
+    networks:
+      - irccs
+
+  irccs-hapi-audit:
+    image: hapiproject/hapi:${HAPI_IMAGE_VERSION}
+    container_name: irccs-hapi-audit
+    ports:
+      # Solo host-locale, per gli script di setup (install_searchparameters / db_protection).
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      - postgres-hapi-audit
+    volumes:
+      - ./hapi-audit-config/application.yaml:/home/application.yaml
+      - ./hapi-fhir-config/lucenefiles-audit:/lucenefiles
+      # Stesso jar dell'istanza clinica: qui carica solo append-only + hash-chain
+      # (vedi custom-interceptor-classes in hapi-audit-config/application.yaml).
+      - ./hapi-fhir-config/interceptors/audit-partition-interceptor.jar:/app/extra-classes/audit-partition-interceptor.jar
+    environment:
+      SPRING_CONFIG_LOCATION: '/home/application.yaml'
+    env_file:
+      - .env
+    networks:
+      - irccs
+
   cache:
     container_name: irccs-redis
     hostname: redis
@@ -373,6 +414,7 @@ services:
 
 volumes:
   postgres_data_hapi:
+  postgres_data_hapi_audit:
   postgres_data_keycloak:
   redis_data:
   elasticsearch_data:

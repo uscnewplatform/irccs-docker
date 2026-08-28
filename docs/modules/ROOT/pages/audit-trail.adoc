@@ -108,16 +108,28 @@ L'isolamento e l'integrità degli AuditEvent sono garantiti da tre interceptor H
 
 Difesa in profondità: interceptor REST → interceptor storage → catena di hash → trigger DB.
 
-.Limiti noti (rafforzamenti ulteriori)
-* La partizione `AUDIT` è isolamento *logico*: stesse tabelle Postgres, colonna
-  `PARTITION_ID` diversa. I trigger DB danno l'immodificabilità storage-level; una
-  separazione *organizzativa* completa (secondo Postgres + istanza HAPI dedicata all'audit,
-  con account e backup indipendenti) resta un'opzione architetturale — la proprietà
-  `org.quarkus.irccs.audit-fhir-server` di `FhirClient` permette già di puntare gli
-  AuditEvent a un server FHIR diverso.
+=== Store fisicamente separato
+
+Gli AuditEvent NON stanno sull'istanza FHIR clinica. Ci sono un Postgres e un HAPI
+dedicati:
+
+* `postgres-hapi-audit` (DB `hapiaudit`, utente `HAPI_AUDIT_DB_USER`, volume
+  `postgres_data_hapi_audit` — backup indipendente)
+* `irccs-hapi-audit` (HAPI, `hapi-audit-config/application.yaml`, solo gli interceptor
+  append-only + hash-chain, niente partitioning né terminologie)
+
+I microservizi ci scrivono tramite `org.quarkus.irccs.audit-fhir-server` in
+`microservice-config/application.properties`; un `FhirClient<AuditEvent>` instrada lì
+*tutte* le operazioni (anche la ricerca da `/fhir/auth/audit-events`). Se la proprietà non
+è impostata, si ricade sullo stesso server di `org.quarkus.irccs.fhir-server`.
+
+.Limiti noti
 * La catena di hash non serializza "lettura ultimo + scrittura nuovo" a livello DB: sotto
   scrittura concorrente due eventi possono agganciarsi allo stesso predecessore (lock solo
   intra-istanza HAPI).
+* L'istanza `irccs-hapi-audit` monta comunque `AuditPartitionInterceptor` nel jar ma non lo
+  attiva (non è in `custom-interceptor-classes`): non serve, non c'è dato clinico da
+  separare.
 
 == Retention
 
@@ -178,15 +190,31 @@ l'orologio dell'host.
 
 == Attivazione (deploy)
 
-. Deploy dello stack `irccs-docker` (il jar interceptor e la config partitioning sono già
-  in `hapi-fhir-config/`).
-. `bash setup/setup_audit_partition.sh <host>:<port>` — crea la partizione `AUDIT` (una
-  tantum, dopo il primo avvio di HAPI; da rieseguire se il volume Postgres viene ricreato).
-. `bash setup/install_audit_db_protection.sh` — applica i trigger Postgres di
-  immodificabilità (dopo che HAPI ha creato lo schema; idempotente; da rieseguire se il
-  volume `postgres_data_hapi` viene ricreato).
-. `bash setup/install_searchparameters.sh <host>:<port>` — installa il SearchParameter
+Nell'`.env`: impostare `HAPI_AUDIT_DB_USER/PASSWORD/NAME` e (produzione)
+`HAPI_CORS_ALLOWED_ORIGIN`.
+
+. Deploy dello stack `irccs-docker` (jar interceptor e config sono già in
+  `hapi-fhir-config/` e `hapi-audit-config/`). Vengono creati `postgres-hapi-audit` e
+  `irccs-hapi-audit`.
+
+Sull'**istanza clinica** (`127.0.0.1:8080`, DB `postgres-hapi-fhir`):
+
+. `bash setup/setup_audit_partition.sh 127.0.0.1:8080` — crea la partizione `AUDIT` (una
+  tantum, dopo il primo avvio; da rieseguire se il volume Postgres viene ricreato).
+. `bash setup/install_searchparameters.sh 127.0.0.1:8080` — SearchParameter clinici.
+
+Sull'**istanza audit** (`127.0.0.1:8081`, DB `postgres-hapi-audit`):
+
+. `bash setup/install_audit_searchparameter.sh 127.0.0.1:8081` — SearchParameter
   `entity-identifier`.
-. `bash setup/reindex.sh <host>:<port>` — reindicizza gli AuditEvent preesistenti.
+. `bash setup/install_audit_db_protection.sh` — trigger di immodificabilità (default:
+  `postgres-hapi-audit`; idempotente; da rieseguire se il volume `postgres_data_hapi_audit`
+  viene ricreato).
+
+Se gli AuditEvent risiedevano prima sull'istanza clinica (deploy pre-separazione):
+
+. `bash setup/reindex.sh 127.0.0.1:8080` per gli AuditEvent rimasti lì, oppure migrarli
+  sull'istanza audit.
+
 . Verificare su traffico applicativo reale (bundle transaction, `_history`, ricerche
   cross-resource) prima di considerare la Fase 1 conclusa.
