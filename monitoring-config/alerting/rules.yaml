@@ -66,7 +66,11 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              expr: 'max(sum by (auditUser) (count_over_time({container_name=~"irccs-.+"} | json | auditAction=~"R|E" | auditOutcome="success" | auditUser!="" [1h])))'
+              # I campi di audit sono in mdc.* nel JSON di logging (quarkus-logging-json):
+              # `| json` senza argomenti li appiattirebbe come `mdc_auditAction` - vanno
+              # estratti con path espliciti. Lo stream e' gia' etichettato audit_trail="true"
+              # da Alloy (stage.match su "auditAction").
+              expr: 'max(sum by (auditUser) (count_over_time({audit_trail="true"} | json auditAction="mdc.auditAction", auditOutcome="mdc.auditOutcome", auditUser="mdc.auditUser" | auditAction=~"R|E" | auditOutcome="success" | auditUser!="" [1h])))'
               refId: query
               queryType: instant
           - refId: threshold
@@ -97,10 +101,11 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              # Nota: la finestra oraria "fuori servizio" va rifinita in base al fuso del
-              # server Grafana; qui e' un gate grezzo sul volume nella finestra di 5m,
-              # da abbinare a una silence programmata negli orari di servizio.
-              expr: 'sum(count_over_time({container_name=~"irccs-.+"} | json | auditAction=~"R|E" | auditOutcome="success" [5m]))'
+              # La finestra oraria e' imposta dalla route in policies.yaml
+              # (active_time_intervals: fuori-orario-servizio, vedi timeintervals.yaml):
+              # la regola valuta sempre ma le notifiche partono solo 21:00-06:00.
+              # Qui resta solo il gate sul volume di letture nella finestra di 5m.
+              expr: 'sum(count_over_time({audit_trail="true"} | json auditAction="mdc.auditAction", auditOutcome="mdc.auditOutcome" | auditAction=~"R|E" | auditOutcome="success" [5m]))'
               refId: query
               queryType: instant
           - refId: threshold
@@ -131,7 +136,9 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              expr: 'sum(count_over_time({container_name=~"irccs-.+"} |~ "createAuditEvent: scrittura AuditEvent fallita|could not write AuditEvent" [15m]))'
+              # Stringhe emesse da FhirClient.createAuditEvent nei due rami di errore
+              # (irccs-common/i3-client): "scrittura AuditEvent fallita" e "errore non gestito".
+              expr: 'sum(count_over_time({container_name=~"irccs-.+"} |~ "createAuditEvent: (scrittura AuditEvent fallita|errore non gestito)" [15m]))'
               refId: query
               queryType: instant
           - refId: threshold
@@ -162,7 +169,9 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              expr: 'sum(count_over_time({container_name=~"irccs-hapi.*"} |~ "AuditEvent e. append-only" [5m]))'
+              # Stringa emessa da AuditEventAppendOnlyInterceptor.LOG.warn prima di
+              # rifiutare l'operazione (irccs-common/hapi-audit-interceptor).
+              expr: 'sum(count_over_time({container_name=~"irccs-hapi.*"} |~ "AUDIT-APPEND-ONLY: bloccata operazione" [5m]))'
               refId: query
               queryType: instant
           - refId: threshold

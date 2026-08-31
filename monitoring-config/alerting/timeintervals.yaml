@@ -1,0 +1,23 @@
+apiVersion: 1
+
+# Intervalli orari per l'alerting.
+#
+# `fuori-orario-servizio`: usato come active_time_intervals sulla route dedicata
+# in policies.yaml, cosi' l'alert `irccs-audit-off-hours-access` NOTIFICA solo in
+# questa finestra (la regola in rules.yaml valuta sempre, ma le notifiche partono
+# solo qui). Adeguare gli orari e il fuso all'orario di servizio reale IRCCS.
+#
+# NB: `location` deve essere un nome IANA tz valido; se il server Grafana non ha
+# il tz database, usare "UTC" e compensare gli orari.
+time_intervals:
+  - orgId: 1
+    name: fuori-orario-servizio
+    time_intervals:
+      - times:
+          - start_time: '21:00'
+            end_time: '24:00'
+          - start_time: '00:00'
+            end_time: '06:00'
+        location: 'Europe/Rome'
+      - weekdays: ['saturday', 'sunday']
+        location: 'Europe/Rome'

@@ -7,3 +7,12 @@ policies:
     group_wait: 30s
     group_interval: 5m
     repeat_interval: 4h
+    routes:
+      # L'accesso "fuori orario di servizio" e' un segnale solo se accade davvero
+      # fuori orario: la regola valuta 24/7, ma la notifica parte solo nella
+      # finestra fuori-orario-servizio (vedi timeintervals.yaml).
+      - receiver: irccs-ops-email
+        object_matchers:
+          - ['alertname', '=', 'Accesso a dati paziente fuori orario di servizio']
+        active_time_intervals:
+          - fuori-orario-servizio
