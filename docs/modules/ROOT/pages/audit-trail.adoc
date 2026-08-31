@@ -234,10 +234,20 @@ Sull'**istanza audit** (`127.0.0.1:8081`, DB `postgres-hapi-audit`):
   `shared_preload_libraries=pgaudit` all'avvio del processo — se il container era già in
   esecuzione con l'immagine vecchia, prima `docker compose up -d --build postgres-hapi-audit`).
 
-Se gli AuditEvent risiedevano prima sull'istanza clinica (deploy pre-separazione):
+Se gli AuditEvent risiedevano prima sull'istanza clinica (deploy pre-separazione),
+migrarli sull'istanza audit **prima** che i microservizi separati vadano in esercizio
+(store di destinazione vuoto):
 
-. `bash setup/reindex.sh 127.0.0.1:8080` per gli AuditEvent rimasti lì, oppure migrarli
-  sull'istanza audit.
+. `python3 setup/migrate_auditevents_to_audit_store.py --dry-run` — verifica conteggi e
+  ordine cronologico.
+. `python3 setup/migrate_auditevents_to_audit_store.py` — copia sequenziale (POST) in
+  ordine di `recorded`; la catena di hash viene ricalcolata dall'istanza audit.
+  Idempotente via checkpoint `setup/.migrate_auditevents.state`: in caso di errore
+  riprendere con `--resume`. Non cancella nulla dalla sorgente (gli AuditEvent restano
+  come copia storica: sono append-only).
+. Se i microservizi separati erano già in esercizio (destinazione non vuota), gli storici
+  vanno accodati esplicitamente con `--allow-nonempty`: finiscono in coda alla catena
+  esistente (posizione in catena successiva pur avendo `recorded` nel passato).
 
 . Verificare su traffico applicativo reale (bundle transaction, `_history`, ricerche
   cross-resource) prima di considerare la Fase 1 conclusa.
