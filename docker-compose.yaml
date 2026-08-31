@@ -255,7 +255,10 @@ services:
   # Postgres + HAPI dedicati agli AuditEvent (storage, account, backup indipendenti
   # da quelli clinici). I microservizi ci scrivono via org.quarkus.irccs.audit-fhir-server.
   postgres-hapi-audit:
-    image: postgres:${POSTGRES_HAPI_VERSION}
+    build:
+      context: ./postgres-audit-image
+      args:
+        POSTGRES_HAPI_VERSION: ${POSTGRES_HAPI_VERSION}
     hostname: postgres-audit
     container_name: postgres-hapi-audit
     restart: always
@@ -268,6 +271,17 @@ services:
       POSTGRES_DB: ${HAPI_AUDIT_DB_NAME}
       POSTGRES_USER: ${HAPI_AUDIT_DB_USER}
       POSTGRES_PASSWORD: ${HAPI_AUDIT_DB_PASSWORD}
+    # pgaudit.log_catalog=off: senza, ogni query interna di HAPI sui cataloghi
+    # di sistema finirebbe loggata - rumore puro, non e' l'accesso che vogliamo
+    # tracciare. pgaudit.log_parameter resta OFF di default: loggherebbe i
+    # valori dei parametri delle query (potenziali identificativi paziente) -
+    # attivarlo e' un trade-off "piu' dettaglio forense" vs "nuova PII nei log
+    # di Postgres", da decidere esplicitamente, non di default.
+    command: >
+      -c shared_preload_libraries=pgaudit
+      -c pgaudit.log=read,write,role,ddl
+      -c pgaudit.log_catalog=off
+      -c pgaudit.log_parameter=off
     networks:
       - irccs
 

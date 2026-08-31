@@ -104,9 +104,27 @@ L'isolamento e l'integrità degli AuditEvent sono garantiti da tre interceptor H
   l'`UPDATE` che valorizza `res_deleted_at` o incrementa `res_ver`, e la modifica del
   contenuto (`res_text_vc`). Coprono chi ha accesso SQL diretto (amministratore di sistema).
   `INSERT` e gli `UPDATE` di sola indicizzazione (`$reindex`) restano consentiti.
+| `pgaudit` (estensione Postgres, `postgres-audit-image/`)
+| I livelli sopra bloccano/rilevano scritture e cancellazioni, ma non tracciano una
+  *lettura* diretta via SQL (chi ha le credenziali del DB `hapiaudit` può leggere senza
+  lasciare traccia applicativa). `pgaudit.log=read,write,role,ddl` logga ogni SELECT,
+  scrittura, cambio ruolo/permesso e DDL eseguito sull'istanza audit, nel log del
+  container Postgres. `log_catalog=off` esclude le query interne di HAPI sui cataloghi
+  di sistema (rumore, non accesso ai dati). `log_parameter` resta OFF di default — i
+  valori dei parametri delle query potrebbero contenere identificativi paziente:
+  attivarlo è un trade-off esplicito "più dettaglio forense" vs "nuova PII nei log di
+  Postgres", non un default. **Volume**: pgaudit traccia ogni sessione con l'utente
+  applicativo (`HAPI_AUDIT_DB_USER`), quindi logga anche tutto il traffico JPA normale
+  di HAPI stesso, non solo un accesso SQL ad-hoc — verificato: rumoroso, non selettivo
+  per ruolo. Se in produzione serve isolare solo l'accesso "umano" diretto, la mitigazione
+  è un utente Postgres separato (sola lettura) per chi si connette manualmente, non un
+  filtro pgaudit (`pgaudit.role` traccia i permessi via un ruolo dedicato, ma richiede
+  comunque connessioni con quel ruolo per beneficiarne).
 |===
 
-Difesa in profondità: interceptor REST → interceptor storage → catena di hash → trigger DB.
+Difesa in profondità: interceptor REST → interceptor storage → catena di hash → trigger DB
+→ pgaudit (copre anche la lettura diretta, unico livello sopra che non era un vincolo
+scrittura/cancellazione).
 
 === Store fisicamente separato
 
@@ -210,6 +228,11 @@ Sull'**istanza audit** (`127.0.0.1:8081`, DB `postgres-hapi-audit`):
 . `bash setup/install_audit_db_protection.sh` — trigger di immodificabilità (default:
   `postgres-hapi-audit`; idempotente; da rieseguire se il volume `postgres_data_hapi_audit`
   viene ricreato).
+. `bash setup/install_audit_pgaudit.sh` — abilita l'estensione `pgaudit` (idempotente;
+  richiede che `postgres-hapi-audit` sia già partito con l'immagine buildata da
+  `postgres-audit-image/`, che include il pacchetto e passa
+  `shared_preload_libraries=pgaudit` all'avvio del processo — se il container era già in
+  esecuzione con l'immagine vecchia, prima `docker compose up -d --build postgres-hapi-audit`).
 
 Se gli AuditEvent risiedevano prima sull'istanza clinica (deploy pre-separazione):
 
