@@ -106,8 +106,9 @@ groups:
             datasourceUid: loki
             model:
               # La finestra oraria e' imposta dalla route in policies.yaml
-              # (active_time_intervals: fuori-orario-servizio, vedi timeintervals.yaml):
-              # la regola valuta sempre ma le notifiche partono solo 21:00-06:00.
+              # (mute_time_intervals: orario-servizio, vedi timeintervals.yaml):
+              # la regola valuta 24/7 ma le notifiche sono silenziate durante
+              # l'orario di servizio -> arrivano solo fuori orario.
               # Qui resta solo il gate sul volume di letture nella finestra di 5m.
               expr: 'sum(count_over_time({audit_trail="true"} | json auditAction="mdc.auditAction", auditOutcome="mdc.auditOutcome" | auditAction=~"R|E" | auditOutcome="success" [5m]))'
               refId: query
