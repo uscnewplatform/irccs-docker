@@ -297,22 +297,28 @@ def check_hash_chain(args, token, since_iso):
                f"solo {len(chain)} AuditEvent nel periodo del test")
         return
     broken = []
+    no_hash = 0
     prev_hash = None
     for ev in chain:
         exts = {x["url"]: x.get("valueString") for x in ev.get("extension", [])}
         cur_prev, cur_hash = exts.get(EXT_PREV), exts.get(EXT_HASH)
         if cur_hash is None:
-            broken.append(f"{ev['id']}:senza-hash")
+            # Evento scritto con hash-chain disattivata (irccs.audit.hash-chain.enabled=false):
+            # non e' una rottura, ma l'interceptor ripartira' da "genesis" al prossimo evento.
+            no_hash += 1
+            prev_hash = "genesis"
             continue
-        if prev_hash is not None and cur_prev != prev_hash:
+        if prev_hash is not None and cur_prev != prev_hash and not (
+                prev_hash == "genesis" and cur_prev in ("genesis", "")):
             broken.append(f"{ev['id']}:prev({(cur_prev or '')[:8]})!=atteso({prev_hash[:8]})")
         prev_hash = cur_hash
+    suffix = f" ({no_hash} senza hash: hash-chain disattivata)" if no_hash else ""
     if broken:
         record("hash-chain: catena degli eventi del test e' contigua", "FAIL",
                f"{len(chain)} eventi, rotture: " + "; ".join(broken[:6]))
     else:
         record("hash-chain: catena degli eventi del test e' contigua", "PASS",
-               f"{len(chain)} eventi concatenati senza rotture")
+               f"{len(chain)} eventi concatenati senza rotture{suffix}")
 
 
 def check_keycloak_poller(args, token):

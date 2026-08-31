@@ -206,10 +206,83 @@ Il reverse proxy instrada `/auth` → `irccs-auth:8080/fhir/auth`; non esiste al
 stack devono avere NTP attivo e sincronizzato (ISO 27001 A.8.17); i container ereditano
 l'orologio dell'host.
 
+== Configurazione
+
+Tutto l'audit trail è pilotato da configurazione, senza rebuild. Riepilogo dei
+parametri per area.
+
+=== Cosa viene tracciato (microservizi -- `microservice-config/application.properties`)
+
+[cols="2,1,3"]
+|===
+|Proprietà |Default |Effetto
+
+|`org.quarkus.irccs.audit.enabled` |`true` |Kill switch globale: se `false` nessun AuditEvent FHIR viene scritto (né scritture né letture né fallimenti).
+|`org.quarkus.irccs.audit.read-enabled` |`true` |Se `false` non traccia le sole consultazioni (read/search/history). Scritture e fallimenti restano tracciati.
+|`org.quarkus.irccs.audit.sensitive-resource-types` |_(elenco interno)_ |CSV che **rimpiazza** l'elenco dei resourceType per cui le letture sono auditate.
+|`org.quarkus.irccs.audit.sensitive-resource-types.extra` |_(vuoto)_ |CSV che **aggiunge** tipi all'elenco di default senza riscriverlo tutto.
+|`org.quarkus.irccs.audit-fhir-server` |_(server clinico)_ |Base URL dello store AuditEvent. Se assente si scrive sullo stesso HAPI dei dati clinici.
+|`org.quarkus.irccs.audit-site` |`unknown-site` |Valore di `AuditEvent.source.site`.
+|===
+
+Elenco di default dei tipi sensibili: Patient, Observation, DiagnosticReport,
+DocumentReference, Media, ImagingStudy, Condition, Procedure, Consent,
+ResearchSubject, AdverseEvent, QuestionnaireResponse, CarePlan, Encounter,
+Specimen, MedicationStatement, MedicationRequest, Immunization,
+AllergyIntolerance, FamilyMemberHistory, ClinicalImpression, RiskAssessment,
+Appointment.
+
+=== Immodificabilità (istanza HAPI audit -- `.env` / env)
+
+[cols="2,1,3"]
+|===
+|Variabile |Default |Effetto
+
+|`IRCCS_AUDIT_APPEND_ONLY_ENABLED` |`true` |Se `false` l'`AuditEventAppendOnlyInterceptor` non blocca più update/delete/expunge.
+|`IRCCS_AUDIT_HASH_CHAIN_ENABLED` |`true` |Se `false` gli AuditEvent vengono scritti senza le extension `audit-chain-*`.
+|===
+
+Sono difese indipendenti: disattivarne una non tocca le altre. Il modo pulito
+per disattivare del tutto un interceptor resta rimuoverlo da
+`hapi.fhir.custom-interceptor-classes` in `hapi-audit-config/application.yaml`.
+I trigger Postgres (`setup/audit_db_protection.sql`) sono un ulteriore layer, si
+disattivano non installandoli o con `DROP TRIGGER`.
+
+=== Retention
+
+[cols="2,2,2"]
+|===
+|Livello |Dove |Default
+
+|AuditEvent FHIR (record legale) |`hapi-audit-config/application.yaml` (`expunge_enabled: false` + append-only) |illimitata -- nessuna cancellazione
+|Log Loki audit (`audit_trail="true"`) |`monitoring-config/loki-config.yml` -> `retention_stream` |`26280h` (3 anni)
+|Log Loki generici |stesso file -> `retention_period` |`2160h` (3 mesi)
+|Eventi Keycloak |`keycloak-config/realm-export/realm-export.json` -> `eventsExpiration` |`94608000` (3 anni, in secondi)
+|===
+
+=== Import eventi Keycloak (`irccs-microservice-auth`)
+
+[cols="2,1,3"]
+|===
+|Proprietà |Default |Effetto
+
+|`irccs.audit.keycloak-events.enabled` |`true` |On/off dell'import periodico degli eventi Keycloak come AuditEvent.
+|`irccs.audit.keycloak-events.interval` |`300s` |Frequenza del poller.
+|`irccs.audit.keycloak-events.lookback-ms` |`900000` |Finestra iniziale (15 min) al primo avvio.
+|===
+
+=== Alerting
+
+`monitoring-config/alerting/`: `rules.yaml` (soglie), `timeintervals.yaml`
+(finestra fuori orario), `policies.yaml` / `contactpoints.yaml` (routing e
+destinatari). Le soglie sono provvisorie -- vedi la nota di validazione per la
+procedura di ricalibrazione.
+
 == Attivazione (deploy)
 
 Nell'`.env`: impostare `HAPI_AUDIT_DB_USER/PASSWORD/NAME` e (produzione)
-`HAPI_CORS_ALLOWED_ORIGIN`.
+`HAPI_CORS_ALLOWED_ORIGIN`. Gli interruttori `IRCCS_AUDIT_*` e le proprietà
+`org.quarkus.irccs.audit.*` restano ai default (tutto attivo) se non impostati.
 
 . Deploy dello stack `irccs-docker` (jar interceptor e config sono già in
   `hapi-fhir-config/` e `hapi-audit-config/`). Vengono creati `postgres-hapi-audit` e
