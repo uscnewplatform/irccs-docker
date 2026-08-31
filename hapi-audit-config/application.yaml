@@ -45,7 +45,16 @@ hapi:
     fhir_version: R4
     allow_multiple_delete: false
     allow_external_references: false
+    # Serve al modificatore :contains sui SearchParameter string entity-identifier-text/
+    # agent-identifier-text (filtro risorsa/utente per match parziale nella vista admin
+    # /audit-trail - i token exact-match entity-identifier/agent-identifier restano per
+    # il lookup esatto usato da AuditTrailDialog).
+    allow_contains_searches: true
     expunge_enabled: false
+    # Gli AuditEvent referenziano risorse cliniche (in forma di identifier logico) che qui
+    # non esistono per definizione: nessun vincolo di integrita' referenziale.
+    enforce_referential_integrity_on_write: false
+    enforce_referential_integrity_on_delete: false
     advanced_lucene_indexing: false
     default_encoding: JSON
     narrative_enabled: false
