@@ -82,6 +82,10 @@ groups:
               conditions:
                 - evaluator:
                     type: gt
+                    # PROVVISORIA: ~16 aperture-cartella/ora per un singolo utente
+                    # (assunto ~30 eventi FHIR per apertura). Ricalibrare dopo 5 gg in
+                    # staging col 99esimo percentile del traffico reale x1,5-2.
+                    # Vedi IRCCS/audit-trail-alerting-validation-2026-08-31.md.
                     params: [500]
 
       - uid: irccs-audit-off-hours-access
@@ -117,6 +121,9 @@ groups:
               conditions:
                 - evaluator:
                     type: gt
+                    # PROVVISORIA: ~1,7 aperture-cartella in 5 min fuori orario di
+                    # servizio (finestra imposta da timeintervals.yaml). Confermare
+                    # orario di servizio reale IRCCS e ricalibrare in staging.
                     params: [50]
 
       - uid: irccs-audit-write-failures
