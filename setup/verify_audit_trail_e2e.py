@@ -349,9 +349,12 @@ def check_bundle_transaction(args, token):
     except OSError as e:
         record("Gap9: bundle transaction -> AuditEvent", "SKIP", f"bundle non leggibile: {e}")
         return
-    r = requests.post(f"{args.base}/Bundle/import", headers=h(token), data=payload, timeout=240)
-    if r.status_code not in (200, 201):
-        record("Gap9: bundle transaction -> AuditEvent", "FAIL", f"import HTTP {r.status_code}: {r.text[:160]}")
+    base = args.bundle_base or args.base
+    r = requests.post(f"{base}/Bundle/import", headers=h(token), data=payload, timeout=240)
+    if r.status_code not in (200, 201) or "<!DOCTYPE html>" in r.text[:80]:
+        record("Gap9: bundle transaction -> AuditEvent", "FAIL",
+               f"import HTTP {r.status_code} da {base} (proxy /Bundle assente? usa --bundle-base "
+               f"http://<studio-clinico>): {r.text[:100]}")
         return
     ev = find_audit(args, token, lambda e: any(st.get("code") == "transaction"
                                                for st in e.get("subtype", [])), tries=15, delay=2)
@@ -386,6 +389,9 @@ def main():
     ap.add_argument("--audit-pg-db", default="hapiaudit")
     ap.add_argument("--with-bundle", action="store_true")
     ap.add_argument("--bundle-file", default="../../pascale-local/setup/transaction-bundle.json")
+    ap.add_argument("--bundle-base", default=None,
+                    help="base per POST /Bundle/import se il proxy non instrada /Bundle "
+                         "(es. http://localhost:<porta-studio-clinico>); default: --base")
     ap.add_argument("--slow", action="store_true")
     ap.add_argument("--settle", type=int, default=20, help="attesa prima del check hash-chain (s)")
     ap.add_argument("--poller-wait", type=int, default=330)
