@@ -131,10 +131,12 @@ hapi:
     allow_cascading_deletes: true
     allow_contains_searches: true
     # allow_external_references permette di salvare Reference con URL assoluti verso server
-    # esterni. Nessun flusso applicativo noto lo richiede (le reference alle terminologie
-    # sono gestite da `logical_urls` sotto). Da mettere a `false` una volta verificato che
-    # nessun import lo usi - lasciato `true` come default per non rompere flussi non censiti.
-    allow_external_references: ${HAPI_ALLOW_EXTERNAL_REFERENCES:true}
+    # esterni. Verificato 2026-08-31: nessun `setReference("http...")`/`new Reference("http...")`
+    # in nessun microservizio (irccs-common + tutti gli irccs-microservice-*) - le reference
+    # alle terminologie sono gestite da `logical_urls` sotto, non da questo flag. Default
+    # `false`; riportabile a `true` via HAPI_ALLOW_EXTERNAL_REFERENCES se un flusso futuro
+    # lo richiedesse davvero.
+    allow_external_references: ${HAPI_ALLOW_EXTERNAL_REFERENCES:false}
     allow_multiple_delete: true
     allow_override_default_search_params: true
     #    auto_create_placeholder_reference_targets: false
