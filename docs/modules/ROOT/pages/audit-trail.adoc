@@ -149,6 +149,24 @@ I microservizi ci scrivono tramite `org.quarkus.irccs.audit-fhir-server` in
   attiva (non è in `custom-interceptor-classes`): non serve, non c'è dato clinico da
   separare.
 
+[#gap-aperti]
+.Gap aperti / da rivedere
+* **Viste frontend senza fetch backend.** L'AuditEvent di consultazione nasce dalla GET
+  server-side (`FhirClient.read/search` sui tipi sensibili). Una risorsa già in cache lato
+  dashboard e ri-aperta, o un PDF generato client-side da dati già caricati, non produce una
+  nuova GET → nessun evento. L'endpoint mediato `POST /fhir/auth/audit-events` (azione R/E)
+  esiste apposta ma è usato in un solo punto (`CrfTherapyRenderer`, export PDF storico). Se la
+  compliance richiede il log di ogni _visualizzazione_ e non solo di ogni _fetch_, il FE deve
+  chiamare `logAuditEvent` all'apertura di paziente/CRF. Decisione aperta.
+* **403 del policy-enforcer Keycloak.** I dinieghi applicativi (`Flow.auditAccessDenied`:
+  visibilità group_ids, ruoli) sono auditati. Un 403 emesso dal policy-enforcer _prima_ del
+  controller no: non passa da JAX-RS, servirebbe un filtro Vert.x per-microservizio. Impatto
+  attuale basso (enforcement fine fatto in `Flow`, path del policy-enforcer quasi tutti
+  `DISABLED`), da rivedere se si riattiva l'enforcer.
+* **Compilazione questionario da link firmato** (`PatientQuestionnaireResponseController`,
+  `@PermitAll`, `content-token`): l'agente dell'AuditEvent è `unknown` (nessun login
+  Keycloak, per design). Paziente (entity role=1) e timestamp sono comunque tracciati.
+
 == Retention
 
 [cols="1,1,2"]
@@ -269,7 +287,11 @@ disattivano non installandoli o con `DROP TRIGGER`.
 |`irccs.audit.keycloak-events.enabled` |`true` |On/off dell'import periodico degli eventi Keycloak come AuditEvent.
 |`irccs.audit.keycloak-events.interval` |`300s` |Frequenza del poller.
 |`irccs.audit.keycloak-events.lookback-ms` |`900000` |Finestra iniziale (15 min) al primo avvio.
+|`irccs.audit.keycloak-events.query-margin-days` |`2` |Giorni sottratti al cursore per il `dateFrom` passato a Keycloak (granularità giornaliera); il taglio fine resta sul timestamp dell'evento.
+|`irccs.audit.keycloak-events.quiet-polls-alarm` |`12` |Poll consecutivi "a vuoto" (API ok, 0 eventi) dopo i quali il poller logga un WARN: con utenti attivi gli eventi token arrivano ogni pochi minuti, silenzio totale = eventi realm disabilitati o ruolo `view-events` mancante sul service account admin.
 |===
+
+NOTE: Il poller chiama gli endpoint `/admin/realms/{realm}/events` e `/admin-events` via HTTP diretto (token `client_credentials` del client applicativo, ruolo `view-events`), NON tramite `keycloak-admin-client`: quest'ultimo genera un path errato per questi due endpoint e risponde 404. Il poll pagina l'intera finestra `dateFrom` (fino a `MAX_PAGES` = 50 pagine da 200) invece di leggere una sola pagina: la Admin API di Keycloak non garantisce l'ordinamento, e una pagina di soli eventi vecchi lasciava il cursore fermo a tempo indefinito.
 
 === Alerting
 
