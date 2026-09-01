@@ -14,7 +14,11 @@ apiVersion: 1
 #
 # `location` deve essere un nome IANA tz valido; se il server Grafana non ha il
 # tz database usare "UTC" e compensare gli orari.
-time_intervals:
+#
+# La chiave di primo livello per il provisioning Grafana e' `muteTimes`
+# (NON `time_intervals`): con la chiave sbagliata Grafana ignora il file e
+# policies.yaml fallisce con "mute time interval 'orario-servizio' does not exist".
+muteTimes:
   - orgId: 1
     name: orario-servizio
     time_intervals:
