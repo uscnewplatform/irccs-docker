@@ -192,3 +192,98 @@ groups:
                 - evaluator:
                     type: gt
                     params: [0]
+
+      - uid: irccs-audit-integrity-tamper
+        title: 'Violazione di integrità dell''audit trail (Hash-Chain Mismatch)'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Il container irccs-audit-integrity ha rilevato una manomissione, cancellazione o rottura di sequenza negli AuditEvent (hash ricalcolato != hash memorizzato)'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              # Marker emesso da setup/verify_audit_hash_chain.py (container irccs-audit-integrity).
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-VIOLATION" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-integrity-fork
+        title: 'Fork nella hash-chain dell''audit trail'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Due AuditEvent dichiarano lo stesso predecessore nella hash-chain. Atteso solo su eventi storici ai riavvii dello stack; su eventi recenti (scansione incrementale) indica scrittura concorrente non serializzata o inserimento illecito'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-FORK" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-integrity-stale
+        title: 'Verifica di integrità dell''audit trail ferma'
+        condition: threshold
+        for: 2h
+        noDataState: Alerting
+        execErrState: Error
+        annotations:
+          summary: 'Nessun esito (OK/FORK/VIOLATION) dal container irccs-audit-integrity nelle ultime 2 ore: il controllo tamper-evidence continuo potrebbe essere fermo'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 7200
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-(OK|FORK|VIOLATION)" [2h]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]
+

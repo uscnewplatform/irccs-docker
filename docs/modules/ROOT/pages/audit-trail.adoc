@@ -218,17 +218,44 @@ Regole Grafana in `monitoring-config/alerting/rules.yaml`, gruppo `irccs-audit-a
   il tool periodico di verifica crittografica (`verify_audit_hash_chain.py` / `run_audit_integrity_cron.sh`)
   rileva una manomissione, alterazione di payload o rottura della catena di hash.
 
-== Verifica automatica periodica dell'integrità (Hash-Chain)
+== Verifica automatica continua dell'integrità (Hash-Chain)
 
-Per soddisfare i requisiti ISO 27001 (A.8.15), GDPR e GCP sul controllo periodico
-dell'immodificabilità, è disponibile il tool di verifica crittografica:
+Gli interceptor e i trigger DB rendono l'audit trail *tamper-resistant*; questo
+controllo lo rende *tamper-evident*: un attaccante con accesso diretto al database
+(non tutte le manipolazioni sono coperte dai trigger) verrebbe comunque rilevato.
+Soddisfa EU Annex 11 §9 (revisione dell'audit trail), ISO 27001 A.8.15, GDPR art. 5(2).
 
-* Script principale: `setup/verify_audit_hash_chain.py`
-  - Ricalcola deterministica di `canonicalPayload` e SHA-256 su ogni `AuditEvent`.
-  - Supporta `--full` (scansione storica totale) e `--incremental` (con checkpoint `.audit_integrity_checkpoint.json`).
-  - Emette log strutturato per Loki (`AUDIT-INTEGRITY-OK` / `AUDIT-INTEGRITY-VIOLATION`) e metriche Prometheus Textfile (`--prometheus-textfile`).
-* Runner per Cron / Systemd: `setup/run_audit_integrity_cron.sh`
-* Test di unità: `setup/test_verify_audit_hash_chain.py`
+Il container **`irccs-audit-integrity`** (`docker-compose.yaml`, immagine
+`python:3.12-alpine`, nessuna dipendenza -- solo stdlib) esegue in loop
+`setup/verify_audit_hash_chain.py`, che ricalcola in Python la stessa
+`canonicalPayload` + SHA-256 di `AuditEventHashChainInterceptor.java` e la confronta
+con l'hash memorizzato su ogni `AuditEvent`.
+
+Rileva: manomissione del contenuto (chi/cosa/quando/quale risorsa), cancellazioni e
+buchi di sequenza, fork della catena, inserimenti illeciti.
+
+Cadenza (`setup/audit_integrity_loop.sh`):
+
+* **incrementale** ogni `AUDIT_INTEGRITY_INTERVAL` s (default 900) -- solo gli eventi
+  nuovi dall'ultimo checkpoint, con `--strict` (un fork nel delta = violazione);
+* **full** ogni `AUDIT_INTEGRITY_FULL_EVERY` cicli (default 96 ≈ 24h) -- ri-verifica
+  l'intero storico, così una manomissione di un evento già checkpointato è rilevata
+  entro 24h. In full i fork storici (attesi ai riavvii dello stack) sono solo `[INFO]`.
+
+Output su stdout/stderr del container → Alloy → Loki: marker `AUDIT-INTEGRITY-OK`,
+`AUDIT-INTEGRITY-FORK`, `AUDIT-INTEGRITY-VIOLATION`, `AUDIT-INTEGRITY-ERROR`. Regole
+Grafana `irccs-audit-integrity-{tamper,fork,stale}` in
+`monitoring-config/alerting/rules.yaml`. Checkpoint, ultimo report JSON e metriche
+Prometheus Textfile nel volume `audit_integrity_state`.
+
+Esecuzione manuale una-tantum (dall'host, HAPI audit su `127.0.0.1:8081`):
+
+[source,bash]
+----
+python3 setup/verify_audit_hash_chain.py --audit-fhir http://127.0.0.1:8081/fhir --full
+----
+
+Test di unità: `python3 setup/test_verify_audit_hash_chain.py`.
 
 
 == Accesso all'audit trail

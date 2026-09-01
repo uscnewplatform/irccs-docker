@@ -9,3 +9,9 @@
 # checkpoint migrazione AuditEvent
 /setup/.migrate_auditevents.state
 /setup/__pycache__/
+# stato/output verifica integrità hash-chain (eseguita manualmente dall'host)
+/setup/.audit_integrity_checkpoint.json
+/setup/audit_integrity_checkpoint.json
+/setup/audit-integrity-last-report.json
+/setup/audit_integrity.prom
+/setup/audit-trail-e2e-report.txt

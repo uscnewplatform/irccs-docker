@@ -306,6 +306,32 @@ services:
     networks:
       - irccs
 
+  # Verifica continua della hash-chain degli AuditEvent (tamper-evidence a runtime).
+  # Ricalcola in Python la stessa canonicalPayload/SHA-256 di
+  # AuditEventHashChainInterceptor.java e confronta con l'hash memorizzato: rileva
+  # manomissioni fatte direttamente sul DB (che i trigger non coprono al 100%),
+  # cancellazioni/buchi e fork della catena. Incrementale ogni 15 min, full ogni ~24h.
+  # Output -> Alloy -> Loki -> regole Grafana irccs-audit-integrity-*.
+  # Nessuna dipendenza: lo script usa solo la stdlib di Python.
+  irccs-audit-integrity:
+    image: python:3.12-alpine
+    container_name: irccs-audit-integrity
+    restart: always
+    logging: *default-logging
+    depends_on:
+      - irccs-hapi-audit
+    volumes:
+      - ./setup:/setup:ro
+      - audit_integrity_state:/state
+    environment:
+      IRCCS_AUDIT_FHIR_URL: http://irccs-hapi-audit:8080/fhir
+      AUDIT_INTEGRITY_INTERVAL: ${AUDIT_INTEGRITY_INTERVAL:-900}
+      AUDIT_INTEGRITY_FULL_EVERY: ${AUDIT_INTEGRITY_FULL_EVERY:-96}
+      AUDIT_INTEGRITY_EXTRA_ARGS: ${AUDIT_INTEGRITY_EXTRA_ARGS:-}
+    entrypoint: ["sh", "/setup/audit_integrity_loop.sh"]
+    networks:
+      - irccs
+
   cache:
     container_name: irccs-redis
     hostname: redis
@@ -432,3 +458,4 @@ volumes:
   postgres_data_keycloak:
   redis_data:
   elasticsearch_data:
+  audit_integrity_state:
