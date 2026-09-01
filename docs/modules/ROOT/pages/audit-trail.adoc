@@ -67,14 +67,28 @@ Interrogazione: `GET /fhir/AuditEvent?entity-identifier=urn:internal|{resourceTy
 
 In parallelo all'AuditEvent, ogni operazione emette una riga di log JSON con i campi MDC
 `auditAction`, `auditOutcome`, `auditUser`, `auditResourceType`, `auditResourceId`,
-`auditPatient`, `clientIp`. Questa riga:
+`auditPatient`, `auditIp` (`clientIp` per le operazioni FHIR). Questa riga:
 
 * sopravvive anche se la scrittura dell'AuditEvent FHIR fallisce (es. HAPI irraggiungibile);
 * viene etichettata `audit_trail="true"` da Alloy (`monitoring-config/config.alloy`);
 * ha retention dedicata in Loki (vedi sotto).
 
-Servizi non-FHIR che emettono la stessa riga strutturata: `notification` (generazione /
-verifica OTP), `zammad` (accessi ai ticket, che possono contenere dati paziente).
+`notification` (generazione / verifica OTP) emette *solo* la riga strutturata (nessun
+client FHIR).
+
+`zammad`: gli accessi ai ticket (che possono contenere dati paziente) sono tracciati a
+*doppio livello* come le risorse FHIR — `ZammadTicketAuditFilter` scrive un AuditEvent
+sullo store di audit isolato (ticket modellato come `Communication`, entity logico
+`urn:internal|Communication/<ticketId>`) *più* la riga di log strutturata. Richiede
+`org.quarkus.irccs.{fhir-server,audit-fhir-server,audit-site}` in
+`microservice-config-zammad`. Limite: nessun riferimento al paziente sull'AuditEvent (non
+ricavabile dal solo id del ticket); un 401/403 emesso dal layer di sicurezza *prima* del
+filtro JAX-RS non viene tracciato.
+
+NOTE: `microservice-config-{tac,notification,webpush}` devono avere
+`org.quarkus.irccs.audit-fhir-server` + `audit-site`, altrimenti gli AuditEvent generati
+da quei servizi (es. audit del download DICOM in `tac`) finiscono sullo store *clinico*
+invece che su quello isolato.
 
 == Immodificabilità
 
@@ -150,14 +164,14 @@ I microservizi ci scrivono tramite `org.quarkus.irccs.audit-fhir-server` in
   separare.
 
 [#gap-aperti]
-.Gap aperti / da rivedere
-* **Viste frontend senza fetch backend.** L'AuditEvent di consultazione nasce dalla GET
-  server-side (`FhirClient.read/search` sui tipi sensibili). Una risorsa già in cache lato
-  dashboard e ri-aperta, o un PDF generato client-side da dati già caricati, non produce una
-  nuova GET → nessun evento. L'endpoint mediato `POST /fhir/auth/audit-events` (azione R/E)
-  esiste apposta ma è usato in un solo punto (`CrfTherapyRenderer`, export PDF storico). Se la
-  compliance richiede il log di ogni _visualizzazione_ e non solo di ogni _fetch_, il FE deve
-  chiamare `logAuditEvent` all'apertura di paziente/CRF. Decisione aperta.
+.Gap aperti e monitorati
+* **Viste frontend e PDF export tracciati.** Per garantire conformità con le linee guida del Garante Privacy sul Dossier Sanitario (tracciamento di ogni consultazione anche da cache o ri-apertura e di ogni export locale), il frontend `irccs-react-dashboard` invoca esplicitamente `logAuditEvent` verso `POST /auth/audit-events` per:
+  - Apertura/visualizzazione scheda e cartella paziente (`PatientsCrudForm`);
+  - Consultazione valutazione eleggibilità e arruolamento (`EligibilityNew`);
+  - Export e stampa PDF risposte CRF compilate (`makeCrfPdf`);
+  - Export PDF storico versioni CRF (`CrfTherapyRenderer` / `makeHistoryPdf`);
+  - Download PDF QR Sessione Paziente (`PatientsCrudForm`);
+  - Meta-audit consultazione log (`AuditTrailAdminPage`).
 * **403 del policy-enforcer Keycloak.** I dinieghi applicativi (`Flow.auditAccessDenied`:
   visibilità group_ids, ruoli) sono auditati. Un 403 emesso dal policy-enforcer _prima_ del
   controller no: non passa da JAX-RS, servirebbe un filtro Vert.x per-microservizio. Impatto
@@ -191,7 +205,7 @@ I microservizi ci scrivono tramite `org.quarkus.irccs.audit-fhir-server` in
 | Non è audit trail.
 |===
 
-== Alerting su accessi anomali
+== Alerting su accessi anomali e integrità
 
 Regole Grafana in `monitoring-config/alerting/rules.yaml`, gruppo `irccs-audit-anomalie`:
 
@@ -199,7 +213,23 @@ Regole Grafana in `monitoring-config/alerting/rules.yaml`, gruppo `irccs-audit-a
 * accesso a dati paziente fuori orario di servizio (gate sul volume, da abbinare a silence
   programmata negli orari di servizio);
 * fallimenti di scrittura AuditEvent;
-* tentativi di modifica/cancellazione di un AuditEvent (bloccati dall'interceptor append-only).
+* tentativi di modifica/cancellazione di un AuditEvent (bloccati dall'interceptor append-only);
+* **violazione di integrità dell'audit trail** (`irccs-audit-integrity-tamper`): scatta se
+  il tool periodico di verifica crittografica (`verify_audit_hash_chain.py` / `run_audit_integrity_cron.sh`)
+  rileva una manomissione, alterazione di payload o rottura della catena di hash.
+
+== Verifica automatica periodica dell'integrità (Hash-Chain)
+
+Per soddisfare i requisiti ISO 27001 (A.8.15), GDPR e GCP sul controllo periodico
+dell'immodificabilità, è disponibile il tool di verifica crittografica:
+
+* Script principale: `setup/verify_audit_hash_chain.py`
+  - Ricalcola deterministica di `canonicalPayload` e SHA-256 su ogni `AuditEvent`.
+  - Supporta `--full` (scansione storica totale) e `--incremental` (con checkpoint `.audit_integrity_checkpoint.json`).
+  - Emette log strutturato per Loki (`AUDIT-INTEGRITY-OK` / `AUDIT-INTEGRITY-VIOLATION`) e metriche Prometheus Textfile (`--prometheus-textfile`).
+* Runner per Cron / Systemd: `setup/run_audit_integrity_cron.sh`
+* Test di unità: `setup/test_verify_audit_hash_chain.py`
+
 
 == Accesso all'audit trail
 
