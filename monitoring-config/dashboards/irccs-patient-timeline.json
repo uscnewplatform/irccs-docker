@@ -1,0 +1,426 @@
+{
+  "id": null,
+  "uid": "irccs-patient-timeline",
+  "title": "IRCCS - Timeline paziente (audit trail)",
+  "tags": [
+    "irccs",
+    "loki",
+    "audit",
+    "patient"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 3,
+  "refresh": "",
+  "time": {
+    "from": "now-90d",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "patient",
+        "type": "textbox",
+        "label": "Paziente (id o Patient/id)",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "Inserire l'id del paziente (es. 1234 oppure Patient/1234) e premere Invio. Senza id i pannelli restano vuoti."
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Inserisci l'**id paziente** nel campo in alto (es. `1234` o `Patient/1234`) e premi Invio. Il periodo di default è 90 giorni. Il **diff** campo-per-campo degli update non è qui (può contenere dati personali): è solo sull'AuditEvent FHIR, visibile in dashboard → `/audit-trail`."
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Esiti: eleggibile",
+      "description": "Numero di valutazioni di eleggibilità con esito positivo nel periodo (ResearchSubject.status=eligible / Observation eligibility-flow positiva / gate CQL true).",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 2
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=\"eligibility-evaluated\"} | json p=\"mdc.auditPatient\", e=\"mdc.auditEligible\" | p=~\"(Patient/)?${patient}\" | e=\"true\" [$__range]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
+          "unit": "short",
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Esiti: non eleggibile",
+      "description": "Numero di valutazioni di eleggibilità con esito negativo nel periodo.",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 2
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=\"eligibility-evaluated\"} | json p=\"mdc.auditPatient\", e=\"mdc.auditEligible\" | p=~\"(Patient/)?${patient}\" | e=\"false\" [$__range]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          },
+          "unit": "short",
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Questionari compilati / modificati",
+      "description": "Eventi questionnaire-response-submitted + questionnaire-response-amended nel periodo.",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 2
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=~\"questionnaire-response-.*\"} | json p=\"mdc.auditPatient\" | p=~\"(Patient/)?${patient}\" [$__range]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "0"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Randomizzazioni / assegnazioni braccio",
+      "description": "Eventi randomization-performed + therapy-assigned nel periodo.",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 2
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=~\"randomization-performed|therapy-assigned\"} | json p=\"mdc.auditPatient\" | p=~\"(Patient/)?${patient}\" [$__range]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "0"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "row",
+      "title": "Cronologia eventi di business",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Eventi di business nel tempo",
+      "description": "Conteggio degli eventi di business del paziente per tipo, nel tempo.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (audit_business_event) (count_over_time({audit_trail=\"true\", audit_business_event=~\".+\"} | json p=\"mdc.auditPatient\" | p=~\"(Patient/)?${patient}\" [$__interval]))",
+          "legendFormat": "{{audit_business_event}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "stacking": {
+              "mode": "normal"
+            },
+            "pointSize": 6
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "Eventi di business - dettaglio (create/update)",
+      "description": "Una riga per evento di business (solo scritture): quando, cosa, risorsa, utente, studio, esito eleggibilità, braccio, terapia, modo assegnazione, questionario, decisione consenso.",
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{audit_trail=\"true\", audit_business_event=~\".+\"} | json p=\"mdc.auditPatient\", evento=\"mdc.auditBusinessEvent\", risorsa=\"mdc.auditResourceType\", riferimento=\"mdc.auditResourceId\", utente=\"mdc.auditUser\", studio=\"mdc.auditStudy\", eleggibile=\"mdc.auditEligible\", braccio=\"mdc.auditArm\", terapia=\"mdc.auditTherapy\", modo=\"mdc.auditAssignmentKind\", questionario=\"mdc.auditQuestionnaire\", consenso=\"mdc.auditConsentDecision\", azione=\"mdc.auditAction\" | p=~\"(Patient/)?${patient}\" | azione=~\"C|U\" | line_format \"\"",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "labels"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "labels": true,
+              "Line": true,
+              "tsNs": true,
+              "id": true,
+              "p": true,
+              "azione": true,
+              "container_name": true,
+              "instance": true,
+              "service_name": true,
+              "detected_level": true,
+              "audit_trail": true,
+              "audit_business_event": true,
+              "TraceID": true,
+              "tsdbFields": true
+            },
+            "renameByName": {
+              "evento": "Evento",
+              "risorsa": "Risorsa",
+              "riferimento": "Riferimento",
+              "utente": "Utente",
+              "studio": "Studio",
+              "eleggibile": "Eleggibile",
+              "braccio": "Braccio",
+              "terapia": "Terapia",
+              "modo": "Modo",
+              "questionario": "Questionario",
+              "consenso": "Consenso"
+            },
+            "indexByName": {
+              "Time": 0,
+              "evento": 1,
+              "risorsa": 2,
+              "riferimento": 3,
+              "utente": 4,
+              "studio": 5,
+              "eleggibile": 6,
+              "braccio": 7,
+              "terapia": 8,
+              "modo": 9,
+              "questionario": 10,
+              "consenso": 11
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Time",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "type": "row",
+      "title": "Attività completa sul paziente",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 10,
+      "type": "logs",
+      "title": "Tutti gli accessi e le scritture (incluse le letture)",
+      "description": "Stream audit_trail completo filtrato sul paziente. Il dettaglio con dati personali (valori dei filtri di ricerca, diff) NON è qui: solo sull'AuditEvent FHIR nello store di audit.",
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{audit_trail=\"true\"} | json p=\"mdc.auditPatient\", act=\"mdc.auditAction\", out=\"mdc.auditOutcome\", rt=\"mdc.auditResourceType\", rid=\"mdc.auditResourceId\", be=\"mdc.auditBusinessEvent\", usr=\"mdc.auditUser\" | p=~\"(Patient/)?${patient}\" | line_format \"{{.act}} {{.out}} {{.rt}}/{{.rid}}{{if .be}} [{{.be}}]{{end}} — {{.usr}}\"",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true,
+        "enableLogDetails": true
+      }
+    }
+  ]
+}

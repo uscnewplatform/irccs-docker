@@ -14,13 +14,14 @@ Uso:
   for c in anagrafica-pazienti studio-clinico auth centro-ricerca; do \
     docker logs pascale-local-$c --since 30m 2>&1 | grep -F '"auditAction"'; \
   done > /tmp/audit_lines.jsonl
-  docker logs pascale-local-hapi-audit --since 30m 2>&1 | grep AUDIT-APPEND-ONLY >> /tmp/audit_lines.jsonl
+  docker logs pascale-local-hapi-audit --since 30m 2>&1 | grep -E 'AUDIT-TRAIL|AUDIT-APPEND-ONLY' >> /tmp/audit_lines.jsonl
 
   python3 validate_audit_queries.py /tmp/audit_lines.jsonl
 
 Richiede Docker (avvia grafana/loki:3.5 su una porta effimera e lo rimuove).
 """
 import json
+import re
 import subprocess
 import sys
 import time
@@ -44,8 +45,11 @@ QUERIES = {
         ('sum(count_over_time({container_name=~"irccs-.+"} '
          '|~ "createAuditEvent: (scrittura AuditEvent fallita|errore non gestito)" [15m]))', "match se presenti"),
     "append-only-violation (soglia: gt 0 / 5m)":
-        ('sum(count_over_time({container_name=~"irccs-hapi.*"} '
-         '|~ "AUDIT-APPEND-ONLY: bloccata operazione" [5m]))', "match se presenti"),
+        ('sum by (user, clientIp) (count_over_time('
+         '{audit_trail="true", audit_marker="append-only-violation"} | logfmt [5m]))', "match se presenti"),
+    "hash-chain-reject (soglia: gt 0 / 15m)":
+        ('sum by (user) (count_over_time('
+         '{audit_trail="true", audit_marker="hash-chain-reject"} | logfmt [15m]))', "match se presenti"),
     "[controllo negativo] `| json` senza path -> DEVE essere vuoto":
         ('sum(count_over_time({audit_trail="true"} | json | auditAction=~"R|E" [1h]))', "atteso VUOTO"),
 }
@@ -76,6 +80,8 @@ def push(lines):
         is_json = ln.startswith("{")
         host = "irccs-unknown"
         audit = False
+        # Label extra che Alloy assegnerebbe alle righe "AUDIT-TRAIL marker=...".
+        extra_labels = {}
         if is_json:
             try:
                 rec = json.loads(ln)
@@ -83,7 +89,16 @@ def push(lines):
                 continue
             host = rec.get("hostName", host)
             audit = "auditAction" in rec.get("mdc", {})
-        elif "AUDIT-APPEND-ONLY" in ln:
+        elif "AUDIT-TRAIL marker=" in ln:
+            host = "irccs-hapi-audit"
+            extra_labels["audit_trail"] = "true"
+            m = re.search(r"AUDIT-TRAIL marker=(\S+)", ln)
+            if m:
+                extra_labels["audit_marker"] = m.group(1)
+            mo = re.search(r"\boutcome=(\S+)", ln)
+            if mo:
+                extra_labels["audit_outcome"] = mo.group(1)
+        elif "AUDIT-APPEND-ONLY" in ln:  # righe legacy pre-AUDIT-TRAIL
             host = "irccs-hapi-audit"
         elif "createAuditEvent:" in ln:
             host = "irccs-anagrafica-pazienti"
@@ -103,11 +118,14 @@ def push(lines):
                 # eventi puntuali (fallimenti, violazioni append-only): ultimi 2 minuti,
                 # dentro le finestre [15m]/[5m] delle rispettive regole
                 ts = str(now - (i % 60) * 1_000_000_000)
-            key = (host, "true" if audit else "")
+            labels = {"container_name": host}
+            if audit:
+                labels["audit_trail"] = "true"
+            labels.update(extra_labels)
+            key = tuple(sorted(labels.items()))
             streams.setdefault(key, []).append([ts, body])
     payload = {"streams": [
-        {"stream": ({"container_name": h, "audit_trail": a} if a else {"container_name": h}), "values": v}
-        for (h, a), v in streams.items()]}
+        {"stream": dict(k), "values": v} for k, v in streams.items()]}
     req = urllib.request.Request(f"{LOKI}/loki/api/v1/push", data=json.dumps(payload).encode(),
                                  headers={"Content-Type": "application/json"})
     urllib.request.urlopen(req)

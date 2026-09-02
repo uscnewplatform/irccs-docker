@@ -167,7 +167,7 @@ groups:
         noDataState: OK
         execErrState: Error
         annotations:
-          summary: 'AuditEventAppendOnlyInterceptor ha bloccato un update/delete/expunge su AuditEvent - possibile tentativo di alterazione dell''audit trail'
+          summary: 'AuditEventAppendOnlyInterceptor ha bloccato un update/delete/expunge su AuditEvent (utente "{{ $labels.user }}", IP {{ $labels.clientIp }}) - possibile tentativo di alterazione dell''audit trail'
         labels:
           severity: critical
         data:
@@ -177,9 +177,79 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              # Stringa emessa da AuditEventAppendOnlyInterceptor.LOG.warn prima di
-              # rifiutare l'operazione (irccs-common/hapi-audit-interceptor).
-              expr: 'sum(count_over_time({container_name=~"irccs-hapi.*"} |~ "AUDIT-APPEND-ONLY: bloccata operazione" [5m]))'
+              # Riga "AUDIT-TRAIL marker=append-only-violation ..." emessa da
+              # AuditLog.emit in AuditEventAppendOnlyInterceptor prima di rifiutare
+              # l'operazione (irccs-common/hapi-audit-interceptor). Alloy assegna la
+              # label audit_marker; user/clientIp escono da `| logfmt` e diventano
+              # label della serie d'allarme per la forense.
+              expr: 'sum by (user, clientIp) (count_over_time({audit_trail="true", audit_marker="append-only-violation"} | logfmt [5m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-hash-chain-reject
+        title: 'Scrittura AuditEvent rifiutata dalla hash-chain'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'AuditEventHashChainInterceptor non ha potuto calcolare l''hash-chain e ha RIFIUTATO la scrittura di un AuditEvent (utente "{{ $labels.user }}"): alcune operazioni potrebbero non essere tracciate nell''AuditEvent FHIR'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              # Riga "AUDIT-TRAIL marker=hash-chain-reject ..." emessa da AuditLog.emit
+              # nel ramo catch di AuditEventHashChainInterceptor.chain prima di
+              # lanciare InternalErrorException.
+              expr: 'sum by (user) (count_over_time({audit_trail="true", audit_marker="hash-chain-reject"} | logfmt [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-hash-chain-dblock
+        title: 'Hash-chain audit senza barriera di serializzazione DB'
+        condition: threshold
+        for: 15m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'AuditEventHashChainInterceptor non ha il pg_advisory_xact_lock: la catena di hash e'' serializzata solo entro la singola istanza HAPI. Accettabile finche'' irccs-hapi-audit resta a istanza singola - verificare che non siano state avviate repliche'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              # Riga "AUDIT-TRAIL marker=hash-chain-dblock status=unavailable ..."
+              # (emessa una-tantum per ciclo di vita del processo HAPI).
+              expr: 'sum(count_over_time({audit_trail="true", audit_marker="hash-chain-dblock"} | logfmt | status="unavailable" [1h]))'
               refId: query
               queryType: instant
           - refId: threshold

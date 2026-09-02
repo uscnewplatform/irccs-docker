@@ -1,0 +1,476 @@
+{
+  "id": null,
+  "uid": "irccs-audit-trail",
+  "title": "IRCCS - Audit trail (interceptor HAPI)",
+  "tags": [
+    "irccs",
+    "loki",
+    "logs",
+    "audit",
+    "security"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "1m",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Immodificabilita' (append-only) e integrita' (hash-chain)",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Violazioni append-only (24h)",
+      "description": "Righe AUDIT-TRAIL marker=append-only-violation: tentativi di update/delete/patch/$expunge/$meta-* su AuditEvent bloccati da AuditEventAppendOnlyInterceptor. Atteso: 0. Ogni valore > 0 e' un possibile tentativo di alterazione dell'audit trail (vedi tabella sotto per utente/IP).",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_marker=\"append-only-violation\"} [24h]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Scritture AuditEvent rifiutate dalla hash-chain (24h)",
+      "description": "Righe AUDIT-TRAIL marker=hash-chain-reject: AuditEventHashChainInterceptor non ha potuto calcolare l'hash e ha rifiutato la scrittura (InternalErrorException). Atteso: 0. Se > 0, alcune operazioni potrebbero non essere tracciate nell'AuditEvent FHIR (resta il log Loki dei microservizi).",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_marker=\"hash-chain-reject\"} [24h]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Verifica integrita' continua (24h)",
+      "description": "Esiti del container irccs-audit-integrity (verify_audit_hash_chain.py): OK = catena integra, FORK = due eventi con lo stesso predecessore, VIOLATION = hash ricalcolato != memorizzato (manomissione diretta sul DB). Rosso se compare anche un solo FORK/VIOLATION.",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({container_name=\"irccs-audit-integrity\"} |~ \"AUDIT-INTEGRITY-(FORK|VIOLATION)\" [24h]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Barriera lock DB hash-chain",
+      "description": "Ultimo esito AUDIT-TRAIL marker=hash-chain-dblock (pg_advisory_xact_lock). status=acquired: catena serializzata anche tra istanze. status=unavailable: serializzata solo entro la singola istanza HAPI - accettabile finche' irccs-hapi-audit resta a istanza singola.",
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_marker=\"hash-chain-dblock\"} | logfmt | status=\"unavailable\" [7d]))",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              }
+            ]
+          },
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Tentativi append-only bloccati - per operazione",
+      "description": "Andamento temporale delle violazioni append-only, suddivise per operazione bloccata (REST UPDATE / REST DELETE / storage-update / ...).",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (op) (count_over_time({audit_trail=\"true\", audit_marker=\"append-only-violation\"} | logfmt [$__interval]))",
+          "legendFormat": "{{op}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Tentativi append-only bloccati - dettaglio (utente / IP / risorsa)",
+      "description": "Ogni riga AUDIT-TRAIL marker=append-only-violation con i campi estratti via logfmt: chi (user, dal bearer token, non verificato in firma), da dove (clientIp, X-Forwarded-For), cosa (op / fhirOp), su quale AuditEvent (resourceId).",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{audit_trail=\"true\", audit_marker=\"append-only-violation\"} | logfmt | line_format \"{{.user}}\"",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "labels"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "labels": true,
+              "tsNs": true,
+              "id": true,
+              "Line": true,
+              "audit_trail": true,
+              "audit_marker": true,
+              "outcome": true,
+              "container_name": true,
+              "instance": true,
+              "kv": true,
+              "level": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "user": 1,
+              "clientIp": 2,
+              "op": 3,
+              "fhirOp": 4,
+              "resourceId": 5,
+              "audit_outcome": 6
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Time",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "type": "row",
+      "title": "Stato hash-chain e log grezzi",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 9,
+      "type": "logs",
+      "title": "Aggancio catena all'avvio (hash-chain-init)",
+      "description": "Una riga per riavvio del processo HAPI audit: mode=genesis (prima catena), pre-chain (eventi preesistenti senza hash), resume (catena gia' presente). prevHash = primi 16 char dell'anello a cui ci si aggancia.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{audit_trail=\"true\", audit_marker=\"hash-chain-init\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      }
+    },
+    {
+      "id": 10,
+      "type": "logs",
+      "title": "Esiti verifica integrita' (irccs-audit-integrity)",
+      "description": "Output del container di verifica continua della hash-chain: OK / FORK / VIOLATION con conteggi.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{container_name=\"irccs-audit-integrity\"} |~ \"AUDIT-INTEGRITY-\"",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      }
+    },
+    {
+      "id": 11,
+      "type": "logs",
+      "title": "Tutte le righe di audit trail (audit_trail=\"true\")",
+      "description": "Stream completo con retention lunga (loki-config.yml retention_stream): righe AUDIT-TRAIL degli interceptor, righe 'auditAction' dei microservizi (FhirClient.createAuditEvent) e output del container di integrita'.",
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{audit_trail=\"true\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      }
+    }
+  ]
+}

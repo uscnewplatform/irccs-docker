@@ -335,6 +335,51 @@ loki.process "logs_process_client" {
       stage.static_labels {
           values = { "audit_trail" = "true" }
       }
+
+      // Evento di business "vita del paziente" (mdc.auditBusinessEvent da AuditMdc in
+      // i3-client: questionnaire-response-*, consent-*, eligibility-evaluated,
+      // randomization-performed, ...). Bassa cardinalita' -> label, per la dashboard
+      // "Timeline paziente". auditEligible/auditArm/auditStudy/auditQuestionnaire
+      // restano campi, query-time via `| json`.
+      stage.json {
+          expressions = { "audit_business_event" = "mdc.auditBusinessEvent" }
+      }
+      stage.labels {
+          values = { "audit_business_event" = "audit_business_event" }
+      }
+  }
+
+  // Righe di audit trail emesse DENTRO il processo HAPI: interceptor append-only +
+  // hash-chain (irccs-common/hapi-audit-interceptor -> prefisso "AUDIT-TRAIL k=v ...",
+  // AuditLog.java) e verifica di integrita' continua (container irccs-audit-integrity
+  // -> "AUDIT-INTEGRITY-*"). Questi container loggano TESTO PIANO (logback default),
+  // non JSON: niente `| json`. "AUDIT-APPEND-ONLY" resta nel filtro per le righe
+  // legacy gia' in Loki (formato pre-AUDIT-TRAIL).
+  stage.match {
+      selector = "{container_name=~\"irccs-(hapi-fhir|hapi-audit|audit-integrity)\"} |~ \"AUDIT-TRAIL|AUDIT-INTEGRITY|AUDIT-APPEND-ONLY\""
+
+      stage.static_labels {
+          values = { "audit_trail" = "true" }
+      }
+  }
+
+  // Solo le righe "AUDIT-TRAIL marker=... k=v ...": estrae la coda logfmt e promuove
+  // a label i soli campi a bassa cardinalita' (marker, outcome). user/clientIp/
+  // resourceId restano nel testo -> query-time via `| logfmt` (evita esplosione
+  // di serie e PII come label).
+  stage.match {
+      selector = "{container_name=~\"irccs-(hapi-fhir|hapi-audit)\"} |~ \"AUDIT-TRAIL marker=\""
+
+      stage.regex {
+          expression = "AUDIT-TRAIL (?P<kv>marker=.*)$"
+      }
+      stage.logfmt {
+          source  = "kv"
+          mapping = { "audit_marker" = "marker", "audit_outcome" = "outcome" }
+      }
+      stage.labels {
+          values = { "audit_marker" = "audit_marker", "audit_outcome" = "audit_outcome" }
+      }
   }
 }
 
