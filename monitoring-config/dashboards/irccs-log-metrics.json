@@ -71,6 +71,7 @@
       "id": 2,
       "type": "logs",
       "title": "Errori frontend (React/Faro)",
+      "description": "Errori e log dal frontend via Faro. VUOTO finche' Faro non e' collegato: serve VITE_API_FARO_COLLECTOR_API + VITE_API_FARO_API_KEY nel config.js runtime (window.APP_CONFIG) e la route proxy verso il faro.receiver di Alloy (porta AGENT_PORT_APP_RECEIVER). In pascale-local non e' configurato di default.",
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -87,7 +88,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{app=\"irccs-react-dashboard\", kind=\"frontend\"}",
+          "expr": "{app=\"irccs-react-dashboard\"}",
           "refId": "A"
         }
       ],
