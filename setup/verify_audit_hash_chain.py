@@ -555,11 +555,13 @@ def main():
         else:
             print(f"\nAUDIT-INTEGRITY-OK: Catena di hash integra. Verificati={verified_count} Saltati={unhashed_count} "
                   f"in {elapsed:.2f}s (ultimo evento={last_event_id})")
-    else:
+    elif total_issues > 0:
         print(f"\nAUDIT-INTEGRITY-VIOLATION: Rilevate {total_issues} anomalie nell'audit trail! "
               f"Tamper={len(violations)}, ChainBreaks={len(chain_breaks)}, "
               f"Fork={len(forks) if fork_is_anomaly else 0}, Verificati={verified_count} "
               f"in {elapsed:.2f}s", file=sys.stderr)
+    # else: is_all_ok=False per sola regressione conteggio/unhashed -> il marker
+    # dedicato e' gia' stato stampato sopra; l'exit code resta 1.
 
     # Aggiorna checkpoint se ci sono stati nuovi eventi verificati con successo
     if is_all_ok and last_event_id and last_valid_hash and (args.incremental or args.full):
