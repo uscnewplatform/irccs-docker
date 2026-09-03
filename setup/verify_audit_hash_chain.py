@@ -254,10 +254,12 @@ def fetch_all_auditevents(base_url: str, token: Optional[str], page_size: int = 
     return events
 
 
-def save_checkpoint(path: str, last_event_id: str, last_hash: str, total_verified: int):
+def save_checkpoint(path: str, last_event_id: str, last_hash: str, total_verified: int,
+                    last_recorded: Optional[str] = None):
     data = {
         "last_event_id": last_event_id,
         "last_hash": last_hash,
+        "last_recorded": last_recorded or "",
         "total_verified": total_verified,
         "last_verified_at": datetime.now(timezone.utc).isoformat()
     }
@@ -417,6 +419,7 @@ def main():
     chain_breaks: List[Dict] = []
     last_valid_hash = start_hash
     last_event_id = checkpoint.get("last_event_id") if checkpoint else None
+    last_recorded = checkpoint.get("last_recorded", "") if checkpoint else ""
 
     # 1. Verifica crittografica di tutti gli eventi ordinati topologicamente
     for ev in ordered_events:
@@ -439,6 +442,8 @@ def main():
             verified_count += 1
             last_event_id = eid
             last_valid_hash = h
+            if rec and rec != "?":
+                last_recorded = rec
             if not args.quiet and verified_count % 100 == 0:
                 print(f"  ... {verified_count} AuditEvent verificati OK")
 
@@ -478,8 +483,30 @@ def main():
         for fh, cids in forks[:10]:
             print(f"       prev {fh[:16]}... -> eventi {cids}", file=out)
 
+    # Checkpoint "stantio": in modalità incrementale non si è agganciato nessun evento
+    # nuovo (by_prev[start_hash] vuoto) MA esistono eventi con hash e 'recorded' successivo
+    # al checkpoint. Significa che l'hash del checkpoint non è più la foglia della catena
+    # (tipicamente: re-seed della catena dopo un riavvio HAPI agganciato a un predecessore
+    # diverso). NON è "tutto ok": va segnalato e il checkpoint NON va avanzato, così il
+    # full scan periodico ricalcola dalla radice.
+    stale_checkpoint = False
+    if is_all_ok and verified_count == 0 and start_hash:
+        newer = [
+            ev for eid, ev in all_events_map.items()
+            if eid not in visited_eids
+            and extract_chain_extensions(ev)[1]
+            and (not last_recorded or ev.get("recorded", "") > last_recorded)
+        ]
+        if newer:
+            stale_checkpoint = True
+            is_all_ok = False
+
     # Log strutturato per Loki
-    if is_all_ok:
+    if stale_checkpoint:
+        print(f"\nAUDIT-INTEGRITY-STALE-CHECKPOINT: il checkpoint (ID={last_event_id}) non è più "
+              f"la foglia della hash-chain; {len(newer)} AuditEvent nuovi non verificabili "
+              f"dall'incrementale. Attesa la scansione full per il ricalcolo.", file=sys.stderr)
+    elif is_all_ok:
         if verified_count == 0 and start_hash:
             print(f"\nAUDIT-INTEGRITY-OK: Nessun nuovo evento dal checkpoint (catena ferma a ID={last_event_id}). "
                   f"Verificati=0 in {elapsed:.2f}s")
@@ -495,7 +522,8 @@ def main():
     # Aggiorna checkpoint se ci sono stati nuovi eventi verificati con successo
     if is_all_ok and last_event_id and last_valid_hash and (args.incremental or args.full):
         prev_total = (checkpoint.get("total_verified", 0) if checkpoint else 0)
-        save_checkpoint(args.checkpoint_file, last_event_id, last_valid_hash, prev_total + verified_count)
+        save_checkpoint(args.checkpoint_file, last_event_id, last_valid_hash,
+                        prev_total + verified_count, last_recorded)
         if not args.quiet:
             print(f"[CHECKPOINT] Salvato stato aggiornato su {args.checkpoint_file}")
 

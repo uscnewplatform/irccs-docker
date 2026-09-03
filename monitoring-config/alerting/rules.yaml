@@ -357,3 +357,34 @@ groups:
                     type: lt
                     params: [1]
 
+      - uid: irccs-audit-integrity-stale-checkpoint
+        title: 'Checkpoint verifica integrità audit non allineato alla coda della catena'
+        condition: threshold
+        for: 30m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'La verifica incrementale non riesce ad agganciare gli AuditEvent nuovi: l''hash del checkpoint non è più la foglia della hash-chain (tipico re-seed della catena dopo un riavvio HAPI). Gli eventi recenti restano coperti solo dal full scan periodico finché non si ricalcola'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-STALE-CHECKPOINT" [30m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
