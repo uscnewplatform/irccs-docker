@@ -2714,6 +2714,33 @@
           "manage-account"
         ]
       }
+    },
+    {
+      "name": "auditor",
+      "path": "/auditor",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [
+        "default-roles-pascale",
+        "offline_access",
+        "uma_authorization"
+      ],
+      "clientRoles": {
+        "irccs": [
+          "uma_protection"
+        ],
+        "broker": [
+          "read-token"
+        ],
+        "account": [
+          "view-profile",
+          "view-groups",
+          "view-consent",
+          "view-applications",
+          "manage-account",
+          "manage-account-links"
+        ]
+      }
     }
   ],
   "defaultRole": {

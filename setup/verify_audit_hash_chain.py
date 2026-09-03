@@ -254,13 +254,25 @@ def fetch_all_auditevents(base_url: str, token: Optional[str], page_size: int = 
     return events
 
 
+def count_auditevents(base_url: str, token: Optional[str]) -> Optional[int]:
+    """Conteggio esatto degli AuditEvent presenti (per rilevare una regressione da restore)."""
+    try:
+        b = _http_get_json(f"{base_url}/AuditEvent?_summary=count&_total=accurate", auth_headers(token))
+        return int(b.get("total")) if b.get("total") is not None else None
+    except (FhirHttpError, ValueError, TypeError):
+        return None
+
+
 def save_checkpoint(path: str, last_event_id: str, last_hash: str, total_verified: int,
-                    last_recorded: Optional[str] = None):
+                    last_recorded: Optional[str] = None, unhashed_baseline: Optional[int] = None,
+                    total_present: Optional[int] = None):
     data = {
         "last_event_id": last_event_id,
         "last_hash": last_hash,
         "last_recorded": last_recorded or "",
         "total_verified": total_verified,
+        "unhashed_baseline": unhashed_baseline if unhashed_baseline is not None else 0,
+        "total_present": total_present if total_present is not None else 0,
         "last_verified_at": datetime.now(timezone.utc).isoformat()
     }
     with open(path, "w", encoding="utf-8") as f:
@@ -501,7 +513,37 @@ def main():
             stale_checkpoint = True
             is_all_ok = False
 
+    # --- Gap threat-model: eventi nuovi senza hash-chain --------------------
+    # Un attore con accesso alla config del container puo' disattivare
+    # l'AuditEventHashChainInterceptor: i nuovi AuditEvent vengono scritti senza
+    # le extension di catena. Il verificatore li conta come "Saltati". Se il
+    # conteggio dei non-hashed cresce oltre la baseline nota, e' un'anomalia.
+    unhashed_baseline = (checkpoint.get("unhashed_baseline", 0) if checkpoint else 0)
+    unhashed_regression = False
+    if unhashed_count > max(unhashed_baseline, 0) and (args.full or args.incremental):
+        # in incrementale unhashed_count e' gia' il solo delta nuovo
+        new_unhashed = unhashed_count if args.incremental else (unhashed_count - unhashed_baseline)
+        if new_unhashed > 0:
+            unhashed_regression = True
+            is_all_ok = False
+
+    # --- Gap threat-model: regressione del conteggio (restore/rollback) ----
+    total_present = count_auditevents(args.audit_fhir, args.token)
+    prev_present = (checkpoint.get("total_present", 0) if checkpoint else 0)
+    count_regression = False
+    if total_present is not None and prev_present and total_present < prev_present:
+        count_regression = True
+        is_all_ok = False
+
     # Log strutturato per Loki
+    if unhashed_regression:
+        print(f"\nAUDIT-INTEGRITY-UNHASHED: {new_unhashed} AuditEvent nuovi senza hash-chain "
+              f"(baseline={unhashed_baseline}, totale non-hashed={unhashed_count}). "
+              f"Possibile disattivazione dell'interceptor di catena.", file=sys.stderr)
+    if count_regression:
+        print(f"\nAUDIT-INTEGRITY-COUNT-REGRESSION: gli AuditEvent presenti sono {total_present}, "
+              f"erano {prev_present} al checkpoint precedente. Possibile restore/rollback dello store.",
+              file=sys.stderr)
     if stale_checkpoint:
         print(f"\nAUDIT-INTEGRITY-STALE-CHECKPOINT: il checkpoint (ID={last_event_id}) non è più "
               f"la foglia della hash-chain; {len(newer)} AuditEvent nuovi non verificabili "
@@ -523,7 +565,9 @@ def main():
     if is_all_ok and last_event_id and last_valid_hash and (args.incremental or args.full):
         prev_total = (checkpoint.get("total_verified", 0) if checkpoint else 0)
         save_checkpoint(args.checkpoint_file, last_event_id, last_valid_hash,
-                        prev_total + verified_count, last_recorded)
+                        prev_total + verified_count, last_recorded,
+                        unhashed_baseline=unhashed_count,
+                        total_present=(total_present if total_present is not None else prev_present))
         if not args.quiet:
             print(f"[CHECKPOINT] Salvato stato aggiornato su {args.checkpoint_file}")
 

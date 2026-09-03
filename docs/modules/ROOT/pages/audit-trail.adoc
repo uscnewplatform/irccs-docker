@@ -133,6 +133,40 @@ NOTE: `microservice-config-{tac,notification,webpush}` devono avere
 da quei servizi (es. audit del download DICOM in `tac`) finiscono sullo store *clinico*
 invece che su quello isolato.
 
+== Semantica di fallimento dell'audit
+
+Cosa succede se lo store di audit è indisponibile mentre un microservizio sta scrivendo
+un dato clinico. La regola dipende dalla *categoria* dell'evento.
+
+[cols="2,1,2,1"]
+|===
+| Evento | Audit obbligatorio | Se l'audit fallisce | Retry
+
+| Consent (grant / withdraw / update)         | Sì | operazione segnalata come fallita | No
+| Randomizzazione (`randomization-performed`) | Sì | operazione segnalata come fallita | No
+| Assegnazione terapia (`therapy-assigned`)   | Sì | operazione segnalata come fallita | No
+| Verdetto di eleggibilità                    | Sì | operazione segnalata come fallita | No
+| Modifica / cancellazione dati di studio (U/D su tipo critico) | Sì | operazione segnalata come fallita | No
+| Lettura di dati paziente / dashboard        | Sì | consentita, evento in coda best-effort | Sì
+|===
+
+*Eventi critici* = scrittura (`C`/`U`/`D`) su un tipo in
+`org.quarkus.irccs.audit.critical-resource-types` (default `Consent,ResearchSubject,CarePlan`),
+con `org.quarkus.irccs.audit.fail-closed-on-critical=true` (default).
+
+Implementazione (`irccs-common/i3-client`, `FhirClient`):
+
+* per un evento critico l'AuditEvent viene scritto in modo *sincrono*; se la POST verso lo
+  store fallisce, il metodo solleva `AuditRequiredException`;
+* per una `create`, prima di ri-sollevare il `FhirClient` esegue una *compensating delete*
+  della risorsa appena creata → il dato clinico non persiste senza audit;
+* per `update` / `delete` la mutazione è già avvenuta: l'operazione viene comunque segnalata
+  come fallita al chiamante, la modifica resta tracciata dalla riga di log ridondante su Loki
+  (emessa *prima* del tentativo di POST) e dall'alert `irccs-audit-write-failures`.
+
+Per tutti gli altri eventi vale il comportamento best-effort: un errore nella scrittura
+dell'AuditEvent non blocca l'operazione originale; resta la traccia su Loki.
+
 == Immodificabilità
 
 L'isolamento e l'integrità degli AuditEvent sono garantiti da tre interceptor HAPI
@@ -286,10 +320,44 @@ Cadenza (`setup/audit_integrity_loop.sh`):
   entro 24h. In full i fork storici (attesi ai riavvii dello stack) sono solo `[INFO]`.
 
 Output su stdout/stderr del container → Alloy → Loki: marker `AUDIT-INTEGRITY-OK`,
-`AUDIT-INTEGRITY-FORK`, `AUDIT-INTEGRITY-VIOLATION`, `AUDIT-INTEGRITY-ERROR`. Regole
-Grafana `irccs-audit-integrity-{tamper,fork,stale}` in
-`monitoring-config/alerting/rules.yaml`. Checkpoint, ultimo report JSON e metriche
-Prometheus Textfile nel volume `audit_integrity_state`.
+`AUDIT-INTEGRITY-FORK`, `AUDIT-INTEGRITY-VIOLATION`, `AUDIT-INTEGRITY-ERROR`,
+`AUDIT-INTEGRITY-STALE-CHECKPOINT`, `AUDIT-INTEGRITY-UNHASHED`,
+`AUDIT-INTEGRITY-COUNT-REGRESSION`. Regole Grafana
+`irccs-audit-integrity-{tamper,fork,stale,stale-checkpoint,unhashed,count-regression}`
++ `irccs-audit-db-direct-mutation` in `monitoring-config/alerting/rules.yaml`.
+Checkpoint, ultimo report JSON e metriche Prometheus Textfile nel volume
+`audit_integrity_state`.
+
+I marker aggiunti chiudono i gap del threat model:
+
+* `AUDIT-INTEGRITY-UNHASHED` -- AuditEvent nuovi privi delle extension di catena:
+  possibile disattivazione dell'`AuditEventHashChainInterceptor` via configurazione del
+  container (livello *container administrator*);
+* `AUDIT-INTEGRITY-COUNT-REGRESSION` -- gli AuditEvent presenti sono meno che al controllo
+  precedente: uno store append-only non cala mai → restore da backup, rollback del DB o
+  cancellazione a livello storage (livello *backup / host administrator*);
+* `irccs-audit-db-direct-mutation` -- `pgaudit` ha registrato una WRITE/DDL/ROLE sulle
+  tabelle degli AuditEvent (nessun percorso legittimo lo fa) (livello *DBA*).
+
+=== Threat model e contromisure residue
+
+La hash-chain è *tamper-evidente*, non una prova assoluta di immutabilità: un attore con
+accesso completo al database e conoscenza dell'algoritmo (open source) può in linea di
+principio riscrivere l'intera catena. Le difese contro i livelli più alti sono
+organizzative e ridondanti, e sono sulla roadmap (non bloccanti per la Fase 1):
+
+* *spedizione log off-host* -- Loki / un forwarder su una macchina distinta, così la copia
+  di corroborazione sopravvive alla compromissione dell'host applicativo;
+* *backup immutabili* -- storage con object-lock / WORM; restore a due persone, registrato;
+* *ancoraggio esterno* -- export periodico dell'hash di testa della catena verso un sistema
+  indipendente (timestamp qualificato, e-mail firmata al DPO): rende rilevabile una
+  riscrittura completa o un rollback.
+
+=== Consultazione: ruoli abilitati
+
+`GET /fhir/auth/audit-events` è consentito ai gruppi Keycloak `/admin` **e** `/auditor`
+(quest'ultimo dedicato a DPO / auditor: sola lettura sull'audit trail, nessun altro
+privilegio amministrativo). Ogni consultazione genera comunque un meta-audit.
 
 Esecuzione manuale una-tantum (dall'host, HAPI audit su `127.0.0.1:8081`):
 

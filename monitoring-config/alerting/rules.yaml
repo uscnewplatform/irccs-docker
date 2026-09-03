@@ -388,3 +388,96 @@ groups:
                     type: gt
                     params: [0]
 
+
+      - uid: irccs-audit-integrity-unhashed
+        title: 'AuditEvent nuovi senza hash-chain'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Il verificatore ha trovato AuditEvent nuovi privi delle extension di catena (audit-chain-prev/-hash): possibile disattivazione dell''AuditEventHashChainInterceptor via configurazione del container'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-UNHASHED" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-integrity-count-regression
+        title: 'Calo del numero di AuditEvent (possibile restore/rollback)'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Gli AuditEvent presenti nello store sono meno che al controllo precedente: uno store append-only non cala mai. Indica un restore da backup, un rollback del database o una cancellazione a livello storage'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-COUNT-REGRESSION" [30m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-db-direct-mutation
+        title: 'Scrittura o DDL SQL diretto sulle tabelle degli AuditEvent'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'pgaudit ha registrato una WRITE / DDL / ROLE sullo store di audit toccando le tabelle degli AuditEvent (hfj_resource / hfj_res_ver / trigger trg_auditevent_*): nessun percorso legittimo scrive quelle tabelle via SQL diretto'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="postgres-hapi-audit"} |~ "(?i)pgaudit" |~ "(?i)(WRITE|DDL|ROLE)" |~ "(?i)(hfj_resource|hfj_res_ver|trg_auditevent|AuditEvent)" [10m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
