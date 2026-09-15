@@ -282,6 +282,31 @@ loki.source.docker "default" {
   forward_to = [loki.process.logs_process_client.receiver]
 }
 
+// Backup DB (irccs-backup.service, vedi backup/): container Docker one-shot
+// lanciato da un timer systemd. Il log NON arriva via loki.source.docker sopra:
+// discovery.docker scopre solo container IN ESECUZIONE (come `docker ps` senza
+// -a), un job che finisce e' invisibile alla discovery per definizione
+// (verificato con test reali, container lasciato "Exited" e mai comparso tra
+// i target). Si era provato anche loki.source.journal (backup diretto
+// sull'host via systemd): scartato, l'immagine Docker ufficiale di
+// grafana/alloy non include libsystemd/journalctl. Soluzione: il wrapper
+// backup/scripts/run_backup_container.sh scrive una copia dell'output anche
+// su file (BACKUP_LOG_FILE, default /var/log/irccs-backup/backup.log),
+// letto qui via loki.source.file — tailing puro, nessuna dipendenza da
+// discovery/timing/librerie di sistema.
+local.file_match "irccs_backup_log" {
+  path_targets = [{
+    "__path__" = "/rootfs/var/log/irccs-backup/backup.log",
+    "component" = "irccs-backup",
+    "instance"  = constants.hostname,
+  }]
+}
+
+loki.source.file "irccs_backup" {
+  targets       = local.file_match.irccs_backup_log.targets
+  forward_to    = [loki.process.logs_process_client.receiver]
+}
+
 // Riceve log/errori dal frontend React (src/faro.ts, @grafana/faro-web-sdk).
 // Solo logs: le trace non sono abilitate lato client (Tempo non deployato,
 // fase 2) quindi non serve un output traces qui.

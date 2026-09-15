@@ -1,0 +1,77 @@
+# Regole Grafana alerting per il backup notturno DB.
+# Da fondere nel gruppo esistente in monitoring-config/alerting/rules.yaml
+# (stesso provisioning apiVersion 1, stesso pattern di irccs-high-error-rate).
+# Il backup gira come container Docker one-shot "irccs-backup-run" (vedi
+# ../Dockerfile, ../scripts/run_backup_container.sh): catturato automaticamente
+# da loki.source.docker (Alloy) esistente, label container_name gia' presente,
+# nessuna configurazione Alloy aggiuntiva richiesta.
+
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: irccs-backup
+    folder: 'Alerting'
+    interval: 5m
+    rules:
+      - uid: irccs-backup-failed
+        title: 'Backup notturno DB fallito'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'irccs-backup.service ha loggato level=error nelle ultime 6 ore'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 21600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-backup-run"} |= "level=error" [6h]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-backup-missing
+        title: 'Backup notturno DB assente da oltre 26h'
+        condition: threshold
+        for: 0m
+        noDataState: Alerting
+        execErrState: Error
+        annotations:
+          summary: 'Nessun log "backup notturno completato con successo" nelle ultime 26 ore'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 93600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-backup-run"} |= "backup notturno completato con successo" [26h]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]

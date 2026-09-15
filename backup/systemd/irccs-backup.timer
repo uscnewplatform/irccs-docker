@@ -1,0 +1,12 @@
+[Unit]
+Description=Schedulazione notturna backup DB IRCCS
+
+[Timer]
+# 03:15 ogni notte, fascia a bassa attivita' - verificare che non confligga
+# con altri job schedulati sullo stesso host prima di attivare.
+OnCalendar=*-*-* 03:15:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
