@@ -1,0 +1,16 @@
+[Unit]
+Description=IRCCS backup notturno DB (HAPI FHIR + Keycloak)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Path assoluto della checkout della stack prod sull'host, da adattare in fase di install.
+WorkingDirectory=/opt/irccs-docker
+ExecStart=/opt/irccs-docker/backup/scripts/run_backup_container.sh
+# Il container di backup logga su stdout/stderr, catturato automaticamente da
+# loki.source.docker (Alloy) -> vedere backup/alerting/backup-rules.yaml.
+# Questi StandardOutput=journal sono solo per la visibilita' locale
+# (journalctl -u irccs-backup.service), non per l'ingestione Grafana.
+StandardOutput=journal
+StandardError=journal
