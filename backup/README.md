@@ -128,6 +128,7 @@ Sequenza manuale equivalente, se non si usa `install.sh`:
 - [x] Test statico (`scripts/run_tests.sh`: sintassi + shellcheck + validazione YAML/JSON, 2026-09-16)
 - [x] Trap ERR su tutti gli entrypoint (rete di sicurezza per l'alerting: un comando non gestito che fallisce produce comunque `level=error`, non muore silenziosamente, 2026-09-16)
 - [x] Floor di sicurezza in retention (`die` se il set da tenere risulta vuoto con archivi presenti, evita cancellazione totale silenziosa — bug collaterale trovato e fixato in `pick_one_per_bucket`, 2026-09-16)
+- [x] Warning anticipato spazio disco (`BACKUP_WARN_FREE_MB`, default 2x soglia minima, prima che diventi critico, 2026-09-16)
 - [ ] Test restore reale su ambiente scratch, RTO misurato
 - [ ] Scelta e configurazione target offsite definitivo
 - [ ] Installazione timer su host prod
