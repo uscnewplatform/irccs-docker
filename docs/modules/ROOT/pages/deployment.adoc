@@ -139,7 +139,25 @@ docker compose logs -f irccs-microservice-auth
 docker compose -f docker-compose.yaml -f docker-compose-monitoring.yaml up -d
 ----
 
-Aggiunge Prometheus (metriche da `/q/metrics`) e Grafana.
+Aggiunge Grafana + Loki (log centralizzati, incluse le righe `audit_trail="true"` e
+i marker `AUDIT-INTEGRITY-*`) + Alloy (agente di raccolta). Metriche Quarkus disponibili
+su `/q/metrics` per microservizio, non aggregate da un Prometheus dedicato in questo
+compose.
+
+**Accesso**: nessuna porta host esposta di default (`GRAFANA_PORT` nel compose è
+commentato) — Grafana è raggiungibile solo via reverse proxy httpd, su
+`http://<host>/grafana` (`ProxyPass /grafana` in `httpd-config/irccs.conf`). Login
+gestito da Grafana stesso, nessun accesso anonimo.
+
+CAUTION: **Variabili `.env` per questo stack non erano documentate nel template fino
+al 2026-09-16** — vedi `.env_example` sezione "Monitoring" per l'elenco completo
+(`GRAFANA_*`, `LOKI_*`, `ALLOY_*`, `GF_SMTP_*`, `ALERT_EMAIL_TO`). Due varianti
+`*_CONFIG_PATH_LOCAL` hanno un comportamento diverso da ricordare: `GRAFANA_CONFIG_PATH_LOCAL`
+punta a una *cartella* (combinata con `GRAFANA_CONFIG_FILE` nel volume), mentre
+`LOKI_CONFIG_PATH_LOCAL` e `ALLOY_CONFIG_PATH_LOCAL` devono puntare al *file* stesso
+(es. `./monitoring-config/config.alloy`, non `./monitoring-config`) — lasciarle come
+cartella produce un errore Docker fuorviante ("mount path must be absolute" o "not a
+directory") invece di un errore chiaro di variabile mancante.
 
 == Zammad Ticketing (stack separato)
 
