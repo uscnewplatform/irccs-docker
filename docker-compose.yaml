@@ -132,7 +132,12 @@ services:
     logging: *default-logging
 
   irccs-httpd:
-    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:${IRCCS_HTTPD_VERSION}
+    # Il tag Docker pushato da Gui-Jenkinsfile include il nome del branch che ha
+    # buildato l'immagine (nexus.infocube.it/.../irccs-httpd-dashboard/<branch>:<versione>,
+    # da package.json). IRCCS_HTTPD_BRANCH (default develop) seleziona quale branch
+    # pullare - utile per testare un'immagine da un feature branch non ancora
+    # mergiato senza editare questo file a mano.
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/${IRCCS_HTTPD_BRANCH:-develop}:${IRCCS_HTTPD_VERSION}
     container_name: irccs-httpd-dashboard
     ports:
       - "80:80"
