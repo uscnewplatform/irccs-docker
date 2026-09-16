@@ -42,6 +42,18 @@ trap 'log_error "crash inatteso alla linea $LINENO (comando: $BASH_COMMAND)"' ER
 
 require_env BACKUP_ROOT BACKUP_VERIFY_KEY_FILE
 
+# Lock non-bloccante dedicato (diverso da .backup.lock del backup notturno:
+# non c'e' bisogno di bloccarsi a vicenda, solo di evitare due esecuzioni
+# concorrenti di QUESTO script, es. manuale + timer settimanale). Esce
+# pulito se gia' in corso.
+mkdir -p "$BACKUP_ROOT"
+VERIFY_LOCK_FILE="$BACKUP_ROOT/.backup-verify.lock"
+exec 201>"$VERIFY_LOCK_FILE"
+if ! flock -n 201; then
+  log_warn "un'altra esecuzione di verify_archive_integrity.sh e' gia' in corso (lock $VERIFY_LOCK_FILE) — esco senza fare nulla"
+  exit 0
+fi
+
 [ -f "$BACKUP_VERIFY_KEY_FILE" ] || die "chiave privata age non trovata: $BACKUP_VERIFY_KEY_FILE (BACKUP_VERIFY_KEY_FILE)"
 command -v age >/dev/null 2>&1 || die "age non installato"
 command -v age-keygen >/dev/null 2>&1 || die "age-keygen non installato"

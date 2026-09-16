@@ -116,6 +116,22 @@ source "$SCRIPT_DIR/lib_common.sh"
 set -E
 trap 'log_error "crash inatteso alla linea $LINENO (comando: $BASH_COMMAND)"' ERR
 
+# Lock non-bloccante: impedisce due esecuzioni concorrenti (es. un operatore
+# che lancia questo script a mano mentre il timer systemd scatta, o due
+# invocazioni manuali). Senza lock, backup_db.sh scriverebbe due volte sullo
+# STESSO path (staging/<db>/<db>_$(date +%F).dump — stesso giorno, stesso
+# nome) con scritture concorrenti potenzialmente interleaved/corrotte, PRIMA
+# ancora che Docker possa mai rifiutare un secondo `--name irccs-backup-run`
+# (quella protezione arriverebbe troppo tardi, a valle di dump/verify).
+# Se il lock e' gia' preso, esce pulito (exit 0, non un errore: e' un
+# comportamento atteso, non un fallimento).
+LOCK_FILE="$BACKUP_ROOT/.backup.lock"
+exec 200>"$LOCK_FILE"
+if ! flock -n 200; then
+  log_warn "un'altra esecuzione di backup e' gia' in corso (lock $LOCK_FILE) — esco senza fare nulla"
+  exit 0
+fi
+
 log_info "=== backup notturno avviato ==="
 
 check_disk_space "$BACKUP_ROOT" "${BACKUP_MIN_FREE_MB:-2048}"
