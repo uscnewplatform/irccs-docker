@@ -256,6 +256,20 @@ loki.process "logs_process_client" {
       }
   }
 
+  // Log dal Faro receiver (frontend, src/faro.ts): non hanno container_name
+  // (non arrivano da loki.source.docker), quindi il match sopra li esclude e
+  // "kind" resta fermo al valore statico "frontend" impostato in
+  // faro.receiver.extra_log_labels. I dashboard di frontend-application.json
+  // filtrano pero' su kind="measurement"/"exception" (valore reale scritto nel
+  // body del log da Faro SDK): serve un secondo match dedicato per estrarlo.
+  stage.match {
+      selector = "{app=\"irccs-react-dashboard\"}"
+
+      stage.logfmt {
+          mapping = { "kind" = "", "service_name" = "" }
+      }
+  }
+
   stage.labels {
       values = { "kind" = "kind", "service_name" = "service_name", "app" = "app" }
   }
@@ -297,9 +311,17 @@ loki.source.file "irccs_backup" {
 // Solo logs: le trace non sono abilitate lato client (Tempo non deployato,
 // fase 2) quindi non serve un output traces qui.
 faro.receiver "integrations_app_agent_receiver" {
+	// Ricevitore condiviso da piu' app frontend (dashboard React, PWA
+	// Flutter). "app" resta statico per non rompere le dashboard/query
+	// Loki esistenti (frontend-application.json usa label_values(app), lo
+	// stage.match sotto seleziona app="irccs-react-dashboard"). "app_name"
+	// (stringa vuota = riconosciuto da Alloy) si popola invece dal campo
+	// app.name del payload Faro di ciascun client, per distinguere davvero
+	// dashboard e PWA senza toccare le dashboard esistenti.
 	extra_log_labels = {
-		app  = "irccs-react-dashboard",
-		kind = "frontend",
+		app      = "irccs-react-dashboard",
+		app_name = "",
+		kind     = "frontend",
 	}
 
 	server {

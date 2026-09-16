@@ -8,4 +8,5 @@
 * xref:monitoraggio.adoc[Monitoraggio]
 * xref:farmaci-aifa.adoc[Import Farmaci AIFA]
 * xref:librerie-crf.adoc[Librerie CRF — Gestione e Import]
+* xref:backup.adoc[Backup DB — HAPI FHIR e Keycloak]
 * xref:changelog.adoc[Changelog]

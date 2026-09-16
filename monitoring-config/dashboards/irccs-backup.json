@@ -52,7 +52,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"irccs-backup-run\"} |= \"backup notturno completato con successo\" [26h]))",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |= \"backup notturno completato con successo\" [26h]))",
           "legendFormat": "Backup OK (26h)",
           "queryType": "instant",
           "refId": "A"
@@ -93,7 +93,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"irccs-backup-run\"} |= \"level=error\" [24h]))",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |= \"level=error\" [24h]))",
           "legendFormat": "Errori (24h)",
           "queryType": "instant",
           "refId": "A"
@@ -128,7 +128,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"irccs-backup-run\"} |= \"backup notturno completato con successo\" [7d]))",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |= \"backup notturno completato con successo\" [7d]))",
           "legendFormat": "Backup riusciti (7g)",
           "queryType": "instant",
           "refId": "A"
@@ -162,7 +162,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"irccs-backup-run\"} |= \"level=error\" [1h]))",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |= \"level=error\" [1h]))",
           "legendFormat": "Errori/ora",
           "queryType": "range",
           "refId": "A"
@@ -170,7 +170,7 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "sum(count_over_time({container_name=\"irccs-backup-run\"} |= \"backup notturno completato con successo\" [1h]))",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |= \"backup notturno completato con successo\" [1h]))",
           "legendFormat": "Successi/ora",
           "queryType": "range",
           "refId": "B"
@@ -178,6 +178,178 @@
       ],
       "title": "Andamento backup (14 giorni)",
       "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "OK", "color": "green" } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 0 },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |= \"spazio disco insufficiente\" [6h]))",
+          "legendFormat": "Disco insufficiente (6h)",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Spazio disco (6h)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "OK", "color": "green" } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 21 },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |~ \"rclone copy fallito|rsync fallito\" [6h]))",
+          "legendFormat": "Push offsite fallito (6h)",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Push offsite (6h)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "OK", "color": "green" } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 21 },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({unit=\"irccs-backup-verify.service\"} |= \"level=error\" [8d]))",
+          "legendFormat": "Verifica integrità fallita (8g)",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Verifica periodica integrità (8g, settimanale)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "nessuna verifica registrata", "color": "green" } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 21 },
+      "id": 9,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({unit=\"irccs-backup.service\"} |= \"backup notturno avviato\" [4h])) - sum(count_over_time({unit=\"irccs-backup.service\"} |= \"backup notturno completato\" [4h]))",
+          "legendFormat": "Run avviati non conclusi (4h)",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Backup bloccato/stuck (4h)",
+      "type": "stat"
     },
     {
       "datasource": { "type": "loki", "uid": "loki" },
@@ -194,12 +366,35 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "editorMode": "code",
-          "expr": "{container_name=\"irccs-backup-run\"}",
+          "expr": "{unit=\"irccs-backup.service\"}",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Log backup (raw)",
+      "title": "Log backup notturno (raw)",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 26 },
+      "id": 10,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "editorMode": "code",
+          "expr": "{unit=\"irccs-backup-verify.service\"}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Log verifica periodica integrità (raw)",
       "type": "logs"
     }
   ],
@@ -212,6 +407,6 @@
   "timezone": "",
   "title": "IRCCS Backup DB",
   "uid": "irccs-backup-db",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

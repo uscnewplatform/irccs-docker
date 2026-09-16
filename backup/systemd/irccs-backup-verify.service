@@ -1,0 +1,17 @@
+[Unit]
+Description=IRCCS verifica periodica integrita' archivio backup DB (campionamento anti-bitrot)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Path assoluto della checkout della stack prod sull'host, da adattare in fase di install.
+WorkingDirectory=/opt/irccs-docker
+# A differenza di irccs-backup.service, questo gira DIRETTAMENTE sull'host
+# (non nel container one-shot con proxy Docker): deve poter leggere
+# BACKUP_VERIFY_KEY_FILE, un file locale che per design non entra mai nel
+# container di backup (vedi commento in verify_archive_integrity.sh).
+EnvironmentFile=/opt/irccs-docker/backup/.env.backup
+ExecStart=/opt/irccs-docker/backup/scripts/verify_archive_integrity.sh
+StandardOutput=journal
+StandardError=journal

@@ -1,19 +1,28 @@
-# Immagine per il container one-shot di backup DB (lanciato dal timer systemd
-# tramite scripts/run_backup_container.sh). Contiene client postgres (pg_dump/
-# pg_restore), Docker CLI (per exec/run/network verso i container sibling via
-# /var/run/docker.sock montato), age (cifratura) e rclone (offsite).
+# Immagine per il container one-shot che fa SOLO cifratura (age) + push
+# offsite (rclone) + retention sui dump gia' verificati (dump e verify girano
+# PRIMA, sull'host, via run_backup_container.sh — vedi quel file per il
+# perche': questo container non deve avere ne' Docker CLI ne' accesso alla
+# Docker API, per chiudere un vettore di escape verificato empiricamente in
+# un'architettura precedente che instradava dump+verify qui dentro tramite
+# un docker-socket-proxy).
 #
-# Base postgres:17: pg_dump client e' forward/backward compatibile con i
-# server 16.x e 17.x usati dalla stack (hapi=16.8, keycloak=17.4) — non serve
-# un'immagine per versione, e' lo stesso principio per cui verify_restore.sh
-# usa immagini scratch dedicate PER il restore, non per il dump.
-FROM postgres:17
+# Niente postgres, niente docker-cli: pg_dump/pg_restore girano tutti dentro
+# ai rispettivi container postgres (target o scratch) via `docker exec`
+# dall'host, mai localmente qui. Serve solo age + rclone + un runtime bash
+# minimale — base debian-slim invece di postgres:17, immagine piu' piccola e
+# superficie ridotta.
+#
+# Digest e versioni pacchetto pinnate: senza pin, ogni rebuild puo' tirare
+# dentro silenziosamente una versione diversa della base image o di age/
+# rclone (drift non tracciato, build non riproducibile). Aggiornare qui
+# deliberatamente quando serve una versione piu' recente, non lasciare che
+# accada da solo ad ogni build.
+FROM debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       docker-cli \
-       age \
-       rclone \
+       age=1.1.1-1+b3 \
+       rclone=1.60.1+dfsg-2+b5 \
        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 

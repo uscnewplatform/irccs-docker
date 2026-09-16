@@ -1,0 +1,12 @@
+[Unit]
+Description=Schedulazione settimanale verifica integrita' archivio backup DB IRCCS
+
+[Timer]
+# Domenica 04:30: dopo il backup notturno (03:15) ma orario diverso per non
+# competere per risorse (entrambi lanciano container postgres scratch).
+OnCalendar=Sun *-*-* 04:30:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

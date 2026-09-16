@@ -37,14 +37,14 @@ limits_config:
   volume_enabled: true
   ingestion_rate_mb: 16
   ingestion_burst_size_mb: 32
-
+  deletion_mode: filter-and-delete
 # Il compactor applica davvero retention_period (senza, i chunk restano su
 # disco all'infinito anche se la config dichiara 360h).
 compactor:
   working_directory: /loki/compactor
   compaction_interval: 10m
   retention_enabled: true
-  retention_delete_delay: 2h
+  retention_delete_delay: 0s
   delete_request_store: filesystem
 
 # Alerting gestito da Grafana unified alerting (vedi monitoring-config/alerting/),
