@@ -58,6 +58,11 @@ REST=("${ALL_FILES[@]:$BACKUP_KEEP_DAILY}")
 pick_one_per_bucket() {
   local bucket_fmt="$1" limit="$2"
   shift 2
+  # limit=0 (o negativo per errore di config) deve tenere zero file da questo
+  # bucket — senza questo controllo il ciclo sotto aggiunge comunque 1 file
+  # prima di verificare il limite (bug trovato testando il floor di sicurezza
+  # qui sotto: con BACKUP_KEEP_WEEKLY/MONTHLY=0 venivano comunque tenuti file).
+  [ "$limit" -le 0 ] && return 0
   local -A seen=()
   local count=0
   local f bucket
@@ -84,6 +89,16 @@ pick_one_per_bucket() {
 
 pick_one_per_bucket "%G-W%V" "$BACKUP_KEEP_WEEKLY" "${REST[@]}"
 pick_one_per_bucket "%Y-%m" "$BACKUP_KEEP_MONTHLY" "${REST[@]}"
+
+# Floor di sicurezza: se c'erano archivi ma il set da tenere risulta vuoto,
+# e' quasi certamente un bug (nel calcolo sopra, o BACKUP_KEEP_DAILY=0 per
+# misconfigurazione) — non e' uno stato legittimo in condizioni normali.
+# Senza questo controllo lo script cancellerebbe silenziosamente TUTTO
+# l'archivio (locale e, con retention offsite, anche remoto dopo la grazia)
+# con solo un log_info, nessun alert critico. Meglio fermarsi ed alertare.
+if [ "${#ALL_FILES[@]}" -gt 0 ] && [ "${#KEEP[@]}" -eq 0 ]; then
+  die "retention: set da tenere vuoto con ${#ALL_FILES[@]} archivi presenti (db=$DB_KIND) — sembra un bug o BACKUP_KEEP_DAILY/WEEKLY/MONTHLY misconfigurati, nessun file cancellato"
+fi
 
 for f in "${ALL_FILES[@]}"; do
   keep=false
