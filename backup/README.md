@@ -72,6 +72,7 @@ oltre a fondere `backup-rules.yaml` e riavviare/reload Alloy).
 | `.env.backup.example` | template config (copiare come `.env.backup`, non committare) |
 | `RESTORE_PLAYBOOK.md` | procedura DR passo-passo + log storico test |
 | `scripts/install.sh` | installer automatico (host nuovo) — vedi sotto |
+| `scripts/run_tests.sh` | test statico (sintassi bash + shellcheck + validazione YAML/JSON), da lanciare prima di ogni modifica |
 
 ## Setup (una tantum)
 
@@ -124,6 +125,7 @@ Sequenza manuale equivalente, se non si usa `install.sh`:
 - [x] Hardening container backup (`--cap-drop=ALL` + sole CHOWN/DAC_OVERRIDE/FOWNER, `no-new-privileges`, 2026-09-16)
 - [x] Container encrypt/offsite/retention non riceve più i segreti della stack (`.env` completo — solo `backup/.env.backup`, 2026-09-16)
 - [x] Immagine Docker pinnata (digest base image + versioni age/rclone, build riproducibile, 2026-09-16)
+- [x] Test statico (`scripts/run_tests.sh`: sintassi + shellcheck + validazione YAML/JSON, 2026-09-16)
 - [ ] Test restore reale su ambiente scratch, RTO misurato
 - [ ] Scelta e configurazione target offsite definitivo
 - [ ] Installazione timer su host prod
@@ -206,6 +208,20 @@ organizzativa più che tecnica, o sono accettati come rischio residuo per ora:
   journald. Non è mai stata fatta una review esplicita per escludere che dati
   clinici finiscano nei log di errore — da verificare prima di considerare i
   log "sicuri da guardare senza restrizioni" in un contesto sanitario.
+- **Backup generato sullo stesso host della stack prod**: `run_backup_container.sh`
+  gira sull'host dove girano anche i container DB (vedi `DEPLOY_PROD.md`
+  §0). Un guasto fisico o una compromissione totale dell'host porta giù
+  contemporaneamente i DB e la capacità di generare nuovi backup — solo le
+  copie offsite già esistenti sopravvivono. Nessun host di orchestrazione
+  backup separato/più isolato previsto in questa iterazione: accettato come
+  rischio residuo, da rivalutare se la piattaforma cresce oltre un singolo
+  host prod.
+- **Nessun test automatico degli script di backup oltre a `run_tests.sh`**
+  (sintassi + shellcheck, vedi sotto): nessuna suite che eserciti davvero la
+  logica (mock DB, simulazione fallimenti) — una regressione logica in uno
+  script (non solo un errore di sintassi) non verrebbe intercettata prima
+  che arrivi in produzione. I test end-to-end di questa sessione sono stati
+  manuali, contro pascale-local, non ripetibili automaticamente in CI.
 
 ## Fuori scope (per ora)
 
