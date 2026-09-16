@@ -451,6 +451,37 @@ groups:
                     type: gt
                     params: [0]
 
+      - uid: irccs-audit-orphan-resource
+        title: 'Risorsa clinica critica senza AuditEvent corrispondente (orfana)'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Una risorsa clinica critica (Consent/ResearchSubject/CarePlan) risulta priva del suo AuditEvent oltre il periodo di grazia: probabile crash del processo tra la scrittura clinica e quella di audit (gap non coperto dal fail-closed sincrono in FhirClient.create) - vedi verify_audit_coverage.py. Query cross-container (container_name=~"irccs-.+") perche'' il marker viene emesso sia dal loop di riconciliazione (container irccs-audit-integrity) sia, per il caso sincrono, da compensatingDelete in FhirClient.java dentro il microservizio che ha fatto la create (container diverso).'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name=~"irccs-.+"} |~ "AUDIT-INTEGRITY-ORPHAN-RESOURCE" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
       - uid: irccs-audit-db-direct-mutation
         title: 'Scrittura o DDL SQL diretto sulle tabelle degli AuditEvent'
         condition: threshold

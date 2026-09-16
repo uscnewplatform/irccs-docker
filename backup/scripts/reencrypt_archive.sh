@@ -216,7 +216,15 @@ for f in "${FILES[@]}"; do
     CUR_TMP_CHECK=""
   fi
 
+  # Gli archivi hapi-audit possono essere chattr +i (WORM best-effort, vedi
+  # encrypt_and_offsite.sh): mv sovrascriverebbe altrimenti un file immutabile
+  # e fallirebbe. Rimuove il flag solo per il tempo della sostituzione e lo
+  # riapplica subito dopo - no-op innocuo se il file non era immutabile.
+  chattr -i "$f" 2>/dev/null || true
   mv "$CUR_TMP_NEW" "$f"
+  case "$f" in
+    */hapi-audit/archive/*) chattr +i "$f" 2>/dev/null || true ;;
+  esac
   CUR_TMP_NEW=""
   shred -u "$CUR_TMP_PLAIN" 2>/dev/null || rm -f "$CUR_TMP_PLAIN"
   CUR_TMP_PLAIN=""

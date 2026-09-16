@@ -56,6 +56,21 @@ if ! age "${AGE_RECIPIENT_ARGS[@]}" -o "$ENCRYPTED.tmp" "$PLAINTEXT"; then
 fi
 mv "$ENCRYPTED.tmp" "$ENCRYPTED"
 
+# WORM best-effort per l'archivio audit (hash-chain tamper-evidence, floor
+# retention 25 anni — vedi retention_cleanup.sh): chattr +i blocca rm/mv/write
+# anche per root senza un chattr -i esplicito precedente. Non e' vera
+# immutabilita' (root puo' sempre fare chattr -i), ma alza il costo di una
+# cancellazione accidentale o di un bug in uno script rispetto a un file
+# normale. Silenzioso se il filesystem non supporta gli attributi ext2
+# (es. overlay/tmpfs in alcuni ambienti di test) - non deve bloccare il backup.
+if [ "$DB_KIND" = "hapi-audit" ]; then
+  if command -v chattr >/dev/null 2>&1 && chattr +i "$ENCRYPTED" 2>/dev/null; then
+    log_info "immutabilita' locale (chattr +i) applicata: $ENCRYPTED"
+  else
+    log_warn "chattr +i non applicabile su $ENCRYPTED (filesystem non supportato o non root): archivio audit NON immutabile localmente"
+  fi
+fi
+
 # Plaintext rimosso solo dopo cifratura riuscita: non deve mai restare su disco.
 rm -f "$PLAINTEXT"
 log_info "plaintext staging rimosso: $PLAINTEXT"

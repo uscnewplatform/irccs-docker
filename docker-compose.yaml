@@ -2,6 +2,17 @@ networks:
   irccs:
     name: irccs
     driver: bridge
+  # Rete interna dedicata al DB dell'audit store: solo postgres-hapi-audit e
+  # irccs-hapi-audit ci stanno sopra. Sulla rete flat `irccs` isolamento
+  # dell'audit store = solo credenziali (qualunque microservizio compromesso
+  # con le credenziali giuste raggiungerebbe postgres-hapi-audit:5432
+  # direttamente, bypassando l'append-only/hash-chain di HAPI). `internal: true`
+  # nega anche l'uscita verso l'esterno - non serve, nulla qui deve chiamare
+  # fuori dallo stack.
+  irccs-audit-db:
+    name: irccs-audit-db
+    driver: bridge
+    internal: true
 
 x-logging: &default-logging
   driver: json-file
@@ -282,8 +293,12 @@ services:
       -c pgaudit.log=read,write,role,ddl
       -c pgaudit.log_catalog=off
       -c pgaudit.log_parameter=off
+    # SOLO irccs-audit-db: nessun microservizio clinico e' su questa rete,
+    # quindi nessuno puo' aprire una connessione TCP diretta a questo Postgres
+    # anche avendone le credenziali - deve passare per forza dall'API REST di
+    # irccs-hapi-audit (append-only + hash-chain interceptor applicati li').
     networks:
-      - irccs
+      - irccs-audit-db
 
   irccs-hapi-audit:
     image: hapiproject/hapi:${HAPI_IMAGE_VERSION}
@@ -303,8 +318,12 @@ services:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
     env_file:
       - .env
+    # Su entrambe le reti: irccs per essere raggiunto dai microservizi clinici
+    # (org.quarkus.irccs.audit-fhir-server) e da irccs-audit-integrity;
+    # irccs-audit-db per raggiungere il proprio Postgres, isolato dal resto.
     networks:
       - irccs
+      - irccs-audit-db
 
   # Verifica continua della hash-chain degli AuditEvent (tamper-evidence a runtime).
   # Ricalcola in Python la stessa canonicalPayload/SHA-256 di
@@ -320,14 +339,21 @@ services:
     logging: *default-logging
     depends_on:
       - irccs-hapi-audit
+      - irccs-hapi-fhir
     volumes:
       - ./setup:/setup:ro
       - audit_integrity_state:/state
     environment:
       IRCCS_AUDIT_FHIR_URL: http://irccs-hapi-audit:8080/fhir
+      IRCCS_CLINICAL_FHIR_URL: http://irccs-hapi-fhir:8080/fhir
       AUDIT_INTEGRITY_INTERVAL: ${AUDIT_INTEGRITY_INTERVAL:-900}
       AUDIT_INTEGRITY_FULL_EVERY: ${AUDIT_INTEGRITY_FULL_EVERY:-96}
       AUDIT_INTEGRITY_EXTRA_ARGS: ${AUDIT_INTEGRITY_EXTRA_ARGS:-}
+      # Riconciliazione risorse orfane (verify_audit_coverage.py, stesso ciclo):
+      # grace prima di considerare "orfana" una risorsa critica senza AuditEvent
+      # corrispondente, per non generare falsi positivi sulle scritture in corso.
+      AUDIT_COVERAGE_GRACE_SECONDS: ${AUDIT_COVERAGE_GRACE_SECONDS:-300}
+      AUDIT_COVERAGE_EXTRA_ARGS: ${AUDIT_COVERAGE_EXTRA_ARGS:-}
     entrypoint: ["sh", "/setup/audit_integrity_loop.sh"]
     networks:
       - irccs

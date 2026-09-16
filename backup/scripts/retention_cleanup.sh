@@ -43,10 +43,42 @@ source "$SCRIPT_DIR/lib_common.sh"
 
 require_env BACKUP_ROOT BACKUP_KEEP_DAILY BACKUP_KEEP_WEEKLY BACKUP_KEEP_MONTHLY
 
-DB_KIND="${1:?uso: retention_cleanup.sh <hapi|keycloak>}"
+DB_KIND="${1:?uso: retention_cleanup.sh <hapi|keycloak|hapi-audit>}"
 ARCHIVE_DIR="$BACKUP_ROOT/$DB_KIND/archive"
 
 [ -d "$ARCHIVE_DIR" ] || { log_warn "archivio inesistente, nulla da pulire: $ARCHIVE_DIR"; exit 0; }
+
+# hapi-audit (AuditEvent store, hash-chain tamper-evidence) ha un floor di
+# retention di 25 anni (org.quarkus.irccs.audit.retention.floor-years, vedi
+# irccs-common) che la normale politica GFS daily/weekly/monthly (pensata per
+# backup operativi, non per compliance) violerebbe: con KEEP_DAILY/WEEKLY/
+# MONTHLY tipici (14gg + 8 settimane + 6 mesi) i dump audit piu' vecchi di
+# ~8 mesi verrebbero cancellati, sia in locale che offsite. Il thinning GFS
+# qui sotto NON si applica a hapi-audit: gli archivi audit si cancellano solo
+# oltre BACKUP_AUDIT_RETENTION_YEARS (default 25), mai per conteggio.
+if [ "$DB_KIND" = "hapi-audit" ]; then
+  RETENTION_YEARS="${BACKUP_AUDIT_RETENTION_YEARS:-25}"
+  CUTOFF_EPOCH="$(date -d "-${RETENTION_YEARS} years" +%s)"
+  mapfile -t AUDIT_FILES < <(find "$ARCHIVE_DIR" -maxdepth 1 -type f -name '*.dump.age' | sort -r)
+  REMOVED=0
+  for f in "${AUDIT_FILES[@]}"; do
+    stamp="$(basename "$f" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' || true)"
+    [ -z "$stamp" ] && continue
+    file_epoch="$(date -d "$stamp" +%s 2>/dev/null || true)"
+    [ -z "$file_epoch" ] && continue
+    if [ "$file_epoch" -lt "$CUTOFF_EPOCH" ]; then
+      log_info "retention audit: rimozione $f (oltre floor ${RETENTION_YEARS} anni)"
+      chattr -i "$f" 2>/dev/null || true
+      rm -f "$f"
+      REMOVED=$((REMOVED + 1))
+    fi
+  done
+  log_info "retention audit completata: db=$DB_KIND floor=${RETENTION_YEARS}anni rimossi=$REMOVED totale=${#AUDIT_FILES[@]}"
+  # Nessuna pulizia offsite per hapi-audit: stesso ragionamento, il file resta
+  # sul remote finche' non supera il floor di retention (non gestito qui,
+  # in pratica mai in automatico — decisione operatore dopo 25 anni).
+  exit 0
+fi
 
 # File ordinati dal piu' recente al piu' vecchio (nome contiene YYYY-MM-DD).
 mapfile -t ALL_FILES < <(find "$ARCHIVE_DIR" -maxdepth 1 -type f -name '*.dump.age' | sort -r)
