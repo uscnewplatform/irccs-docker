@@ -123,6 +123,7 @@ Sequenza manuale equivalente, se non si usa `install.sh`:
 - [x] Preview contenuto dump (`pg_restore --list`) prima della conferma in `restore_db.sh`, blocco su dump illeggibile, warning su dbname mismatch (2026-09-16)
 - [x] Hardening container backup (`--cap-drop=ALL` + sole CHOWN/DAC_OVERRIDE/FOWNER, `no-new-privileges`, 2026-09-16)
 - [x] Container encrypt/offsite/retention non riceve più i segreti della stack (`.env` completo — solo `backup/.env.backup`, 2026-09-16)
+- [x] Immagine Docker pinnata (digest base image + versioni age/rclone, build riproducibile, 2026-09-16)
 - [ ] Test restore reale su ambiente scratch, RTO misurato
 - [ ] Scelta e configurazione target offsite definitivo
 - [ ] Installazione timer su host prod

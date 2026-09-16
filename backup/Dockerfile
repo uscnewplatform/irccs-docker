@@ -11,12 +11,18 @@
 # dall'host, mai localmente qui. Serve solo age + rclone + un runtime bash
 # minimale — base debian-slim invece di postgres:17, immagine piu' piccola e
 # superficie ridotta.
-FROM debian:bookworm-slim
+#
+# Digest e versioni pacchetto pinnate: senza pin, ogni rebuild puo' tirare
+# dentro silenziosamente una versione diversa della base image o di age/
+# rclone (drift non tracciato, build non riproducibile). Aggiornare qui
+# deliberatamente quando serve una versione piu' recente, non lasciare che
+# accada da solo ad ogni build.
+FROM debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       age \
-       rclone \
+       age=1.1.1-1+b3 \
+       rclone=1.60.1+dfsg-2+b5 \
        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
