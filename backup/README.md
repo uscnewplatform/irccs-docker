@@ -130,6 +130,7 @@ Sequenza manuale equivalente, se non si usa `install.sh`:
 - [x] Floor di sicurezza in retention (`die` se il set da tenere risulta vuoto con archivi presenti, evita cancellazione totale silenziosa — bug collaterale trovato e fixato in `pick_one_per_bucket`, 2026-09-16)
 - [x] Warning anticipato spazio disco (`BACKUP_WARN_FREE_MB`, default 2x soglia minima, prima che diventi critico, 2026-09-16)
 - [x] Lock non-bloccante contro esecuzioni concorrenti (`flock` su `.backup.lock`/`.backup-verify.lock`, evita race su staging in scritture parallele, 2026-09-16)
+- [x] `RESTORE_PLAYBOOK.md` disabilita i timer di backup prima di iniziare un restore manuale (evita `pg_dump` su un DB a metà ricostruzione, 2026-09-16)
 - [ ] Test restore reale su ambiente scratch, RTO misurato
 - [ ] Scelta e configurazione target offsite definitivo
 - [ ] Installazione timer su host prod

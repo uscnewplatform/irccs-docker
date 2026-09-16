@@ -10,6 +10,28 @@ fidarsene in produzione — vedi sezione "Test periodico" in fondo.
 - Chiave privata `age` per decifrare l'archivio (**non** risiede sull'host di backup — recuperarla dalla sua sede separata).
 - Dump da ripristinare: locale (`backup/<hapi|keycloak|hapi-audit>/archive/*.dump.age`) o dalla copia offsite se il disco locale è perso.
 
+**Disabilitare i timer di backup PRIMA di iniziare**, sempre, anche per un
+test su ambiente scratch:
+
+```bash
+sudo systemctl stop irccs-backup.timer irccs-backup-verify.timer
+```
+
+Motivo: il timer notturno (03:15) o quello di verifica settimanale possono
+scattare mentre il restore è a metà (DROP DATABASE → CREATE → pg_restore).
+Un `pg_dump` lanciato su un DB a metà ricostruzione produce un dump
+incoerente o fallisce a causa delle connessioni chiuse dal DROP — inquina
+silenziosamente la catena di backup proprio nel momento più delicato. Il
+lock in `run_backup_container.sh` impedisce due backup concorrenti tra
+loro, ma non protegge da un backup che parte mentre un **restore manuale**
+è in corso: quello è responsabilità dell'operatore, da qui.
+
+Riattivare a restore concluso e verificato (§8):
+
+```bash
+sudo systemctl start irccs-backup.timer irccs-backup-verify.timer
+```
+
 ## 1. Decidere il punto di restore
 
 - RPO = 24h: si perdono al massimo le modifiche dall'ultimo backup notturno riuscito alle 03:15.
