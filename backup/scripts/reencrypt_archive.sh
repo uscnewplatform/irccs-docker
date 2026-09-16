@@ -101,6 +101,26 @@ done
 
 [ "${#FILES[@]}" -gt 0 ] || die "nessun archivio *.dump.age trovato sotto $BACKUP_ROOT/{hapi,keycloak,hapi-audit}/archive/ — nulla da ri-cifrare"
 
+# Sweep difensivo: residui di una run precedente interrotta (es. SIGKILL,
+# che nessun trap puo' intercettare — vedi commento piu' sotto). *.plain.*
+# sono plaintext, va fatto shred, non solo rm. Verificato con test reale che
+# il trap EXIT pulisce correttamente nella stragrande maggioranza dei casi
+# (SIGTERM/^C/crash gestito), questo sweep e' la seconda rete per il residuo
+# non coperto (SIGKILL/OOM-kill).
+STALE_FOUND=0
+for db in hapi keycloak hapi-audit; do
+  archive_dir="$BACKUP_ROOT/$db/archive"
+  [ -d "$archive_dir" ] || continue
+  while IFS= read -r -d '' stale; do
+    STALE_FOUND=$((STALE_FOUND + 1))
+    case "$stale" in
+      *.plain.*) shred -u "$stale" 2>/dev/null || rm -f "$stale" ;;
+      *) rm -f "$stale" 2>/dev/null ;;
+    esac
+  done < <(find "$archive_dir" -maxdepth 1 -type f \( -name '*.dump.age.plain.*' -o -name '*.dump.age.new.*' -o -name '*.dump.age.check.*' \) -print0)
+done
+[ "$STALE_FOUND" -gt 0 ] && log_warn "sweep: rimossi $STALE_FOUND file temporanei residui da una run precedente (probabile interruzione non pulita)"
+
 CURRENT_HOST="$(hostname)"
 
 echo "=== reencrypt_archive.sh: ri-cifratura completa dell'archivio ===" >&2
@@ -140,44 +160,66 @@ log_info "conferma OK, avvio ri-cifratura di ${#FILES[@]} file"
 OK_COUNT=0
 FAIL_COUNT=0
 
+# Trap EXIT globale (non solo cleanup nei rami di errore espliciti sotto):
+# questo script maneggia PLAINTEXT di dump storici, uno alla volta, in file
+# temporanei nella STESSA directory dell'archivio. Senza un trap, un'uscita
+# non gestita esplicitamente (crash sotto set -e via il trap ERR sopra,
+# SIGTERM da timeout systemd, ^C/SIGINT) lascerebbe il plaintext sul disco
+# in chiaro, non protetto quanto l'archivio cifrato che doveva sostituire.
+# Limite noto: un trap bash NON puo' intercettare SIGKILL (kill -9, o
+# l'OOM-killer del kernel in alcune configurazioni) — nessuna implementazione
+# puo' proteggersi da quello, e' un limite del modello dei segnali POSIX, non
+# di questo script. Copre comunque la stragrande maggioranza degli scenari di
+# interruzione realistici. Le variabili sono globali (non locali alla
+# funzione) cosi' il trap vede sempre i path correnti, qualunque sia il
+# punto esatto in cui il processo termina.
+CUR_TMP_PLAIN=""
+CUR_TMP_NEW=""
+CUR_TMP_CHECK=""
+cleanup_current_tmp() {
+  [ -n "$CUR_TMP_PLAIN" ] && [ -f "$CUR_TMP_PLAIN" ] && shred -u "$CUR_TMP_PLAIN" 2>/dev/null
+  [ -n "$CUR_TMP_NEW" ] && [ -f "$CUR_TMP_NEW" ] && rm -f "$CUR_TMP_NEW" 2>/dev/null
+  [ -n "$CUR_TMP_CHECK" ] && [ -f "$CUR_TMP_CHECK" ] && shred -u "$CUR_TMP_CHECK" 2>/dev/null
+  true
+}
+trap cleanup_current_tmp EXIT
+
 for f in "${FILES[@]}"; do
   db_kind="$(basename "$(dirname "$(dirname "$f")")")"
-  TMP_PLAIN="$(mktemp "${f}.plain.XXXXXX")"
-  TMP_NEW="$(mktemp "${f}.new.XXXXXX")"
+  CUR_TMP_PLAIN="$(mktemp "${f}.plain.XXXXXX")"
+  CUR_TMP_NEW="$(mktemp "${f}.new.XXXXXX")"
+  CUR_TMP_CHECK=""
 
-  cleanup_tmp() {
-    [ -f "$TMP_PLAIN" ] && shred -u "$TMP_PLAIN" 2>/dev/null
-    [ -f "$TMP_NEW" ] && rm -f "$TMP_NEW" 2>/dev/null
-  }
-
-  if ! age -d -i "$OLD_KEY_FILE" -o "$TMP_PLAIN" "$f" 2>/dev/null; then
+  if ! age -d -i "$OLD_KEY_FILE" -o "$CUR_TMP_PLAIN" "$f" 2>/dev/null; then
     log_error "decifratura fallita con la vecchia chiave, file NON toccato: $f"
-    cleanup_tmp
+    cleanup_current_tmp
     FAIL_COUNT=$((FAIL_COUNT + 1))
     continue
   fi
 
-  if ! age "${AGE_RECIPIENT_ARGS[@]}" -o "$TMP_NEW" "$TMP_PLAIN" 2>/dev/null; then
+  if ! age "${AGE_RECIPIENT_ARGS[@]}" -o "$CUR_TMP_NEW" "$CUR_TMP_PLAIN" 2>/dev/null; then
     log_error "ri-cifratura fallita, file NON toccato: $f"
-    cleanup_tmp
+    cleanup_current_tmp
     FAIL_COUNT=$((FAIL_COUNT + 1))
     continue
   fi
 
   if [ "$VERIFY_ROUNDTRIP" = true ]; then
-    TMP_CHECK="$(mktemp "${f}.check.XXXXXX")"
-    if ! age -d -i "$BACKUP_VERIFY_KEY_FILE" -o "$TMP_CHECK" "$TMP_NEW" 2>/dev/null || ! cmp -s "$TMP_PLAIN" "$TMP_CHECK"; then
+    CUR_TMP_CHECK="$(mktemp "${f}.check.XXXXXX")"
+    if ! age -d -i "$BACKUP_VERIFY_KEY_FILE" -o "$CUR_TMP_CHECK" "$CUR_TMP_NEW" 2>/dev/null || ! cmp -s "$CUR_TMP_PLAIN" "$CUR_TMP_CHECK"; then
       log_error "verifica round-trip fallita (il nuovo file cifrato non decifra allo stesso contenuto), file NON toccato: $f"
-      rm -f "$TMP_CHECK"
-      cleanup_tmp
+      cleanup_current_tmp
       FAIL_COUNT=$((FAIL_COUNT + 1))
       continue
     fi
-    rm -f "$TMP_CHECK"
+    shred -u "$CUR_TMP_CHECK" 2>/dev/null || rm -f "$CUR_TMP_CHECK"
+    CUR_TMP_CHECK=""
   fi
 
-  mv "$TMP_NEW" "$f"
-  shred -u "$TMP_PLAIN" 2>/dev/null || rm -f "$TMP_PLAIN"
+  mv "$CUR_TMP_NEW" "$f"
+  CUR_TMP_NEW=""
+  shred -u "$CUR_TMP_PLAIN" 2>/dev/null || rm -f "$CUR_TMP_PLAIN"
+  CUR_TMP_PLAIN=""
   log_info "ri-cifrato OK: $f"
   OK_COUNT=$((OK_COUNT + 1))
 

@@ -133,6 +133,7 @@ Sequenza manuale equivalente, se non si usa `install.sh`:
 - [x] Lock non-bloccante contro esecuzioni concorrenti (`flock` su `.backup.lock`/`.backup-verify.lock`, evita race su staging in scritture parallele, 2026-09-16)
 - [x] `RESTORE_PLAYBOOK.md` disabilita i timer di backup prima di iniziare un restore manuale (evita `pg_dump` su un DB a metà ricostruzione, 2026-09-16)
 - [x] Tool di ri-cifratura per revoca/rotazione chiavi age (`scripts/reencrypt_archive.sh`, verifica round-trip prima di sovrascrivere, testato: chiave revocata non decifra più, 2026-09-16)
+- [x] `reencrypt_archive.sh`: trap EXIT + sweep difensivo contro plaintext residuo se il processo viene interrotto a metà (testato con SIGTERM reale durante la decifratura: plaintext correttamente ripulito, 2026-09-16)
 - [ ] Test restore reale su ambiente scratch, RTO misurato
 - [ ] Scelta e configurazione target offsite definitivo
 - [ ] Installazione timer su host prod
