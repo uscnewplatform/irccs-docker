@@ -64,6 +64,7 @@ oltre a fondere `backup-rules.yaml` e riavviare/reload Alloy).
 | `scripts/backup_nightly.sh` | orchestratore (entry point del timer) |
 | `scripts/verify_archive_integrity.sh` | verifica periodica (settimanale) di un archivio a campione per DB, decifra+restore reale su scratch, rileva bitrot |
 | `scripts/restore_db.sh` | drop+create+pg_restore per un DB, protetto da conferma hostname (usato da `RESTORE_PLAYBOOK.md`) |
+| `scripts/reencrypt_archive.sh` | ri-cifra tutto l'archivio (locale+offsite) verso un nuovo set di recipient — per revoca/rotazione chiavi, vedi "Rischi noti" |
 | `systemd/irccs-backup.{service,timer}` | schedulazione host backup notturno (non container: sopravvive a redeploy stack) |
 | `systemd/irccs-backup-verify.{service,timer}` | schedulazione host verifica integrità settimanale (domenica 04:30) |
 | `alerting/backup-rules.yaml` | regole Grafana (6 regole: fallito, assente, disco insufficiente, offsite fallito, backup bloccato, verifica integrità fallita — da fondere in `monitoring-config/alerting/rules.yaml`) |
@@ -131,6 +132,7 @@ Sequenza manuale equivalente, se non si usa `install.sh`:
 - [x] Warning anticipato spazio disco (`BACKUP_WARN_FREE_MB`, default 2x soglia minima, prima che diventi critico, 2026-09-16)
 - [x] Lock non-bloccante contro esecuzioni concorrenti (`flock` su `.backup.lock`/`.backup-verify.lock`, evita race su staging in scritture parallele, 2026-09-16)
 - [x] `RESTORE_PLAYBOOK.md` disabilita i timer di backup prima di iniziare un restore manuale (evita `pg_dump` su un DB a metà ricostruzione, 2026-09-16)
+- [x] Tool di ri-cifratura per revoca/rotazione chiavi age (`scripts/reencrypt_archive.sh`, verifica round-trip prima di sovrascrivere, testato: chiave revocata non decifra più, 2026-09-16)
 - [ ] Test restore reale su ambiente scratch, RTO misurato
 - [ ] Scelta e configurazione target offsite definitivo
 - [ ] Installazione timer su host prod
@@ -238,6 +240,20 @@ organizzativa più che tecnica, o sono accettati come rischio residuo per ora:
   schedulare release nella finestra di backup — da definire con il team
   deploy/CI se il rischio empirico si materializza (probabilità bassa vista
   la finestra breve del dump, ma non nulla).
+- **Revoca/rotazione chiavi age — RISOLTO parzialmente con `scripts/reencrypt_archive.sh` (2026-09-16)**:
+  rimuovere una chiave da `BACKUP_AGE_RECIPIENTS` protegge solo i backup
+  *futuri* — age non supporta revoca retroattiva, quindi gli archivi già
+  cifrati restano decifrabili per sempre con la vecchia chiave finché non
+  vengono ri-cifrati esplicitamente. Lo script ri-cifra tutto l'archivio
+  (locale+offsite) verso il nuovo set di recipient, con verifica round-trip
+  prima di sovrascrivere ogni file (se `BACKUP_VERIFY_KEY_FILE` è tra i
+  nuovi recipient) e conferma hostname esplicita — testato: chiave revocata
+  verificata NON decifrare più dopo l'operazione, chiavi valide sì,
+  contenuto preservato byte-per-byte. **Resta una decisione organizzativa**:
+  QUANDO lanciarlo (offboarding di un custode, sospetto di compromissione)
+  non è automatizzato né monitorato — va definito un processo con il DPO/
+  referente sicurezza (es. checklist di offboarding che include "ruota le
+  chiavi backup se il custode uscente ne deteneva una").
 
 ## Fuori scope (per ora)
 
