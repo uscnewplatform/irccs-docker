@@ -66,7 +66,7 @@
       "targetBlank": true,
       "title": "View In Explore",
       "type": "link",
-      "url": "/explore?orgId=1&left=[\"now-1h\",\"now\",\"Loki\",{\"expr\":\"{job=\\\"$app\\\"}\"},{\"ui\":[true,true,true,\"none\"]}]"
+      "url": "/explore?orgId=1&left=[\"now-1h\",\"now\",\"Loki\",{\"expr\":\"{container_name=\\\"$app\\\"}\"},{\"ui\":[true,true,true,\"none\"]}]"
     },
     {
       "$$hashKey": "object:61",
@@ -125,7 +125,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(count_over_time({job=\"$app\"} |= \"$search\" [$__interval]))",
+          "expr": "sum(count_over_time({container_name=\"$app\"} |= \"$search\" [$__interval]))",
           "legendFormat": "",
           "refId": "A"
         }
@@ -197,7 +197,7 @@
       },
       "targets": [
         {
-          "expr": "{job=\"$app\"} |= \"$search\" | logfmt",
+          "expr": "{container_name=\"$app\"} |= \"$search\" | logfmt",
           "hide": false,
           "legendFormat": "",
           "refId": "A"
@@ -220,14 +220,14 @@
         "allValue": null,
         "current": {},
         "datasource": "Loki",
-        "definition": "label_values(job)",
+        "definition": "label_values(container_name)",
         "hide": 0,
         "includeAll": false,
         "label": "App",
         "multi": false,
         "name": "app",
         "options": [],
-        "query": "label_values(job)",
+        "query": "label_values(container_name)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
