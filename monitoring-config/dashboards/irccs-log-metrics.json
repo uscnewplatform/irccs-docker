@@ -2,12 +2,19 @@
   "id": null,
   "uid": "irccs-log-metrics",
   "title": "IRCCS - Metriche log (Loki)",
-  "tags": ["irccs", "loki", "logs"],
+  "tags": [
+    "irccs",
+    "loki",
+    "logs"
+  ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "30s",
-  "time": { "from": "now-6h", "to": "now" },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
   "templating": {
     "list": [
       {
@@ -15,7 +22,10 @@
         "type": "textbox",
         "label": "Request ID (correlazione)",
         "query": "",
-        "current": { "text": "", "value": "" }
+        "current": {
+          "text": "",
+          "value": ""
+        }
       }
     ]
   },
@@ -24,18 +34,36 @@
       "id": 1,
       "type": "timeseries",
       "title": "Tasso errori per microservizio",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum by (container_name) (count_over_time({container_name=~\"irccs-.+\", detected_level=\"error\"} [$__interval]))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (container_name) (count_over_time({container_name=~\"irccs-(auth|anagrafica-pazienti|centro-ricerca|studio-clinico|practitioner|clinical-reasoning|tac|patient-interview|notification|webpush|zammad)\"} | json | level=~\"ERROR|SEVERE|FATAL\" [$__interval]))",
           "legendFormat": "{{container_name}}",
           "refId": "A"
         }
       ],
       "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "bars", "stacking": { "mode": "normal" } } },
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
         "overrides": []
       }
     },
@@ -43,33 +71,65 @@
       "id": 2,
       "type": "logs",
       "title": "Errori frontend (React/Faro)",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "description": "Errori e log dal frontend via Faro. VUOTO finche' Faro non e' collegato: serve VITE_API_FARO_COLLECTOR_API + VITE_API_FARO_API_KEY nel config.js runtime (window.APP_CONFIG) e la route proxy verso il faro.receiver di Alloy (porta AGENT_PORT_APP_RECEIVER). In pascale-local non e' configurato di default.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{app=\"irccs-react-dashboard\", kind=\"frontend\"}",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{app=\"irccs-react-dashboard\"}",
           "refId": "A"
         }
       ],
-      "options": { "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true }
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      }
     },
     {
       "id": 3,
       "type": "timeseries",
       "title": "Volume log per servizio",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (container_name) (count_over_time({container_name=~\"irccs-.+\"} [$__interval]))",
           "legendFormat": "{{container_name}}",
           "refId": "A"
         }
       ],
       "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10 } },
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          }
+        },
         "overrides": []
       }
     },
@@ -78,16 +138,31 @@
       "type": "logs",
       "title": "Correlazione richiesta (requestId) - tutti i microservizi",
       "description": "Compila la variabile 'Request ID' in alto per tracciare una richiesta HTTP attraverso i microservizi (header X-Request-Id / MDC requestId, vedi RequestIdFilter in irccs-common).",
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 24 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "{container_name=~\"irccs-.+\"} |= \"$requestId\"",
           "refId": "A"
         }
       ],
-      "options": { "showTime": true, "sortOrder": "Ascending", "wrapLogMessage": true }
+      "options": {
+        "showTime": true,
+        "sortOrder": "Ascending",
+        "wrapLogMessage": true
+      }
     }
   ]
 }

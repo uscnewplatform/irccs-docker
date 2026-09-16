@@ -2714,6 +2714,33 @@
           "manage-account"
         ]
       }
+    },
+    {
+      "name": "auditor",
+      "path": "/auditor",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [
+        "default-roles-pascale",
+        "offline_access",
+        "uma_authorization"
+      ],
+      "clientRoles": {
+        "irccs": [
+          "uma_protection"
+        ],
+        "broker": [
+          "read-token"
+        ],
+        "account": [
+          "view-profile",
+          "view-groups",
+          "view-consent",
+          "view-applications",
+          "manage-account",
+          "manage-account-links"
+        ]
+      }
     }
   ],
   "defaultRole": {
@@ -4386,8 +4413,7 @@
             "displayName": "Create Observation Resource",
             "attributes": {},
             "uris": [
-              "/fhir/Observation",
-              "/fhir/Observation/{id}/$expunge"
+              "/fhir/Observation"
             ],
             "scopes": [
               {
@@ -11685,7 +11711,38 @@
     "CODE_TO_TOKEN",
     "CODE_TO_TOKEN_ERROR",
     "REFRESH_TOKEN",
-    "REFRESH_TOKEN_ERROR"
+    "REFRESH_TOKEN_ERROR",
+    "UPDATE_PASSWORD",
+    "UPDATE_PASSWORD_ERROR",
+    "UPDATE_TOTP",
+    "UPDATE_TOTP_ERROR",
+    "REMOVE_TOTP",
+    "REMOVE_TOTP_ERROR",
+    "UPDATE_EMAIL",
+    "UPDATE_EMAIL_ERROR",
+    "UPDATE_PROFILE",
+    "UPDATE_PROFILE_ERROR",
+    "SEND_RESET_PASSWORD",
+    "SEND_RESET_PASSWORD_ERROR",
+    "RESET_PASSWORD",
+    "RESET_PASSWORD_ERROR",
+    "VERIFY_EMAIL",
+    "VERIFY_EMAIL_ERROR",
+    "GRANT_CONSENT",
+    "GRANT_CONSENT_ERROR",
+    "REVOKE_GRANT",
+    "UPDATE_CONSENT",
+    "UPDATE_CONSENT_ERROR",
+    "REGISTER",
+    "REGISTER_ERROR",
+    "DELETE_ACCOUNT",
+    "DELETE_ACCOUNT_ERROR",
+    "IDENTITY_PROVIDER_LINK_ACCOUNT",
+    "IDENTITY_PROVIDER_LINK_ACCOUNT_ERROR",
+    "IMPERSONATE",
+    "IMPERSONATE_ERROR",
+    "USER_DISABLED_BY_PERMANENT_LOCKOUT",
+    "USER_DISABLED_BY_TEMPORARY_LOCKOUT"
   ],
   "adminEventsEnabled": true,
   "adminEventsDetailsEnabled": true,
@@ -12569,5 +12626,6 @@
   },
   "clientPolicies": {
     "policies": []
-  }
+  },
+  "eventsExpiration": 94608000
 }

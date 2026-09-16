@@ -130,7 +130,13 @@ hapi:
     allowed_bundle_types: COLLECTION,DOCUMENT,MESSAGE,TRANSACTION,TRANSACTIONRESPONSE,BATCH,BATCHRESPONSE,HISTORY,SEARCHSET
     allow_cascading_deletes: true
     allow_contains_searches: true
-    allow_external_references: true
+    # allow_external_references permette di salvare Reference con URL assoluti verso server
+    # esterni. Verificato 2026-08-31: nessun `setReference("http...")`/`new Reference("http...")`
+    # in nessun microservizio (irccs-common + tutti gli irccs-microservice-*) - le reference
+    # alle terminologie sono gestite da `logical_urls` sotto, non da questo flag. Default
+    # `false`; riportabile a `true` via HAPI_ALLOW_EXTERNAL_REFERENCES se un flusso futuro
+    # lo richiedesse davvero.
+    allow_external_references: ${HAPI_ALLOW_EXTERNAL_REFERENCES:false}
     allow_multiple_delete: true
     allow_override_default_search_params: true
     #    auto_create_placeholder_reference_targets: false
@@ -177,14 +183,21 @@ hapi:
       - https://loinc.org/*
       - http://ncicb.nci.nih.gov/*
       - https://ncicb.nci.nih.gov/*
-    #    partitioning:
-    #      allow_references_across_partitions: false
-    #      partitioning_include_in_search_hashes: false
+    # Audit trail Fase 1: gli AuditEvent vanno sulla partizione logica "AUDIT"
+    # (AuditPartitionInterceptor). allow_references_across_partitions=true perche' gli
+    # AuditEvent referenziano risorse cliniche della partizione di default.
+    partitioning:
+      allow_references_across_partitions: true
+      partitioning_include_in_search_hashes: false
     cors:
       allow_Credentials: true
       # These are allowed_origin patterns, see: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/cors/CorsConfiguration.html#setAllowedOriginPatterns-java.util.List-
+      # HAPI non e' browser-facing (i client passano dai microservizi via il reverse proxy),
+      # quindi il CORS qui e' difesa in profondita': impostare HAPI_CORS_ALLOWED_ORIGIN
+      # nell'.env all'origin reale del deploy (es. https://pascale.example.it). Default '*'
+      # solo per non rompere gli ambienti di sviluppo.
       allowed_origin:
-        - '*'
+        - ${HAPI_CORS_ALLOWED_ORIGIN:*}
 
     # Search coordinator thread pool sizes
     search-coord-core-pool-size: 20
@@ -192,12 +205,19 @@ hapi:
     search-coord-queue-capacity: 200
 
     # comma-separated package names, will be @ComponentScan'ed by Spring to allow for creating custom Spring beans
-    #custom-bean-packages:
+    # Audit trail Fase 1. Il jar e' montato in /app/extra-classes/ da docker-compose.yaml
+    # (hapi-fhir-config/interceptors/audit-partition-interceptor.jar). La partizione AUDIT
+    # va creata una tantum dopo il primo avvio: setup/setup_audit_partition.sh <host>.
+    # Vedi irccs-common/hapi-audit-interceptor/README.md.
+    custom-bean-packages: org.irccs.hapi.audit
 
     # comma-separated list of fully qualified interceptor classes.
     # classes listed here will be fetched from the Spring context when combined with 'custom-bean-packages',
     # or will be instantiated via reflection using an no-arg contructor; then registered with the server
-    #custom-interceptor-classes:
+    # AuditPartitionInterceptor: instrada gli AuditEvent sulla partizione AUDIT.
+    # AuditEventAppendOnlyInterceptor: nega update/delete/expunge sugli AuditEvent (immodificabilita').
+    # AuditEventHashChainInterceptor: catena di hash tamper-evidence fra AuditEvent consecutivi.
+    custom-interceptor-classes: org.irccs.hapi.audit.AuditPartitionInterceptor,org.irccs.hapi.audit.AuditEventAppendOnlyInterceptor,org.irccs.hapi.audit.AuditEventHashChainInterceptor
 
     # Threadpool size for BATCH'ed GETs in a bundle.
     #    bundle_batch_pool_size: 10

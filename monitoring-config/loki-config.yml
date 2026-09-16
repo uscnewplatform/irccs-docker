@@ -32,19 +32,28 @@ limits_config:
   reject_old_samples: true
   reject_old_samples_max_age: 168h
   retention_period: 2160h # 3 mesi. Snapshot pre-cancellazione: setup/archive_loki_snapshot.sh (cron)
+  # Le righe di audit trail (label audit_trail="true", assegnata da config.alloy) sono
+  # tracciabilita' degli accessi ai dati sanitari: retention molto piu' lunga della
+  # retention operativa. NB: il record di riferimento a lungo termine (>=25 anni, GCP/
+  # EU CTR) e' l'AuditEvent FHIR su HAPI, che e' append-only e non viene mai cancellato;
+  # questa e' la copia di corroborazione indipendente dai permessi FHIR.
+  retention_stream:
+    - selector: '{audit_trail="true"}'
+      priority: 10
+      period: 26280h # 3 anni (allineato a eventsExpiration di Keycloak)
   max_query_series: 100000
   max_query_parallelism: 2
   volume_enabled: true
   ingestion_rate_mb: 16
   ingestion_burst_size_mb: 32
-  deletion_mode: filter-and-delete
+
 # Il compactor applica davvero retention_period (senza, i chunk restano su
 # disco all'infinito anche se la config dichiara 360h).
 compactor:
   working_directory: /loki/compactor
   compaction_interval: 10m
   retention_enabled: true
-  retention_delete_delay: 0s
+  retention_delete_delay: 2h
   delete_request_store: filesystem
 
 # Alerting gestito da Grafana unified alerting (vedi monitoring-config/alerting/),

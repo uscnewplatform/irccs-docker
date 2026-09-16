@@ -3,20 +3,22 @@
 # cancelli i chunk oltre retention_period (3 mesi, vedi monitoring-config/loki-config.yml).
 #
 # Non seleziona i soli log "in scadenza": copia l'intero storage ad ogni run,
-# compresso. Gli archivi restano su disco finche' non vengono cancellati a
-# mano (o con una procedura separata di pulizia). Pensato per girare da cron
-# ~mensile, in modo che ogni finestra di retention abbia almeno uno snapshot
-# prima che i dati corrispondenti vengano cancellati da Loki.
+# compresso. Pensato per girare da cron ~mensile (vedi setup/install_loki_archive_cron.sh
+# per l'installazione automatica, non piu' a mano), in modo che ogni finestra di
+# retention abbia almeno uno snapshot prima che i dati corrispondenti vengano cancellati
+# da Loki.
 #
 # Uso:
-#   ./archive_loki_snapshot.sh [directory_archivio]
+#   ./archive_loki_snapshot.sh [directory_archivio] [mesi_da_conservare]
 #
-# Cron (mensile, il 1 del mese alle 03:00), esempio crontab:
-#   0 3 1 * * /path/to/irccs-docker/setup/archive_loki_snapshot.sh /var/backup/loki-archive >> /var/log/loki-archive.log 2>&1
+# mesi_da_conservare (default 12): gli archivi piu' vecchi di questa soglia vengono
+# cancellati automaticamente ad ogni run - prima non c'era alcuna pulizia, lo spazio
+# disco cresceva senza limite (vedi audit trail report, Fase 3).
 
 set -euo pipefail
 
 ARCHIVE_DIR="${1:-/var/backup/loki-archive}"
+KEEP_MONTHS="${2:-12}"
 VOLUME_NAME="irccs-docker_loki_data"
 STAMP="$(date +%Y-%m-%d_%H%M)"
 OUT_FILE="${ARCHIVE_DIR}/loki-snapshot-${STAMP}.tar.gz"
@@ -37,5 +39,12 @@ docker run --rm \
     tar czf "/backup/$(basename "$OUT_FILE")" -C / loki
 
 echo "[$(date -Is)] Fatto: $(du -h "$OUT_FILE" | cut -f1)"
+
+DELETED=$(find "$ARCHIVE_DIR" -maxdepth 1 -name 'loki-snapshot-*.tar.gz' -mtime "+$((KEEP_MONTHS * 30))" -print -delete)
+if [ -n "$DELETED" ]; then
+    echo "[$(date -Is)] Rimossi archivi piu' vecchi di ${KEEP_MONTHS} mesi:"
+    echo "$DELETED"
+fi
+
 echo "Archivi presenti in ${ARCHIVE_DIR}:"
 ls -lh "$ARCHIVE_DIR"
