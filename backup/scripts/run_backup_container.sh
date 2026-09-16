@@ -105,6 +105,17 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 # shellcheck source=./lib_common.sh
 source "$SCRIPT_DIR/lib_common.sh"
 
+# Rete di sicurezza per l'alerting: ogni step gestito esplicitamente (if/else
+# sotto) produce gia' un log_error corretto se fallisce, ma un comando "nudo"
+# non avvolto in if/||true che fallisce sotto `set -e` termina lo script
+# SENZA passare da log_error/die — dimostrato empiricamente in questa sessione
+# (due bug reali trovati: un `source` fallito e una pipe con grep senza match
+# hanno ucciso lo script prima di qualunque log strutturato, l'alert veloce
+# "backup fallito" non li avrebbe visti, solo il lento "backup assente" 26h
+# dopo). set -E fa ereditare il trap ERR anche dentro le funzioni.
+set -E
+trap 'log_error "crash inatteso alla linea $LINENO (comando: $BASH_COMMAND)"' ERR
+
 log_info "=== backup notturno avviato ==="
 
 check_disk_space "$BACKUP_ROOT" "${BACKUP_MIN_FREE_MB:-2048}"

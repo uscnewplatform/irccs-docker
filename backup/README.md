@@ -126,6 +126,7 @@ Sequenza manuale equivalente, se non si usa `install.sh`:
 - [x] Container encrypt/offsite/retention non riceve più i segreti della stack (`.env` completo — solo `backup/.env.backup`, 2026-09-16)
 - [x] Immagine Docker pinnata (digest base image + versioni age/rclone, build riproducibile, 2026-09-16)
 - [x] Test statico (`scripts/run_tests.sh`: sintassi + shellcheck + validazione YAML/JSON, 2026-09-16)
+- [x] Trap ERR su tutti gli entrypoint (rete di sicurezza per l'alerting: un comando non gestito che fallisce produce comunque `level=error`, non muore silenziosamente, 2026-09-16)
 - [ ] Test restore reale su ambiente scratch, RTO misurato
 - [ ] Scelta e configurazione target offsite definitivo
 - [ ] Installazione timer su host prod

@@ -34,6 +34,12 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 # shellcheck source=./lib_common.sh
 source "$SCRIPT_DIR/lib_common.sh"
 
+# Rete di sicurezza: un comando non avvolto in if/||true che fallisce sotto
+# `set -e` termina lo script senza passare da log_error — vedi lo stesso
+# trap e spiegazione in run_backup_container.sh.
+set -E
+trap 'log_error "crash inatteso alla linea $LINENO (comando: $BASH_COMMAND)"' ERR
+
 require_env BACKUP_ROOT BACKUP_VERIFY_KEY_FILE
 
 [ -f "$BACKUP_VERIFY_KEY_FILE" ] || die "chiave privata age non trovata: $BACKUP_VERIFY_KEY_FILE (BACKUP_VERIFY_KEY_FILE)"
