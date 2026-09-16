@@ -227,6 +227,17 @@ organizzativa più che tecnica, o sono accettati come rischio residuo per ora:
   script (non solo un errore di sintassi) non verrebbe intercettata prima
   che arrivi in produzione. I test end-to-end di questa sessione sono stati
   manuali, contro pascale-local, non ripetibili automaticamente in CI.
+- **Nessun coordinamento tra finestra di backup e deploy/migrazioni schema**:
+  i microservizi Quarkus (HAPI, Keycloak) applicano migrazioni di schema
+  (Flyway/Liquibase, realm import) all'avvio. `pg_dump` usa uno snapshot
+  MVCC coerente per le scritture DML, ma non è protetto allo stesso modo da
+  DDL concorrenti — una migrazione che gira mentre `pg_dump` è in corso (es.
+  un deploy che si sovrappone casualmente alle 03:15) può far fallire il
+  dump o produrne uno con schema incoerente. Nessuna guardia tecnica (lock
+  cross-processo tra deploy e backup) né una policy CI/CD che eviti di
+  schedulare release nella finestra di backup — da definire con il team
+  deploy/CI se il rischio empirico si materializza (probabilità bassa vista
+  la finestra breve del dump, ma non nulla).
 
 ## Fuori scope (per ora)
 
