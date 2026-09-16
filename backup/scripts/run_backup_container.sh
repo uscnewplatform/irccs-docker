@@ -52,11 +52,13 @@ set +a
 [ -n "${BACKUP_ROOT:-}" ] || { echo "BACKUP_ROOT non definito in .env.backup" >&2; exit 1; }
 mkdir -p "$BACKUP_ROOT"
 
-# `docker run --env-file` e' rigido (niente spazi attorno a "=", niente righe
-# malformate): il .env della stack ne contiene alcune (variabili frontend Vite
-# non rilevanti qui). Si filtra su un file temporaneo con solo righe KEY=VALUE
-# valide — sufficiente, le uniche variabili che servono davvero al backup
-# (POSTGRES_KEYCLOAK_*, HAPI_DB_*, HAPI_AUDIT_DB_*) sono gia' in quel formato.
+# Usato SOLO qui sull'host (extract_env_var sotto), mai passato al container:
+# .env della stack contiene molti segreti non correlati al backup (JWT_SECRET,
+# password di altri servizi...) — filtrarlo per sintassi (KEY=VALUE valida)
+# non basterebbe a scremare il CONTENUTO, quindi non deve mai raggiungere
+# --env-file di un container. Le uniche variabili che servono davvero
+# (POSTGRES_KEYCLOAK_*, HAPI_DB_*, HAPI_AUDIT_DB_*) vengono estratte una per
+# una qui sotto e tenute nel processo bash dell'host.
 STACK_ENV_SANITIZED="$(mktemp)"
 trap 'rm -f "$STACK_ENV_SANITIZED"' EXIT
 grep -E '^[A-Za-z_][A-Za-z0-9_]*=' "$STACK_DIR/.env" > "$STACK_ENV_SANITIZED" || true
@@ -139,12 +141,17 @@ if [ "${#VERIFIED_DBS[@]}" -gt 0 ]; then
   # riesce nemmeno a fare `mkdir` dentro BACKUP_ROOT — verificato con test
   # reale). Nessuna di queste tre permette escape verso l'host: agiscono
   # solo su file all'interno dei mount del container stesso.
+  # NIENTE --env-file su STACK_ENV_SANITIZED qui: encrypt_and_offsite.sh e
+  # retention_cleanup.sh non leggono ne' usano alcuna credenziale DB della
+  # stack (dump/verify sono gia' finiti sull'host sopra). Passare comunque
+  # l'intero .env della stack esporrebbe inutilmente al container anche
+  # segreti non correlati (JWT_SECRET, WEBPUSH_DB_PASSWORD, ecc.) — solo
+  # backup/.env.backup (config age/rclone/retention) e VERIFIED_DBS servono.
   if ! docker run --rm --name irccs-backup-run \
       --cap-drop=ALL --cap-add=CHOWN --cap-add=DAC_OVERRIDE --cap-add=FOWNER \
       --security-opt=no-new-privileges \
       -e VERIFIED_DBS="$VERIFIED_LIST" \
       -v "$BACKUP_ROOT:$BACKUP_ROOT" \
-      --env-file "$STACK_ENV_SANITIZED" \
       --env-file "$BACKUP_DIR/.env.backup" \
       "$IMAGE"; then
     FAILED=1
