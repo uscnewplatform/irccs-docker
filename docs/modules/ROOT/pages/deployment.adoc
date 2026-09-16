@@ -6,6 +6,16 @@
 * Docker Engine ≥ 24 e Docker Compose v2
 * File `.env` con tutte le variabili richieste
 
+CAUTION: **`docker compose` v2 (plugin, senza trattino) vs `docker-compose` v1
+(legacy, con trattino).** Gli script in `setup/` rilevano automaticamente quale dei
+due è disponibile, ma i comandi in questa pagina usano la sintassi v2. Su un host con
+solo v1, sostituire `docker compose` con `docker-compose` (stessi flag/sottocomandi).
+v1 ha inoltre un bug noto con immagini in formato BuildKit: un `recreate`/`up -d` su un
+container il cui config è cambiato può fallire con `ERROR: ... 'ContainerConfig'`
+(`KeyError` Python) — se capita, `docker rm -f <nome-container>` esplicito prima di
+ripetere il comando, oppure passare a v2 (`docker compose version` per verificare se
+c'è già).
+
 == Variabili d'ambiente (.env)
 
 [source,shell]
@@ -84,6 +94,34 @@ quarkus.keycloak.policy-enforcer.http-method-as-scope=true
 
 * path OTP (`/totp/generate`, `/totp/verify`) con `enforcement-mode=DISABLED`
 * configurazione Redis e mailer OTP
+
+== Immagine dashboard (irccs-httpd)
+
+`Gui-Jenkinsfile` pusha l'immagine della dashboard su Nexus con un path che include
+il **nome del branch** che ha fatto il build, non solo la versione:
+
+[source]
+----
+nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/<branch>:<versione>
+----
+
+`<versione>` = `package.json` → `version` (o il tag git, se il build parte da un
+tag). `docker-compose.yaml` seleziona il branch da pullare con `IRCCS_HTTPD_BRANCH`
+(default `develop` se assente):
+
+[source,shell]
+----
+IRCCS_HTTPD_VERSION=2.8.0
+IRCCS_HTTPD_BRANCH=develop                          # default, si può omettere
+#IRCCS_HTTPD_BRANCH=feature/audit-event-store-isolato # per testare un branch non mergiato
+----
+
+Utile per validare un'immagine costruita da un feature branch prima del merge in
+`develop`, senza editare `docker-compose.yaml` a mano. Prerequisito: Jenkins deve aver
+effettivamente scoperto e buildato quel branch (multibranch pipeline — su GitHub
+Settings → Webhooks verificare che le consegne a Jenkins vadano a buon fine; in
+assenza di webhook funzionante, la scoperta di branch nuovi/aggiornati avviene solo al
+prossimo `periodicFolderTrigger`, default ogni 15 minuti).
 
 == Aggiornamento di un singolo microservizio
 
