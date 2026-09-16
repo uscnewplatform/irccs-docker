@@ -151,13 +151,16 @@ gestito da Grafana stesso, nessun accesso anonimo.
 
 CAUTION: **Variabili `.env` per questo stack non erano documentate nel template fino
 al 2026-09-16** — vedi `.env_example` sezione "Monitoring" per l'elenco completo
-(`GRAFANA_*`, `LOKI_*`, `ALLOY_*`, `GF_SMTP_*`, `ALERT_EMAIL_TO`). Due varianti
-`*_CONFIG_PATH_LOCAL` hanno un comportamento diverso da ricordare: `GRAFANA_CONFIG_PATH_LOCAL`
-punta a una *cartella* (combinata con `GRAFANA_CONFIG_FILE` nel volume), mentre
-`LOKI_CONFIG_PATH_LOCAL` e `ALLOY_CONFIG_PATH_LOCAL` devono puntare al *file* stesso
-(es. `./monitoring-config/config.alloy`, non `./monitoring-config`) — lasciarle come
-cartella produce un errore Docker fuorviante ("mount path must be absolute" o "not a
-directory") invece di un errore chiaro di variabile mancante.
+(`GRAFANA_*`, `LOKI_*`, `ALLOY_*`, `GF_SMTP_*`, `ALERT_EMAIL_TO`). **Tutte e tre**
+`GRAFANA_CONFIG_PATH_LOCAL`, `LOKI_CONFIG_PATH_LOCAL` e `ALLOY_CONFIG_PATH_LOCAL`
+devono puntare al *file* stesso (es. `./monitoring-config/grafana.ini`, NON
+`./monitoring-config` da solo) — il volume nel compose non le combina con la
+rispettiva `*_CONFIG_FILE` lato host, solo lato container. Lasciarle come cartella
+produce un errore Docker fuorviante invece di un errore chiaro di variabile mancante:
+`failed to parse "...": is a directory` (Grafana) o `mount ...: not a directory`
+(Loki/Alloy). Le altre variabili `GRAFANA_*_PATH_LOCAL` (datasources, dashboards,
+dashboards-provisioning, alerting) puntano correttamente a *cartelle* — sono
+provisioning dir vere, non un singolo file di config.
 
 == Zammad Ticketing (stack separato)
 
