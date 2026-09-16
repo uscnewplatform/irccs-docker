@@ -8,20 +8,31 @@ fidarsene in produzione — vedi sezione "Test periodico" in fondo.
 
 - Accesso host prod, docker CLI, stack irccs-docker checked out.
 - Chiave privata `age` per decifrare l'archivio (**non** risiede sull'host di backup — recuperarla dalla sua sede separata).
-- Dump da ripristinare: locale (`backup/<hapi|keycloak>/archive/*.dump.age`) o dalla copia offsite se il disco locale è perso.
+- Dump da ripristinare: locale (`backup/<hapi|keycloak|hapi-audit>/archive/*.dump.age`) o dalla copia offsite se il disco locale è perso.
 
 ## 1. Decidere il punto di restore
 
 - RPO = 24h: si perdono al massimo le modifiche dall'ultimo backup notturno riuscito alle 03:15.
-- Elenco backup disponibili: `ls -la backup/hapi/archive/ backup/keycloak/archive/` (locale) o dal target offsite.
+- Elenco backup disponibili: `ls -la backup/hapi/archive/ backup/keycloak/archive/ backup/hapi-audit/archive/` (locale) o dal target offsite.
 - Se il disco locale è perso, recuperare prima da offsite (`rclone copy <target>/hapi/ ./restore-staging/` ecc.).
+
+**Sospetto ransomware/tampering**: NON restorare ciecamente dall'ultimo
+backup disponibile. Se l'incidente sembra un attacco (non un guasto hardware
+semplice), stimare prima il momento di compromissione e scegliere un dump
+precedente a quel momento, anche se più vecchio del RPO nominale di 24h — un
+backup "fresco" generato dopo la compromissione può già contenere dati
+manomessi o essere stato lui stesso il bersaglio. In caso di dubbio,
+verificare più generazioni (`backup/<db>/archive/` tiene 14 giornalieri)
+prima di scegliere quale restorare, e coinvolgere subito il referente
+sicurezza/DPO prima di procedere.
 
 ## 2. Fermare i servizi applicativi (non i DB)
 
 ```bash
 docker compose stop irccs-auth irccs-anagrafica-pazienti irccs-studio-clinico \
   irccs-centro-ricerca irccs-practitioner irccs-clinical-reasoning \
-  irccs-notification irccs-tac irccs-zammad irccs-httpd-dashboard
+  irccs-notification irccs-tac irccs-zammad irccs-httpd-dashboard \
+  irccs-hapi-audit irccs-audit-integrity
 ```
 
 Evita scritture concorrenti durante il restore. I due container postgres restano su.
@@ -34,39 +45,57 @@ age -d -i /path/alla/chiave-privata.txt \
 
 age -d -i /path/alla/chiave-privata.txt \
   backup/keycloak/archive/keycloak_2026-09-14.dump.age > /tmp/keycloak_restore.dump
+
+age -d -i /path/alla/chiave-privata.txt \
+  backup/hapi-audit/archive/hapi-audit_2026-09-14.dump.age > /tmp/hapi_audit_restore.dump
 ```
 
-## 4. Ricreare i DB (drop + create pulito)
+## 4. Ricreare i DB e restorare (drop + create + pg_restore)
 
 **Attenzione: operazione distruttiva, cancella i dati correnti nel DB target.**
 Confermare di avere il dump giusto prima di procedere.
 
+Questi due step sono ora gestiti da `backup/scripts/restore_db.sh`, che
+sostituisce i comandi `psql`/`pg_restore` copia-incolla con uno script
+protetto da conferma esplicita: prima di droppare qualunque cosa, mostra
+hostname corrente, container target, DB target e dump da usare, e richiede
+di **digitare per intero l'hostname della macchina corrente** per procedere
+(oppure `--yes-i-am-sure=<hostname>` per uso scriptato/non interattivo — si
+rifiuta se il valore non corrisponde esattamente all'hostname reale). Riduce
+il rischio di eseguirlo per sbaglio contro l'host o il container sbagliato
+(es. shell SSH aperta su prod invece che sullo scratch di test).
+
 ```bash
+cd backup/scripts
+
 # HAPI
-docker exec -i postgres-hapi-fhir psql -U "$HAPI_DB_USER" -d postgres \
-  -c "DROP DATABASE IF EXISTS \"$HAPI_DB_NAME\";" \
-  -c "CREATE DATABASE \"$HAPI_DB_NAME\" OWNER \"$HAPI_DB_USER\";"
+./restore_db.sh hapi /tmp/hapi_restore.dump
 
 # Keycloak
-docker exec -i postgres-keycloak psql -U "$POSTGRES_KEYCLOAK_USER" -d postgres \
-  -c "DROP DATABASE IF EXISTS \"$POSTGRES_KEYCLOAK_DB\";" \
-  -c "CREATE DATABASE \"$POSTGRES_KEYCLOAK_DB\" OWNER \"$POSTGRES_KEYCLOAK_USER\";"
+./restore_db.sh keycloak /tmp/keycloak_restore.dump
+
+# Audit trail (hapiaudit) — attenzione: dopo restore la hash-chain riparte dal
+# tail contenuto nel dump. Se l'incidente ha causato un fork della catena, va
+# rivalutato con verify_audit_hash_chain.py prima di considerare l'audit trail
+# integro (vedi memoria progetto hapi-identifier-modifier-broken).
+./restore_db.sh hapi-audit /tmp/hapi_audit_restore.dump
 ```
+
+Ogni invocazione chiede la conferma hostname separatamente (drop+create+
+restore avvengono insieme per ciascun DB, non più in due fasi separate). Per
+un restore scriptato/non presidiato, aggiungere `--yes-i-am-sure="$(hostname)"`
+a ciascun comando — SOLO se si è certi di essere sull'host giusto, il flag
+non aggiunge un livello di sicurezza in più rispetto al prompt interattivo,
+lo sostituisce.
 
 ## 5. Restore
 
-```bash
-docker exec -i postgres-hapi-fhir pg_restore -U "$HAPI_DB_USER" \
-  -d "$HAPI_DB_NAME" --no-owner --no-privileges < /tmp/hapi_restore.dump
-
-docker exec -i postgres-keycloak pg_restore -U "$POSTGRES_KEYCLOAK_USER" \
-  -d "$POSTGRES_KEYCLOAK_DB" --no-owner --no-privileges < /tmp/keycloak_restore.dump
-```
+*(vedi sopra — drop+create+restore sono ora un'unica operazione per DB via `restore_db.sh`, non più due sezioni separate)*
 
 ## 6. Pulizia file decifrati in chiaro
 
 ```bash
-shred -u /tmp/hapi_restore.dump /tmp/keycloak_restore.dump
+shred -u /tmp/hapi_restore.dump /tmp/keycloak_restore.dump /tmp/hapi_audit_restore.dump
 ```
 
 ## 7. Riavvio ordinato
@@ -75,7 +104,10 @@ shred -u /tmp/hapi_restore.dump /tmp/keycloak_restore.dump
 docker compose up -d irccs-keycloak
 # attendere healthcheck keycloak OK, poi:
 docker compose up -d irccs-hapi-fhir
-# attendere che HAPI risponda su /fhir/metadata, poi il resto:
+# attendere che HAPI risponda su /fhir/metadata, poi:
+docker compose up -d irccs-hapi-audit
+# attendere che risponda su /fhir/metadata, poi il resto (irccs-audit-integrity
+# incluso, riaggancia il tail della hash-chain al riavvio):
 docker compose up -d
 ```
 
@@ -86,6 +118,7 @@ docker compose up -d
 - [ ] Query FHIR di prova (es. `GET /fhir/Patient?_count=1`) restituisce dati coerenti con la data del dump
 - [ ] Dashboard React carica e mostra dati
 - [ ] Controllo log per errori inattesi (Grafana/Loki)
+- [ ] `irccs-hapi-audit` risponde su `/fhir/metadata`, hash-chain integra (`verify_audit_hash_chain.py`, nessun `AUDIT-INTEGRITY-STALE-CHECKPOINT`)
 
 ## 9. Comunicazione
 
@@ -104,4 +137,4 @@ numero che conta in caso di incidente, non una stima.
 
 | Data | Tipo (test/reale) | Dump usato | RTO misurato | Esito | Note |
 |---|---|---|---|---|---|
-| _(compilare al primo test)_ | | | | | |
+| 2026-09-16 | test (parziale) | hapi/keycloak dump del giorno, pascale-local | 20s (decifra+pg_restore+sanity; dump già pronto, non conta il dump) | OK | Dump generati con pipeline reale (`backup_nightly.sh` contro container pascale-local, offsite=none per assenza rclone in locale). Restore su 2 container postgres scratch isolati (non sulla stack pascale-local viva). Sanity: hapi `hfj_resource`=1338 righe (match dump), keycloak realm=2 (`master`,`pascale`). **Non coperto da questo test**: stop/riavvio ordinato della stack applicativa (playbook §2,7), verifica login/dashboard reali (§8) — da fare al prossimo test completo su VM scratch o pascale-local dedicato. |

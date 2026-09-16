@@ -1,10 +1,13 @@
 # Regole Grafana alerting per il backup notturno DB.
 # Da fondere nel gruppo esistente in monitoring-config/alerting/rules.yaml
 # (stesso provisioning apiVersion 1, stesso pattern di irccs-high-error-rate).
-# Il backup gira come container Docker one-shot "irccs-backup-run" (vedi
-# ../Dockerfile, ../scripts/run_backup_container.sh): catturato automaticamente
-# da loki.source.docker (Alloy) esistente, label container_name gia' presente,
-# nessuna configurazione Alloy aggiuntiva richiesta.
+# Il backup gira come irccs-backup.service (systemd): dump/verify sull'host,
+# cifratura/offsite/retention nel container one-shot "irccs-backup-run"
+# lanciato dallo stesso script — l'intero output (host + container) finisce
+# nel journal di quell'unit (run_backup_container.sh fa `exec > tee`), quindi
+# le query filtrano su unit="irccs-backup.service" via loki.source.journal,
+# non su container_name (il container ora ha vita breve e nessun accesso
+# Docker: vedi run_backup_container.sh per il perche').
 
 apiVersion: 1
 
@@ -31,7 +34,7 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              expr: 'sum(count_over_time({container_name="irccs-backup-run"} |= "level=error" [6h]))'
+              expr: 'sum(count_over_time({unit="irccs-backup.service"} |= "level=error" [6h]))'
               refId: query
               queryType: instant
           - refId: threshold
@@ -62,7 +65,7 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              expr: 'sum(count_over_time({container_name="irccs-backup-run"} |= "backup notturno completato con successo" [26h]))'
+              expr: 'sum(count_over_time({unit="irccs-backup.service"} |= "backup notturno completato con successo" [26h]))'
               refId: query
               queryType: instant
           - refId: threshold
@@ -75,3 +78,178 @@ groups:
                 - evaluator:
                     type: lt
                     params: [1]
+
+      # Spazio disco insufficiente sull'host di backup: preflight di
+      # check_disk_space() in lib_common.sh (chiamato da run_backup_container.sh
+      # PRIMA di qualunque pg_dump) fallisce con questo pattern esatto se lo
+      # spazio libero e' sotto BACKUP_MIN_FREE_MB. E' un level=error come gli
+      # altri fallimenti quindi gia' coperto da irccs-backup-failed sopra, ma
+      # questa regola dedicata rende la causa immediatamente ovvia in
+      # notifica (spazio disco vs dump/verify/cifratura falliti) senza dover
+      # aprire i log.
+      - uid: irccs-backup-disk-space
+        title: 'Backup notturno DB: spazio disco insufficiente'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'check_disk_space ha bloccato il backup prima di iniziare: spazio libero sotto BACKUP_MIN_FREE_MB su BACKUP_ROOT'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 21600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({unit="irccs-backup.service"} |= "spazio disco insufficiente" [6h]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      # Fallimento offsite (rclone/rsync) distinto da un fallimento di
+      # dump/verify/cifratura: aiuta a capire subito che il problema e'
+      # connettivita'/credenziali verso il remote, non i DB sorgente.
+      # backup_nightly.sh isola il fallimento per singolo DB (gli altri DB
+      # nel loop continuano ad essere processati, non e' piu' un `die`
+      # secco che interrompe tutto), ma quel DB resta senza copia offsite
+      # per la notte — severity critical comunque, non e' un problema
+      # cosmetico. Non confondere con i fallimenti di retention_cleanup.sh
+      # sull'offsite (quelli sono log_warn, best-effort, niente level=error,
+      # gia' esclusi da questa e da irccs-backup-failed).
+      - uid: irccs-backup-offsite-failed
+        title: 'Backup notturno DB: push offsite fallito (rclone/rsync)'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'rclone copy o rsync verso BACKUP_OFFSITE_TARGET falliti per almeno un DB — verificare connettivita/credenziali del remote offsite'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 21600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({unit="irccs-backup.service"} |~ "rclone copy fallito|rsync fallito" [6h]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      # Backup "appeso": avviato ma non ancora concluso (ne' successo ne'
+      # errore) entro una finestra ben oltre la durata normale (pochi minuti
+      # su questi volumi di dati). Espressa come differenza tra conteggio
+      # "avviato" e conteggio "completato" (il pattern "backup notturno
+      # completato" matcha sia l'esito di successo sia quello con errori,
+      # vedi backup_nightly.sh riga finale in entrambi i casi) sulla stessa
+      # finestra, con math expression Grafana. SPERIMENTALE/NON VALIDATA
+      # contro un'istanza Grafana reale in questo ambiente (nessun
+      # grafana/loki attivo per test) — la sintassi dell'espressione math
+      # con riferimento ai refId via $nome segue la convenzione standard
+      # Grafana, ma va confermata in Grafana Explore/alerting UI prima di
+      # fidarsene in produzione. "for: 2h" evita falsi positivi su backup
+      # normali che durano minuti.
+      - uid: irccs-backup-stuck
+        title: 'Backup notturno DB: possibile blocco (avviato ma non concluso da oltre 2h)'
+        condition: threshold
+        for: 2h
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Un run e'' iniziato (log "backup notturno avviato") senza un log di chiusura (successo o errore) da oltre 2 ore — possibile processo bloccato'
+        labels:
+          severity: warning
+        data:
+          - refId: started
+            relativeTimeRange:
+              from: 14400
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({unit="irccs-backup.service"} |= "backup notturno avviato" [4h]))'
+              refId: started
+              queryType: instant
+          - refId: finished
+            relativeTimeRange:
+              from: 14400
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({unit="irccs-backup.service"} |= "backup notturno completato" [4h]))'
+              refId: finished
+              queryType: instant
+          - refId: gap
+            datasourceUid: '__expr__'
+            model:
+              type: math
+              refId: gap
+              expression: '$started - $finished'
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: gap
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      # Verifica periodica integrità archivio (irccs-backup-verify.service,
+      # domenica 04:30, vedi ../scripts/verify_archive_integrity.sh): stesso
+      # pattern journal-based delle regole sopra, unit diversa. Finestra 8
+      # giorni: il timer è settimanale, un margine oltre 7gg assorbe
+      # RandomizedDelaySec/slittamenti senza perdere un ciclo mancato.
+      - uid: irccs-backup-verify-failed
+        title: 'Verifica periodica integrità archivio backup fallita'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'irccs-backup-verify.service ha loggato level=error (archivio corrotto o non decifrabile) nelle ultime 8 giorni'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 691200
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({unit="irccs-backup-verify.service"} |= "level=error" [8d]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]

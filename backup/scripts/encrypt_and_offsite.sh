@@ -10,13 +10,38 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 # shellcheck source=./lib_common.sh
 source "$SCRIPT_DIR/lib_common.sh"
 
-require_env BACKUP_ROOT BACKUP_AGE_RECIPIENT BACKUP_OFFSITE_METHOD
+require_env BACKUP_ROOT BACKUP_OFFSITE_METHOD
 
 DB_KIND="${1:?uso: encrypt_and_offsite.sh <hapi|keycloak> <dump>}"
 PLAINTEXT="${2:?uso: encrypt_and_offsite.sh <hapi|keycloak> <dump>}"
 
 [ -f "$PLAINTEXT" ] || die "dump non trovato: $PLAINTEXT"
 command -v age >/dev/null 2>&1 || die "age non installato (apt/brew install age)"
+
+# Multi-recipient: BACKUP_AGE_RECIPIENTS (plurale, una o piu' chiavi pubbliche
+# age separate da spazi/newline/virgole, righe vuote o che iniziano per #
+# ignorate) — perdere UNA chiave privata non rende illeggibili i backup se ne
+# esiste almeno un'altra custodita altrove. Retrocompatibilita': se solo la
+# vecchia variabile singolare BACKUP_AGE_RECIPIENT e' definita, si comporta
+# come prima (singolo recipient).
+RECIPIENTS_RAW="${BACKUP_AGE_RECIPIENTS:-${BACKUP_AGE_RECIPIENT:-}}"
+[ -n "$RECIPIENTS_RAW" ] || die "nessuna chiave age configurata: impostare BACKUP_AGE_RECIPIENTS (raccomandato, multi-custode) o BACKUP_AGE_RECIPIENT in backup/.env.backup"
+
+AGE_RECIPIENT_ARGS=()
+while IFS= read -r recipient; do
+  recipient="${recipient//,/}"
+  [ -z "$recipient" ] && continue
+  case "$recipient" in
+    \#*) continue ;;
+    age1*) AGE_RECIPIENT_ARGS+=(-r "$recipient") ;;
+    *) die "recipient age non valido (atteso formato age1...): $recipient" ;;
+  esac
+done < <(tr ' ,' '\n\n' <<<"$RECIPIENTS_RAW")
+
+RECIPIENT_COUNT=$(( ${#AGE_RECIPIENT_ARGS[@]} / 2 ))
+[ "$RECIPIENT_COUNT" -gt 0 ] || die "nessun recipient age valido trovato in BACKUP_AGE_RECIPIENTS/BACKUP_AGE_RECIPIENT"
+log_info "cifratura con $RECIPIENT_COUNT recipient age configurati"
+[ "$RECIPIENT_COUNT" -eq 1 ] && log_warn "un solo recipient age configurato: se questa chiave privata va persa, tutti i backup diventano illeggibili. Raccomandato BACKUP_AGE_RECIPIENTS con almeno 2 custodi indipendenti."
 
 ARCHIVE_DIR="$BACKUP_ROOT/$DB_KIND/archive"
 mkdir -p "$ARCHIVE_DIR"
@@ -25,7 +50,7 @@ BASENAME="$(basename "$PLAINTEXT")"
 ENCRYPTED="$ARCHIVE_DIR/${BASENAME}.age"
 
 log_info "cifratura: $PLAINTEXT -> $ENCRYPTED"
-if ! age -r "$BACKUP_AGE_RECIPIENT" -o "$ENCRYPTED.tmp" "$PLAINTEXT"; then
+if ! age "${AGE_RECIPIENT_ARGS[@]}" -o "$ENCRYPTED.tmp" "$PLAINTEXT"; then
   rm -f "$ENCRYPTED.tmp"
   die "cifratura fallita: $PLAINTEXT"
 fi

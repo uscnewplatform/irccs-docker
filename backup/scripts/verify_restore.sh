@@ -3,7 +3,7 @@
 # isolato (rete dedicata, nessun accesso ai container prod), poi esegue una
 # sanity query. Il container scratch viene sempre distrutto a fine run.
 #
-# Uso: verify_restore.sh <hapi|keycloak> <path/al/dump>
+# Uso: verify_restore.sh <hapi|keycloak|hapi-audit> <path/al/dump>
 # Exit 0 = restore OK e sanity query passata. Exit != 0 = FAIL (non procedere a
 # cifratura/retention/offsite di quel dump: va conservato per analisi manuale).
 
@@ -26,8 +26,14 @@ case "$DB_KIND" in
     IMAGE="${BACKUP_VERIFY_IMAGE_KEYCLOAK:-postgres:17.4}"
     SANITY_QUERY="SELECT count(*) FROM realm;"
     ;;
+  hapi-audit)
+    # postgres-hapi-audit e' un'istanza HAPI FHIR separata (audit trail,
+    # hash-chain tamper detection): stesso schema hfj_resource di hapi.
+    IMAGE="${BACKUP_VERIFY_IMAGE_HAPI_AUDIT:-${BACKUP_VERIFY_IMAGE_HAPI:-postgres:16.8}}"
+    SANITY_QUERY="SELECT count(*) FROM hfj_resource;"
+    ;;
   *)
-    die "tipo db sconosciuto: $DB_KIND (atteso hapi|keycloak)"
+    die "tipo db sconosciuto: $DB_KIND (atteso hapi|keycloak|hapi-audit)"
     ;;
 esac
 
