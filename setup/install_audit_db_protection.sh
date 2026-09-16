@@ -20,6 +20,14 @@ COMPOSE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 TARGET="${1:-audit}"
 
+# docker compose v2 (plugin) se disponibile, altrimenti docker-compose v1 (legacy) -
+# alcuni host hanno solo uno dei due installato.
+if docker compose version >/dev/null 2>&1; then
+  DC="docker compose"
+else
+  DC="docker-compose"
+fi
+
 envval() { for k in "$@"; do v="$(grep -E "^${k}=" .env 2>/dev/null | head -1 | cut -d= -f2-)"; [ -n "$v" ] && { echo "$v"; return; }; done; }
 
 case "$TARGET" in
@@ -32,7 +40,7 @@ case "$TARGET" in
     U="$(envval HAPI_AUDIT_DB_USER)"; D="$(envval HAPI_AUDIT_DB_NAME)"
     : "${U:?HAPI_AUDIT_DB_USER non in .env}"; : "${D:?HAPI_AUDIT_DB_NAME non in .env}"
     echo "Applico $SQL_FILE su postgres-hapi-audit ($D)..."
-    docker compose exec -T postgres-hapi-audit psql -U "$U" -d "$D" -v ON_ERROR_STOP=1 < "$SQL_FILE"
+    $DC exec -T postgres-hapi-audit psql -U "$U" -d "$D" -v ON_ERROR_STOP=1 < "$SQL_FILE"
     ;;
   clinical)
     cd "$COMPOSE_DIR"
@@ -40,7 +48,7 @@ case "$TARGET" in
     D="$(envval HAPI_DB_NAME POSTGRES_HAPI_DB POSTGRES_DB)"
     : "${U:?utente DB HAPI non in .env}"; : "${D:?nome DB HAPI non in .env}"
     echo "Applico $SQL_FILE su postgres-hapi-fhir ($D)..."
-    docker compose exec -T postgres-hapi-fhir psql -U "$U" -d "$D" -v ON_ERROR_STOP=1 < "$SQL_FILE"
+    $DC exec -T postgres-hapi-fhir psql -U "$U" -d "$D" -v ON_ERROR_STOP=1 < "$SQL_FILE"
     ;;
   *)
     echo "Target sconosciuto: $TARGET (usa: audit | clinical | <DSN>)" >&2; exit 1

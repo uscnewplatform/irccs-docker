@@ -24,19 +24,27 @@ envval() { grep -E "^${1}=" .env 2>/dev/null | head -1 | cut -d= -f2-; }
 U="$(envval HAPI_AUDIT_DB_USER)"; D="$(envval HAPI_AUDIT_DB_NAME)"
 : "${U:?HAPI_AUDIT_DB_USER non in .env}"; : "${D:?HAPI_AUDIT_DB_NAME non in .env}"
 
-PRELOADED="$(docker compose exec -T postgres-hapi-audit psql -U "$U" -d "$D" -tAc "SHOW shared_preload_libraries;")"
+# docker compose v2 (plugin) se disponibile, altrimenti docker-compose v1 (legacy) -
+# alcuni host hanno solo uno dei due installato.
+if docker compose version >/dev/null 2>&1; then
+  DC="docker compose"
+else
+  DC="docker-compose"
+fi
+
+PRELOADED="$($DC exec -T postgres-hapi-audit psql -U "$U" -d "$D" -tAc "SHOW shared_preload_libraries;")"
 case "$PRELOADED" in
   *pgaudit*) ;;
   *)
     echo "ERRORE: shared_preload_libraries='$PRELOADED' non include pgaudit." >&2
     echo "Il container va avviato col comando -c shared_preload_libraries=pgaudit" >&2
-    echo "(vedi docker-compose.yaml) - ricrealo con: docker compose up -d --build postgres-hapi-audit" >&2
+    echo "(vedi docker-compose.yaml) - ricrealo con: $DC up -d --build postgres-hapi-audit" >&2
     exit 1
     ;;
 esac
 
 echo "Creo/verifico estensione pgaudit su postgres-hapi-audit ($D)..."
-docker compose exec -T postgres-hapi-audit psql -U "$U" -d "$D" -v ON_ERROR_STOP=1 \
+$DC exec -T postgres-hapi-audit psql -U "$U" -d "$D" -v ON_ERROR_STOP=1 \
   -c "CREATE EXTENSION IF NOT EXISTS pgaudit;"
 
-echo "pgaudit attiva. Verifica log con: docker compose logs postgres-hapi-audit | grep AUDIT"
+echo "pgaudit attiva. Verifica log con: $DC logs postgres-hapi-audit | grep AUDIT"

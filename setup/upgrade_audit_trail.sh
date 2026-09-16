@@ -67,8 +67,19 @@ step() { echo ""; echo -e "${CYAN}=== $* ===${NC}"; }
 step "0/8 Preflight"
 
 command -v docker >/dev/null 2>&1 || fail "docker non trovato nel PATH"
-docker compose version >/dev/null 2>&1 || fail "docker compose v2 non disponibile"
-[ -f "$PROJECT_ROOT/.env" ] || fail ".env non trovato in $PROJECT_ROOT (richiesto da docker compose)"
+# docker compose v2 (plugin) se disponibile, altrimenti docker-compose v1 (legacy) -
+# alcuni host hanno solo uno dei due installato. v1 con immagini BuildKit ha un bug
+# noto (KeyError 'ContainerConfig' sul recreate) - preferire v2 quando c'e'.
+if docker compose version >/dev/null 2>&1; then
+  DC="docker compose"
+elif command -v docker-compose >/dev/null 2>&1; then
+  DC="docker-compose"
+  warn "docker compose v2 non trovato, uso docker-compose v1 (legacy) - se il recreate"
+  warn "fallisce con 'ContainerConfig', vedi audit-trail.adoc per il workaround."
+else
+  fail "ne' 'docker compose' (v2) ne' 'docker-compose' (v1) disponibili"
+fi
+[ -f "$PROJECT_ROOT/.env" ] || fail ".env non trovato in $PROJECT_ROOT (richiesto da $DC)"
 [ -f "$PROJECT_ROOT/docker-compose.yaml" ] || fail "docker-compose.yaml non trovato — sei nella directory giusta?"
 
 if ! grep -q "^HAPI_AUDIT_DB_" "$PROJECT_ROOT/.env" 2>/dev/null; then
@@ -83,21 +94,21 @@ step "1/8 Ricrea i container con docker-compose.yaml aggiornato"
 warn "Questo passo recrea i container il cui config e' cambiato (rete irccs-audit-db,"
 warn "nuove variabili d'ambiente). I container INVARIATI non vengono toccati. Downtime"
 warn "atteso: solo per i container ricreati, tipicamente pochi secondi ciascuno."
-if ! confirm "Procedere con 'docker compose up -d'?"; then
+if ! confirm "Procedere con '$DC up -d'?"; then
   fail "Annullato dall'operatore prima di ricreare i container"
 fi
 
-docker compose up -d
-ok "docker compose up -d completato"
+$DC up -d
+ok "$DC up -d completato"
 
 log "Attendo che postgres-hapi-audit e irccs-hapi-audit siano pronti..."
 for i in $(seq 1 30); do
-  if docker compose ps postgres-hapi-audit 2>/dev/null | grep -q "Up\|running" \
+  if $DC ps postgres-hapi-audit 2>/dev/null | grep -q "Up\|running" \
      && curl -sf "http://$AUDIT_HOST/fhir/metadata" >/dev/null 2>&1; then
     ok "irccs-hapi-audit risponde su http://$AUDIT_HOST/fhir"
     break
   fi
-  [ "$i" -eq 30 ] && fail "irccs-hapi-audit non risponde dopo 30 tentativi (150s) — controllare 'docker compose logs irccs-hapi-audit'"
+  [ "$i" -eq 30 ] && fail "irccs-hapi-audit non risponde dopo 30 tentativi (150s) — controllare '$DC logs irccs-hapi-audit'"
   sleep 5
 done
 

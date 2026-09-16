@@ -38,6 +38,13 @@ TOKEN=""; PATIENT="Patient/1532"
 EVIDENCE_DIR="./09-restore-test"
 DESTRUCTIVE=0
 
+# docker compose v2 (plugin) se disponibile, altrimenti docker-compose v1 (legacy).
+if docker compose version >/dev/null 2>&1; then
+  DC="docker compose"
+else
+  DC="docker-compose"
+fi
+
 while [ $# -gt 0 ]; do
   case "$1" in
     --pg-container) PG_CONTAINER="$2"; shift 2;;
@@ -98,7 +105,7 @@ $PSQL -d postgres -c "DROP DATABASE $SCRATCH;" >/dev/null
 
 # --- 5. restart hapi-audit -----------------------------------------
 log "5/7  restart $AUDIT_CONTAINER"
-( cd "$COMPOSE_DIR" && docker compose $COMPOSE_FILES restart "$AUDIT_CONTAINER" ) >/dev/null 2>&1 || \
+( cd "$COMPOSE_DIR" && $DC $COMPOSE_FILES restart "$AUDIT_CONTAINER" ) >/dev/null 2>&1 || \
   docker restart "$AUDIT_CONTAINER" >/dev/null
 for i in $(seq 1 30); do
   [ "$(curl -s -o /dev/null -w '%{http_code}' "$AUDIT_FHIR/metadata")" = "200" ] && { log "     su (${i}x5s)"; break; }
@@ -168,11 +175,11 @@ if [ "$DESTRUCTIVE" = "1" ]; then
   log "VARIANTE DISTRUTTIVA richiesta: droppo e ricreo $PG_DB dal dump"
   read -r -p "Confermi la distruzione di $PG_DB su $PG_CONTAINER? (scrivi DISTRUGGI) " ans
   [ "$ans" = "DISTRUGGI" ] || { echo "annullato"; exit 0; }
-  ( cd "$COMPOSE_DIR" && docker compose $COMPOSE_FILES stop "$AUDIT_CONTAINER" ) >/dev/null 2>&1 || docker stop "$AUDIT_CONTAINER"
+  ( cd "$COMPOSE_DIR" && $DC $COMPOSE_FILES stop "$AUDIT_CONTAINER" ) >/dev/null 2>&1 || docker stop "$AUDIT_CONTAINER"
   $PSQL -d postgres -c "DROP DATABASE $PG_DB;"
   $PSQL -d postgres -c "CREATE DATABASE $PG_DB;"
   docker exec "$PG_CONTAINER" pg_restore -U "$PG_USER" -d "$PG_DB" --no-owner "/tmp/backup-$STAMP.dump" 2>&1 | tail -3
-  ( cd "$COMPOSE_DIR" && docker compose $COMPOSE_FILES start "$AUDIT_CONTAINER" ) >/dev/null 2>&1 || docker start "$AUDIT_CONTAINER"
+  ( cd "$COMPOSE_DIR" && $DC $COMPOSE_FILES start "$AUDIT_CONTAINER" ) >/dev/null 2>&1 || docker start "$AUDIT_CONTAINER"
   for i in $(seq 1 30); do [ "$(curl -s -o /dev/null -w '%{http_code}' "$AUDIT_FHIR/metadata")" = "200" ] && break; sleep 5; done
   python3 "$VERIFY" --audit-fhir "$AUDIT_FHIR" ${TOKEN:+--token "$TOKEN"} --full \
     --checkpoint-file "$EVIDENCE_DIR/cp-destructive.json" \
