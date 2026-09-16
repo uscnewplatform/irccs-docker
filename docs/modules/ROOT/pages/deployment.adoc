@@ -33,7 +33,24 @@ OTP_MAIL_PORT=587
 OTP_MAIL_TLS=REQUIRED
 OTP_MAIL_USER=<smtp-user>
 OTP_MAIL_PSW=<smtp-password>
+
+# Audit trail — store FHIR dedicato, fisicamente separato dal clinico
+HAPI_AUDIT_DB_USER=<utente>
+HAPI_AUDIT_DB_PASSWORD=<password>
+HAPI_AUDIT_DB_NAME=hapiaudit
 ----
+
+TIP: L'audit trail (tracciabilità di ogni accesso/modifica ai dati clinici, richiesta da
+GDPR/GCP/Garante Privacy) ha una guida di attivazione e configurazione dedicata —
+vedi xref:audit-trail.adoc[] prima del primo deploy: store separato
+(`postgres-hapi-audit` + `irccs-hapi-audit`), rete Docker isolata, SearchParameter,
+trigger DB, hash-chain, backup con retention WORM-like. Le variabili sopra sono il
+minimo per far partire i container; senza SearchParameter/trigger/pgaudit installati
+(xref:audit-trail.adoc#attivazione-deploy[sezione "Attivazione (deploy)"]) l'audit trail
+gira ma senza le protezioni di immodificabilità e senza la consultazione via dashboard.
+Per un ambiente che ha **già** lo stack con dati e va aggiornato alla versione corrente
+dell'audit trail, usare `setup/upgrade_audit_trail.sh` invece di ripetere i passi a mano —
+vedi xref:audit-trail.adoc#checklist-upgrade-2026-09-16[].
 
 == Avvio
 

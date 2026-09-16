@@ -553,6 +553,7 @@ NOTE: Il poller chiama gli endpoint `/admin/realms/{realm}/events` e `/admin-eve
 destinatari). Le soglie sono provvisorie -- vedi la nota di validazione per la
 procedura di ricalibrazione.
 
+[#attivazione-deploy]
 == Attivazione (deploy)
 
 Nell'`.env`: impostare `HAPI_AUDIT_DB_USER/PASSWORD/NAME` e (produzione)
@@ -600,10 +601,21 @@ migrarli sull'istanza audit **prima** che i microservizi separati vadano in eser
 . Verificare su traffico applicativo reale (bundle transaction, `_history`, ricerche
   cross-resource) prima di considerare la Fase 1 conclusa.
 
+[#checklist-upgrade-2026-09-16]
 === Checklist aggiuntiva (isolamento, backup WORM, riconciliazione -- 2026-09-16)
 
 Nessuno di questi step richiede azioni separate se si parte da uno stack nuovo (sono già
 nel `docker-compose.yaml`/negli script): elencati per chi aggiorna uno stack esistente.
+
+TIP: `setup/upgrade_audit_trail.sh` orchestra tutti gli step sotto (ricrea i container,
+verifica la rete, installa SearchParameter/trigger/pgaudit, propone la migrazione degli
+storici se presenti, verifica hash-chain e copertura orfani a fine corsa) chiedendo
+conferma esplicita prima di ogni azione che tocca container o dati in esecuzione.
+Richiede che le immagini aggiornate (irccs-common/auth/zammad con i fix, questo stesso
+`docker-compose.yaml`) siano già sull'host -- non fa `git pull` né build. Uso:
+`./setup/upgrade_audit_trail.sh` (interattivo) o `--yes` per automazione,
+`--skip-migration` per saltare il passo storici. La checklist manuale sotto resta
+valida per chi preferisce eseguire i passi singolarmente o capire cosa fa lo script.
 
 . **Rete `irccs-audit-db`**: creata automaticamente da `docker compose up` (definita in
   `docker-compose.yaml`). Se lo stack esisteva già, un `docker compose up -d
