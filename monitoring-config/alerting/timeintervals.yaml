@@ -1,0 +1,29 @@
+apiVersion: 1
+
+# Intervalli orari per l'alerting.
+#
+# `orario-servizio`: usato come mute_time_intervals sulla route dedicata in
+# policies.yaml. L'alert `irccs-audit-off-hours-access` valuta 24/7 ma le
+# notifiche sono SILENZIATE durante l'orario di servizio -> notifica solo
+# fuori orario (sere, notti, weekend). Adeguare orari e fuso all'orario di
+# servizio reale IRCCS.
+#
+# NB: si silenzia l'orario di servizio (non si "attiva" quello fuori servizio):
+# con active_time_intervals la route smetterebbe di matchare fuori finestra e
+# l'alert ricadrebbe sulla policy radice, che notifica sempre.
+#
+# `location` deve essere un nome IANA tz valido; se il server Grafana non ha il
+# tz database usare "UTC" e compensare gli orari.
+#
+# La chiave di primo livello per il provisioning Grafana e' `muteTimes`
+# (NON `time_intervals`): con la chiave sbagliata Grafana ignora il file e
+# policies.yaml fallisce con "mute time interval 'orario-servizio' does not exist".
+muteTimes:
+  - orgId: 1
+    name: orario-servizio
+    time_intervals:
+      - times:
+          - start_time: '06:00'
+            end_time: '21:00'
+        weekdays: ['monday:friday']
+        location: 'Europe/Rome'
