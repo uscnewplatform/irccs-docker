@@ -20,8 +20,37 @@
 
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+BACKUP_DIR="$(dirname "$SCRIPT_DIR")"
+STACK_DIR="$(dirname "$BACKUP_DIR")"
 # shellcheck source=./lib_common.sh
 source "$SCRIPT_DIR/lib_common.sh"
+
+# HAPI_DB_USER/HAPI_DB_NAME/POSTGRES_KEYCLOAK_USER/POSTGRES_KEYCLOAK_DB/
+# HAPI_AUDIT_DB_USER vivono nel .env della stack, non in backup/.env.backup:
+# il playbook non chiede di sourcarlo a mano, quindi lo estraiamo qui. Stesso
+# pattern (mai `source` diretto) di run_backup_container.sh: il .env della
+# stack contiene segreti non correlati al backup (JWT_SECRET, ecc.) che
+# potrebbero contenere caratteri shell-unsafe — grep+cut tratta il contenuto
+# come dato, mai come codice. Non sovrascrive variabili gia' presenti
+# nell'ambiente (es. se l'operatore le ha esportate a mano).
+if [ -f "$STACK_DIR/.env" ]; then
+  STACK_ENV_SANITIZED="$(mktemp)"
+  trap 'rm -f "$STACK_ENV_SANITIZED"' EXIT
+  grep -E '^[A-Za-z_][A-Za-z0-9_]*=' "$STACK_DIR/.env" > "$STACK_ENV_SANITIZED" || true
+  extract_env_var() {
+    local var="$1" from_stack
+    [ -n "${!var:-}" ] && return 0
+    from_stack="$(grep -E "^$var=" "$STACK_ENV_SANITIZED" | tail -1 | cut -d= -f2-)" || true
+    [ -n "$from_stack" ] && export "$var=$from_stack"
+    return 0
+  }
+  extract_env_var HAPI_DB_USER
+  extract_env_var HAPI_DB_NAME
+  extract_env_var POSTGRES_KEYCLOAK_USER
+  extract_env_var POSTGRES_KEYCLOAK_DB
+  extract_env_var HAPI_AUDIT_DB_USER
+  extract_env_var HAPI_AUDIT_DB_NAME
+fi
 
 DB_KIND="${1:?uso: restore_db.sh <hapi|keycloak|hapi-audit> <dump> [--yes-i-am-sure=<hostname>]}"
 DUMP_FILE="${2:?uso: restore_db.sh <hapi|keycloak|hapi-audit> <dump> [--yes-i-am-sure=<hostname>]}"
