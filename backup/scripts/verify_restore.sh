@@ -53,11 +53,19 @@ log_info "verify avviato: db=$DB_KIND dump=$DUMP_FILE"
 
 docker network create "$SCRATCH_NET" >/dev/null
 
+SCRATCH_ARGS=()
+if [ "$DB_KIND" = "hapi-audit" ]; then
+  # Il dump include CREATE EXTENSION pgaudit: va precaricata all'avvio del
+  # processo postgres (non basta il pacchetto installato nell'immagine),
+  # stesso comando usato da postgres-hapi-audit in docker-compose.yaml.
+  SCRATCH_ARGS=(-c shared_preload_libraries=pgaudit)
+fi
+
 docker run -d --name "$SCRATCH_NAME" --network "$SCRATCH_NET" \
   -e POSTGRES_USER="$SCRATCH_USER" \
   -e POSTGRES_PASSWORD="$SCRATCH_PW" \
   -e POSTGRES_DB="$SCRATCH_DB" \
-  "$IMAGE" >/dev/null
+  "$IMAGE" "${SCRATCH_ARGS[@]}" >/dev/null
 
 log_info "attesa readiness container scratch $SCRATCH_NAME"
 # L'immagine postgres ufficiale fa un doppio avvio (init poi restart interno):
