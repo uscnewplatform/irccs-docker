@@ -104,6 +104,10 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 
 # shellcheck source=./lib_common.sh
 source "$SCRIPT_DIR/lib_common.sh"
+# shellcheck source=./lib_preflight.sh
+source "$SCRIPT_DIR/lib_preflight.sh"
+
+preflight_backup "$STACK_DIR" "$BACKUP_DIR" || die "preflight fallito: risolvere le dipendenze mancanti sopra prima di riprovare (nessun dump avviato)"
 
 # Rete di sicurezza per l'alerting: ogni step gestito esplicitamente (if/else
 # sotto) produce gia' un log_error corretto se fallisce, ma un comando "nudo"

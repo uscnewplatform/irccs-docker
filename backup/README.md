@@ -57,6 +57,7 @@ oltre a fondere `backup-rules.yaml` e riavviare/reload Alloy).
 | File | Scopo |
 |---|---|
 | `scripts/lib_common.sh` | logging condiviso + preflight spazio disco (`check_disk_space`) |
+| `scripts/lib_preflight.sh` | controllo dipendenze host condiviso (age/rclone/docker/pg_restore versione giusta/.env presenti) — usato da `run_backup_container.sh` e `restore_orchestrated.sh`, riporta cosa manca invece di fallire a metà |
 | `scripts/backup_db.sh` | dump dei tre DB (hapi, keycloak, hapi-audit) |
 | `scripts/verify_restore.sh` | test restore + sanity query su container scratch |
 | `scripts/encrypt_and_offsite.sh` | cifratura age multi-recipient + push offsite |
@@ -65,6 +66,7 @@ oltre a fondere `backup-rules.yaml` e riavviare/reload Alloy).
 | `scripts/verify_archive_integrity.sh` | verifica periodica (settimanale) di un archivio a campione per DB, decifra+restore reale su scratch, rileva bitrot |
 | `scripts/restore_db.sh` | drop+create+pg_restore per un DB, protetto da conferma hostname (usato da `RESTORE_PLAYBOOK.md`) |
 | `scripts/reencrypt_archive.sh` | ri-cifra tutto l'archivio (locale+offsite) verso un nuovo set di recipient — per revoca/rotazione chiavi, vedi "Rischi noti" |
+| `scripts/restore_orchestrated.sh` | automatizza la parte meccanica del restore (stop servizi -> decifra -> `restore_db.sh` per ogni DB -> riavvio ordinato), con preflight dipendenze. La scelta del dump (playbook §1) e la verifica finale (§8) restano manuali di proposito |
 | `systemd/irccs-backup.{service,timer}` | schedulazione host backup notturno (non container: sopravvive a redeploy stack) |
 | `systemd/irccs-backup-verify.{service,timer}` | schedulazione host verifica integrità settimanale (domenica 04:30) |
 | `alerting/backup-rules.yaml` | regole Grafana (6 regole: fallito, assente, disco insufficiente, offsite fallito, backup bloccato, verifica integrità fallita — da fondere in `monitoring-config/alerting/rules.yaml`) |

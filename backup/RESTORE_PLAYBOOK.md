@@ -51,10 +51,17 @@ sicurezza/DPO prima di procedere.
 ## 2. Fermare i servizi applicativi (non i DB)
 
 ```bash
-docker compose stop irccs-auth irccs-anagrafica-pazienti irccs-studio-clinico \
-  irccs-centro-ricerca irccs-practitioner irccs-clinical-reasoning \
-  irccs-notification irccs-tac irccs-zammad irccs-webpush irccs-patient-interview \
-  irccs-httpd-dashboard irccs-keycloak irccs-hapi-fhir \
+# docker compose v2 se disponibile, altrimenti docker-compose v1 (legacy) - vedi
+# nota "docker-compose v1/v2" in DEPLOY_PROD.md, alcuni host hanno solo l'uno o l'altro.
+# NB: sono NOMI SERVIZIO (chiave nel docker-compose.yaml), non i container_name -
+# per i microservizi differiscono (es. servizio irccs-microservice-auth ->
+# container_name irccs-auth; servizio irccs-httpd -> container_name irccs-httpd-dashboard).
+docker compose stop irccs-microservice-auth irccs-microservice-anagrafica-pazienti \
+  irccs-microservice-studio-clinico irccs-microservice-centro-ricerca \
+  irccs-microservice-practitioner irccs-microservice-clinical-reasoning \
+  irccs-microservice-notification irccs-microservice-tac irccs-microservice-zammad \
+  irccs-microservice-webpush irccs-microservice-patient-interview \
+  irccs-httpd irccs-keycloak irccs-hapi-fhir \
   irccs-hapi-audit irccs-audit-integrity
 ```
 
