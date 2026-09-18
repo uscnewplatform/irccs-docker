@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-# Disattiva la manutenzione COMPLETA: riavvia lo stack Docker, aspetta che
-# irccs-httpd-dashboard sia up, ferma il nginx fallback e svuota il flag.
-# Sequenza inversa di maintenance-on.sh, ordine importante: nginx deve
-# fermarsi DOPO che httpd e' pronto a prendere la porta, altrimenti c'e'
-# una finestra vuota tra i due.
+# Disattiva la manutenzione COMPLETA: ferma il nginx fallback, riavvia lo
+# stack Docker, aspetta che irccs-httpd-dashboard sia up, svuota il flag.
+#
+# Nginx va fermato PRIMA di "docker compose up": tengono entrambi la stessa
+# porta (80/443), non possono stare su insieme. Con nginx ancora attivo
+# "docker compose up" fallisce con "address already in use" (visto in lab).
+# C'e' quindi una finestra di qualche secondo, tra lo stop di nginx e
+# l'avvio di httpd, in cui la porta non risponde: inevitabile, non
+# eliminabile senza un layer esterno (vedi discussione in README).
 set -euo pipefail
 
 COMPOSE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -18,6 +22,12 @@ else
     exit 1
 fi
 
+if systemctl is-active --quiet irccs-maintenance 2>/dev/null; then
+    echo "[..] Fermo il fallback host-level (nginx) per liberare la porta..."
+    sudo systemctl stop irccs-maintenance
+    echo "[OK] Fallback host-level fermato."
+fi
+
 echo "[..] Riavvio lo stack Docker (${COMPOSE[*]} up -d)..."
 (cd "$COMPOSE_DIR" && "${COMPOSE[@]}" up -d)
 
@@ -30,17 +40,13 @@ for i in $(seq 1 30); do
     sleep 2
     if [ "$i" -eq 30 ]; then
         echo "[ATTENZIONE] irccs-httpd-dashboard non risulta up dopo 60s."
-        echo "  Non fermo il fallback host-level per non lasciare la porta scoperta."
-        echo "  Controlla 'docker compose logs irccs-httpd' poi rilancia questo script."
+        echo "  Il nginx fallback e' gia' fermo: la porta potrebbe restare"
+        echo "  scoperta finche' non risolvi. Controlla 'docker compose logs irccs-httpd'."
+        echo "  Puoi rimettere su il fallback nel frattempo:"
+        echo "    sudo systemctl start irccs-maintenance"
         exit 1
     fi
 done
-
-if systemctl is-active --quiet irccs-maintenance 2>/dev/null; then
-    echo "[..] Fermo il fallback host-level (nginx)..."
-    sudo systemctl stop irccs-maintenance
-    echo "[OK] Fallback host-level fermato."
-fi
 
 : > "$FLAG_FILE"
 echo "[OK] Flag di manutenzione (livello 1) svuotato."

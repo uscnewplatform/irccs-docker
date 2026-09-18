@@ -104,12 +104,22 @@ sopra):
 ```bash
 ./host-maintenance/maintenance-off.sh
 ```
-1. `docker compose up -d`.
-2. Attende (fino a 60s) che `irccs-httpd-dashboard` sia up prima di
-   proseguire — se non ce la fa si ferma e NON tocca il fallback, per non
-   lasciare la porta scoperta.
-3. Ferma il fallback host-level.
+1. Ferma il fallback host-level (nginx) — DEVE succedere prima, nginx e
+   `irccs-httpd-dashboard` vogliono la stessa porta e non possono coesistere;
+   con nginx ancora attivo `docker compose up` fallisce con
+   "address already in use" (bug visto in lab, corretto).
+2. `docker compose up -d`.
+3. Attende (fino a 60s) che `irccs-httpd-dashboard` sia up. Se non ce la fa,
+   esce con errore (il fallback resta gia' fermo — la porta puo' restare
+   scoperta finche' non risolvi; puoi rimettere su il fallback a mano nel
+   frattempo con `sudo systemctl start irccs-maintenance`).
 4. Svuota il flag Livello 1.
+
+Nota: tra il passo 1 e il passo 2/3 c'e' inevitabilmente una finestra di
+qualche secondo in cui nessuno risponde sulla porta (nginx gia' fermo,
+httpd non ancora pronto). Non e' eliminabile con questa architettura —
+solo un layer esterno sempre attivo (fuori scope, vedi conversazione
+iniziale su questa feature) toglierebbe anche quella finestra.
 
 Richiede `sudo` senza password per `systemctl start/stop irccs-maintenance`
 (o va lanciato con utente che ha i permessi), altrimenti si ferma a
