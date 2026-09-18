@@ -148,8 +148,14 @@ log_info "riavvio ordinato: keycloak"
 $COMPOSE up -d irccs-keycloak
 
 log_info "attesa readiness Keycloak..."
+# Stesso probe dell'healthcheck in docker-compose.yaml (porta 9000, management
+# interface, non 8080): l'immagine Keycloak e' UBI micro, curl non e'
+# garantito presente, e /health/ready sulla 8080 e' comunque la porta
+# sbagliata dalla KC26 in poi.
 for _ in $(seq 1 30); do
-  docker exec irccs-keycloak curl -sf http://localhost:8080/health/ready >/dev/null 2>&1 && break
+  docker exec irccs-keycloak sh -c \
+    "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3 | grep -q '200 OK'" \
+    >/dev/null 2>&1 && break
   sleep 2
 done
 
@@ -157,8 +163,11 @@ log_info "riavvio ordinato: hapi-fhir"
 $COMPOSE up -d irccs-hapi-fhir
 
 log_info "attesa readiness HAPI FHIR..."
+# HAPI e' esposto su 127.0.0.1:8080 dell'HOST (vedi docker-compose.yaml),
+# curlare da qui invece che con docker exec - stessa convenzione degli
+# script di setup del progetto (install_searchparameters.sh ecc.).
 for _ in $(seq 1 30); do
-  docker exec irccs-hapi-fhir curl -sf http://localhost:8080/fhir/metadata >/dev/null 2>&1 && break
+  curl -sf http://127.0.0.1:8080/fhir/metadata >/dev/null 2>&1 && break
   sleep 2
 done
 

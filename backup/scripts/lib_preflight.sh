@@ -123,6 +123,7 @@ preflight_restore() {
   _pf_check_cmd docker "vedi docs.docker.com/engine/install"
   _pf_check_cmd age "sudo apt install age"
   _pf_check_cmd shred "sudo apt install coreutils (di norma gia' presente)"
+  _pf_check_cmd curl "sudo apt install curl (serve sull'host per il check readiness di HAPI FHIR)"
   _pf_check_pg_client "$stack_dir/.env"
   _pf_check_compose
   _pf_check_file "$stack_dir/.env" "file .env della stack"
