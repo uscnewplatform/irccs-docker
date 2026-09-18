@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Manutenzione in corso</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    background: #fff9ee;
+    color: #21252b;
+  }
+  .wrap {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  .orb-zone {
+    position: relative;
+    width: 168px;
+    height: 168px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .orb-halo {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(rgba(242, 148, 31, 0.09) 0%, rgba(242, 148, 31, 0) 58%);
+  }
+  .orb {
+    width: 124px;
+    height: 124px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 32% 28%, #ffd9a0 0%, #f2941f 38%, #c9600a 100%);
+    box-shadow: 0 18px 32px -14px rgba(201, 96, 10, 0.55);
+  }
+  .orb svg {
+    width: 56px;
+    height: 56px;
+  }
+  h1 {
+    margin: 20px 0 4px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .tagline {
+    margin: 0 0 28px;
+    max-width: 320px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #7a7570;
+    text-align: center;
+  }
+  .card {
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    background: #fdf1e0;
+    border: 1px solid rgba(201, 96, 10, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px -28px rgba(33, 37, 43, 0.28);
+    padding: 32px;
+    text-align: center;
+  }
+  .card p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #4a4640;
+  }
+
+  @media (max-width: 480px) {
+    .orb-zone { width: 130px; height: 130px; }
+    .orb { width: 96px; height: 96px; }
+    h1 { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="orb-zone">
+      <div class="orb-halo"></div>
+      <div class="orb">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
+            stroke="#ffffff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <h1>Manutenzione in corso</h1>
+    <p class="tagline">Stiamo effettuando un aggiornamento programmato del sistema.</p>
+    <div class="card">
+      <p>Il servizio tornera' disponibile a breve.<br>
+      Ci scusiamo per il disagio.</p>
+    </div>
+  </div>
+</body>
+</html>

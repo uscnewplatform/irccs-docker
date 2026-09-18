@@ -36,3 +36,479 @@ groups:
                 - evaluator:
                     type: gt
                     params: [20]
+
+  # ---------------------------------------------------------------------------
+  # Accessi anomali ai dati paziente - richiesti dal provvedimento del Garante
+  # sul dossier sanitario (rilevazione accessi anomali per volume / fuori orario /
+  # fallimenti). Si basano sulla riga di log strutturata "AUDIT ..." emessa da
+  # FhirClient.createAuditEvent / AuditTrailService (campi MDC auditAction,
+  # auditOutcome, auditUser, auditResourceType), indipendente dall'AuditEvent FHIR.
+  # ---------------------------------------------------------------------------
+  - orgId: 1
+    name: irccs-audit-anomalie
+    folder: 'Alerting'
+    interval: 5m
+    rules:
+      - uid: irccs-audit-read-volume-per-user
+        title: 'Volume elevato di consultazioni dati paziente da un singolo utente'
+        condition: threshold
+        for: 10m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Un utente ha effettuato molte letture di dati clinici nell''ultima ora - possibile accesso massivo non pertinente'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              # I campi di audit sono in mdc.* nel JSON di logging (quarkus-logging-json):
+              # `| json` senza argomenti li appiattirebbe come `mdc_auditAction` - vanno
+              # estratti con path espliciti. Lo stream e' gia' etichettato audit_trail="true"
+              # da Alloy (stage.match su "auditAction").
+              expr: 'max(sum by (auditUser) (count_over_time({audit_trail="true"} | json auditAction="mdc.auditAction", auditOutcome="mdc.auditOutcome", auditUser="mdc.auditUser" | auditAction=~"R|E" | auditOutcome="success" | auditUser!="" [1h])))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    # PROVVISORIA: ~16 aperture-cartella/ora per un singolo utente
+                    # (assunto ~30 eventi FHIR per apertura). Ricalibrare dopo 5 gg in
+                    # staging col 99esimo percentile del traffico reale x1,5-2.
+                    # Vedi IRCCS/audit-trail-alerting-validation-2026-08-31.md.
+                    params: [500]
+
+      - uid: irccs-audit-off-hours-access
+        title: 'Accesso a dati paziente fuori orario di servizio'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Letture di dati clinici registrate tra le 21:00 e le 06:00 - verificare la pertinenza'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              # La finestra oraria e' imposta dalla route in policies.yaml
+              # (mute_time_intervals: orario-servizio, vedi timeintervals.yaml):
+              # la regola valuta 24/7 ma le notifiche sono silenziate durante
+              # l'orario di servizio -> arrivano solo fuori orario.
+              # Qui resta solo il gate sul volume di letture nella finestra di 5m.
+              expr: 'sum(count_over_time({audit_trail="true"} | json auditAction="mdc.auditAction", auditOutcome="mdc.auditOutcome" | auditAction=~"R|E" | auditOutcome="success" [5m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    # PROVVISORIA: ~1,7 aperture-cartella in 5 min fuori orario di
+                    # servizio (finestra imposta da timeintervals.yaml). Confermare
+                    # orario di servizio reale IRCCS e ricalibrare in staging.
+                    params: [50]
+
+      - uid: irccs-audit-write-failures
+        title: 'Fallimenti di scrittura AuditEvent'
+        condition: threshold
+        for: 5m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'createAuditEvent sta fallendo: alcune operazioni potrebbero non essere tracciate nell''AuditEvent FHIR (resta il log Loki)'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              # Stringhe emesse da FhirClient.createAuditEvent nei due rami di errore
+              # (irccs-common/i3-client): "scrittura AuditEvent fallita" e "errore non gestito".
+              expr: 'sum(count_over_time({container_name=~"irccs-.+"} |~ "createAuditEvent: (scrittura AuditEvent fallita|errore non gestito)" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-append-only-violation
+        title: 'Tentativo di modifica/cancellazione di un AuditEvent'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'AuditEventAppendOnlyInterceptor ha bloccato un update/delete/expunge su AuditEvent (utente "{{ $labels.user }}", IP {{ $labels.clientIp }}) - possibile tentativo di alterazione dell''audit trail'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              # Riga "AUDIT-TRAIL marker=append-only-violation ..." emessa da
+              # AuditLog.emit in AuditEventAppendOnlyInterceptor prima di rifiutare
+              # l'operazione (irccs-common/hapi-audit-interceptor). Alloy assegna la
+              # label audit_marker; user/clientIp escono da `| logfmt` e diventano
+              # label della serie d'allarme per la forense.
+              expr: 'sum by (user, clientIp) (count_over_time({audit_trail="true", audit_marker="append-only-violation"} | logfmt [5m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-hash-chain-reject
+        title: 'Scrittura AuditEvent rifiutata dalla hash-chain'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'AuditEventHashChainInterceptor non ha potuto calcolare l''hash-chain e ha RIFIUTATO la scrittura di un AuditEvent (utente "{{ $labels.user }}"): alcune operazioni potrebbero non essere tracciate nell''AuditEvent FHIR'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              # Riga "AUDIT-TRAIL marker=hash-chain-reject ..." emessa da AuditLog.emit
+              # nel ramo catch di AuditEventHashChainInterceptor.chain prima di
+              # lanciare InternalErrorException.
+              expr: 'sum by (user) (count_over_time({audit_trail="true", audit_marker="hash-chain-reject"} | logfmt [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-hash-chain-dblock
+        title: 'Hash-chain audit senza barriera di serializzazione DB'
+        condition: threshold
+        for: 15m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'AuditEventHashChainInterceptor non ha il pg_advisory_xact_lock: la catena di hash e'' serializzata solo entro la singola istanza HAPI. Accettabile finche'' irccs-hapi-audit resta a istanza singola - verificare che non siano state avviate repliche'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              # Riga "AUDIT-TRAIL marker=hash-chain-dblock status=unavailable ..."
+              # (emessa una-tantum per ciclo di vita del processo HAPI).
+              expr: 'sum(count_over_time({audit_trail="true", audit_marker="hash-chain-dblock"} | logfmt | status="unavailable" [1h]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-integrity-tamper
+        title: 'Violazione di integrità dell''audit trail (Hash-Chain Mismatch)'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Il container irccs-audit-integrity ha rilevato una manomissione, cancellazione o rottura di sequenza negli AuditEvent (hash ricalcolato != hash memorizzato)'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              # Marker emesso da setup/verify_audit_hash_chain.py (container irccs-audit-integrity).
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-VIOLATION" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-integrity-fork
+        title: 'Fork nella hash-chain dell''audit trail'
+        condition: threshold
+        for: 0m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Due AuditEvent dichiarano lo stesso predecessore nella hash-chain. Atteso solo su eventi storici ai riavvii dello stack; su eventi recenti (scansione incrementale) indica scrittura concorrente non serializzata o inserimento illecito'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-FORK" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-integrity-stale
+        title: 'Verifica di integrità dell''audit trail ferma'
+        condition: threshold
+        for: 2h
+        noDataState: Alerting
+        execErrState: Error
+        annotations:
+          summary: 'Nessun esito (OK/FORK/VIOLATION) dal container irccs-audit-integrity nelle ultime 2 ore: il controllo tamper-evidence continuo potrebbe essere fermo'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 7200
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-(OK|FORK|VIOLATION)" [2h]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]
+
+      - uid: irccs-audit-integrity-stale-checkpoint
+        title: 'Checkpoint verifica integrità audit non allineato alla coda della catena'
+        condition: threshold
+        for: 30m
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'La verifica incrementale non riesce ad agganciare gli AuditEvent nuovi: l''hash del checkpoint non è più la foglia della hash-chain (tipico re-seed della catena dopo un riavvio HAPI). Gli eventi recenti restano coperti solo dal full scan periodico finché non si ricalcola'
+        labels:
+          severity: warning
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-STALE-CHECKPOINT" [30m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+
+      - uid: irccs-audit-integrity-unhashed
+        title: 'AuditEvent nuovi senza hash-chain'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Il verificatore ha trovato AuditEvent nuovi privi delle extension di catena (audit-chain-prev/-hash): possibile disattivazione dell''AuditEventHashChainInterceptor via configurazione del container'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-UNHASHED" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-integrity-count-regression
+        title: 'Calo del numero di AuditEvent (possibile restore/rollback)'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Gli AuditEvent presenti nello store sono meno che al controllo precedente: uno store append-only non cala mai. Indica un restore da backup, un rollback del database o una cancellazione a livello storage'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-COUNT-REGRESSION" [30m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-orphan-resource
+        title: 'Risorsa clinica critica senza AuditEvent corrispondente (orfana)'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'Una risorsa clinica critica (Consent/ResearchSubject/CarePlan) risulta priva del suo AuditEvent oltre il periodo di grazia: probabile crash del processo tra la scrittura clinica e quella di audit (gap non coperto dal fail-closed sincrono in FhirClient.create) - vedi verify_audit_coverage.py. Query cross-container (container_name=~"irccs-.+") perche'' il marker viene emesso sia dal loop di riconciliazione (container irccs-audit-integrity) sia, per il caso sincrono, da compensatingDelete in FhirClient.java dentro il microservizio che ha fatto la create (container diverso).'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 1800
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name=~"irccs-.+"} |~ "AUDIT-INTEGRITY-ORPHAN-RESOURCE" [15m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+
+      - uid: irccs-audit-db-direct-mutation
+        title: 'Scrittura o DDL SQL diretto sulle tabelle degli AuditEvent'
+        condition: threshold
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        annotations:
+          summary: 'pgaudit ha registrato una WRITE / DDL / ROLE sullo store di audit toccando le tabelle degli AuditEvent (hfj_resource / hfj_res_ver / trigger trg_auditevent_*): nessun percorso legittimo scrive quelle tabelle via SQL diretto'
+        labels:
+          severity: critical
+        data:
+          - refId: query
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              expr: 'sum(count_over_time({container_name="postgres-hapi-audit"} |~ "(?i)pgaudit" |~ "(?i)(WRITE|DDL|ROLE)" |~ "(?i)(hfj_resource|hfj_res_ver|trg_auditevent|AuditEvent)" [10m]))'
+              refId: query
+              queryType: instant
+          - refId: threshold
+            datasourceUid: '__expr__'
+            model:
+              type: threshold
+              refId: threshold
+              expression: query
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]

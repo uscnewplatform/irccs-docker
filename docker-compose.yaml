@@ -2,6 +2,17 @@ networks:
   irccs:
     name: irccs
     driver: bridge
+  # Rete interna dedicata al DB dell'audit store: solo postgres-hapi-audit e
+  # irccs-hapi-audit ci stanno sopra. Sulla rete flat `irccs` isolamento
+  # dell'audit store = solo credenziali (qualunque microservizio compromesso
+  # con le credenziali giuste raggiungerebbe postgres-hapi-audit:5432
+  # direttamente, bypassando l'append-only/hash-chain di HAPI). `internal: true`
+  # nega anche l'uscita verso l'esterno - non serve, nulla qui deve chiamare
+  # fuori dallo stack.
+  irccs-audit-db:
+    name: irccs-audit-db
+    driver: bridge
+    internal: true
 
 x-logging: &default-logging
   driver: json-file
@@ -121,7 +132,12 @@ services:
     logging: *default-logging
 
   irccs-httpd:
-    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/develop:${IRCCS_HTTPD_VERSION}
+    # Il tag Docker pushato da Gui-Jenkinsfile include il nome del branch che ha
+    # buildato l'immagine (nexus.infocube.it/.../irccs-httpd-dashboard/<branch>:<versione>,
+    # da package.json). IRCCS_HTTPD_BRANCH (default develop) seleziona quale branch
+    # pullare - utile per testare un'immagine da un feature branch non ancora
+    # mergiato senza editare questo file a mano.
+    image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/${IRCCS_HTTPD_BRANCH:-develop}:${IRCCS_HTTPD_VERSION}
     container_name: irccs-httpd-dashboard
     ports:
       - "443:443"
@@ -131,6 +147,8 @@ services:
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
       - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
+      - ./httpd-config/maintenance.html:/usr/local/apache2/htdocs/maintenance.html:ro
+      - ./httpd-config/.maintenance-flag:/usr/local/apache2/htdocs/.maintenance-flag #vuoto=sito attivo, non vuoto=manutenzione
       - /home/savioadmin/cert-pasc-2026-fullchain.crt:/usr/local/apache2/conf/ssl/cert-pasc-2026.crt:ro
       - /home/savioadmin/cert-pasc-2026.key:/usr/local/apache2/conf/ssl/cert-pasc-2026.key:ro
     networks:
@@ -219,6 +237,11 @@ services:
       - ./hapi-fhir-config/application.yaml:/home/application.yaml
       - ./terminology:/terminology
       - ./hapi-fhir-config/lucenefiles:/lucenefiles
+      # Audit trail Fase 1: interceptor (partizione AUDIT + append-only + hash-chain).
+      # /app/extra-classes/ e' gia' in -Dloader.path nell'entrypoint dell'immagine
+      # hapiproject/hapi (LOADER_PATH come env NON basta). Il jar e' un artefatto buildato
+      # da irccs-common/hapi-audit-interceptor, committato qui come i provider Keycloak.
+      - ./hapi-fhir-config/interceptors/audit-partition-interceptor.jar:/app/extra-classes/audit-partition-interceptor.jar
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
     env_file:
@@ -240,6 +263,102 @@ services:
       POSTGRES_DB: ${HAPI_DB_NAME}
       POSTGRES_USER: ${HAPI_DB_USER}
       POSTGRES_PASSWORD: ${HAPI_DB_PASSWORD}
+    networks:
+      - irccs
+
+  # ---- Audit trail: store FHIR fisicamente separato ------------------------
+  # Postgres + HAPI dedicati agli AuditEvent (storage, account, backup indipendenti
+  # da quelli clinici). I microservizi ci scrivono via org.quarkus.irccs.audit-fhir-server.
+  postgres-hapi-audit:
+    build:
+      context: ./postgres-audit-image
+      args:
+        POSTGRES_HAPI_VERSION: ${POSTGRES_HAPI_VERSION}
+    hostname: postgres-audit
+    container_name: postgres-hapi-audit
+    restart: always
+    logging: *default-logging
+    env_file:
+      - .env
+    volumes:
+      - postgres_data_hapi_audit:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${HAPI_AUDIT_DB_NAME}
+      POSTGRES_USER: ${HAPI_AUDIT_DB_USER}
+      POSTGRES_PASSWORD: ${HAPI_AUDIT_DB_PASSWORD}
+    # pgaudit.log_catalog=off: senza, ogni query interna di HAPI sui cataloghi
+    # di sistema finirebbe loggata - rumore puro, non e' l'accesso che vogliamo
+    # tracciare. pgaudit.log_parameter resta OFF di default: loggherebbe i
+    # valori dei parametri delle query (potenziali identificativi paziente) -
+    # attivarlo e' un trade-off "piu' dettaglio forense" vs "nuova PII nei log
+    # di Postgres", da decidere esplicitamente, non di default.
+    command: >
+      -c shared_preload_libraries=pgaudit
+      -c pgaudit.log=read,write,role,ddl
+      -c pgaudit.log_catalog=off
+      -c pgaudit.log_parameter=off
+    # SOLO irccs-audit-db: nessun microservizio clinico e' su questa rete,
+    # quindi nessuno puo' aprire una connessione TCP diretta a questo Postgres
+    # anche avendone le credenziali - deve passare per forza dall'API REST di
+    # irccs-hapi-audit (append-only + hash-chain interceptor applicati li').
+    networks:
+      - irccs-audit-db
+
+  irccs-hapi-audit:
+    image: hapiproject/hapi:${HAPI_IMAGE_VERSION}
+    container_name: irccs-hapi-audit
+    ports:
+      # Solo host-locale, per gli script di setup (install_searchparameters / db_protection).
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      - postgres-hapi-audit
+    volumes:
+      - ./hapi-audit-config/application.yaml:/home/application.yaml
+      - ./hapi-fhir-config/lucenefiles-audit:/lucenefiles
+      # Stesso jar dell'istanza clinica: qui carica solo append-only + hash-chain
+      # (vedi custom-interceptor-classes in hapi-audit-config/application.yaml).
+      - ./hapi-fhir-config/interceptors/audit-partition-interceptor.jar:/app/extra-classes/audit-partition-interceptor.jar
+    environment:
+      SPRING_CONFIG_LOCATION: '/home/application.yaml'
+    env_file:
+      - .env
+    # Su entrambe le reti: irccs per essere raggiunto dai microservizi clinici
+    # (org.quarkus.irccs.audit-fhir-server) e da irccs-audit-integrity;
+    # irccs-audit-db per raggiungere il proprio Postgres, isolato dal resto.
+    networks:
+      - irccs
+      - irccs-audit-db
+
+  # Verifica continua della hash-chain degli AuditEvent (tamper-evidence a runtime).
+  # Ricalcola in Python la stessa canonicalPayload/SHA-256 di
+  # AuditEventHashChainInterceptor.java e confronta con l'hash memorizzato: rileva
+  # manomissioni fatte direttamente sul DB (che i trigger non coprono al 100%),
+  # cancellazioni/buchi e fork della catena. Incrementale ogni 15 min, full ogni ~24h.
+  # Output -> Alloy -> Loki -> regole Grafana irccs-audit-integrity-*.
+  # Nessuna dipendenza: lo script usa solo la stdlib di Python.
+  irccs-audit-integrity:
+    image: python:3.12-alpine
+    container_name: irccs-audit-integrity
+    restart: always
+    logging: *default-logging
+    depends_on:
+      - irccs-hapi-audit
+      - irccs-hapi-fhir
+    volumes:
+      - ./setup:/setup:ro
+      - audit_integrity_state:/state
+    environment:
+      IRCCS_AUDIT_FHIR_URL: http://irccs-hapi-audit:8080/fhir
+      IRCCS_CLINICAL_FHIR_URL: http://irccs-hapi-fhir:8080/fhir
+      AUDIT_INTEGRITY_INTERVAL: ${AUDIT_INTEGRITY_INTERVAL:-900}
+      AUDIT_INTEGRITY_FULL_EVERY: ${AUDIT_INTEGRITY_FULL_EVERY:-96}
+      AUDIT_INTEGRITY_EXTRA_ARGS: ${AUDIT_INTEGRITY_EXTRA_ARGS:-}
+      # Riconciliazione risorse orfane (verify_audit_coverage.py, stesso ciclo):
+      # grace prima di considerare "orfana" una risorsa critica senza AuditEvent
+      # corrispondente, per non generare falsi positivi sulle scritture in corso.
+      AUDIT_COVERAGE_GRACE_SECONDS: ${AUDIT_COVERAGE_GRACE_SECONDS:-300}
+      AUDIT_COVERAGE_EXTRA_ARGS: ${AUDIT_COVERAGE_EXTRA_ARGS:-}
+    entrypoint: ["sh", "/setup/audit_integrity_loop.sh"]
     networks:
       - irccs
 
@@ -365,6 +484,8 @@ services:
 
 volumes:
   postgres_data_hapi:
+  postgres_data_hapi_audit:
   postgres_data_keycloak:
   redis_data:
   elasticsearch_data:
+  audit_integrity_state:

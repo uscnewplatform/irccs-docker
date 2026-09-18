@@ -1,0 +1,75 @@
+= Backup DB — HAPI FHIR e Keycloak
+
+Sistema di backup notturno per i tre database postgres della stack prod
+(`postgres-hapi-fhir`, `postgres-keycloak`, `postgres-hapi-audit` — DB audit
+trail separato con hash-chain per tamper detection). RPO 24h, esecuzione a
+caldo (nessun downtime), verifica automatica ogni notte, archivio cifrato con
+retention GFS, replica offsite.
+
+Codice sorgente e documentazione operativa completa: `backup/` nella root del
+repo `irccs-docker` (README.md, DEPLOY_PROD.md, RESTORE_PLAYBOOK.md).
+
+== Pipeline
+
+[source]
+----
+[systemd timer 03:15] -> run_backup_container.sh (HOST, non containerizzato)
+   |- check_disk_space       preflight: BACKUP_MIN_FREE_MB prima di qualunque dump
+   |- backup_db.sh           pg_dump -Fc sui tre DB -> staging/ (plaintext) -- docker exec reale
+   |- verify_restore.sh      restore su container postgres scratch isolato + sanity query
+   |                         (fallito -> quel DB salta la cifratura, alert)
+   \- docker run irccs-backup-run   SOLO sui DB verificati, container SENZA alcun accesso Docker
+      |- encrypt_and_offsite.sh     cifratura age multi-recipient -> archive/ locale, poi offsite
+      \- retention_cleanup.sh       GFS locale + offsite (rclone)
+----
+
+Dump e verify girano sull'HOST (gia' trusted, systemd/root, accesso Docker
+legittimo per gestire la stack). Il container `irccs-backup-run` fa solo
+cifratura/offsite/retention e non ha alcun accesso Docker: nessun socket,
+nessun proxy, nessun docker-cli nell'immagine. Sostituisce un'architettura
+precedente (dump+verify dentro il container via `docker-socket-proxy`) in
+cui un escape verso root host era stato verificato empiricamente possibile
+nonostante il proxy a permessi ridotti.
+
+Verifica periodica separata (`verify_archive_integrity.sh`, timer settimanale
+domenica 04:30): campiona un archivio a rotazione per DB e lo restora
+davvero su un container scratch, per rilevare bitrot/corruzione nel tempo
+(non solo al momento della creazione). Restore reale protetto da conferma
+hostname esplicita (`restore_db.sh`, usato da `RESTORE_PLAYBOOK.md`).
+
+Log strutturati (`level=info|warn|error`) -> journald -> Alloy
+(`loki.source.journal`) -> Loki. Alert e dashboard Grafana auto-provisionati
+(vedi `monitoring-config/`).
+
+== Installazione su un host nuovo
+
+`backup/scripts/install.sh` (root, idempotente) automatizza:
+
+* install `age` + `rclone`
+* generazione chiave di cifratura age (se assente)
+* creazione `backup/.env.backup` da template + permessi script
+* installazione e attivazione del timer systemd
+* journal systemd persistente + restart Alloy
+
+A fine esecuzione stampa la checklist di quanto resta manuale (per design —
+richiede credenziali interattive o verifica umana):
+
+* configurazione remote offsite (`rclone config`)
+* compilazione valori in `backup/.env.backup` (recipient age, target offsite)
+* spostare la chiave privata age fuori da questo host
+* test manuale `backup_nightly.sh` con decifrazione verificata a mano
+* fusione delle regole alert in `monitoring-config/alerting/rules.yaml`
+* test restore reale su ambiente scratch (obbligatorio prima del go-live, vedi `backup/RESTORE_PLAYBOOK.md`)
+
+Sequenza dettagliata passo-passo, incluso cosa verificare a ogni step:
+`backup/DEPLOY_PROD.md`.
+
+== Stato
+
+Testato end-to-end su pascale-local (dump, verify, cifratura/decifratura,
+retention). Non ancora testato su host prod reale: push offsite, timer
+systemd, alert in produzione, restore reale.
+
+Fuori scope in questa prima iterazione: backup di `dicom/` (volume TAC) e
+della configurazione già versionata in git (`keycloak-config/realm-export`,
+`terminology/`).

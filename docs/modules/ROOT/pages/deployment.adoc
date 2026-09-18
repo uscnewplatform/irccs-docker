@@ -6,6 +6,16 @@
 * Docker Engine ≥ 24 e Docker Compose v2
 * File `.env` con tutte le variabili richieste
 
+CAUTION: **`docker compose` v2 (plugin, senza trattino) vs `docker-compose` v1
+(legacy, con trattino).** Gli script in `setup/` rilevano automaticamente quale dei
+due è disponibile, ma i comandi in questa pagina usano la sintassi v2. Su un host con
+solo v1, sostituire `docker compose` con `docker-compose` (stessi flag/sottocomandi).
+v1 ha inoltre un bug noto con immagini in formato BuildKit: un `recreate`/`up -d` su un
+container il cui config è cambiato può fallire con `ERROR: ... 'ContainerConfig'`
+(`KeyError` Python) — se capita, `docker rm -f <nome-container>` esplicito prima di
+ripetere il comando, oppure passare a v2 (`docker compose version` per verificare se
+c'è già).
+
 == Variabili d'ambiente (.env)
 
 [source,shell]
@@ -33,7 +43,24 @@ OTP_MAIL_PORT=587
 OTP_MAIL_TLS=REQUIRED
 OTP_MAIL_USER=<smtp-user>
 OTP_MAIL_PSW=<smtp-password>
+
+# Audit trail — store FHIR dedicato, fisicamente separato dal clinico
+HAPI_AUDIT_DB_USER=<utente>
+HAPI_AUDIT_DB_PASSWORD=<password>
+HAPI_AUDIT_DB_NAME=hapiaudit
 ----
+
+TIP: L'audit trail (tracciabilità di ogni accesso/modifica ai dati clinici, richiesta da
+GDPR/GCP/Garante Privacy) ha una guida di attivazione e configurazione dedicata —
+vedi xref:audit-trail.adoc[] prima del primo deploy: store separato
+(`postgres-hapi-audit` + `irccs-hapi-audit`), rete Docker isolata, SearchParameter,
+trigger DB, hash-chain, backup con retention WORM-like. Le variabili sopra sono il
+minimo per far partire i container; senza SearchParameter/trigger/pgaudit installati
+(xref:audit-trail.adoc#attivazione-deploy[sezione "Attivazione (deploy)"]) l'audit trail
+gira ma senza le protezioni di immodificabilità e senza la consultazione via dashboard.
+Per un ambiente che ha **già** lo stack con dati e va aggiornato alla versione corrente
+dell'audit trail, usare `setup/upgrade_audit_trail.sh` invece di ripetere i passi a mano —
+vedi xref:audit-trail.adoc#checklist-upgrade-2026-09-16[].
 
 == Avvio
 
@@ -68,6 +95,34 @@ quarkus.keycloak.policy-enforcer.http-method-as-scope=true
 * path OTP (`/totp/generate`, `/totp/verify`) con `enforcement-mode=DISABLED`
 * configurazione Redis e mailer OTP
 
+== Immagine dashboard (irccs-httpd)
+
+`Gui-Jenkinsfile` pusha l'immagine della dashboard su Nexus con un path che include
+il **nome del branch** che ha fatto il build, non solo la versione:
+
+[source]
+----
+nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/<branch>:<versione>
+----
+
+`<versione>` = `package.json` → `version` (o il tag git, se il build parte da un
+tag). `docker-compose.yaml` seleziona il branch da pullare con `IRCCS_HTTPD_BRANCH`
+(default `develop` se assente):
+
+[source,shell]
+----
+IRCCS_HTTPD_VERSION=2.8.0
+IRCCS_HTTPD_BRANCH=develop                          # default, si può omettere
+#IRCCS_HTTPD_BRANCH=feature/audit-event-store-isolato # per testare un branch non mergiato
+----
+
+Utile per validare un'immagine costruita da un feature branch prima del merge in
+`develop`, senza editare `docker-compose.yaml` a mano. Prerequisito: Jenkins deve aver
+effettivamente scoperto e buildato quel branch (multibranch pipeline — su GitHub
+Settings → Webhooks verificare che le consegne a Jenkins vadano a buon fine; in
+assenza di webhook funzionante, la scoperta di branch nuovi/aggiornati avviene solo al
+prossimo `periodicFolderTrigger`, default ogni 15 minuti).
+
 == Aggiornamento di un singolo microservizio
 
 [source,shell]
@@ -84,7 +139,28 @@ docker compose logs -f irccs-microservice-auth
 docker compose -f docker-compose.yaml -f docker-compose-monitoring.yaml up -d
 ----
 
-Aggiunge Prometheus (metriche da `/q/metrics`) e Grafana.
+Aggiunge Grafana + Loki (log centralizzati, incluse le righe `audit_trail="true"` e
+i marker `AUDIT-INTEGRITY-*`) + Alloy (agente di raccolta). Metriche Quarkus disponibili
+su `/q/metrics` per microservizio, non aggregate da un Prometheus dedicato in questo
+compose.
+
+**Accesso**: nessuna porta host esposta di default (`GRAFANA_PORT` nel compose è
+commentato) — Grafana è raggiungibile solo via reverse proxy httpd, su
+`http://<host>/grafana` (`ProxyPass /grafana` in `httpd-config/irccs.conf`). Login
+gestito da Grafana stesso, nessun accesso anonimo.
+
+CAUTION: **Variabili `.env` per questo stack non erano documentate nel template fino
+al 2026-09-16** — vedi `.env_example` sezione "Monitoring" per l'elenco completo
+(`GRAFANA_*`, `LOKI_*`, `ALLOY_*`, `GF_SMTP_*`, `ALERT_EMAIL_TO`). **Tutte e tre**
+`GRAFANA_CONFIG_PATH_LOCAL`, `LOKI_CONFIG_PATH_LOCAL` e `ALLOY_CONFIG_PATH_LOCAL`
+devono puntare al *file* stesso (es. `./monitoring-config/grafana.ini`, NON
+`./monitoring-config` da solo) — il volume nel compose non le combina con la
+rispettiva `*_CONFIG_FILE` lato host, solo lato container. Lasciarle come cartella
+produce un errore Docker fuorviante invece di un errore chiaro di variabile mancante:
+`failed to parse "...": is a directory` (Grafana) o `mount ...: not a directory`
+(Loki/Alloy). Le altre variabili `GRAFANA_*_PATH_LOCAL` (datasources, dashboards,
+dashboards-provisioning, alerting) puntano correttamente a *cartelle* — sono
+provisioning dir vere, non un singolo file di config.
 
 == Zammad Ticketing (stack separato)
 

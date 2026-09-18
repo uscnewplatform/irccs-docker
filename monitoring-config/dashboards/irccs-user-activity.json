@@ -2,12 +2,20 @@
   "id": null,
   "uid": "irccs-user-activity",
   "title": "IRCCS - Attivita' utente (per email)",
-  "tags": ["irccs", "loki", "logs", "audit"],
+  "tags": [
+    "irccs",
+    "loki",
+    "logs",
+    "audit"
+  ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 3,
   "refresh": "",
-  "time": { "from": "now-24h", "to": "now" },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
   "templating": {
     "list": [
       {
@@ -15,8 +23,11 @@
         "type": "textbox",
         "label": "Email utente",
         "query": "",
-        "current": { "text": "", "value": "" },
-        "description": "Match esatto sul campo strutturato 'userId' (MDC, popolato da UserIdFilter in irccs-common con preferred_username/subject del JWT). Non cerca l'email in altri campi/testo libero."
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "Match esatto sul campo MDC userId (popolato da UserIdFilter in irccs-common: preferred_username/subject del JWT). Inserire l'email e premere Invio."
       }
     ]
   },
@@ -25,7 +36,12 @@
       "id": 1,
       "type": "row",
       "title": "Utente singolo",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "collapsed": false,
       "panels": []
     },
@@ -34,18 +50,36 @@
       "type": "timeseries",
       "title": "Eventi per servizio (userId = email)",
       "description": "Conteggio righe di log con campo userId esattamente uguale all'email cercata, per microservizio.",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 1 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "sum by (container_name) (count_over_time({container_name=~\"irccs-.+\"} | json | userId=\"$userEmail\" [$__interval]))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (container_name) (count_over_time({container_name=~\"irccs-(auth|anagrafica-pazienti|centro-ricerca|studio-clinico|practitioner|clinical-reasoning|tac|patient-interview|notification|webpush|zammad)\"} | json userId=\"mdc.userId\" | userId=\"$userEmail\" [$__interval]))",
           "legendFormat": "{{container_name}}",
           "refId": "A"
         }
       ],
       "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "bars", "stacking": { "mode": "normal" } } },
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
         "overrides": []
       }
     },
@@ -54,22 +88,42 @@
       "type": "logs",
       "title": "Dettaglio attivita' (userId = email)",
       "description": "Ogni riga di log con campo userId esattamente uguale all'email cercata, ordine cronologico.",
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 9 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{container_name=~\"irccs-.+\"} | json | userId=\"$userEmail\"",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{container_name=~\"irccs-(auth|anagrafica-pazienti|centro-ricerca|studio-clinico|practitioner|clinical-reasoning|tac|patient-interview|notification|webpush|zammad)\"} | json userId=\"mdc.userId\" | userId=\"$userEmail\"",
           "refId": "A"
         }
       ],
-      "options": { "showTime": true, "sortOrder": "Ascending", "wrapLogMessage": true }
+      "options": {
+        "showTime": true,
+        "sortOrder": "Ascending",
+        "wrapLogMessage": true
+      }
     },
     {
       "id": 4,
       "type": "row",
       "title": "Tutti gli utenti (vista aggregata)",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
       "collapsed": false,
       "panels": []
     },
@@ -78,12 +132,23 @@
       "type": "barchart",
       "title": "Top utenti per numero di azioni (periodo selezionato)",
       "description": "Conteggio totale righe di log per userId nel range temporale scelto in alto a destra. Utile per capire chi ha lavorato di piu' sulla piattaforma.",
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 22 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "topk(20, sum by (userId) (count_over_time({container_name=~\"irccs-.+\"} | json | userId!=\"\" [$__range])))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "topk(20, sum by (userId) (count_over_time({container_name=~\"irccs-(auth|anagrafica-pazienti|centro-ricerca|studio-clinico|practitioner|clinical-reasoning|tac|patient-interview|notification|webpush|zammad)\"} | json userId=\"mdc.userId\" | userId!=\"\" [$__range])))",
           "legendFormat": "{{userId}}",
           "refId": "A",
           "instant": true
@@ -99,18 +164,34 @@
       "type": "timeseries",
       "title": "Attivita' nel tempo per utente (top 10)",
       "description": "Andamento temporale delle azioni per i 10 utenti piu' attivi nel range selezionato.",
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 32 },
-      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "topk(10, sum by (userId) (count_over_time({container_name=~\"irccs-.+\"} | json | userId!=\"\" [$__interval])))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "topk(10, sum by (userId) (count_over_time({container_name=~\"irccs-(auth|anagrafica-pazienti|centro-ricerca|studio-clinico|practitioner|clinical-reasoning|tac|patient-interview|notification|webpush|zammad)\"} | json userId=\"mdc.userId\" | userId!=\"\" [$__interval])))",
           "legendFormat": "{{userId}}",
           "refId": "A"
         }
       ],
       "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10 } },
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10
+          }
+        },
         "overrides": []
       }
     }

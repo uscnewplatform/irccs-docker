@@ -466,3 +466,28 @@ EOF
 curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -H "Content-Type: application/json" \
       -d "$JSON_BODY"
+
+# ── AuditEvent ──────────────────────────────────────────────────────────────
+# La dashboard (useAuditTrail.ts) cerca gli AuditEvent di una risorsa con
+# `AuditEvent?entity-identifier=urn:internal|{resourceType}/{id}`. entity.what e' un
+# Identifier logico (non una Reference vera - vedi FhirClient.createAuditEvent), e HAPI
+# v8.0.0 NON auto-indicizza il .identifier dei search param di tipo reference: il
+# modificatore standard `entity:identifier=` torna sempre 0. Serve questo SearchParameter
+# token esplicito. Per gli AuditEvent gia' esistenti: reindex.sh una-tantum.
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://irccs.pascale.it/SearchParameter/AuditEvent-entity-identifier",
+  "name": "entity-identifier",
+  "status": "active",
+  "description": "Search AuditEvent by the logical identifier of entity.what",
+  "code": "entity-identifier",
+  "base": ["AuditEvent"],
+  "type": "token",
+  "expression": "AuditEvent.entity.what.identifier"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"

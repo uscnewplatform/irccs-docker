@@ -1,0 +1,623 @@
+= Audit Trail — Tracciabilità degli accessi e delle modifiche
+:toc: macro
+
+toc::[]
+
+Questa pagina descrive come è implementato l'audit trail della piattaforma IRCCS Pascale
+e le politiche operative (retention, immodificabilità, accesso, alerting) richieste dalla
+normativa in ambito sanitario/ricerca clinica.
+
+== Riferimenti normativi
+
+[cols="1,3"]
+|===
+| Norma | Requisito coperto
+
+| GDPR art. 5(1)(f), 30, 32
+| Tracciabilità e integrità dei trattamenti di dati particolari (art. 9)
+
+| Garante Privacy — provv. "Dossier sanitario" 4/6/2015
+| Log degli accessi *in consultazione* ai dati sanitari, conservazione ≥ 24 mesi,
+  log immodificabili, alert su accessi anomali
+
+| ICH GCP E6(R2) §5.5.3 / ALCOA+
+| Audit trail di ogni create/modify/delete dei dati di studio, attribuibile e non alterabile
+
+| EU CTR 536/2014 / TMF
+| Conservazione dei documenti essenziali dello studio (inclusi audit trail) per 25 anni
+
+| ISO/IEC 27001:2022 A.8.15–A.8.17
+| Logging protetto da manomissione, monitoraggio, sincronizzazione degli orologi
+|===
+
+== Cosa viene tracciato
+
+=== AuditEvent FHIR (record di riferimento)
+
+Generati da `FhirClient` (`irccs-common/i3-client`) su ogni operazione verso il server FHIR:
+
+* **Scritture** (create / update / delete / transaction): sempre, per qualunque resourceType.
+* **Consultazioni** (read / search / history): per i resourceType che contengono dati
+  sanitari o personali del paziente (`SENSITIVE_RESOURCE_TYPES` in `FhirClient`: Patient,
+  Observation, DiagnosticReport, DocumentReference, ImagingStudy, Condition, Procedure,
+  Consent, ResearchSubject, AdverseEvent, QuestionnaireResponse, CarePlan, Encounter,
+  Specimen, Media, MedicationStatement/Request, Immunization, AllergyIntolerance, …).
+* **Fallimenti**: sempre, per qualunque resourceType (`outcome = 4` Minor per errori
+  applicativi, `8` Serious riservato a guasti di sistema).
+* **Operazioni IAM Keycloak**: `KeycloakEventAuditPoller` (microservizio auth, schedulato
+  ogni 5 minuti) importa gli eventi Keycloak (login/logout, cambio password, modifiche MFA,
+  consensi, azioni admin) dall'Admin API come AuditEvent.
+
+Ogni AuditEvent contiene:
+
+* `agent.who` (identificativo utente), `agent.requestor`, `agent.type` = humanuser
+* `agent.network.address` = IP del chiamante (da `ClientIpFilter`, primo `X-Forwarded-For`)
+* `agent.extension[username|groups|realm_access|groupsId|organizations-id]` = claim JWT
+  verbatim al momento del fatto
+* `entity[0].what` = Identifier logico `urn:internal|{resourceType}/{id}` (non una Reference
+  risolvibile, per non vincolare la cancellazione della risorsa auditata)
+* `entity[1]` = riferimento al **paziente** (role 1) quando ricavabile dalla risorsa
+* `type` / `subtype` = CodeSystem HL7 `audit-event-type` / `restful-interaction`
+* `extension[audit-chain-prev|audit-chain-hash]` = catena di hash (vedi Immodificabilità)
+
+Interrogazione: `GET /fhir/AuditEvent?entity-identifier=urn:internal|{resourceType}/{id}`
+(SearchParameter custom `entity-identifier`, installato da `setup/install_searchparameters.sh`).
+
+=== Eventi di business (la "vita del paziente")
+
+Oltre all'interazione REST (create/update/…), l'AuditEvent porta il *significato
+clinico/di studio* dell'operazione, per rendere leggibile il percorso del paziente
+senza ricostruirlo dalle singole scritture FHIR.
+
+* `AuditEvent.subtype[1]` = secondo Coding, CodeSystem
+  `http://irccs.pascale.it/fhir/CodeSystem/audit-business-event`. Codici:
+  `questionnaire-response-submitted` / `-amended`, `consent-granted` / `-withdrawn` /
+  `-updated`, `study-screened`, `study-enrolled`, `eligibility-evaluated`,
+  `randomization-performed`, `therapy-assigned`, `study-exited`,
+  `group-membership-changed`, `study-data-exported` / `-imported`, `crf-data-extracted`.
+* `AuditEvent.entity.detail` = coppie `type`/`valueString` strutturate specifiche
+  dell'evento: es. `questionnaire` (canonical), `answeredItems`, `consentScope`,
+  `eligible`, `eligibleByExpression` (esito per singola espressione CQL), `arm`,
+  `assignmentKind` (`randomized` | `choice` | `default`), `therapy`, `breakdown`
+  (conteggio per tipo di risorsa), `patients` (elenco `Patient/<id>` per export/import).
+* `entity.detail` con `type = "diff"` = diff testuale rispetto alla versione precedente
+  (solo `action = U`; per i bundle transaction, per ogni entry PUT/PATCH, max 20 entry).
+
+L'evento di business è *dedotto* dal contenuto della risorsa scritta
+(`BusinessEventInference` in `i3-client`) oppure passato *esplicitamente* dal chiamante
+via header, quando il significato è calcolato altrove (tipicamente la dashboard: esito
+eleggibilità, braccio di randomizzazione). Header letti da `BusinessEventFilter`
+(`i3-annotations`), sanitizzati (niente CR/LF, troncati) e vincolati a whitelist chiuse:
+
+[cols="2,3"]
+|===
+| Header | Contenuto
+
+| `X-Audit-Business-Event` | codice evento (deve essere nella whitelist)
+| `X-Audit-Eligible` | `true` / `false`
+| `X-Audit-Arm` | nome del braccio
+| `X-Audit-Study` | id/riferimento studio
+| `X-Audit-Patient` | `Patient/<id>` — attribuzione paziente esplicita (vale anche senza evento)
+| `X-Audit-Therapy` | nome terapia assegnata
+| `X-Audit-Assignment-Kind` | `randomized` \| `choice` \| `default`
+|===
+
+Un sottoinsieme non-PII (`businessEvent`, `study`, `eligible`, `arm`, `consentDecision`,
+`questionnaire`) finisce anche nell'MDC della riga Loki, per la dashboard Grafana
+"Timeline paziente".
+
+=== Log strutturato (copia di corroborazione)
+
+In parallelo all'AuditEvent, ogni operazione emette una riga di log JSON con i campi MDC
+`auditAction`, `auditOutcome`, `auditUser`, `auditResourceType`, `auditResourceId`,
+`auditPatient`, `auditIp` (`clientIp` per le operazioni FHIR). Questa riga:
+
+* sopravvive anche se la scrittura dell'AuditEvent FHIR fallisce (es. HAPI irraggiungibile);
+* viene etichettata `audit_trail="true"` da Alloy (`monitoring-config/config.alloy`);
+* ha retention dedicata in Loki (vedi sotto).
+
+`notification` (generazione / verifica OTP) emette *solo* la riga strutturata (nessun
+client FHIR).
+
+`zammad`: gli accessi ai ticket (che possono contenere dati paziente) sono tracciati a
+*doppio livello* come le risorse FHIR — `ZammadTicketAuditFilter` scrive un AuditEvent
+sullo store di audit isolato (ticket modellato come `Communication`, entity logico
+`urn:internal|Communication/<ticketId>`) *più* la riga di log strutturata. Richiede
+`org.quarkus.irccs.{fhir-server,audit-fhir-server,audit-site}` in
+`microservice-config-zammad`. Il filtro è legato a `ZammadTicketApiController` tramite
+`@AuditedTicketAccess` (`@NameBinding` JAX-RS, dal 2026-09-16 -- prima un match testuale
+`path.contains("zammad/tickets")`, fragile verso path rinominati/nuovi sotto-endpoint).
+Limite residuo, accettato: nessun riferimento al paziente sull'AuditEvent (non ricavabile
+dal solo id del ticket); un 401/403 emesso dal layer di sicurezza *prima* del filtro
+JAX-RS non viene tracciato.
+
+NOTE: `microservice-config-{tac,notification,webpush}` devono avere
+`org.quarkus.irccs.audit-fhir-server` + `audit-site`, altrimenti gli AuditEvent generati
+da quei servizi (es. audit del download DICOM in `tac`) finiscono sullo store *clinico*
+invece che su quello isolato.
+
+== Semantica di fallimento dell'audit
+
+Cosa succede se lo store di audit è indisponibile mentre un microservizio sta scrivendo
+un dato clinico. La regola dipende dalla *categoria* dell'evento.
+
+[cols="2,1,2,1"]
+|===
+| Evento | Audit obbligatorio | Se l'audit fallisce | Retry
+
+| Consent (grant / withdraw / update)         | Sì | operazione segnalata come fallita | No
+| Randomizzazione (`randomization-performed`) | Sì | operazione segnalata come fallita | No
+| Assegnazione terapia (`therapy-assigned`)   | Sì | operazione segnalata come fallita | No
+| Verdetto di eleggibilità                    | Sì | operazione segnalata come fallita | No
+| Modifica / cancellazione dati di studio (U/D su tipo critico) | Sì | operazione segnalata come fallita | No
+| Lettura di dati paziente / dashboard        | Sì | consentita, evento in coda best-effort | Sì
+|===
+
+*Eventi critici* = scrittura (`C`/`U`/`D`) su un tipo in
+`org.quarkus.irccs.audit.critical-resource-types` (default `Consent,ResearchSubject,CarePlan`),
+con `org.quarkus.irccs.audit.fail-closed-on-critical=true` (default).
+
+Implementazione (`irccs-common/i3-client`, `FhirClient`):
+
+* per un evento critico l'AuditEvent viene scritto in modo *sincrono*; se la POST verso lo
+  store fallisce, il metodo solleva `AuditRequiredException`;
+* per una `create`, prima di ri-sollevare il `FhirClient` esegue una *compensating delete*
+  della risorsa appena creata → il dato clinico non persiste senza audit;
+* per `update` / `delete` la mutazione è già avvenuta: l'operazione viene comunque segnalata
+  come fallita al chiamante, la modifica resta tracciata dalla riga di log ridondante su Loki
+  (emessa *prima* del tentativo di POST) e dall'alert `irccs-audit-write-failures`.
+
+Per tutti gli altri eventi vale il comportamento best-effort: un errore nella scrittura
+dell'AuditEvent non blocca l'operazione originale; resta la traccia su Loki.
+
+== Immodificabilità
+
+L'isolamento e l'integrità degli AuditEvent sono garantiti da tre interceptor HAPI
+(`irccs-common/hapi-audit-interceptor`, jar montato in `/app/extra-classes/`):
+
+[cols="1,3"]
+|===
+| Interceptor | Funzione
+
+| `AuditPartitionInterceptor`
+| Instrada ogni AuditEvent sulla partizione logica HAPI `AUDIT`, separata dalla partizione
+  di default dei dati clinici. Le letture senza tipo di risorsa (batch `$reindex`) usano
+  `allPartitions()`.
+
+| `AuditEventAppendOnlyInterceptor`
+| Nega `UPDATE` / `DELETE` / `PATCH` / `$expunge` sugli AuditEvent — anche con la chiave
+  admin di HAPI (hook a livello storage + hook REST).
+
+| `AuditEventHashChainInterceptor`
+| Ogni AuditEvent porta l'hash del precedente + il proprio hash calcolato sui campi chiave.
+  Cancellare o alterare un evento (anche direttamente sul database) rompe la catena a
+  partire da quel punto, rilevabile ricalcolando la sequenza.
+
+| Trigger Postgres (`setup/audit_db_protection.sql`)
+| A livello *database*: bloccano `DELETE` su `hfj_resource`/`hfj_res_ver` per gli AuditEvent,
+  l'`UPDATE` che valorizza `res_deleted_at` o incrementa `res_ver`, e la modifica del
+  contenuto (`res_text_vc`). Coprono chi ha accesso SQL diretto (amministratore di sistema).
+  `INSERT` e gli `UPDATE` di sola indicizzazione (`$reindex`) restano consentiti.
+| `pgaudit` (estensione Postgres, `postgres-audit-image/`)
+| I livelli sopra bloccano/rilevano scritture e cancellazioni, ma non tracciano una
+  *lettura* diretta via SQL (chi ha le credenziali del DB `hapiaudit` può leggere senza
+  lasciare traccia applicativa). `pgaudit.log=read,write,role,ddl` logga ogni SELECT,
+  scrittura, cambio ruolo/permesso e DDL eseguito sull'istanza audit, nel log del
+  container Postgres. `log_catalog=off` esclude le query interne di HAPI sui cataloghi
+  di sistema (rumore, non accesso ai dati). `log_parameter` resta OFF di default — i
+  valori dei parametri delle query potrebbero contenere identificativi paziente:
+  attivarlo è un trade-off esplicito "più dettaglio forense" vs "nuova PII nei log di
+  Postgres", non un default. **Volume**: pgaudit traccia ogni sessione con l'utente
+  applicativo (`HAPI_AUDIT_DB_USER`), quindi logga anche tutto il traffico JPA normale
+  di HAPI stesso, non solo un accesso SQL ad-hoc — verificato: rumoroso, non selettivo
+  per ruolo. Se in produzione serve isolare solo l'accesso "umano" diretto, la mitigazione
+  è un utente Postgres separato (sola lettura) per chi si connette manualmente, non un
+  filtro pgaudit (`pgaudit.role` traccia i permessi via un ruolo dedicato, ma richiede
+  comunque connessioni con quel ruolo per beneficiarne).
+|===
+
+Difesa in profondità: interceptor REST → interceptor storage → catena di hash → trigger DB
+→ pgaudit (copre anche la lettura diretta, unico livello sopra che non era un vincolo
+scrittura/cancellazione).
+
+=== Store fisicamente separato
+
+Gli AuditEvent NON stanno sull'istanza FHIR clinica. Ci sono un Postgres e un HAPI
+dedicati:
+
+* `postgres-hapi-audit` (DB `hapiaudit`, utente `HAPI_AUDIT_DB_USER`, volume
+  `postgres_data_hapi_audit` — backup indipendente)
+* `irccs-hapi-audit` (HAPI, `hapi-audit-config/application.yaml`, solo gli interceptor
+  append-only + hash-chain, niente partitioning né terminologie)
+
+I microservizi ci scrivono tramite `org.quarkus.irccs.audit-fhir-server` in
+`microservice-config/application.properties`; un `FhirClient<AuditEvent>` instrada lì
+*tutte* le operazioni (anche la ricerca da `/fhir/auth/audit-events`). Se la proprietà non
+è impostata, si ricade sullo stesso server di `org.quarkus.irccs.fhir-server` — con la
+conseguenza che l'audit smette di essere isolato (vedi sotto: in `NORMAL` (prod/staging)
+questo ora blocca l'avvio invece di degradare in silenzio).
+
+**Isolamento a due livelli** (aggiunto in seguito alla review di sicurezza del 2026-09-16):
+
+* *Config* -- `FhirRestClientConfiguration` (irccs-common) verifica a startup che
+  `audit-fhir-server` sia configurato e diverso da `fhir-server`. In `LaunchMode.NORMAL`
+  (jar impacchettato, prod/staging) l'assenza è **fatale** (`IllegalStateException`,
+  override esplicito con `org.quarkus.irccs.audit.require-isolated-store=false` se il
+  condiviso è voluto); in dev/test (Dev Services, HAPI singolo) resta un `WARN`.
+* *Rete* -- `postgres-hapi-audit` sta sulla rete Docker interna dedicata `irccs-audit-db`
+  (`internal: true`), NON sulla rete flat `irccs` dei microservizi: nessun microservizio
+  clinico compromesso può aprire una connessione TCP diretta al DB audit anche avendone le
+  credenziali, deve per forza passare dall'API REST di `irccs-hapi-audit` (append-only +
+  hash-chain applicati lì). `irccs-hapi-audit` sta su entrambe le reti (deve essere
+  raggiungibile dai microservizi *e* raggiungere il proprio DB).
+
+.Limiti noti
+* La catena di hash non serializza "lettura ultimo + scrittura nuovo" a livello DB: sotto
+  scrittura concorrente due eventi possono agganciarsi allo stesso predecessore (lock solo
+  intra-istanza HAPI).
+* L'istanza `irccs-hapi-audit` monta comunque `AuditPartitionInterceptor` nel jar ma non lo
+  attiva (non è in `custom-interceptor-classes`): non serve, non c'è dato clinico da
+  separare.
+
+[#gap-aperti]
+.Gap aperti e monitorati
+* **Viste frontend e PDF export tracciati.** Per garantire conformità con le linee guida del Garante Privacy sul Dossier Sanitario (tracciamento di ogni consultazione anche da cache o ri-apertura e di ogni export locale), il frontend `irccs-react-dashboard` invoca esplicitamente `logAuditEvent` verso `POST /auth/audit-events` per:
+  - Apertura/visualizzazione scheda e cartella paziente (`PatientsCrudForm`);
+  - Consultazione valutazione eleggibilità e arruolamento (`EligibilityNew`);
+  - Export e stampa PDF risposte CRF compilate (`makeCrfPdf`);
+  - Export PDF storico versioni CRF (`CrfTherapyRenderer` / `makeHistoryPdf`);
+  - Download PDF QR Sessione Paziente (`PatientsCrudForm`);
+  - Meta-audit consultazione log (`AuditTrailAdminPage`).
+* **403 del policy-enforcer Keycloak.** I dinieghi applicativi (`Flow.auditAccessDenied`:
+  visibilità group_ids, ruoli) sono auditati. Un 403 emesso dal policy-enforcer _prima_ del
+  controller no: non passa da JAX-RS, servirebbe un filtro Vert.x per-microservizio. Impatto
+  attuale basso (enforcement fine fatto in `Flow`, path del policy-enforcer quasi tutti
+  `DISABLED`), da rivedere se si riattiva l'enforcer.
+* **Compilazione questionario da link firmato** (`PatientQuestionnaireResponseController`,
+  `@PermitAll`, `content-token`): l'agente dell'AuditEvent è `unknown` (nessun login
+  Keycloak, per design). Paziente (entity role=1) e timestamp sono comunque tracciati.
+
+== Retention
+
+[cols="1,1,2"]
+|===
+| Livello | Periodo | Note
+
+| AuditEvent FHIR su HAPI
+| **≥ 25 anni** (di fatto illimitato)
+| Record di riferimento. Append-only, non viene mai cancellato: nessun job di retention lo
+  tocca. Vincolo EU CTR 536/2014 / GCP per i documenti essenziali dello studio.
+
+| Righe di audit su Loki (`audit_trail="true"`)
+| 3 anni (`retention_stream` in `monitoring-config/loki-config.yml`)
+| Copia di corroborazione, indipendente dai permessi FHIR.
+
+| Eventi Keycloak nel DB Keycloak
+| 3 anni (`eventsExpiration` nel realm-export)
+| Vengono comunque importati come AuditEvent dal poller (retention ≥ 25 anni lì).
+
+| Log operativi generici su Loki
+| 3 mesi + snapshot (`archive_loki_snapshot.sh`, cron, conservati 12 mesi)
+| Non è audit trail.
+|===
+
+== Alerting su accessi anomali e integrità
+
+Regole Grafana in `monitoring-config/alerting/rules.yaml`, gruppo `irccs-audit-anomalie`:
+
+* volume elevato di consultazioni dati paziente da un singolo utente (soglia da tarare);
+* accesso a dati paziente fuori orario di servizio (gate sul volume, da abbinare a silence
+  programmata negli orari di servizio);
+* fallimenti di scrittura AuditEvent;
+* tentativi di modifica/cancellazione di un AuditEvent (bloccati dall'interceptor append-only);
+* **violazione di integrità dell'audit trail** (`irccs-audit-integrity-tamper`): scatta se
+  il tool periodico di verifica crittografica (`verify_audit_hash_chain.py` / `run_audit_integrity_cron.sh`)
+  rileva una manomissione, alterazione di payload o rottura della catena di hash.
+
+== Verifica automatica continua dell'integrità (Hash-Chain)
+
+Gli interceptor e i trigger DB rendono l'audit trail *tamper-resistant*; questo
+controllo lo rende *tamper-evident*: un attaccante con accesso diretto al database
+(non tutte le manipolazioni sono coperte dai trigger) verrebbe comunque rilevato.
+Soddisfa EU Annex 11 §9 (revisione dell'audit trail), ISO 27001 A.8.15, GDPR art. 5(2).
+
+Il container **`irccs-audit-integrity`** (`docker-compose.yaml`, immagine
+`python:3.12-alpine`, nessuna dipendenza -- solo stdlib) esegue in loop
+`setup/verify_audit_hash_chain.py`, che ricalcola in Python la stessa
+`canonicalPayload` + SHA-256 di `AuditEventHashChainInterceptor.java` e la confronta
+con l'hash memorizzato su ogni `AuditEvent`.
+
+Rileva: manomissione del contenuto (chi/cosa/quando/quale risorsa), cancellazioni e
+buchi di sequenza, fork della catena, inserimenti illeciti.
+
+Cadenza (`setup/audit_integrity_loop.sh`):
+
+* **incrementale** ogni `AUDIT_INTEGRITY_INTERVAL` s (default 900) -- solo gli eventi
+  nuovi dall'ultimo checkpoint, con `--strict` (un fork nel delta = violazione);
+* **full** ogni `AUDIT_INTEGRITY_FULL_EVERY` cicli (default 96 ≈ 24h) -- ri-verifica
+  l'intero storico, così una manomissione di un evento già checkpointato è rilevata
+  entro 24h. In full i fork storici (attesi ai riavvii dello stack) sono solo `[INFO]`.
+
+Output su stdout/stderr del container → Alloy → Loki: marker `AUDIT-INTEGRITY-OK`,
+`AUDIT-INTEGRITY-FORK`, `AUDIT-INTEGRITY-VIOLATION`, `AUDIT-INTEGRITY-ERROR`,
+`AUDIT-INTEGRITY-STALE-CHECKPOINT`, `AUDIT-INTEGRITY-UNHASHED`,
+`AUDIT-INTEGRITY-COUNT-REGRESSION`. Regole Grafana
+`irccs-audit-integrity-{tamper,fork,stale,stale-checkpoint,unhashed,count-regression}`
++ `irccs-audit-db-direct-mutation` in `monitoring-config/alerting/rules.yaml`.
+Checkpoint, ultimo report JSON e metriche Prometheus Textfile nel volume
+`audit_integrity_state`.
+
+I marker aggiunti chiudono i gap del threat model:
+
+* `AUDIT-INTEGRITY-UNHASHED` -- AuditEvent nuovi privi delle extension di catena:
+  possibile disattivazione dell'`AuditEventHashChainInterceptor` via configurazione del
+  container (livello *container administrator*);
+* `AUDIT-INTEGRITY-COUNT-REGRESSION` -- gli AuditEvent presenti sono meno che al controllo
+  precedente: uno store append-only non cala mai → restore da backup, rollback del DB o
+  cancellazione a livello storage (livello *backup / host administrator*);
+* `irccs-audit-db-direct-mutation` -- `pgaudit` ha registrato una WRITE/DDL/ROLE sulle
+  tabelle degli AuditEvent (nessun percorso legittimo lo fa) (livello *DBA*).
+
+=== Riconciliazione risorse orfane (crash-window)
+
+Il fail-closed sincrono (vedi sopra) e la verifica hash-chain coprono manomissioni e
+fallimenti *osservabili*, ma non il caso in cui il processo muore tra il write clinico e
+il write audit. `setup/verify_audit_coverage.py` chiude questo gap dal lato opposto:
+confronta, per i tipi in `org.quarkus.irccs.audit.critical-resource-types`
+(default Consent/ResearchSubject/CarePlan), le risorse presenti sullo store clinico con la
+copertura sullo store audit (stessa ricerca `entity-identifier=urn:internal|{Tipo}/{id}`
+usata dalla dashboard), e segnala come orfana ogni risorsa priva del suo AuditEvent oltre
+un periodo di grazia (`--grace-seconds`, default 300s -- per non generare falsi positivi
+sulle scritture ancora in corso).
+
+Gira nello **stesso container** `irccs-audit-integrity`, stesso ciclo di
+`verify_audit_hash_chain.py` (`setup/audit_integrity_loop.sh`), con checkpoint separato
+(`audit_coverage_checkpoint.json`) per non riscansionare ad ogni ciclo tutto lo storico.
+Marker: `AUDIT-INTEGRITY-ORPHAN-RESOURCE` (stesso marker usato anche dal fallimento
+sincrono della `compensatingDelete` in `FhirClient.java` -- un'unica regola Loki
+(`irccs-audit-orphan-resource`, query cross-container `container_name=~"irccs-.+"`) copre
+entrambe le sorgenti), `AUDIT-INTEGRITY-COVERAGE-OK` / `-COVERAGE-VIOLATION` a fine ciclo.
+
+[cols="2,1,3"]
+|===
+|Variabile |Default |Effetto
+
+|`AUDIT_COVERAGE_GRACE_SECONDS` |`300` |Secondi prima che una risorsa critica senza AuditEvent sia considerata orfana (non solo "scrittura in corso").
+|`AUDIT_COVERAGE_EXTRA_ARGS` |_(vuoto)_ |Argomenti extra passati a `verify_audit_coverage.py` (es. `--critical-types`, `--lookback-days`).
+|===
+
+=== Threat model e contromisure residue
+
+La hash-chain è *tamper-evidente*, non una prova assoluta di immutabilità: un attore con
+accesso completo al database e conoscenza dell'algoritmo (open source) può in linea di
+principio riscrivere l'intera catena. Le difese contro i livelli più alti sono
+organizzative e ridondanti:
+
+* *backup con floor di retention WORM-like* -- **fatto** (2026-09-16). I backup di
+  `hapi-audit` sono esenti dal thinning GFS che si applica a `hapi`/`keycloak`
+  (`backup/scripts/retention_cleanup.sh`): si cancellano solo oltre
+  `BACKUP_AUDIT_RETENTION_YEARS` (default 25, allineato al floor di retention
+  applicativo), mai per conteggio. L'archivio cifrato locale viene marcato
+  `chattr +i` subito dopo la scrittura (`encrypt_and_offsite.sh`) -- non è
+  object-lock a livello storage (root può sempre `chattr -i`), ma alza il costo di
+  una cancellazione accidentale o di un bug in uno script rispetto a un file normale.
+  Restano sulla roadmap l'object-lock a livello storage offsite (se/quando il backend
+  scelto lo supporta) e il restore a due persone registrato.
+* *spedizione log off-host* -- Loki / un forwarder su una macchina distinta, così la copia
+  di corroborazione sopravvive alla compromissione dell'host applicativo (roadmap, non
+  bloccante);
+* *ancoraggio esterno* -- export periodico dell'hash di testa della catena verso un sistema
+  indipendente (timestamp qualificato, e-mail firmata al DPO): rende rilevabile una
+  riscrittura completa o un rollback (roadmap, non bloccante).
+
+=== Consultazione: ruoli abilitati
+
+`GET /fhir/auth/audit-events` è consentito ai gruppi Keycloak `/admin` **e** `/auditor`
+(quest'ultimo dedicato a DPO / auditor: sola lettura sull'audit trail, nessun altro
+privilegio amministrativo). Ogni consultazione genera comunque un meta-audit.
+
+Esecuzione manuale una-tantum (dall'host, HAPI audit su `127.0.0.1:8081`):
+
+[source,bash]
+----
+python3 setup/verify_audit_hash_chain.py --audit-fhir http://127.0.0.1:8081/fhir --full
+----
+
+Test di unità: `python3 setup/test_verify_audit_hash_chain.py`.
+
+
+== Accesso all'audit trail
+
+HAPI FHIR **non è esposto in rete** (`docker-compose.yaml`: bind su `127.0.0.1`, solo i
+microservizi sulla rete `irccs` e gli script di setup sull'host lo raggiungono). La
+partizione `AUDIT` non è quindi consultabile direttamente.
+
+La dashboard consulta gli AuditEvent tramite l'endpoint mediato
+**`GET /auth/audit-events`** del microservizio `auth` (`useAuditTrail.ts`):
+
+* richiede autenticazione + gruppo `/admin` (403 altrimenti);
+* inoltra i search param FHIR (`entity-identifier`, `_sort`, `_count`, …) a HAPI;
+* **ogni consultazione è a sua volta tracciata** con un AuditEvent
+  (`entity.what = urn:internal|AuditEvent/query`, meta-audit).
+
+Il reverse proxy instrada `/auth` → `irccs-auth:8080/fhir/auth`; non esiste alcuna rotta
+`/AuditEvent` verso HAPI.
+
+== Sincronizzazione degli orologi
+
+`AuditEvent.recorded` usa l'orologio di sistema del container. Gli host che eseguono lo
+stack devono avere NTP attivo e sincronizzato (ISO 27001 A.8.17); i container ereditano
+l'orologio dell'host.
+
+== Configurazione
+
+Tutto l'audit trail è pilotato da configurazione, senza rebuild. Riepilogo dei
+parametri per area.
+
+=== Cosa viene tracciato (microservizi -- `microservice-config/application.properties`)
+
+[cols="2,1,3"]
+|===
+|Proprietà |Default |Effetto
+
+|`org.quarkus.irccs.audit.enabled` |`true` |Kill switch globale: se `false` nessun AuditEvent FHIR viene scritto (né scritture né letture né fallimenti).
+|`org.quarkus.irccs.audit.read-enabled` |`true` |Se `false` non traccia le sole consultazioni (read/search/history). Scritture e fallimenti restano tracciati.
+|`org.quarkus.irccs.audit.sensitive-resource-types` |_(elenco interno)_ |CSV che **rimpiazza** l'elenco dei resourceType per cui le letture sono auditate.
+|`org.quarkus.irccs.audit.sensitive-resource-types.extra` |_(vuoto)_ |CSV che **aggiunge** tipi all'elenco di default senza riscriverlo tutto.
+|`org.quarkus.irccs.audit-fhir-server` |_(server clinico)_ |Base URL dello store AuditEvent. Se assente si scrive sullo stesso HAPI dei dati clinici.
+|`org.quarkus.irccs.audit-site` |`unknown-site` |Valore di `AuditEvent.source.site`.
+|===
+
+==== Eventi di business e arricchimento
+
+[cols="2,1,3"]
+|===
+|Proprietà |Default |Effetto
+
+|`org.quarkus.irccs.audit.business-event.enabled` |`true` |Se `false` non aggiunge il secondo `subtype` di business né i relativi `entity.detail` strutturati.
+|`org.quarkus.irccs.audit.history-diff.enabled` |`true` |Se `false` non calcola il diff `entity.detail` sugli update (giro `_history` sincrono extra). Vale anche per il diff per-entry dei bundle transaction.
+|`org.quarkus.irccs.audit.transaction.detail-patients` |`true` |Se `true` la transazione elenca *tutti* i pazienti distinti toccati come `entity` role=1 (+ detail `patientCount`); se `false` solo il primo.
+|`org.quarkus.irccs.audit.export.list-patients` |`true` |Se `true` gli eventi `study-data-exported` / `-imported` portano il detail `patients` (CSV di `Patient/<id>`); se `false` solo il conteggio.
+|`org.quarkus.irccs.audit.export.max-patient-entities` |`200` |Tetto all'elenco `patients`; oltre soglia tronca e aggiunge detail `patientsListTruncated=true`.
+|`org.quarkus.irccs.audit.retention.floor-years` |`25` |Retention minima dichiarata (GCP/CTR). Solo per job/documentazione di compliance: lo store è append-only, non c'è job che cancelli.
+|===
+
+Elenco di default dei tipi sensibili: Patient, Observation, DiagnosticReport,
+DocumentReference, Media, ImagingStudy, Condition, Procedure, Consent,
+ResearchSubject, AdverseEvent, QuestionnaireResponse, CarePlan, Encounter,
+Specimen, MedicationStatement, MedicationRequest, Immunization,
+AllergyIntolerance, FamilyMemberHistory, ClinicalImpression, RiskAssessment,
+Appointment.
+
+=== Immodificabilità (istanza HAPI audit -- `.env` / env)
+
+[cols="2,1,3"]
+|===
+|Variabile |Default |Effetto
+
+|`IRCCS_AUDIT_APPEND_ONLY_ENABLED` |`true` |Se `false` l'`AuditEventAppendOnlyInterceptor` non blocca più update/delete/expunge.
+|`IRCCS_AUDIT_HASH_CHAIN_ENABLED` |`true` |Se `false` gli AuditEvent vengono scritti senza le extension `audit-chain-*`.
+|===
+
+Sono difese indipendenti: disattivarne una non tocca le altre. Il modo pulito
+per disattivare del tutto un interceptor resta rimuoverlo da
+`hapi.fhir.custom-interceptor-classes` in `hapi-audit-config/application.yaml`.
+I trigger Postgres (`setup/audit_db_protection.sql`) sono un ulteriore layer, si
+disattivano non installandoli o con `DROP TRIGGER`.
+
+=== Retention
+
+[cols="2,2,2"]
+|===
+|Livello |Dove |Default
+
+|AuditEvent FHIR (record legale) |`hapi-audit-config/application.yaml` (`expunge_enabled: false` + append-only) |illimitata -- nessuna cancellazione
+|Log Loki audit (`audit_trail="true"`) |`monitoring-config/loki-config.yml` -> `retention_stream` |`26280h` (3 anni)
+|Log Loki generici |stesso file -> `retention_period` |`2160h` (3 mesi)
+|Eventi Keycloak |`keycloak-config/realm-export/realm-export.json` -> `eventsExpiration` |`94608000` (3 anni, in secondi)
+|===
+
+=== Import eventi Keycloak (`irccs-microservice-auth`)
+
+[cols="2,1,3"]
+|===
+|Proprietà |Default |Effetto
+
+|`irccs.audit.keycloak-events.enabled` |`true` |On/off dell'import periodico degli eventi Keycloak come AuditEvent.
+|`irccs.audit.keycloak-events.interval` |`300s` |Frequenza del poller.
+|`irccs.audit.keycloak-events.lookback-ms` |`900000` |Finestra iniziale (15 min) al primo avvio.
+|`irccs.audit.keycloak-events.query-margin-days` |`2` |Giorni sottratti al cursore per il `dateFrom` passato a Keycloak (granularità giornaliera); il taglio fine resta sul timestamp dell'evento.
+|`irccs.audit.keycloak-events.quiet-polls-alarm` |`12` |Poll consecutivi "a vuoto" (API ok, 0 eventi) dopo i quali il poller logga un WARN: con utenti attivi gli eventi token arrivano ogni pochi minuti, silenzio totale = eventi realm disabilitati o ruolo `view-events` mancante sul service account admin.
+|===
+
+NOTE: Il poller chiama gli endpoint `/admin/realms/{realm}/events` e `/admin-events` via HTTP diretto (token `client_credentials` del client applicativo, ruolo `view-events`), NON tramite `keycloak-admin-client`: quest'ultimo genera un path errato per questi due endpoint e risponde 404. Il poll pagina l'intera finestra `dateFrom` (fino a `MAX_PAGES` = 50 pagine da 200) invece di leggere una sola pagina: la Admin API di Keycloak non garantisce l'ordinamento, e una pagina di soli eventi vecchi lasciava il cursore fermo a tempo indefinito.
+
+=== Alerting
+
+`monitoring-config/alerting/`: `rules.yaml` (soglie), `timeintervals.yaml`
+(finestra fuori orario), `policies.yaml` / `contactpoints.yaml` (routing e
+destinatari). Le soglie sono provvisorie -- vedi la nota di validazione per la
+procedura di ricalibrazione.
+
+== Attivazione (deploy)
+
+Nell'`.env`: impostare `HAPI_AUDIT_DB_USER/PASSWORD/NAME` e (produzione)
+`HAPI_CORS_ALLOWED_ORIGIN`. Gli interruttori `IRCCS_AUDIT_*` e le proprietà
+`org.quarkus.irccs.audit.*` restano ai default (tutto attivo) se non impostati.
+
+. Deploy dello stack `irccs-docker` (jar interceptor e config sono già in
+  `hapi-fhir-config/` e `hapi-audit-config/`). Vengono creati `postgres-hapi-audit` e
+  `irccs-hapi-audit`.
+
+Sull'**istanza clinica** (`127.0.0.1:8080`, DB `postgres-hapi-fhir`):
+
+. `bash setup/setup_audit_partition.sh 127.0.0.1:8080` — crea la partizione `AUDIT` (una
+  tantum, dopo il primo avvio; da rieseguire se il volume Postgres viene ricreato).
+. `bash setup/install_searchparameters.sh 127.0.0.1:8080` — SearchParameter clinici.
+
+Sull'**istanza audit** (`127.0.0.1:8081`, DB `postgres-hapi-audit`):
+
+. `bash setup/install_audit_searchparameter.sh 127.0.0.1:8081` — SearchParameter
+  `entity-identifier`.
+. `bash setup/install_audit_db_protection.sh` — trigger di immodificabilità (default:
+  `postgres-hapi-audit`; idempotente; da rieseguire se il volume `postgres_data_hapi_audit`
+  viene ricreato).
+. `bash setup/install_audit_pgaudit.sh` — abilita l'estensione `pgaudit` (idempotente;
+  richiede che `postgres-hapi-audit` sia già partito con l'immagine buildata da
+  `postgres-audit-image/`, che include il pacchetto e passa
+  `shared_preload_libraries=pgaudit` all'avvio del processo — se il container era già in
+  esecuzione con l'immagine vecchia, prima `docker compose up -d --build postgres-hapi-audit`).
+
+Se gli AuditEvent risiedevano prima sull'istanza clinica (deploy pre-separazione),
+migrarli sull'istanza audit **prima** che i microservizi separati vadano in esercizio
+(store di destinazione vuoto):
+
+. `python3 setup/migrate_auditevents_to_audit_store.py --dry-run` — verifica conteggi e
+  ordine cronologico.
+. `python3 setup/migrate_auditevents_to_audit_store.py` — copia sequenziale (POST) in
+  ordine di `recorded`; la catena di hash viene ricalcolata dall'istanza audit.
+  Idempotente via checkpoint `setup/.migrate_auditevents.state`: in caso di errore
+  riprendere con `--resume`. Non cancella nulla dalla sorgente (gli AuditEvent restano
+  come copia storica: sono append-only).
+. Se i microservizi separati erano già in esercizio (destinazione non vuota), gli storici
+  vanno accodati esplicitamente con `--allow-nonempty`: finiscono in coda alla catena
+  esistente (posizione in catena successiva pur avendo `recorded` nel passato).
+
+. Verificare su traffico applicativo reale (bundle transaction, `_history`, ricerche
+  cross-resource) prima di considerare la Fase 1 conclusa.
+
+[#checklist-upgrade-2026-09-16]
+=== Checklist aggiuntiva (isolamento, backup WORM, riconciliazione -- 2026-09-16)
+
+Nessuno di questi step richiede azioni separate se si parte da uno stack nuovo (sono già
+nel `docker-compose.yaml`/negli script): elencati per chi aggiorna uno stack esistente.
+
+TIP: `setup/upgrade_audit_trail.sh` orchestra tutti gli step sotto (ricrea i container,
+verifica la rete, installa SearchParameter/trigger/pgaudit, propone la migrazione degli
+storici se presenti, verifica hash-chain e copertura orfani a fine corsa) chiedendo
+conferma esplicita prima di ogni azione che tocca container o dati in esecuzione.
+Richiede che le immagini aggiornate (irccs-common/auth/zammad con i fix, questo stesso
+`docker-compose.yaml`) siano già sull'host -- non fa `git pull` né build. Uso:
+`./setup/upgrade_audit_trail.sh` (interattivo) o `--yes` per automazione,
+`--skip-migration` per saltare il passo storici. La checklist manuale sotto resta
+valida per chi preferisce eseguire i passi singolarmente o capire cosa fa lo script.
+
+. **Rete `irccs-audit-db`**: creata automaticamente da `docker compose up` (definita in
+  `docker-compose.yaml`). Se lo stack esisteva già, un `docker compose up -d
+  postgres-hapi-audit irccs-hapi-audit` ricrea i due container sulla rete giusta
+  (verificare con `docker network inspect irccs-audit-db` che solo questi due ci
+  compaiano).
+. **`org.quarkus.irccs.audit.require-isolated-store`**: verificare che TUTTI i
+  `microservice-config-*/application.properties` abbiano `audit-fhir-server` impostato
+  *prima* di aggiornare a una versione di `irccs-common` che include il fail-fast --
+  altrimenti il microservizio non parte più in prod. In `pascale-local`/`irccs-docker` è
+  già così su tutti i servizi coperti dall'audit trail.
+. **`BACKUP_AUDIT_RETENTION_YEARS`**: impostare in `backup/.env.backup` (default 25 se
+  assente). Se lo stack ha già backup `hapi-audit` più vecchi della GFS precedente,
+  nessuna azione: la nuova logica si applica dal prossimo giro di `retention_cleanup.sh`,
+  non tocca retroattivamente nulla.
+. **`verify_audit_coverage.py`**: parte da solo nel container `irccs-audit-integrity`
+  esistente (stesso `audit_integrity_loop.sh`), nessun container nuovo da avviare. Al
+  primo giro scansiona `--lookback-days` (default 7) indietro -- se serve una copertura
+  storica più ampia alla prima attivazione, un giro manuale con `--reset-checkpoint
+  --lookback-days N` più ampio prima di lasciarlo al loop.

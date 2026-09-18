@@ -1,0 +1,70 @@
+# ============================================================================
+# HAPI FHIR dedicato all'AUDIT TRAIL (irccs-hapi-audit).
+#
+# Istanza separata da quella clinica (irccs-hapi-fhir): storage fisico, account
+# DB e backup indipendenti. I microservizi ci scrivono gli AuditEvent tramite
+# org.quarkus.irccs.audit-fhir-server; la consultazione passa da
+# /fhir/auth/audit-events (auth), non e' esposta ai client.
+#
+# Config volutamente minimale: nessun partitioning (qui ci sono SOLO AuditEvent),
+# nessuna terminologia. Restano gli interceptor di immodificabilita'.
+# ============================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+spring:
+  main:
+    allow-circular-references: true
+  flyway:
+    enabled: false
+    check-location: false
+    baselineOnMigrate: true
+  datasource:
+    url: 'jdbc:postgresql://postgres-hapi-audit:5432/hapiaudit'
+    username: ${HAPI_AUDIT_DB_USER}
+    password: ${HAPI_AUDIT_DB_PASSWORD}
+    driverClassName: org.postgresql.Driver
+    max-active: 10
+    hikari:
+      maximum-pool-size: 6
+  jpa:
+    properties:
+      hibernate.format_sql: false
+      hibernate.show_sql: false
+      hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgres94Dialect
+      hibernate.search.enabled: true
+      hibernate.search.backend.type: lucene
+      hibernate.search.backend.analysis.configurer: ca.uhn.fhir.jpa.search.HapiHSearchAnalysisConfigurers$HapiLuceneAnalysisConfigurer
+      hibernate.search.backend.directory.type: local-filesystem
+      hibernate.search.backend.directory.root: /lucenefiles
+      hibernate.search.backend.lucene_version: lucene_current
+hapi:
+  fhir:
+    fhir_version: R4
+    allow_multiple_delete: false
+    allow_external_references: false
+    # Serve al modificatore :contains sui SearchParameter string entity-identifier-text/
+    # agent-identifier-text (filtro risorsa/utente per match parziale nella vista admin
+    # /audit-trail - i token exact-match entity-identifier/agent-identifier restano per
+    # il lookup esatto usato da AuditTrailDialog).
+    allow_contains_searches: true
+    expunge_enabled: false
+    # Gli AuditEvent referenziano risorse cliniche (in forma di identifier logico) che qui
+    # non esistono per definizione: nessun vincolo di integrita' referenziale.
+    enforce_referential_integrity_on_write: false
+    enforce_referential_integrity_on_delete: false
+    advanced_lucene_indexing: false
+    default_encoding: JSON
+    narrative_enabled: false
+    bulk_export_enabled: false
+    bulk_import_enabled: false
+    cors:
+      allow_Credentials: true
+      allowed_origin:
+        - ${HAPI_CORS_ALLOWED_ORIGIN:*}
+    # Solo i due interceptor di immodificabilita': niente AuditPartitionInterceptor
+    # (nessun dato clinico da separare qui).
+    custom-bean-packages: org.irccs.hapi.audit
+    custom-interceptor-classes: org.irccs.hapi.audit.AuditEventAppendOnlyInterceptor,org.irccs.hapi.audit.AuditEventHashChainInterceptor

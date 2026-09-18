@@ -1,0 +1,24 @@
+# Unit systemd per il nginx di fallback host-level.
+# Installazione: copiare in /etc/systemd/system/irccs-maintenance.service
+# poi: systemctl daemon-reload && systemctl disable irccs-maintenance
+# (disable = NON parte al boot, resta dormiente: si avvia solo a mano)
+#
+# Usa un binario/config nginx dedicato, separato dal servizio nginx di sistema
+# (se presente), per non interferire con eventuali altri siti su questa VM.
+
+[Unit]
+Description=IRCCS - nginx di cortesia (fallback quando lo stack Docker e' giu')
+After=network.target
+# Non mette dipendenze da docker.service: deve poter partire anche se
+# Docker stesso e' fermo.
+
+[Service]
+Type=forking
+ExecStartPre=/usr/sbin/nginx -t -c /etc/nginx/irccs-maintenance-standalone.conf
+ExecStart=/usr/sbin/nginx -c /etc/nginx/irccs-maintenance-standalone.conf
+ExecReload=/usr/sbin/nginx -s reload -c /etc/nginx/irccs-maintenance-standalone.conf
+ExecStop=/usr/sbin/nginx -s stop -c /etc/nginx/irccs-maintenance-standalone.conf
+PIDFile=/run/irccs-maintenance.pid
+
+[Install]
+WantedBy=multi-user.target

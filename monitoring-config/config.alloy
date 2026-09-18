@@ -226,6 +226,25 @@ loki.process "logs_process_client" {
     expression = "(?s)(?P<redacted>.*)"
   }
 
+  // TENTATIVO FALLITO 2026-08-26, non riprovare senza risolvere il problema sotto:
+  // riabilitare la redazione email qui (rimossa il 14/07 apposta) e' stato scartato
+  // dopo test reale (Loki+Alloy isolati) perche' gli username Keycloak in questo realm
+  // SONO indirizzi email (es. l'unico utente reale nel realm e' "gennaro.aurilia@gmail.com",
+  // vedi keycloak-config/realm-export) — mdc.userId (popolato da UserIdFilter proprio per
+  // dare un campo di correlazione strutturato non-PII) e' anch'esso un'email, quindi
+  // qualunque redazione email applicata all'intera riga di log lo cancella insieme al
+  // resto del testo, vanificando esattamente la correlazione che si voleva abilitare.
+  // Per farlo davvero servirebbe processare mdc.userId separatamente PRIMA di questo
+  // stage generico (o a monte, lato applicazione, non loggare l'email come userId ma un
+  // id opaco) — non tentato: cambierebbe il formato del campo usato dalla dashboard
+  // Grafana "irccs-user-activity" (vedi audit trail report), serve una decisione
+  // separata, non un side-effect di uno scrub PII.
+  //
+  // stage.template {
+  //   source   = "redacted"
+  //   template = "{{ regexReplaceAll `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}` .Value `[REDACTED_EMAIL]` }}"
+  // }
+
   stage.template {
     source   = "redacted"
     template = "{{ regexReplaceAll `(?i)[A-Z]{6}[0-9LMNPQRSTUV]{2}[A-EHLMPRT][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]` .Value `[REDACTED_CF]` }}"
@@ -234,6 +253,48 @@ loki.process "logs_process_client" {
   stage.template {
     source   = "redacted"
     template = "{{ regexReplaceAll `\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}\\b` .Value `[REDACTED_IBAN]` }}"
+  }
+
+  // Campi FHIR identita'-paziente/indirizzo, per quando un bundle/resource completo
+  // finisce in un log di errore (es. irccs-microservice-tac). Copre solo chiavi il
+  // cui significato in FHIR e' quasi sempre PII (nome, data di nascita, indirizzo):
+  // NON copre ContactPoint.value (telefono/email sotto "telecom") ne' Identifier.value,
+  // perche' la chiave JSON "value" e' riusata ovunque in FHIR anche per dati clinici
+  // non sensibili (es. Quantity.value) - un regex su "value" scrubberebbe anche
+  // misure cliniche legittime dai log. Per quei due campi la mitigazione reale e' a
+  // monte: non loggare il bundle completo, solo resourceType+id (vedi audit trail
+  // report, Fase 3 - "bundle FHIR in chiaro nei log errore TAC").
+  //
+  // `\\?` prima/dopo ogni virgoletta: nel caso reale (verificato) il bundle non e' il
+  // log-line stesso ma una stringa dentro il campo "message" del JSON di logging
+  // (quarkus-logging-json) - le virgolette del bundle arrivano gia' escaped (\"family\"),
+  // non nude. Senza questo, il match fallisce silenziosamente su ogni log reale (provato:
+  // matcha solo su JSON "nudo" mai visto in pratica). Sostituzione sempre con virgolette
+  // escaped, per restare coerenti con quel caso reale — nel caso raro di JSON non
+  // annidato la sostituzione introduce backslash innocui ma il dato PII e' comunque tolto.
+  stage.template {
+    source   = "redacted"
+    template = "{{ regexReplaceAll `\\\\?\"family\\\\?\"\\s*:\\s*\\\\?\"[^\"]*\"` .Value `\\\"family\\\":\\\"[REDACTED]\\\"` }}"
+  }
+
+  stage.template {
+    source   = "redacted"
+    template = "{{ regexReplaceAll `\\\\?\"given\\\\?\"\\s*:\\s*\\[[^\\]]*\\]` .Value `\\\"given\\\":[\\\"[REDACTED]\\\"]` }}"
+  }
+
+  stage.template {
+    source   = "redacted"
+    template = "{{ regexReplaceAll `\\\\?\"birthDate\\\\?\"\\s*:\\s*\\\\?\"[^\"]*\"` .Value `\\\"birthDate\\\":\\\"[REDACTED]\\\"` }}"
+  }
+
+  stage.template {
+    source   = "redacted"
+    template = "{{ regexReplaceAll `\\\\?\"line\\\\?\"\\s*:\\s*\\[[^\\]]*\\]` .Value `\\\"line\\\":[\\\"[REDACTED]\\\"]` }}"
+  }
+
+  stage.template {
+    source   = "redacted"
+    template = "{{ regexReplaceAll `\\\\?\"(city|district|state|postalCode)\\\\?\"\\s*:\\s*\\\\?\"[^\"]*\"` .Value `\\\"$1\\\":\\\"[REDACTED]\\\"` }}"
   }
 
   stage.output {
@@ -256,22 +317,69 @@ loki.process "logs_process_client" {
       }
   }
 
-  // Log dal Faro receiver (frontend, src/faro.ts): non hanno container_name
-  // (non arrivano da loki.source.docker), quindi il match sopra li esclude e
-  // "kind" resta fermo al valore statico "frontend" impostato in
-  // faro.receiver.extra_log_labels. I dashboard di frontend-application.json
-  // filtrano pero' su kind="measurement"/"exception" (valore reale scritto nel
-  // body del log da Faro SDK): serve un secondo match dedicato per estrarlo.
-  stage.match {
-      selector = "{app=\"irccs-react-dashboard\"}"
+  stage.labels {
+      values = { "kind" = "kind", "service_name" = "service_name", "app" = "app" }
+  }
 
-      stage.logfmt {
-          mapping = { "kind" = "", "service_name" = "" }
+  // Etichetta le righe di audit trail (quelle con il campo MDC "auditAction" emesso
+  // da FhirClient.createAuditEvent / AuditTrailService) con audit_trail="true", cosi'
+  // loki-config.yml puo' dargli una retention piu' lunga della retention operativa
+  // di 3 mesi (vedi retention_stream). NB: l'AuditEvent FHIR su HAPI - append-only -
+  // resta comunque il record di riferimento a lungo termine; questa e' la copia
+  // ridondante di corroborazione, non deve sparire dopo 3 mesi.
+  // Whitelist sui soli container che loggano JSON (i microservizi Quarkus): lo
+  // stage.json su una riga non-JSON fallisce e spamma i log di Alloy.
+  stage.match {
+      selector = "{container_name=~\"irccs-(auth|anagrafica-pazienti|centro-ricerca|studio-clinico|practitioner|clinical-reasoning|tac|patient-interview|notification|zammad)\"} |~ \"auditAction\""
+
+      stage.static_labels {
+          values = { "audit_trail" = "true" }
+      }
+
+      // Evento di business "vita del paziente" (mdc.auditBusinessEvent da AuditMdc in
+      // i3-client: questionnaire-response-*, consent-*, eligibility-evaluated,
+      // randomization-performed, ...). Bassa cardinalita' -> label, per la dashboard
+      // "Timeline paziente". auditEligible/auditArm/auditStudy/auditQuestionnaire
+      // restano campi, query-time via `| json`.
+      stage.json {
+          expressions = { "audit_business_event" = "mdc.auditBusinessEvent" }
+      }
+      stage.labels {
+          values = { "audit_business_event" = "audit_business_event" }
       }
   }
 
-  stage.labels {
-      values = { "kind" = "kind", "service_name" = "service_name", "app" = "app" }
+  // Righe di audit trail emesse DENTRO il processo HAPI: interceptor append-only +
+  // hash-chain (irccs-common/hapi-audit-interceptor -> prefisso "AUDIT-TRAIL k=v ...",
+  // AuditLog.java) e verifica di integrita' continua (container irccs-audit-integrity
+  // -> "AUDIT-INTEGRITY-*"). Questi container loggano TESTO PIANO (logback default),
+  // non JSON: niente `| json`. "AUDIT-APPEND-ONLY" resta nel filtro per le righe
+  // legacy gia' in Loki (formato pre-AUDIT-TRAIL).
+  stage.match {
+      selector = "{container_name=~\"irccs-(hapi-fhir|hapi-audit|audit-integrity)\"} |~ \"AUDIT-TRAIL|AUDIT-INTEGRITY|AUDIT-APPEND-ONLY\""
+
+      stage.static_labels {
+          values = { "audit_trail" = "true" }
+      }
+  }
+
+  // Solo le righe "AUDIT-TRAIL marker=... k=v ...": estrae la coda logfmt e promuove
+  // a label i soli campi a bassa cardinalita' (marker, outcome). user/clientIp/
+  // resourceId restano nel testo -> query-time via `| logfmt` (evita esplosione
+  // di serie e PII come label).
+  stage.match {
+      selector = "{container_name=~\"irccs-(hapi-fhir|hapi-audit)\"} |~ \"AUDIT-TRAIL marker=\""
+
+      stage.regex {
+          expression = "AUDIT-TRAIL (?P<kv>marker=.*)$"
+      }
+      stage.logfmt {
+          source  = "kv"
+          mapping = { "audit_marker" = "marker", "audit_outcome" = "outcome" }
+      }
+      stage.labels {
+          values = { "audit_marker" = "audit_marker", "audit_outcome" = "audit_outcome" }
+      }
   }
 }
 
@@ -286,17 +394,9 @@ loki.source.docker "default" {
 // Solo logs: le trace non sono abilitate lato client (Tempo non deployato,
 // fase 2) quindi non serve un output traces qui.
 faro.receiver "integrations_app_agent_receiver" {
-	// Ricevitore condiviso da piu' app frontend (dashboard React, PWA
-	// Flutter). "app" resta statico per non rompere le dashboard/query
-	// Loki esistenti (frontend-application.json usa label_values(app), lo
-	// stage.match sotto seleziona app="irccs-react-dashboard"). "app_name"
-	// (stringa vuota = riconosciuto da Alloy) si popola invece dal campo
-	// app.name del payload Faro di ciascun client, per distinguere davvero
-	// dashboard e PWA senza toccare le dashboard esistenti.
 	extra_log_labels = {
-		app      = "irccs-react-dashboard",
-		app_name = "",
-		kind     = "frontend",
+		app  = "irccs-react-dashboard",
+		kind = "frontend",
 	}
 
 	server {
