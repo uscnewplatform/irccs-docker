@@ -35,15 +35,23 @@ statica con 503.
 
 File in questa cartella (`host-maintenance/`), da installare sull'host (NON
 dentro un container):
-- `nginx-maintenance.conf` — vhost nginx **produzione**: porta 443 + TLS,
-  stessi certificati gia' usati da `irccs-httpd-dashboard`.
-- `nginx-maintenance-lab.conf` — vhost nginx **lab/test**: porta 80, no TLS,
+- `nginx-maintenance-standalone.conf` — config nginx **completo**
+  (events{}/http{}), e' quello che la unit systemd passa a `nginx -c`.
+  Include il vhost vero e proprio (sotto). Va installato SEMPRE, uguale
+  in lab e in prod (cambia solo quale vhost include, vedi sotto).
+- `nginx-maintenance.conf` — vhost **produzione**: porta 443 + TLS, stessi
+  certificati gia' usati da `irccs-httpd-dashboard`.
+- `nginx-maintenance-lab.conf` — vhost **lab/test**: porta 80, no TLS,
   coerente con `VirtualHost *:80` usato in questo repo/ambiente.
-  Usare questo in lab, l'altro in prod — entrambi si installano con lo
-  stesso nome destinazione (vedi sotto), la unit systemd non cambia.
+  Uno dei due va installato come `/etc/nginx/sites-available/irccs-maintenance-vhost.conf`
+  (nome fisso, referenziato dal config standalone).
 - `irccs-maintenance.service` — unit systemd, `disabled` di default (non
   parte al boot, va avviata a mano).
 - `maintenance.html` — copia statica della stessa pagina.
+
+Nota: `nginx -c <file>` prende quel file come l'INTERO `nginx.conf` (deve
+avere `events{}`/`http{}`), non come un singolo vhost — per questo la unit
+punta al file standalone, che a sua volta fa `include` del vhost giusto.
 
 ## Installazione (una tantum, in lab prima di prod)
 
@@ -51,21 +59,25 @@ dentro un container):
 # 1. nginx sull'host, se non gia' presente
 sudo apt install nginx
 
-# 2. copia pagina e config
-sudo mkdir -p /opt/irccs-maintenance
+# 2. copia pagina, config standalone e vhost
+sudo mkdir -p /opt/irccs-maintenance /etc/nginx/sites-available
 sudo cp host-maintenance/maintenance.html /opt/irccs-maintenance/
+sudo cp host-maintenance/nginx-maintenance-standalone.conf /etc/nginx/irccs-maintenance-standalone.conf
 # LAB (porta 80, no TLS):
-sudo cp host-maintenance/nginx-maintenance-lab.conf /etc/nginx/sites-available/irccs-maintenance.conf
+sudo cp host-maintenance/nginx-maintenance-lab.conf /etc/nginx/sites-available/irccs-maintenance-vhost.conf
 # PROD (porta 443, TLS) - usare questo invece del precedente in produzione:
-#   sudo cp host-maintenance/nginx-maintenance.conf /etc/nginx/sites-available/irccs-maintenance.conf
-# NON creare link in sites-enabled: va avviato standalone via systemd,
-# non tramite il nginx "principale" (se ce n'e' uno) per evitare conflitti
-# di porta quando lo stack Docker e' su.
+#   sudo cp host-maintenance/nginx-maintenance.conf /etc/nginx/sites-available/irccs-maintenance-vhost.conf
+# NON creare link in sites-enabled del nginx "principale" (se presente): va
+# avviato standalone via systemd, per evitare conflitti di porta quando lo
+# stack Docker e' su.
 
 # 3. unit systemd
 sudo cp host-maintenance/irccs-maintenance.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl disable irccs-maintenance   # resta dormiente, non parte al boot
+
+# 4. verifica sintassi PRIMA di avviare
+sudo nginx -t -c /etc/nginx/irccs-maintenance-standalone.conf
 ```
 
 In lab, verificare che `listen 80` (variante `-lab.conf`) non confligga con

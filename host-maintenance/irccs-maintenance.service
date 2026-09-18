@@ -14,10 +14,10 @@ After=network.target
 
 [Service]
 Type=forking
-ExecStartPre=/usr/sbin/nginx -t -c /etc/nginx/sites-available/irccs-maintenance.conf -g "pid /run/irccs-maintenance.pid;"
-ExecStart=/usr/sbin/nginx -c /etc/nginx/sites-available/irccs-maintenance.conf -g "pid /run/irccs-maintenance.pid;"
-ExecReload=/usr/sbin/nginx -s reload -c /etc/nginx/sites-available/irccs-maintenance.conf -g "pid /run/irccs-maintenance.pid;"
-ExecStop=/usr/sbin/nginx -s stop -c /etc/nginx/sites-available/irccs-maintenance.conf -g "pid /run/irccs-maintenance.pid;"
+ExecStartPre=/usr/sbin/nginx -t -c /etc/nginx/irccs-maintenance-standalone.conf
+ExecStart=/usr/sbin/nginx -c /etc/nginx/irccs-maintenance-standalone.conf
+ExecReload=/usr/sbin/nginx -s reload -c /etc/nginx/irccs-maintenance-standalone.conf
+ExecStop=/usr/sbin/nginx -s stop -c /etc/nginx/irccs-maintenance-standalone.conf
 PIDFile=/run/irccs-maintenance.pid
 
 [Install]
