@@ -88,34 +88,32 @@ confligga con altri servizi nginx eventualmente gia' presenti sull'host.
 
 ## Uso combinato
 
-Script in questa cartella, entrambi eseguibili da `irccs-docker/`:
+Script in questa cartella, entrambi eseguibili da `irccs-docker/`. Fanno
+TUTTI i passaggi in un colpo (richiedono il fallback gia' installato, vedi
+sopra):
 
 ```bash
 ./host-maintenance/maintenance-on.sh
 ```
-- Attiva sempre il flag Livello 1 (backend).
-- Se `irccs-httpd-dashboard` non e' in esecuzione, avvisa di avviare anche
-  il Livello 2 (`sudo systemctl start irccs-maintenance`) prima di fermare
-  lo stack.
+1. Scrive il flag Livello 1 (backend).
+2. Avvia il fallback host-level (`sudo systemctl start irccs-maintenance`)
+   se non gia' attivo.
+3. `docker compose down` — sicuro perche' la porta resta coperta dal nginx
+   host-level, nessuna finestra di 502/connection refused.
 
 ```bash
 ./host-maintenance/maintenance-off.sh
 ```
-- Svuota il flag Livello 1.
-- Se il fallback host-level (`irccs-maintenance`) e' attivo, lo ferma (cosi'
-  la porta 443 torna libera per Docker).
-- Ricorda di rifare `docker compose up -d` se lo stack era fermo.
+1. `docker compose up -d`.
+2. Attende (fino a 60s) che `irccs-httpd-dashboard` sia up prima di
+   proseguire — se non ce la fa si ferma e NON tocca il fallback, per non
+   lasciare la porta scoperta.
+3. Ferma il fallback host-level.
+4. Svuota il flag Livello 1.
 
-Procedura consigliata per un update che richiede di fermare httpd/stack:
-
-```bash
-./host-maintenance/maintenance-on.sh          # flag ON
-sudo systemctl start irccs-maintenance        # 443 coperta da nginx host
-docker compose down                           # ora sicuro, 443 resta coperta
-# ... aggiornamento ...
-docker compose up -d                          # stack riparte
-./host-maintenance/maintenance-off.sh         # ferma nginx host, svuota flag
-```
+Richiede `sudo` senza password per `systemctl start/stop irccs-maintenance`
+(o va lanciato con utente che ha i permessi), altrimenti si ferma a
+chiedere la password a meta' sequenza.
 
 ## Test in lab prima di prod
 
