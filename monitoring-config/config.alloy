@@ -390,6 +390,31 @@ loki.source.docker "default" {
   forward_to = [loki.process.logs_process_client.receiver]
 }
 
+// Backup DB (HAPI FHIR + Keycloak + hapi-audit): irccs-backup.service e
+// irccs-backup-verify.service girano come unit systemd sull'host (non
+// container — dump/verify/encrypt/retention sopravvivono a un redeploy
+// della stack, vedi backup/README.md), quindi il log arriva via journal,
+// non via loki.source.docker sopra. Richiede journal persistente
+// (Storage=persistent in journald.conf, impostato da backup/scripts/install.sh
+// step 8a) — un journal solo-volatile non e' leggibile da un altro mount
+// namespace come questo container. Path sotto /rootfs perche' l'intero
+// filesystem host e' montato li' (vedi volumes del servizio alloy).
+discovery.relabel "logs_backup_journal" {
+  targets = []
+
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+}
+
+loki.source.journal "backup" {
+  path          = "/rootfs/var/log/journal"
+  matches       = "_SYSTEMD_UNIT=irccs-backup.service _SYSTEMD_UNIT=irccs-backup-verify.service"
+  relabel_rules = discovery.relabel.logs_backup_journal.rules
+  forward_to    = [loki.process.logs_process_client.receiver]
+}
+
 // Riceve log/errori dal frontend React (src/faro.ts, @grafana/faro-web-sdk).
 // Solo logs: le trace non sono abilitate lato client (Tempo non deployato,
 // fase 2) quindi non serve un output traces qui.
