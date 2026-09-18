@@ -131,6 +131,8 @@ services:
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
       - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
+      - ./httpd-config/maintenance.html:/usr/local/apache2/htdocs/maintenance.html:ro
+      - ./httpd-config/.maintenance-flag:/usr/local/apache2/htdocs/.maintenance-flag #vuoto=sito attivo, non vuoto=manutenzione
     networks:
       - irccs
   postgres-keycloak:
