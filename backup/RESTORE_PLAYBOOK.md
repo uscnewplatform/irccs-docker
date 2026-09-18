@@ -53,11 +53,17 @@ sicurezza/DPO prima di procedere.
 ```bash
 docker compose stop irccs-auth irccs-anagrafica-pazienti irccs-studio-clinico \
   irccs-centro-ricerca irccs-practitioner irccs-clinical-reasoning \
-  irccs-notification irccs-tac irccs-zammad irccs-httpd-dashboard \
+  irccs-notification irccs-tac irccs-zammad irccs-webpush irccs-patient-interview \
+  irccs-httpd-dashboard irccs-keycloak irccs-hapi-fhir \
   irccs-hapi-audit irccs-audit-integrity
 ```
 
-Evita scritture concorrenti durante il restore. I due container postgres restano su.
+Evita scritture concorrenti durante il restore. **`irccs-keycloak` e `irccs-hapi-fhir` vanno
+fermati anche loro**, non solo `irccs-hapi-audit`: `restore_db.sh` fa `DROP DATABASE` senza
+`WITH (FORCE)`, e Postgres rifiuta il drop se un client ha ancora connessioni aperte verso
+quel DB — lasciarli accesi fa fallire il restore di `postgres-keycloak`/`postgres-hapi-fhir`
+a metà. I tre container postgres (`postgres-keycloak`, `postgres-hapi-fhir`,
+`postgres-hapi-audit`) restano su, solo i client applicativi si fermano.
 
 ## 3. Decifrare il dump
 
