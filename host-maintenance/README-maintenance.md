@@ -115,6 +115,11 @@ Richiede `sudo` senza password per `systemctl start/stop irccs-maintenance`
 (o va lanciato con utente che ha i permessi), altrimenti si ferma a
 chiedere la password a meta' sequenza.
 
+Rilevano da soli quale comando compose usare: `docker compose` (v2, plugin)
+se disponibile, altrimenti fallback su `docker-compose` (v1, binario a
+parte) — non tutte le macchine hanno entrambi. Se non trovano ne' l'uno ne'
+l'altro, escono con errore prima di toccare nulla.
+
 ## Test in lab prima di prod
 
 1. Con stack su, `echo test > httpd-config/.maintenance-flag` (o lo script

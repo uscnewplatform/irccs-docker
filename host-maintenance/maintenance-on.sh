@@ -12,6 +12,15 @@ set -euo pipefail
 COMPOSE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FLAG_FILE="$COMPOSE_DIR/httpd-config/.maintenance-flag"
 
+if docker compose version &>/dev/null; then
+    COMPOSE=(docker compose)
+elif command -v docker-compose &>/dev/null; then
+    COMPOSE=(docker-compose)
+else
+    echo "[ERRORE] Ne' 'docker compose' (v2) ne' 'docker-compose' (v1) trovati." >&2
+    exit 1
+fi
+
 echo "manutenzione attivata il $(date -Iseconds)" > "$FLAG_FILE"
 echo "[OK] Flag di manutenzione (livello 1, backend) attivato: $FLAG_FILE"
 
@@ -28,6 +37,6 @@ else
     echo "[OK] Fallback host-level attivo: la porta e' coperta anche a stack fermo."
 fi
 
-echo "[..] Fermo lo stack Docker (docker compose down)..."
-(cd "$COMPOSE_DIR" && docker compose down)
+echo "[..] Fermo lo stack Docker (${COMPOSE[*]} down)..."
+(cd "$COMPOSE_DIR" && "${COMPOSE[@]}" down)
 echo "[OK] Stack fermo. Sito in manutenzione, servito da nginx host-level."

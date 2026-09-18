@@ -9,8 +9,17 @@ set -euo pipefail
 COMPOSE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FLAG_FILE="$COMPOSE_DIR/httpd-config/.maintenance-flag"
 
-echo "[..] Riavvio lo stack Docker (docker compose up -d)..."
-(cd "$COMPOSE_DIR" && docker compose up -d)
+if docker compose version &>/dev/null; then
+    COMPOSE=(docker compose)
+elif command -v docker-compose &>/dev/null; then
+    COMPOSE=(docker-compose)
+else
+    echo "[ERRORE] Ne' 'docker compose' (v2) ne' 'docker-compose' (v1) trovati." >&2
+    exit 1
+fi
+
+echo "[..] Riavvio lo stack Docker (${COMPOSE[*]} up -d)..."
+(cd "$COMPOSE_DIR" && "${COMPOSE[@]}" up -d)
 
 echo "[..] Attendo che irccs-httpd-dashboard sia up (max 60s)..."
 for i in $(seq 1 30); do
