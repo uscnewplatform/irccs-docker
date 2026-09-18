@@ -170,18 +170,6 @@ Implementazione (`irccs-common/i3-client`, `FhirClient`):
 Per tutti gli altri eventi vale il comportamento best-effort: un errore nella scrittura
 dell'AuditEvent non blocca l'operazione originale; resta la traccia su Loki.
 
-CAUTION: **Limite del fail-closed sincrono.** La compensating delete copre solo il caso in
-cui la POST dell'AuditEvent fallisce *e ritorna un errore* prima che `create()` termini. Se
-il processo muore (OOM-kill, restart del pod, network partition) *tra* il write clinico
-riuscito e il write audit, nessun codice in-process può reagire: la risorsa resta creata,
-silenziosamente senza audit. Questa finestra residua è coperta fuori-processo dalla
-riconciliazione periodica (`verify_audit_coverage.py`, vedi sotto) che confronta
-periodicamente store clinico e store audit sui tipi critici e segnala l'eventuale orfano —
-non in tempo reale come il fail-closed sincrono, ma entro il ciclo di verifica
-(`AUDIT_INTEGRITY_INTERVAL`, default 900s). Se anche la `compensatingDelete` stessa fallisce
-(store audit giù *durante* il tentativo di rollback), il log riporta il marker
-`AUDIT-INTEGRITY-ORPHAN-RESOURCE` (stesso marker usato dalla riconciliazione, vedi sotto).
-
 == Immodificabilità
 
 L'isolamento e l'integrità degli AuditEvent sono garantiti da tre interceptor HAPI
@@ -478,7 +466,6 @@ parametri per area.
 |`org.quarkus.irccs.audit.sensitive-resource-types.extra` |_(vuoto)_ |CSV che **aggiunge** tipi all'elenco di default senza riscriverlo tutto.
 |`org.quarkus.irccs.audit-fhir-server` |_(server clinico)_ |Base URL dello store AuditEvent. Se assente si scrive sullo stesso HAPI dei dati clinici.
 |`org.quarkus.irccs.audit-site` |`unknown-site` |Valore di `AuditEvent.source.site`.
-|`org.quarkus.irccs.audit.require-isolated-store` |`true` |Se `true` e `audit-fhir-server` non è configurato (o coincide col server clinico), l'avvio fallisce in `LaunchMode.NORMAL` (prod/staging) invece di degradare in silenzio a store condiviso. `false` per accettare esplicitamente il condiviso.
 |===
 
 ==== Eventi di business e arricchimento
@@ -525,7 +512,6 @@ disattivano non installandoli o con `DROP TRIGGER`.
 |Livello |Dove |Default
 
 |AuditEvent FHIR (record legale) |`hapi-audit-config/application.yaml` (`expunge_enabled: false` + append-only) |illimitata -- nessuna cancellazione
-|Backup `hapi-audit` (dump cifrato locale + offsite) |`backup/.env.backup` -> `BACKUP_AUDIT_RETENTION_YEARS` |`25` anni, esente dal thinning GFS (`retention_cleanup.sh`), non per conteggio
 |Log Loki audit (`audit_trail="true"`) |`monitoring-config/loki-config.yml` -> `retention_stream` |`26280h` (3 anni)
 |Log Loki generici |stesso file -> `retention_period` |`2160h` (3 mesi)
 |Eventi Keycloak |`keycloak-config/realm-export/realm-export.json` -> `eventsExpiration` |`94608000` (3 anni, in secondi)
@@ -553,50 +539,11 @@ NOTE: Il poller chiama gli endpoint `/admin/realms/{realm}/events` e `/admin-eve
 destinatari). Le soglie sono provvisorie -- vedi la nota di validazione per la
 procedura di ricalibrazione.
 
-[#attivazione-deploy]
 == Attivazione (deploy)
 
 Nell'`.env`: impostare `HAPI_AUDIT_DB_USER/PASSWORD/NAME` e (produzione)
 `HAPI_CORS_ALLOWED_ORIGIN`. Gli interruttori `IRCCS_AUDIT_*` e le proprietà
 `org.quarkus.irccs.audit.*` restano ai default (tutto attivo) se non impostati.
-
-CAUTION: **Prima creazione dello store audit su un ambiente nuovo**: `HAPI_AUDIT_DB_USER`/
-`HAPI_AUDIT_DB_PASSWORD` non devono coincidere con nulla di esistente — è un DB nuovo, va
-bene qualunque credenziale purché diversa dai default d'esempio (genera con `openssl rand
--base64 24`). Se lo store esiste già (upgrade di un ambiente con dati), le credenziali in
-`.env` DEVONO combaciare esattamente con quelle usate alla creazione originale del volume
-`postgres_data_hapi_audit`, altrimenti l'autenticazione fallisce silenziosamente (il
-sintomo è `UnknownHostException` o connection refused nei log di `irccs-hapi-audit`, non
-un errore di credenziali esplicito — la connessione fallisce prima ancora di arrivare
-all'auth se il container `postgres-hapi-audit` non è nemmeno raggiungibile/su).
-
-CAUTION: **Permessi della cartella Lucene** (`hapi-fhir-config/lucenefiles-audit`, montata
-su `/lucenefiles` nel container). Se la directory host non esiste ancora, Docker la crea
-come `root:root` al primo `docker compose up` — il processo Java dentro il container gira
-come utente non-root e non può scriverci, con fallimento a startup
-(`AccessDeniedException: /lucenefiles/TermConcept`, tipicamente dopo che la connessione al
-DB è già andata a buon fine — non confondere questo errore con un problema di DB). Prima
-del primo avvio:
-+
-[source,bash]
-----
-mkdir -p hapi-fhir-config/lucenefiles-audit
-chmod -R 777 hapi-fhir-config/lucenefiles-audit
-----
-+
-Verificare con `ls -la hapi-fhir-config/lucenefiles-audit` che risulti `drwxrwxrwx` PRIMA
-di avviare/riavviare `irccs-hapi-audit` — un `chmod` lanciato ma non verificato (permessi
-insufficienti sull'host, target sbagliato) è la causa più comune di questo errore
-ripetuto anche dopo il fix apparente.
-
-CAUTION: **`docker-compose` v1 (`docker-compose` con trattino, es. `1.29.2`) rompe il
-recreate** di container il cui config è cambiato, con `ERROR: ... 'ContainerConfig'`
-(`KeyError` Python) — bug noto di v1 con immagini in formato manifest recente
-(BuildKit). Sintomo secondario: il container fallito viene rinominato con un prefisso
-hash (es. `2a038cd3eb7c_postgres-hapi-audit`) invece di essere sostituito. Fix: usare
-`docker compose` v2 (plugin, SENZA trattino, `docker compose version` per verificare se
-c'è) al posto di `docker-compose` v1; se non disponibile, `docker rm -f <nome-container>`
-esplicito prima di ogni `docker-compose up -d` che tocca quel servizio.
 
 . Deploy dello stack `irccs-docker` (jar interceptor e config sono già in
   `hapi-fhir-config/` e `hapi-audit-config/`). Vengono creati `postgres-hapi-audit` e
