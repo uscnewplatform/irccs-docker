@@ -96,10 +96,17 @@ sopra):
 ./host-maintenance/maintenance-on.sh
 ```
 1. Scrive il flag Livello 1 (backend).
-2. Avvia il fallback host-level (`sudo systemctl start irccs-maintenance`)
+2. `docker compose down` — DEVE succedere prima del fallback: nginx e
+   `irccs-httpd-dashboard` vogliono la stessa porta, non possono coesistere;
+   se nginx parte con httpd ancora su, fallisce con
+   "Address already in use" (bug visto in lab, corretto).
+3. Avvia il fallback host-level (`sudo systemctl start irccs-maintenance`)
    se non gia' attivo.
-3. `docker compose down` — sicuro perche' la porta resta coperta dal nginx
-   host-level, nessuna finestra di 502/connection refused.
+
+Nota: tra il passo 2 e il passo 3 c'e' inevitabilmente una finestra di
+qualche secondo in cui nessuno risponde sulla porta (httpd gia' giu', nginx
+non ancora su) — stessa cosa, in ordine inverso, della finestra descritta
+sotto per `maintenance-off.sh`. Non eliminabile con questa architettura.
 
 ```bash
 ./host-maintenance/maintenance-off.sh
