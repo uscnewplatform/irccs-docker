@@ -181,6 +181,21 @@ log "Check connessione SSH + docker su TARGET..."
 "${SSH_DST[@]}" "docker ps --format '{{.Names}}' | grep -qE '^postgres-hapi-fhir$' && docker ps --format '{{.Names}}' | grep -qE '^postgres-keycloak$'" \
   || { warn "TARGET: container postgres-hapi-fhir / postgres-keycloak non trovati o non attivi."; exit 1; }
 
+# DB audit trail separato (postgres-hapi-audit): incluso solo se presente e attivo
+# su ENTRAMBI gli host (ambienti pre-audit non lo hanno). Se c'e' solo da un lato
+# il sync procede senza audit, ma con warning: hash-chain non allineata.
+has_audit() { "$@" "docker ps --format '{{.Names}}' | grep -qE '^postgres-hapi-audit$'"; }
+SRC_HAS_AUDIT=false; DST_HAS_AUDIT=false
+has_audit "${SSH_SRC[@]}" && SRC_HAS_AUDIT=true
+has_audit "${SSH_DST[@]}" && DST_HAS_AUDIT=true
+if [[ "$SRC_HAS_AUDIT" == true && "$DST_HAS_AUDIT" == true ]]; then
+  WITH_AUDIT=true
+  log "DB audit (postgres-hapi-audit) presente su SOURCE e TARGET: incluso nel sync."
+else
+  WITH_AUDIT=false
+  warn "postgres-hapi-audit non presente su entrambi (SOURCE=${SRC_HAS_AUDIT} TARGET=${DST_HAS_AUDIT}): DB audit ESCLUSO dal sync."
+fi
+
 # ----------------------------------------------------------------------------
 # STEP 1 — conteggi SOURCE prima del dump (per confronto finale automatico)
 # ----------------------------------------------------------------------------
@@ -188,6 +203,11 @@ log "Leggo conteggi di riferimento su SOURCE..."
 SRC_HAPI_COUNT=$("${SSH_SRC[@]}" "docker exec postgres-hapi-fhir psql -U admin -d hapi -tAc 'SELECT count(*) FROM hfj_resource;'" | tr -d '[:space:]')
 SRC_KC_COUNT=$("${SSH_SRC[@]}" "docker exec postgres-keycloak psql -U keycloak_owner -d keycloak -tAc 'SELECT count(*) FROM user_entity;'" | tr -d '[:space:]')
 log "  SOURCE hfj_resource=${SRC_HAPI_COUNT}  user_entity=${SRC_KC_COUNT}"
+SRC_AUDIT_COUNT=""
+if [[ "$WITH_AUDIT" == true ]]; then
+  SRC_AUDIT_COUNT=$("${SSH_SRC[@]}" "cd '${SRC_DIR}' && source .env 2>/dev/null; docker exec postgres-hapi-audit psql -U \"\${HAPI_AUDIT_DB_USER}\" -d \"\${HAPI_AUDIT_DB_NAME:-hapiaudit}\" -tAc \"SELECT count(*) FROM hfj_resource WHERE res_type='AuditEvent';\"" | tr -d '[:space:]')
+  log "  SOURCE AuditEvent(audit)=${SRC_AUDIT_COUNT}"
+fi
 
 # Nota su partition_id: HAPI puo' risolvere una "partizione di default"
 # diversa da NULL (es. 0) a seconda della storia dell'istanza TARGET, in modo
@@ -215,6 +235,8 @@ HAPI_DB_NAME="\${HAPI_DB_NAME:-hapi}"
 HAPI_DB_USER="\${HAPI_DB_USER:-admin}"
 KC_DB_NAME="\${POSTGRES_KEYCLOAK_DB:-keycloak}"
 KC_DB_USER="\${POSTGRES_KEYCLOAK_USER:-keycloak_owner}"
+AUDIT_DB_NAME="\${HAPI_AUDIT_DB_NAME:-hapiaudit}"
+AUDIT_DB_USER="\${HAPI_AUDIT_DB_USER:-}"
 
 verify_dump() {
   local file="\$1" container="\$2"
@@ -236,7 +258,13 @@ echo "  dump Keycloak..."
 docker exec postgres-keycloak pg_dump -U "\$KC_DB_USER" -F c -d "\$KC_DB_NAME" > "${REMOTE_BACKUP_DIR_SRC}/keycloak_${DATE}.dump"
 verify_dump "${REMOTE_BACKUP_DIR_SRC}/keycloak_${DATE}.dump" postgres-keycloak
 
-echo "  OK entrambi i dump validi su SOURCE."
+if [[ "${WITH_AUDIT}" == true ]]; then
+  echo "  dump HAPI audit..."
+  docker exec postgres-hapi-audit pg_dump -U "\$AUDIT_DB_USER" -F c -d "\$AUDIT_DB_NAME" > "${REMOTE_BACKUP_DIR_SRC}/hapi-audit_${DATE}.dump"
+  verify_dump "${REMOTE_BACKUP_DIR_SRC}/hapi-audit_${DATE}.dump" postgres-hapi-audit
+fi
+
+echo "  OK dump validi su SOURCE."
 REMOTE_DUMP
 
 log "Dump completati e validati su SOURCE: ${REMOTE_BACKUP_DIR_SRC}"
@@ -252,11 +280,15 @@ LOCAL_BACKUP_DIR="${LOCAL_TMP}/backup_${DATE}"
 log "Verifico checksum locale..."
 LOCAL_HAPI=$(ls "${LOCAL_BACKUP_DIR}"/hapi_*.dump)
 LOCAL_KC=$(ls "${LOCAL_BACKUP_DIR}"/keycloak_*.dump)
-ls -lh "$LOCAL_HAPI" "$LOCAL_KC"
+LOCAL_AUDIT=""
+if [[ "$WITH_AUDIT" == true ]]; then
+  LOCAL_AUDIT=$(ls "${LOCAL_BACKUP_DIR}"/hapi-audit_*.dump)
+fi
+ls -lh "$LOCAL_HAPI" "$LOCAL_KC" ${LOCAL_AUDIT:+"$LOCAL_AUDIT"}
 
 log "Carico dump da locale verso TARGET..."
 "${SSH_DST[@]}" "mkdir -p '${REMOTE_BACKUP_DIR_DST}'"
-"${SSHPASS_DST[@]}" scp -o ConnectTimeout=8 -P "$SCP_DST_PORT" "$LOCAL_HAPI" "$LOCAL_KC" "${DST_USER}@${DST_HOST}:${REMOTE_BACKUP_DIR_DST}/"
+"${SSHPASS_DST[@]}" scp -o ConnectTimeout=8 -P "$SCP_DST_PORT" "$LOCAL_HAPI" "$LOCAL_KC" ${LOCAL_AUDIT:+"$LOCAL_AUDIT"} "${DST_USER}@${DST_HOST}:${REMOTE_BACKUP_DIR_DST}/"
 
 # ----------------------------------------------------------------------------
 # STEP 4 — verifica integrita' dump sul TARGET prima di toccare qualsiasi DB
@@ -277,7 +309,10 @@ verify_dump() {
 }
 verify_dump "${REMOTE_BACKUP_DIR_DST}/$(basename "$LOCAL_HAPI")" postgres-hapi-fhir
 verify_dump "${REMOTE_BACKUP_DIR_DST}/$(basename "$LOCAL_KC")" postgres-keycloak
-echo "OK entrambi i dump validi su TARGET."
+if [[ "${WITH_AUDIT}" == true ]]; then
+  verify_dump "${REMOTE_BACKUP_DIR_DST}/$(basename "${LOCAL_AUDIT:-none}")" postgres-hapi-audit
+fi
+echo "OK dump validi su TARGET."
 REMOTE_VERIFY
 
 # ----------------------------------------------------------------------------
@@ -285,7 +320,7 @@ REMOTE_VERIFY
 # ----------------------------------------------------------------------------
 if [[ "$AUTO_YES" == false ]]; then
   echo ""
-  warn "STAI PER SOVRASCRIVERE i DB hapi + keycloak su TARGET: ${DST_HOST}"
+  warn "STAI PER SOVRASCRIVERE i DB hapi + keycloak$([[ "$WITH_AUDIT" == true ]] && echo " + hapi-audit") su TARGET: ${DST_HOST}"
   warn "SOURCE (${SRC_HOST}) non viene toccato in nessun modo."
   read -r -p "Scrivi 'RESTORE' per confermare: " CONFIRM
   if [[ "$CONFIRM" != "RESTORE" ]]; then
@@ -341,6 +376,8 @@ HAPI_DB_NAME="\${HAPI_DB_NAME:-hapi}"
 HAPI_DB_USER="\${HAPI_DB_USER:-admin}"
 KC_DB_NAME="\${POSTGRES_KEYCLOAK_DB:-keycloak}"
 KC_DB_USER="\${POSTGRES_KEYCLOAK_USER:-keycloak_owner}"
+AUDIT_DB_NAME="\${HAPI_AUDIT_DB_NAME:-hapiaudit}"
+AUDIT_DB_USER="\${HAPI_AUDIT_DB_USER:-}"
 
 if docker compose version >/dev/null 2>&1; then
   COMPOSE="docker compose"
@@ -353,6 +390,11 @@ fi
 echo "  uso: \$COMPOSE"
 
 \$COMPOSE stop irccs-hapi-fhir irccs-keycloak
+if [[ "${WITH_AUDIT}" == true ]]; then
+  # Ferma anche HAPI audit e il verificatore hash-chain: niente scritture/verifiche
+  # sul DB audit durante wipe+restore (un check a meta' restore darebbe falso allarme).
+  \$COMPOSE stop irccs-hapi-audit irccs-audit-integrity
+fi
 
 # Wipe completo dello schema public PRIMA del restore, invece di affidarsi
 # a "pg_restore --clean" (che genera i DROP solo per gli oggetti presenti
@@ -387,7 +429,21 @@ docker cp "${REMOTE_BACKUP_DIR_DST}/$(basename "$LOCAL_KC")" postgres-keycloak:/
 docker exec postgres-keycloak pg_restore -U "\$KC_DB_USER" -d "\$KC_DB_NAME" --exit-on-error -v /tmp/restore_keycloak.dump
 docker exec postgres-keycloak rm -f /tmp/restore_keycloak.dump
 
+if [[ "${WITH_AUDIT}" == true ]]; then
+  echo "  wipe schema public su HAPI audit (TARGET) prima del restore..."
+  docker exec postgres-hapi-audit psql -U "\$AUDIT_DB_USER" -d "\$AUDIT_DB_NAME" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public AUTHORIZATION \"\$AUDIT_DB_USER\";"
+  docker exec postgres-hapi-audit psql -U "\$AUDIT_DB_USER" -d "\$AUDIT_DB_NAME" -c "SELECT lo_unlink(oid) FROM pg_largeobject_metadata;" >/dev/null
+
+  echo "  restore HAPI audit..."
+  docker cp "${REMOTE_BACKUP_DIR_DST}/$(basename "${LOCAL_AUDIT:-none}")" postgres-hapi-audit:/tmp/restore_hapi_audit.dump
+  docker exec postgres-hapi-audit pg_restore -U "\$AUDIT_DB_USER" -d "\$AUDIT_DB_NAME" --exit-on-error -v /tmp/restore_hapi_audit.dump
+  docker exec postgres-hapi-audit rm -f /tmp/restore_hapi_audit.dump
+fi
+
 \$COMPOSE start irccs-hapi-fhir irccs-keycloak
+if [[ "${WITH_AUDIT}" == true ]]; then
+  \$COMPOSE start irccs-hapi-audit irccs-audit-integrity
+fi
 echo "  app riavviate su TARGET."
 REMOTE_RESTORE
 
@@ -487,6 +543,14 @@ sleep 8
 
 DST_HAPI_COUNT=$("${SSH_DST[@]}" "docker exec postgres-hapi-fhir psql -U admin -d hapi -tAc 'SELECT count(*) FROM hfj_resource;'" | tr -d '[:space:]')
 DST_KC_COUNT=$("${SSH_DST[@]}" "docker exec postgres-keycloak psql -U keycloak_owner -d keycloak -tAc 'SELECT count(*) FROM user_entity;'" | tr -d '[:space:]')
+if [[ "$WITH_AUDIT" == true ]]; then
+  DST_AUDIT_COUNT=$("${SSH_DST[@]}" "cd '${DST_DIR}' && source .env 2>/dev/null; docker exec postgres-hapi-audit psql -U \"\${HAPI_AUDIT_DB_USER}\" -d \"\${HAPI_AUDIT_DB_NAME:-hapiaudit}\" -tAc \"SELECT count(*) FROM hfj_resource WHERE res_type='AuditEvent';\"" | tr -d '[:space:]')
+  if [[ "$DST_AUDIT_COUNT" == "$SRC_AUDIT_COUNT" ]]; then
+    log "  AuditEvent OK: SOURCE=${SRC_AUDIT_COUNT} TARGET=${DST_AUDIT_COUNT}"
+  else
+    warn "  AuditEvent DIVERSI: SOURCE=${SRC_AUDIT_COUNT} TARGET=${DST_AUDIT_COUNT} (SOURCE puo' aver scritto dopo il dump; se lo scarto e' grande verifica)"
+  fi
+fi
 
 # ----------------------------------------------------------------------------
 # STEP 7.5 — smoke test: lettura REST diretta di una risorsa reale su TARGET,
