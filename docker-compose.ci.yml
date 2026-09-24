@@ -66,13 +66,18 @@ services:
     container_name: !reset null
     ports: !reset []
     mem_limit: 2g
+    # Keycloak 26 accetta --hostname-backchannel-dynamic true solo con hostname in forma di URL
+    # completo: KC_HOSTNAME resta solo host (serve all'alias httpd e all'URL dei test), qui si
+    # aggiunge lo schema (stack CI solo HTTP).
+    environment:
+      KC_HOSTNAME: http://${KC_HOSTNAME}
     # Come il base (develop: Keycloak senza relative path) ma SENZA --import-realm: il realm
     # arriva dal dump, non da realm-export.
     entrypoint:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname ${KC_HOSTNAME} --hostname-backchannel-dynamic true"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname http://${KC_HOSTNAME} --hostname-backchannel-dynamic true"
       ]
 
   irccs-hapi-fhir:
