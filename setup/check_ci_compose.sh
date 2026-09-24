@@ -7,7 +7,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 ENV_FILE="${1:?uso: check_ci_compose.sh <env-file>}"
 export CI_PROJECT="${CI_PROJECT:-pascale-ci-check}"
 export CI_CONF_DIR="${CI_CONF_DIR:-/tmp/ci-conf-check}"
-mkdir -p "$CI_CONF_DIR"; touch "$CI_CONF_DIR/httpd.conf" "$CI_CONF_DIR/irccs.conf" "$CI_CONF_DIR/zammad.conf"
+mkdir -p "$CI_CONF_DIR"; touch "$CI_CONF_DIR/httpd.conf" "$CI_CONF_DIR/irccs.conf" "$CI_CONF_DIR/zammad.conf" "$CI_CONF_DIR/config.js"
 CREATED_ENV=false
 if [ ! -f .env ]; then cp "$ENV_FILE" .env; CREATED_ENV=true; fi
 trap '[ "$CREATED_ENV" = true ] && rm -f .env' EXIT
@@ -34,6 +34,9 @@ while IFS=$'\t' read -r svc cname; do
     '.services[$s].networks.irccs.aliases // [] | index($c) != null' >/dev/null \
     || { echo "KO: $svc senza alias $cname"; fail=1; }
 done <<< "$PAIRS"
+# dashboard: config.js senza Zammad montato da CI_CONF_DIR (una sola mount su quel target)
+n=$(echo "$JSON" | jq --arg d "$CI_CONF_DIR" '[.services["irccs-httpd"].volumes[] | select(.target == "/usr/local/apache2/htdocs/config.js" and .source == ($d + "/config.js"))] | length')
+[ "$n" = 1 ] || { echo "KO: config.js del dashboard non montato da CI_CONF_DIR (mount trovate: $n)"; fail=1; }
 # Keycloak: niente --import-realm in CI
 echo "$JSON" | jq -e '.services["irccs-keycloak"].entrypoint | join(" ") | contains("--import-realm") | not' >/dev/null \
   || { echo "KO: keycloak usa ancora --import-realm"; fail=1; }

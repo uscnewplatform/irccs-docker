@@ -103,6 +103,9 @@ services:
       - ${CI_CONF_DIR}/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ${CI_CONF_DIR}/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ${CI_CONF_DIR}/zammad.conf:/usr/local/apache2/conf/sites/zammad.conf
+      # config.js del dashboard senza Zammad (VITE_APP_ZAMMAD_HOST vuoto) e senza Faro: generato
+      # da e2e-stack.sh da httpd-config/config-prod.js.
+      - ${CI_CONF_DIR}/config.js:/usr/local/apache2/htdocs/config.js
     networks:
       irccs:
         aliases:

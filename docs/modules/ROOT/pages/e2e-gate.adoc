@@ -17,6 +17,7 @@ Orchestrato da `irccs-jenkinsfile/scripts/e2e/e2e-stack.sh` con
 * *alias di rete*: httpd e microservizi si chiamano per *nome container* (`irccs-auth`, `irccs-centro-ricerca`, ...). Senza `container_name` quei nomi restano risolvibili come alias; httpd ha anche l'alias `${KC_HOSTNAME}`;
 * Keycloak senza `--import-realm` (il realm arriva dal dump);
 * httpd solo HTTP: `httpd.conf` e `irccs.conf` sono derivati con `sed` da `httpd-config/` in `.ci-conf/`, cosi' le regole di proxy non si duplicano;
+* Dashboard senza Zammad: `e2e-stack.sh up` genera `.ci-conf/config.js` da `httpd-config/config-prod.js` con `VITE_APP_ZAMMAD_HOST` e le chiavi Faro vuote (il dashboard tratta host vuoto come Zammad non configurato) e l'override lo monta su `htdocs/config.js`.
 * servizio `mailpit` al posto di Gmail (le specs leggono gli OTP dalla REST API di Mailpit).
 
 Requisiti: Docker Compose >= 2.24 (`!reset`).
