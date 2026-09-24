@@ -26,7 +26,7 @@ echo "sha256 dump usati:"; (cd "$DUMP_DIR" && sha256sum $DUMPS)
 # e passarli a restore_db.sh tramite le variabili BACKUP_*_CONTAINER che gia' supporta.
 cid() {
   docker ps --filter "label=com.docker.compose.project=$CI_PROJECT" \
-            --filter "label=com.docker.compose.service=$1" --format '{{.Names}}' | head -n1
+            --filter "label=com.docker.compose.service=$1" --format '{{.Names}}' | sed -n '1p'
 }
 BACKUP_HAPI_CONTAINER="$(cid postgres-hapi-fhir)"
 BACKUP_KEYCLOAK_CONTAINER="$(cid postgres-keycloak)"
