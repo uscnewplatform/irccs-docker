@@ -1,0 +1,104 @@
+# Override CI per il gate E2E (vedi irccs-jenkinsfile/docs/superpowers/specs/2026-09-23-e2e-gate-design.md).
+# Isola lo stack dallo staging sullo stesso Docker host: niente container_name, niente porte
+# host, reti con nome per-progetto (nel compose base hanno nome fisso `irccs`/`irccs-audit-db`:
+# senza override lo stack CI si unirebbe alla rete di staging). httpd e microservizi si chiamano
+# per NOME CONTAINER (irccs-auth, irccs-centro-ricerca...): senza container_name quei nomi
+# restano risolvibili come alias di rete. Solo HTTP (porta 80), Keycloak senza --import-realm.
+# Uso: docker compose -p $CI_PROJECT -f docker-compose.yaml -f docker-compose.ci.yml --env-file <env> ...
+networks:
+  irccs:
+    name: ${CI_PROJECT}-irccs
+  irccs-audit-db:
+    name: ${CI_PROJECT}-irccs-audit-db
+
+services:
+  irccs-microservice-clinical-reasoning:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-clinical-reasoning] } }
+  irccs-microservice-auth:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-auth] } }
+  irccs-microservice-notification:
+    container_name: !reset null
+    ports: !reset []
+    networks: { irccs: { aliases: [irccs-notification] } }
+  irccs-microservice-practitioner:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-practitioner] } }
+  irccs-microservice-centro-ricerca:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-centro-ricerca] } }
+  irccs-microservice-studio-clinico:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-studio-clinico] } }
+  irccs-microservice-anagrafica-pazienti:
+    container_name: !reset null
+    ports: !reset []
+    networks: { irccs: { aliases: [irccs-anagrafica-pazienti] } }
+  irccs-microservice-tac:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-tac] } }
+  irccs-microservice-zammad:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-zammad] } }
+  irccs-microservice-webpush:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-webpush] } }
+  irccs-microservice-patient-interview:
+    container_name: !reset null
+    networks: { irccs: { aliases: [irccs-patient-interview] } }
+  cache:
+    container_name: !reset null
+    ports: !reset []
+    networks: { irccs: { aliases: [irccs-redis] } }
+  irccs-antora-docs:
+    container_name: !reset null
+    ports: !reset []
+
+  # Postgres/HAPI audit/integrity: container_name == nome servizio, nessun alias necessario.
+  postgres-keycloak:     { container_name: !reset null }
+  postgres-hapi-fhir:    { container_name: !reset null }
+  postgres-hapi-audit:   { container_name: !reset null }
+  irccs-hapi-audit:      { container_name: !reset null, ports: !reset [] }
+  irccs-audit-integrity: { container_name: !reset null }
+
+  irccs-keycloak:
+    container_name: !reset null
+    ports: !reset []
+    mem_limit: 2g
+    # Come il base (develop: Keycloak senza relative path) ma SENZA --import-realm: il realm
+    # arriva dal dump, non da realm-export.
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname ${KC_HOSTNAME} --hostname-backchannel-dynamic true"
+      ]
+
+  irccs-hapi-fhir:
+    container_name: !reset null
+    ports: !reset []
+    mem_limit: 4g
+
+  # httpd solo HTTP: le conf (Listen 80, vhost *:80 senza SSL) sono DERIVATE da httpd-config/
+  # da e2e-stack.sh (sed) in CI_CONF_DIR, cosi' le regole di proxy non vanno duplicate a mano.
+  # Mount agli stessi path del base => l'override sostituisce le sorgenti (il base di develop non
+  # monta certificati TLS).
+  irccs-httpd:
+    container_name: !reset null
+    ports: !reset []
+    volumes:
+      - ${CI_CONF_DIR}/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ${CI_CONF_DIR}/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
+      - ${CI_CONF_DIR}/zammad.conf:/usr/local/apache2/conf/sites/zammad.conf
+    networks:
+      irccs:
+        aliases:
+          - irccs-httpd-dashboard
+          - ${KC_HOSTNAME}
+
+  # SMTP catcher: sostituisce Gmail (le specs auth-authz leggono OTP da Mailpit REST).
+  mailpit:
+    image: axllent/mailpit:latest
+    networks:
+      - irccs
