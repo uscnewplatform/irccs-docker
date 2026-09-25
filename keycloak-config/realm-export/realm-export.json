@@ -496,18 +496,6 @@
         "attributes": {}
       },
       {
-        "id": "fc5f5c3a-b57f-4f3f-8bfa-2e5fce6f3ce2",
-        "name": "internal:ui:pazienti",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {
-          "category": [
-            "menu"
-          ]
-        }
-      },
-      {
         "id": "5e47317d-be91-45fd-a796-897b77c072c9",
         "name": "binary:history",
         "description": "Allows you to perform a history operation on Binary.",
@@ -612,22 +600,6 @@
         "name": "careplan:create",
         "description": "Allows you to perform a create operation on CarePlan.",
         "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
-        "id": "c11c2e3b-6beb-4ef3-b58a-db788d948dc7",
-        "name": "radiologi",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "internal:read:organization",
-            "internal:read:group",
-            "internal:create:group"
-          ]
-        },
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
