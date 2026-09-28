@@ -12,7 +12,7 @@ networks:
 
 services:
   irccs-pwa:
-    image: nexus.infocube.it:443/i3/irccs/irccs-pwa/develop:1.0.0
+    image: nexus.infocube.it:443/i3/irccs/irccs-pwa/${IRCCS_PWA_BRANCH:-develop}:${IRCCS_PWA_VERSION:-1.0.0}
     container_name: irccs-pwa
     hostname: irccs-pwa
     env_file:

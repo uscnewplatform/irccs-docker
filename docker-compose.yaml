@@ -146,6 +146,12 @@ services:
       - ./httpd-config/zammad.conf:/usr/local/apache2/conf/sites/zammad.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
+      # versions.json generato ad ogni deploy da httpd-config/generate-versions-env.sh
+      # (chiamato dai Jenkinsfile di deploy in irccs-jenkinsfile). Pagina pubblica
+      # /versions del dashboard lo legge via fetch. Se il file non esiste ancora
+      # (primo deploy dopo questa modifica), i Jenkinsfile lo creano prima dello
+      # start del container; in locale: bash httpd-config/generate-versions-env.sh .env httpd-config/versions.json
+      - ./httpd-config/versions.json:/usr/local/apache2/htdocs/versions.json:ro
       - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
       - ./httpd-config/maintenance.html:/usr/local/apache2/htdocs/maintenance.html:ro
       - ./httpd-config/.maintenance-flag:/usr/local/apache2/htdocs/.maintenance-flag #vuoto=sito attivo, non vuoto=manutenzione

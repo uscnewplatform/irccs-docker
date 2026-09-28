@@ -141,12 +141,35 @@ warn() { echo "!!! $*" >&2; }
 # (ssh-copy-id) invece: zero segreti in giro, revoca immediata.
 # ----------------------------------------------------------------------------
 SSHPASS_SRC=(); SSHPASS_DST=()
+
+# Chiede le password se non gia' in env (input nascosto). Invio a vuoto =
+# nessuna password: usa chiave SSH o prompt manuale di ssh/scp.
+if [[ -z "${SYNC_SRC_SSH_PASS:-}" && -z "${SYNC_DST_SSH_PASS:-}" && "$AUTO_YES" == false && -t 0 ]]; then
+  echo ""
+  echo "Password SSH (invio a vuoto = chiave SSH / prompt manuale):"
+  read -r -s -p "  Password SSH SOURCE: " SYNC_SRC_SSH_PASS; echo ""
+  read -r -s -p "  Password SSH TARGET: " SYNC_DST_SSH_PASS; echo ""
+  export SYNC_SRC_SSH_PASS SYNC_DST_SSH_PASS
+fi
+
+# Se serve una password e sshpass manca, prova a installarlo.
+if [[ -n "${SYNC_SRC_SSH_PASS:-}" || -n "${SYNC_DST_SSH_PASS:-}" ]] && ! command -v sshpass >/dev/null 2>&1; then
+  warn "'sshpass' non installato: tento l'installazione..."
+  if command -v apt-get >/dev/null 2>&1; then
+    sudo apt-get install -y sshpass || true
+  elif command -v brew >/dev/null 2>&1; then
+    brew install hudochenkov/sshpass/sshpass || true
+  elif command -v dnf >/dev/null 2>&1; then
+    sudo dnf install -y sshpass || true
+  fi
+fi
+
 if command -v sshpass >/dev/null 2>&1; then
-  [[ -n "${SYNC_SRC_SSH_PASS:-}" ]] && SSHPASS_SRC=(sshpass -p "$SYNC_SRC_SSH_PASS")
-  [[ -n "${SYNC_DST_SSH_PASS:-}" ]] && SSHPASS_DST=(sshpass -p "$SYNC_DST_SSH_PASS")
+  # SSHPASS via env + 'sshpass -e': password non visibile in 'ps'.
+  [[ -n "${SYNC_SRC_SSH_PASS:-}" ]] && SSHPASS_SRC=(env "SSHPASS=$SYNC_SRC_SSH_PASS" sshpass -e)
+  [[ -n "${SYNC_DST_SSH_PASS:-}" ]] && SSHPASS_DST=(env "SSHPASS=$SYNC_DST_SSH_PASS" sshpass -e)
 elif [[ -n "${SYNC_SRC_SSH_PASS:-}" || -n "${SYNC_DST_SSH_PASS:-}" ]]; then
-  warn "SYNC_*_SSH_PASS impostata ma 'sshpass' non e' installato: verra' comunque chiesta la password a mano."
-  warn "Installa con: sudo apt install sshpass  (o 'brew install hudochenkov/sshpass/sshpass' su mac)"
+  warn "Installazione sshpass fallita: verra' chiesta la password a mano."
 fi
 
 SSH_SRC=("${SSHPASS_SRC[@]}" ssh -o ConnectTimeout=8 -p "$SRC_PORT" "${SRC_USER}@${SRC_HOST}")

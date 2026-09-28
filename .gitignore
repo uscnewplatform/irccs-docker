@@ -2,6 +2,8 @@
 /docker-compose_dev.yaml
 .env
 .env.*
+# generato ad ogni deploy da httpd-config/generate-versions-env.sh
+/httpd-config/versions.json
 /keycloak-config/providers_sources/infocube-custom-provider/target/
 /keycloak-config/providers_sources/keycloak-scan-spi/target/
 # output dry-run import farmaci (non committare)
