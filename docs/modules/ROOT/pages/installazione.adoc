@@ -95,20 +95,12 @@ Il file `.env_example` fornisce il template con i nomi di tutte le variabili ric
 
 == Configurazioni post-avvio
 
-=== 1. Installazione Search Parameters FHIR
+Due gruppi di step, in ordine: prima quelli manuali via UI Keycloak, poi
+un unico comando che carica tutti i dati FHIR necessari.
 
-Dopo il primo avvio, è necessario installare i parametri di ricerca custom nel server FHIR per garantire il corretto funzionamento dei microservizi.
+=== A. Step manuali (UI Keycloak)
 
-[source,bash]
-----
-cd setup
-chmod +x install_searchparameters.sh
-bash install_searchparameters.sh <hostname>:<port>
-----
-
-Sostituire `<hostname>:<port>` con l'indirizzo del container HAPI FHIR (default: `irccs-hapi-fhir:8080`).
-
-=== 2. Configurazione SMTP in Keycloak
+==== A.1 Configurazione SMTP in Keycloak
 
 . Accedere alla dashboard Keycloak all'indirizzo `http://<host>:9445`
 . Autenticarsi con le credenziali di admin definite nel file `.env`
@@ -118,14 +110,14 @@ Sostituire `<hostname>:<port>` con l'indirizzo del container HAPI FHIR (default:
 . Inserire i parametri SMTP forniti dall'infrastruttura
 . Verificare la connessione con il pulsante *Test connection*
 
-=== 3. Configurazione lingua e tema Keycloak
+==== A.2 Configurazione lingua e tema Keycloak
 
 . Accedere alla UI di Keycloak (`http://<host>:9445`)
 . Selezionare il realm `pascale` → *Realm Settings*
 . Tab *Languages*: aggiungere **Italiano**
 . Tab *Themes* → *Custom Theme*: selezionare `pascale-theme`
 
-=== 4. Rinnovo/Cambio Client Secret Keycloak
+==== A.3 Rinnovo/Cambio Client Secret Keycloak
 
 Se si rigenera il client secret di Keycloak:
 
@@ -140,33 +132,49 @@ docker compose down
 docker compose up -d
 ----
 
-=== 5. Installazione Patient Journey J-LI
-
-[source,bash]
-----
-cd setup
-chmod +x install_jli.sh
-./install_jli.sh http://irccs-hapi-fhir:8080/fhir
-----
-
-=== 6. Verifica account di servizio Keycloak
+==== A.4 Verifica account di servizio Keycloak
 
 Verificare che l'utente di servizio `service-account-irccs` nel realm `pascale` abbia il ruolo `/admin` (necessario per le operazioni di signup).
 
-=== 7. Installazione tipi di consenso (registry)
+=== B. Step automatici (dati FHIR) — un solo comando
 
-I tipi di consenso sono un *registry dinamico* persistito come `CodeSystem` FHIR (`urn:irccs:consent-type`). Lo script precarica i 9 tipi base con terminologia HL7 (scope `consentscope`, category `consentcategorycodes`). È necessario per far comparire i tipi nel designer e per garantire che il tipo `privacy` esista (gli studi che lo richiedono lo usano per valorizzare `Consent.scope`/`category`).
+Tutto ciò che segue (Search Parameters, Patient Journey J-LI, tipi di
+consenso, librerie CRF, farmaci AIFA) è eseguito in sequenza da un unico
+script, che stampa cosa sta facendo passo per passo:
 
 [source,bash]
 ----
-cd setup
-chmod +x install_consent_types.sh
-bash install_consent_types.sh <hostname>:<port>
+cd irccs-docker
+./setup/install/install-all.sh http://irccs-hapi-fhir:8080/fhir
 ----
 
-Idempotente (PUT conditional `?url=`): può essere rilanciato senza creare duplicati. Successivamente i tipi sono gestibili a runtime dalla dashboard (Back-office → Tipi di consenso, solo SuperAdmin).
+Sostituire l'URL con quello del container HAPI FHIR raggiungibile dall'host
+che esegue lo script (dallo host stesso: `http://localhost:8080/fhir`).
 
-=== 6. Import terminologia LOINC (opzionale)
+Idempotente nel suo complesso: rieseguirlo dopo un'interruzione (Ctrl+C,
+errore di rete) non duplica nulla, ogni script sottostante lo è già
+singolarmente. Alla fine stampa un promemoria degli step che restano
+manuali (LOINC, vedi sotto).
+
+Dettaglio di cosa fa ciascuno dei 6 step (per debug o esecuzione singola):
+
+[cols="1,3,2"]
+|===
+|Step |Cosa fa |Script
+
+|1 |Search Parameters FHIR custom (richiesti dai microservizi) |`setup/install/install_searchparameters.sh`
+|2 |Patient Journey J-LI di esempio |`setup/install/install_jli.sh`
+|3 |Registry tipi di consenso (9 tipi base, terminologia HL7) |`setup/install/install_consent_types.sh`
+|4 |Librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE, EORTC, EuroQol, USC PROFFIT) |`data-import/crf-libraries/*/install-*.sh`
+|5 |Farmaci AIFA per classe A/H + equivalenti |`data-import/farmaci-aifa/import-aifa-per-classi/import-aifa-farmaci.py`
+|6 |Farmaci AIFA per confezione + ATC (159k concept, a lotti) |`data-import/farmaci-aifa/import-confezioni-atc/import-confezioni-atc-batch.py`
+|===
+
+I tipi di consenso sono un *registry dinamico* persistito come `CodeSystem` FHIR (`urn:irccs:consent-type`) — necessario per far comparire i tipi nel designer studi e per garantire che il tipo `privacy` esista. Successivamente sono gestibili a runtime dalla dashboard (Back-office → Tipi di consenso, solo SuperAdmin).
+
+Per i dettagli sulle librerie CRF vedere xref:librerie-crf.adoc[Librerie CRF — Gestione e Import].
+
+=== C. Import terminologia LOINC (opzionale, MANUALE)
 
 Per abilitare la validazione e ricerca di codici LOINC nel server FHIR è necessario importare la terminologia.
 
@@ -222,48 +230,6 @@ Completamento confermato da risposta HTTP 200 con `OperationOutcome` di severity
 ====
 
 Per aggiornare a una versione LOINC successiva, aggiornare il prefisso di versione (es. `Loinc_2.82` → `Loinc_2.83`) in tutte le righe del file `terminology/loincupload.properties`.
-
-=== 7. Installazione librerie CRF su HAPI FHIR
-
-Le librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE v1, EORTC QLQ-C30/HCC18, EuroQol EQ-5D-5L, USC PROFFIT) sono distribuite come `CodeSystem` FHIR nella cartella `importCrfLibraries/`.
-Ogni sotto-cartella contiene uno script di installazione che esegue il push del bundle FHIR su HAPI.
-
-[source,bash]
-----
-cd importCrfLibraries
-
-# CTCAE v4
-bash ctcae-v4/install-ctcae-v4.sh http://irccs-hapi-fhir:8080/fhir
-
-# CTCAE v5
-bash ctcae-v5/install-ctcae-v5.sh http://irccs-hapi-fhir:8080/fhir
-
-# CTCAE v6
-bash ctcae-v6/install-ctcae-v6.sh http://irccs-hapi-fhir:8080/fhir
-
-# PRO-CTCAE v1
-bash proctc-v1/install-proctc-v1.sh http://irccs-hapi-fhir:8080/fhir
-
-# EORTC QLQ-C30
-bash eortc-qlq-c30/install-eortc-v1.sh http://irccs-hapi-fhir:8080/fhir
-
-# EORTC QLQ-HCC18
-bash eortc_hcc18/install-eortc-hcc18.sh http://irccs-hapi-fhir:8080/fhir
-
-# EuroQol EQ-5D-5L
-bash euroqol_eq5d5l/install-euroqol-eq5d5l.sh http://irccs-hapi-fhir:8080/fhir
-
-# USC PROFFIT
-bash usc_proffit/install-usc-proffit.sh http://irccs-hapi-fhir:8080/fhir
-----
-
-[NOTE]
-====
-Gli script inviano il bundle FHIR tramite `curl` in modalità `transaction`. +
-Se HAPI FHIR restituisce `200 OK` con un `Bundle` di risposta, l'installazione è riuscita. +
-Il frontend scopre le librerie automaticamente da HAPI: dopo l'installazione il bottone di import compare nel Questionnaire builder senza modifiche al codice. +
-Per i dettagli sull'architettura e la struttura delle librerie, vedere xref:librerie-crf.adoc[Librerie CRF — Gestione e Import].
-====
 
 == Abilitazione SSL per Keycloak
 
