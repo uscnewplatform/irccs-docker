@@ -59,7 +59,13 @@ services:
   postgres-keycloak:     { container_name: !reset null }
   postgres-hapi-fhir:    { container_name: !reset null }
   postgres-hapi-audit:   { container_name: !reset null }
-  irccs-hapi-audit:      { container_name: !reset null, ports: !reset [] }
+  # Le immagini HAPI girano non-root e non riescono a scrivere l'indice Lucene su una bind mount
+  # creata da root (lucenefiles-audit non e' nel repo, lucenefiles e' clonata da root): in CI
+  # (stack effimero) girano come root.
+  irccs-hapi-audit:
+    container_name: !reset null
+    ports: !reset []
+    user: "0:0"
   irccs-audit-integrity: { container_name: !reset null }
 
   irccs-keycloak:
@@ -78,6 +84,7 @@ services:
     container_name: !reset null
     ports: !reset []
     mem_limit: 4g
+    user: "0:0"  # vedi irccs-hapi-audit
 
   # httpd solo HTTP: le conf (Listen 80, vhost *:80 senza SSL) sono DERIVATE da httpd-config/
   # da e2e-stack.sh (sed) in CI_CONF_DIR, cosi' le regole di proxy non vanno duplicate a mano.
@@ -92,6 +99,9 @@ services:
       - ${CI_CONF_DIR}/zammad.conf:/usr/local/apache2/conf/sites/zammad.conf
       - /dev/null:/usr/local/apache2/conf/ssl/cert-pasc-2026.crt:ro
       - /dev/null:/usr/local/apache2/conf/ssl/cert-pasc-2026.key:ro
+      # config.js del dashboard senza Zammad (VITE_APP_ZAMMAD_HOST vuoto) e senza Faro: generato
+      # da e2e-stack.sh da httpd-config/config-prod.js.
+      - ${CI_CONF_DIR}/config.js:/usr/local/apache2/htdocs/config.js
     networks:
       irccs:
         aliases:
@@ -100,6 +110,6 @@ services:
 
   # SMTP catcher: sostituisce Gmail (le specs auth-authz leggono OTP da Mailpit REST).
   mailpit:
-    image: axllent/mailpit:latest
+    image: axllent/mailpit:${MAILPIT_VERSION:-v1.31.0}
     networks:
       - irccs

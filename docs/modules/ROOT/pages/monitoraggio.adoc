@@ -279,7 +279,7 @@ Le principali variabili d'ambiente per il monitoraggio (da inserire nel file `.e
 |Variabile |Descrizione
 
 |`GRAFANA_VERSION`
-|Versione dell'immagine Grafana (obbligatoria, nessun fallback `latest`)
+|Versione dell'immagine Grafana
 
 |`LOKI_VERSION`
 |Tag dell'immagine `grafana/loki` (es. `3.5`)

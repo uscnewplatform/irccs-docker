@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:25.0.6
+FROM quay.io/keycloak/keycloak:26.0.5
 
 # Copy the built SPI JAR into Keycloak's providers directory.
 # Keycloak auto-discovers all JARs in this directory on startup.

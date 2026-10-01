@@ -140,6 +140,15 @@
         "attributes": {}
       },
       {
+        "id": "4d6d4124-5460-43dd-8212-a774466278e1",
+        "name": "study:export",
+        "description": "Allows exporting a full ResearchStudy design graph bundle.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
         "id": "b012684b-eaee-49a3-ac03-f88b3abef273",
         "name": "searchparameter:search",
         "description": "Allows you to perform a search operation on SearchParameter.",
@@ -153,20 +162,6 @@
         "name": "questionnaire:history",
         "description": "Allows you to perform a history operation on Questionnaire.",
         "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
-        "id": "87dd81c2-31e4-4213-bfb7-c4b85d57840d",
-        "name": "sperimentatore_pi",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "sperimentatore"
-          ]
-        },
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
@@ -217,6 +212,15 @@
         "attributes": {}
       },
       {
+        "id": "2738b8cb-04be-4bd3-baea-56e26d704747",
+        "name": "study:read",
+        "description": "Read study",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
         "id": "e63e621e-d293-48b7-bd46-dc491c4e815b",
         "name": "patient:history",
         "description": "Allows you to perform a history operation on Patient.",
@@ -260,6 +264,18 @@
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
+      },
+      {
+        "id": "904cf7ec-6ee3-4063-9fc8-c7029a4c674c",
+        "name": "internal:notify:sae",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {
+          "category": [
+            "visibility"
+          ]
+        }
       },
       {
         "id": "1d86d0bf-430e-4686-a63a-c48dc793fce7",
@@ -340,6 +356,19 @@
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {
+          "category": [
+            "visibility"
+          ]
+        }
+      },
+      {
+        "id": "7231a0e4-065e-4740-aaaa-d647e26ec446",
+        "name": "profile:delete",
+        "description": "Allows deleting Profiles (/fhir/auth/profiles).",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
       },
       {
@@ -358,7 +387,11 @@
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
+        "attributes": {
+          "category": [
+            "visibility"
+          ]
+        }
       },
       {
         "id": "9e2b98a3-a563-4321-bbe6-7d7fcc9fb230",
@@ -392,22 +425,6 @@
         "name": "binary:update",
         "description": "Allows you to perform a update operation on Binary.",
         "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
-        "id": "962e460d-9eba-4ea3-b1fd-6952f8d8d410",
-        "name": "orgadmin",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "client": {
-            "irccs": [
-              "admin"
-            ]
-          }
-        },
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
@@ -467,85 +484,6 @@
         "attributes": {}
       },
       {
-        "id": "b3a92e48-d5cc-4ac1-a5c5-74c22adae799",
-        "name": "radiologo",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "capabilitystatement:search",
-            "practitioner:search",
-            "adverseevent:search",
-            "bundle:search",
-            "internal:read:organization",
-            "searchparameter:read",
-            "researchstudy:search",
-            "organization:search",
-            "valueset:read",
-            "activitydefinition:search",
-            "researchsubject:search",
-            "plandefinition:read",
-            "encounterhistory:search",
-            "structuredefinition:search",
-            "plandefinition:search",
-            "encounter:read",
-            "group:search",
-            "adverseevent:read",
-            "questionnaire:search",
-            "activitydefinition:read",
-            "observation:read",
-            "observation:search",
-            "questionnaireresponse:search",
-            "binary:read",
-            "internal:ui:patients",
-            "practitioner:read",
-            "parameters:read",
-            "parameters:search",
-            "appointmentresponse:read",
-            "permission:read",
-            "searchparameter:search",
-            "internal:read:group",
-            "patient:search",
-            "capabilitystatement:read",
-            "patient:read",
-            "encounter:search",
-            "library:search",
-            "careplan:read",
-            "auditevent:search",
-            "questionnaire:read",
-            "careplan:search",
-            "researchstudy:read",
-            "organization:read",
-            "structuredefinition:read",
-            "operationoutcome:read",
-            "permission:search",
-            "operationoutcome:search",
-            "bundle:read",
-            "appointment:read",
-            "group:read",
-            "appointment:search",
-            "auditevent:read",
-            "procedure:read",
-            "procedure:search",
-            "structuremap:search",
-            "structuremap:read",
-            "binary:search",
-            "medication:search",
-            "medication:read",
-            "researchsubject:read",
-            "encounterhistory:read",
-            "valueset:search",
-            "questionnaireresponse:read",
-            "internal:create:group",
-            "library:read",
-            "appointmentresponse:search"
-          ]
-        },
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
         "id": "e56c8247-c258-4722-be12-8bac273b73cb",
         "name": "careplan:create",
         "description": "Allows you to perform a create operation on CarePlan.",
@@ -555,74 +493,10 @@
         "attributes": {}
       },
       {
-        "id": "c11c2e3b-6beb-4ef3-b58a-db788d948dc7",
-        "name": "radiologi",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "internal:read:organization",
-            "internal:read:group",
-            "internal:create:group"
-          ]
-        },
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
         "id": "a1a42f33-6049-4923-af3c-b28e83ef70c3",
         "name": "researchsubject:delete",
         "description": "Allows you to perform a delete operation on ResearchSubject.",
         "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
-        "id": "df9ebe8f-6de5-4b3c-9e3f-8f4c2dfec1e3",
-        "name": "opened_sae_email",
-        "description": "Farmacovigilanza: lettura pazienti/CRF di tutti i centri degli studi associati + apertura query/ticket",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "practitioner:search",
-            "adverseevent:search",
-            "careplan:read",
-            "questionnaire:read",
-            "careplan:search",
-            "organization:read",
-            "researchstudy:read",
-            "organization:search",
-            "task:search",
-            "researchstudy:search",
-            "activitydefinition:search",
-            "researchsubject:search",
-            "plandefinition:read",
-            "task:create",
-            "plandefinition:search",
-            "group:search",
-            "task:read",
-            "adverseevent:read",
-            "questionnaire:search",
-            "group:read",
-            "activitydefinition:read",
-            "observation:read",
-            "observation:search",
-            "questionnaireresponse:search",
-            "internal:ui:patients",
-            "practitioner:read",
-            "researchsubject:read",
-            "consent:read",
-            "questionnaireresponse:read",
-            "internal:create:group",
-            "internal:read:group",
-            "patient:search",
-            "internal:read:study-associated",
-            "consent:search",
-            "patient:read"
-          ]
-        },
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
@@ -713,6 +587,15 @@
             "internal:ui:studydesigner"
           ]
         },
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "40ad2654-cb10-451f-bda5-71a31d1ec5d6",
+        "name": "profile:update",
+        "description": "Allows updating Profiles (/fhir/auth/profiles).",
+        "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
@@ -970,6 +853,15 @@
         "attributes": {}
       },
       {
+        "id": "f3f54be3-beb1-428a-bde8-bc6b8eadc781",
+        "name": "patientjourney:read",
+        "description": "Allows reading the full patient-journey design graph (ResearchStudy .../all).",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
         "id": "414782c2-c31b-4488-9c7b-8a2b1562b1ae",
         "name": "practitioner:create",
         "description": "Allows you to perform a create operation on Practitioner.",
@@ -1129,7 +1021,11 @@
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
+        "attributes": {
+          "category": [
+            "visibility"
+          ]
+        }
       },
       {
         "id": "245349bd-ccd4-4630-9886-d6e129b04417",
@@ -1474,6 +1370,15 @@
         "attributes": {}
       },
       {
+        "id": "e0d1e550-d706-48f7-9e8e-59ebc2e184a8",
+        "name": "report:read",
+        "description": "Allows reading ResearchStudy $report/stratification and $report/general.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
         "id": "ffab2f74-a18d-4aa7-8093-b845fbc7be58",
         "name": "library:read",
         "description": "Allows you to perform a read operation on Library.",
@@ -1490,6 +1395,18 @@
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
+      },
+      {
+        "id": "1a95972a-9c76-4b48-8d54-522c1b635104",
+        "name": "internal:notify:signup",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {
+          "category": [
+            "visibility"
+          ]
+        }
       },
       {
         "id": "b8895840-edc0-4f49-85bc-7d794cedbc3c",
@@ -1741,7 +1658,11 @@
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
+        "attributes": {
+          "category": [
+            "visibility"
+          ]
+        }
       },
       {
         "id": "349dbf31-4bdc-43b9-af0e-ffc735a42742",
@@ -1861,82 +1782,31 @@
         "attributes": {}
       },
       {
-        "id": "f27b4bba-3a2e-49ae-b810-3683552125b7",
-        "name": "questionnaireresponse:search",
-        "description": "Allows you to perform a search operation on QuestionnaireResponse.",
+        "id": "a0fd5eb3-d798-4ad2-aa4b-4395ba68acd7",
+        "name": "profile:read",
+        "description": "Allows reading/listing Profiles (/fhir/auth/profiles).",
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
       },
       {
-        "id": "f223f12d-b6b1-4273-bdec-54231855dc48",
-        "name": "sperimentatore",
-        "description": "",
-        "composite": true,
-        "composites": {
-          "realm": [
-            "practitioner:search",
-            "group:delete",
-            "internal:read:organization",
-            "researchstudy:search",
-            "organization:search",
-            "activitydefinition:search",
-            "researchsubject:search",
-            "plandefinition:read",
-            "plandefinition:search",
-            "researchsubject:update",
-            "encounter:read",
-            "group:search",
-            "questionnaire:search",
-            "activitydefinition:read",
-            "questionnaireresponse:create",
-            "observation:read",
-            "researchsubject:delete",
-            "observation:create",
-            "observation:search",
-            "questionnaireresponse:search",
-            "task:update",
-            "researchsubject:history",
-            "internal:ui:patients",
-            "careplan:create",
-            "encounter:delete",
-            "practitioner:read",
-            "patient:delete",
-            "internal:read:group",
-            "group:update",
-            "patient:search",
-            "careplan:update",
-            "patient:read",
-            "encounter:search",
-            "library:search",
-            "careplan:read",
-            "questionnaire:read",
-            "careplan:search",
-            "researchstudy:read",
-            "organization:read",
-            "task:search",
-            "internal:create:organization",
-            "patient:history",
-            "task:create",
-            "patient:update",
-            "group:create",
-            "task:read",
-            "group:read",
-            "encounter:create",
-            "group:history",
-            "patient:create",
-            "library:update",
-            "encounter:update",
-            "library:create",
-            "researchsubject:create",
-            "researchsubject:read",
-            "questionnaireresponse:read",
-            "internal:create:group",
-            "library:read",
-            "questionnaireresponse:update"
+        "id": "c0056eb9-3fba-4a46-b973-dadc6a27535e",
+        "name": "internal:ui:home",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {
+          "category": [
+            "menu"
           ]
-        },
+        }
+      },
+      {
+        "id": "f27b4bba-3a2e-49ae-b810-3683552125b7",
+        "name": "questionnaireresponse:search",
+        "description": "Allows you to perform a search operation on QuestionnaireResponse.",
+        "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
@@ -1954,15 +1824,6 @@
         "id": "ac9fc996-cd95-4ef8-b504-ca080770de9a",
         "name": "valueset:read",
         "description": "Allows you to perform a read operation on ValueSet.",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
-        "id": "07286b38-fba1-437e-8fb0-89b2c95cfe63",
-        "name": "internal:update:visibility",
-        "description": "",
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
@@ -2029,7 +1890,11 @@
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
+        "attributes": {
+          "category": [
+            "visibility"
+          ]
+        }
       },
       {
         "id": "958c7392-46dd-4f6d-827e-010f425f9d00",
@@ -2071,6 +1936,15 @@
         "id": "a229b7b3-484e-4a97-9312-1132a4736c83",
         "name": "organization:search",
         "description": "Allows you to perform a search operation on Organization.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "7a85d522-586a-44e8-8938-521562b26bf3",
+        "name": "profile:create",
+        "description": "Allows creating Profiles (/fhir/auth/profiles).",
         "composite": false,
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
@@ -2285,12 +2159,18 @@
         "composite": true,
         "composites": {
           "realm": [
-            "internal:update:visibility",
+            "researchstudy:create",
+            "activitydefinition:create",
+            "careplan:create",
             "internal:read:organization",
-            "internal:read:group",
-            "internal:create:group",
+            "questionnaire:create",
+            "library:create",
             "internal:create:organization",
-            "orgadmin",
+            "profile:read",
+            "group:create",
+            "internal:create:group",
+            "internal:read:group",
+            "plandefinition:create",
             "internal:ui:all"
           ]
         },
@@ -2836,7 +2716,8 @@
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
-        "default-roles-pascale"
+        "default-roles-pascale",
+        "admin"
       ],
       "clientRoles": {
         "irccs": [
@@ -3122,36 +3003,6 @@
           }
         },
         {
-          "id": "3612df72-5fc5-48d9-94a4-9faa0d183d5e",
-          "name": "groupsId",
-          "protocol": "openid-connect",
-          "protocolMapper": "groups-id-mapper",
-          "consentRequired": false,
-          "config": {
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "introspection.token.claim": "true",
-            "claim.name": "groupsId",
-            "userinfo.token.claim": "true"
-          }
-        },
-        {
-          "id": "d19e3696-c550-435e-b43e-92cf5a5eb263",
-          "name": "groups",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-group-membership-mapper",
-          "consentRequired": false,
-          "config": {
-            "full.path": "true",
-            "introspection.token.claim": "true",
-            "userinfo.token.claim": "true",
-            "multivalued": "true",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "claim.name": "groups"
-          }
-        },
-        {
           "id": "2c264e8d-9c78-45e7-a40f-f3776960658d",
           "name": "Client Host",
           "protocol": "openid-connect",
@@ -3227,10 +3078,10 @@
       "defaultClientScopes": [
         "web-origins",
         "acr",
-        "roles",
         "profile",
         "basic",
-        "email"
+        "email",
+        "client-roles-only"
       ],
       "optionalClientScopes": [
         "address",
@@ -3322,7 +3173,8 @@
             "displayName": "Base ActivityDefinition Resource",
             "attributes": {},
             "uris": [
-              "/fhir/ActivityDefinition/{id}"
+              "/fhir/ActivityDefinition/{id}",
+              "/fhir/ActivityDefinition/$bulk_delete"
             ],
             "scopes": [
               {
@@ -3397,7 +3249,8 @@
             "displayName": "Base AdverseEvent Resource",
             "attributes": {},
             "uris": [
-              "/fhir/AdverseEvent/{id}"
+              "/fhir/AdverseEvent/{id}",
+              "/fhir/AdverseEvent/$bulk_delete"
             ],
             "scopes": [
               {
@@ -3472,7 +3325,8 @@
             "displayName": "Base Appointment Resource",
             "attributes": {},
             "uris": [
-              "/fhir/Appointment/{id}"
+              "/fhir/Appointment/{id}",
+              "/fhir/Appointment/$bulk_delete"
             ],
             "scopes": [
               {
@@ -3638,12 +3492,59 @@
             "icon_uri": ""
           },
           {
+            "name": "Read PatientJourney Resource",
+            "type": "ResearchStudy",
+            "ownerManagedAccess": false,
+            "displayName": "Read PatientJourney Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ResearchStudy/{id}/all"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ]
+          },
+          {
+            "name": "Read Report Resource",
+            "type": "ResearchStudy",
+            "ownerManagedAccess": false,
+            "displayName": "Read Report Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ResearchStudy/{id}/$report/general",
+              "/fhir/ResearchStudy/{id}/$report/stratification"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ]
+          },
+          {
+            "name": "Export Study Resource",
+            "type": "ResearchStudy",
+            "ownerManagedAccess": false,
+            "displayName": "Export Study Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ResearchStudy/{id}/export"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ]
+          },
+          {
             "name": "Base CodeSystem Resource",
             "type": "CodeSystem",
             "ownerManagedAccess": false,
             "displayName": "Base CodeSystem Resource",
             "attributes": {},
             "uris": [
+              "/fhir/CodeSystem/$bulk_delete",
               "/fhir/CodeSystem/{id}"
             ],
             "scopes": [
@@ -3795,6 +3696,7 @@
             "displayName": "Base Bundle Resource",
             "attributes": {},
             "uris": [
+              "/fhir/Bundle/$bulk_delete",
               "/fhir/Bundle/{id}"
             ],
             "scopes": [
@@ -3945,6 +3847,7 @@
             "displayName": "Base CarePlan Resource",
             "attributes": {},
             "uris": [
+              "/fhir/CarePlan/$bulk_delete",
               "/fhir/CarePlan/{id}"
             ],
             "scopes": [
@@ -4015,6 +3918,45 @@
               }
             ],
             "icon_uri": ""
+          },
+          {
+            "name": "AuthProfile Resource",
+            "type": "AuthProfile",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "uris": [
+              "/fhir/auth/profiles",
+              "/fhir/auth/profiles/*"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              },
+              {
+                "name": "PUT"
+              }
+            ]
+          },
+          {
+            "name": "Associate PatientJourney Resource",
+            "type": "ResearchStudy",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "uris": [
+              "/fhir/ResearchStudy/{id}/associate",
+              "/fhir/ResearchStudy/{id}/disassociate"
+            ],
+            "scopes": [
+              {
+                "name": "POST"
+              }
+            ]
           },
           {
             "name": "Create Encounter Resource",
@@ -4432,7 +4374,8 @@
             "displayName": "Base Observation Resource",
             "attributes": {},
             "uris": [
-              "/fhir/Observation/{id}"
+              "/fhir/Observation/{id}",
+              "/fhir/Observation/$bulk_delete"
             ],
             "scopes": [
               {
@@ -4600,6 +4543,7 @@
             "displayName": "Base Organization Resource",
             "attributes": {},
             "uris": [
+              "/fhir/Organization/$bulk_delete",
               "/fhir/Organization/{id}"
             ],
             "scopes": [
@@ -4750,6 +4694,7 @@
             "displayName": "Base Patient Resource",
             "attributes": {},
             "uris": [
+              "/fhir/Patient/$bulk_delete",
               "/fhir/Patient/{id}"
             ],
             "scopes": [
@@ -4900,7 +4845,8 @@
             "displayName": "Base PlanDefinition Resource",
             "attributes": {},
             "uris": [
-              "/fhir/PlanDefinition/{id}"
+              "/fhir/PlanDefinition/{id}",
+              "/fhir/PlanDefinition/$bulk_delete"
             ],
             "scopes": [
               {
@@ -4975,6 +4921,7 @@
             "displayName": "Base Practitioner Resource",
             "attributes": {},
             "uris": [
+              "/fhir/Practitioner/$bulk_delete",
               "/fhir/Practitioner/{id}"
             ],
             "scopes": [
@@ -5050,6 +4997,7 @@
             "displayName": "Base Procedure Resource",
             "attributes": {},
             "uris": [
+              "/fhir/Procedure/$bulk_delete",
               "/fhir/Procedure/{id}"
             ],
             "scopes": [
@@ -5125,6 +5073,7 @@
             "displayName": "Base Questionnaire Resource",
             "attributes": {},
             "uris": [
+              "/fhir/Questionnaire/$bulk_delete",
               "/fhir/Questionnaire/{id}",
               "/api/service/*"
             ],
@@ -5201,6 +5150,7 @@
             "displayName": "Base QuestionnaireResponse Resource",
             "attributes": {},
             "uris": [
+              "/fhir/QuestionnaireResponse/$bulk_delete",
               "/fhir/QuestionnaireResponse/{id}"
             ],
             "scopes": [
@@ -5270,30 +5220,6 @@
             "icon_uri": ""
           },
           {
-            "name": "Base ResearchStudy Resource",
-            "type": "ResearchStudy",
-            "ownerManagedAccess": false,
-            "displayName": "Base ResearchStudy Resource",
-            "attributes": {},
-            "uris": [
-              "/fhir/ResearchStudy/{id}",
-              "/fhir/ResearchStudy/{id}/all",
-              "/fhir/ResearchStudy/{id}/assignExtensions"
-            ],
-            "scopes": [
-              {
-                "name": "DELETE"
-              },
-              {
-                "name": "GET"
-              },
-              {
-                "name": "PUT"
-              }
-            ],
-            "icon_uri": ""
-          },
-          {
             "name": "Search ResearchStudy Resource",
             "type": "ResearchStudy",
             "ownerManagedAccess": false,
@@ -5353,7 +5279,8 @@
             "displayName": "Base ResearchSubject Resource",
             "attributes": {},
             "uris": [
-              "/fhir/ResearchSubject/{id}"
+              "/fhir/ResearchSubject/{id}",
+              "/fhir/ResearchSubject/$bulk_delete"
             ],
             "scopes": [
               {
@@ -5519,6 +5446,29 @@
             "icon_uri": ""
           },
           {
+            "name": "Base ResearchStudy Resource",
+            "type": "ResearchStudy",
+            "ownerManagedAccess": false,
+            "displayName": "Base ResearchStudy Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ResearchStudy/{id}",
+              "/fhir/ResearchStudy/$bulk_delete",
+              "/fhir/ResearchStudy/{id}/groups"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ]
+          },
+          {
             "name": "Search StructureDefinition Resource",
             "type": "StructureDefinition",
             "ownerManagedAccess": false,
@@ -5653,7 +5603,8 @@
             "displayName": "Base ValueSet Resource",
             "attributes": {},
             "uris": [
-              "/fhir/ValueSet/{id}"
+              "/fhir/ValueSet/{id}",
+              "/fhir/ValueSet/$bulk_delete"
             ],
             "scopes": [
               {
@@ -5719,6 +5670,22 @@
             "icon_uri": ""
           },
           {
+            "name": "Generate Token Resource",
+            "type": "QuestionnaireResponse",
+            "ownerManagedAccess": false,
+            "displayName": "Generate Token Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/token/generate"
+            ],
+            "scopes": [
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
             "name": "Evaluate Library",
             "type": "Library",
             "ownerManagedAccess": false,
@@ -5763,6 +5730,7 @@
             "displayName": "Base Task Resource",
             "attributes": {},
             "uris": [
+              "/fhir/Task/$bulk_delete",
               "/fhir/Task/{id}"
             ],
             "scopes": [
@@ -5838,7 +5806,8 @@
             "displayName": "Base Consent Resource",
             "attributes": {},
             "uris": [
-              "/fhir/Consent/{id}"
+              "/fhir/Consent/{id}",
+              "/fhir/Consent/$bulk_delete"
             ],
             "scopes": [
               {
@@ -5907,7 +5876,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"activitydefinition:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"activitydefinition:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5917,7 +5887,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"activitydefinition:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"activitydefinition:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5927,7 +5898,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"activitydefinition:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"activitydefinition:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5937,7 +5909,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"activitydefinition:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"activitydefinition:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5947,7 +5920,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"activitydefinition:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"activitydefinition:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5957,7 +5931,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"activitydefinition:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"activitydefinition:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5967,7 +5942,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"adverseevent:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"adverseevent:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5977,7 +5953,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"adverseevent:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"adverseevent:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5987,7 +5964,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"adverseevent:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"adverseevent:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -5997,7 +5975,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"adverseevent:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"adverseevent:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6007,7 +5986,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"adverseevent:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"adverseevent:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6017,7 +5997,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"adverseevent:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"adverseevent:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6027,7 +6008,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointment:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointment:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6037,7 +6019,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointment:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointment:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6047,7 +6030,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointment:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointment:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6057,7 +6041,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointment:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointment:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6067,7 +6052,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointment:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointment:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6077,7 +6063,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointment:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointment:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6087,7 +6074,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointmentresponse:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointmentresponse:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6097,7 +6085,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointmentresponse:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointmentresponse:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6107,7 +6096,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"group:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"group:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6117,7 +6107,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointmentresponse:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointmentresponse:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6127,7 +6118,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointmentresponse:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointmentresponse:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6137,7 +6129,18 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointmentresponse:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointmentresponse:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read PatientJourney Policy",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"patientjourney:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6147,7 +6150,50 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"appointmentresponse:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"appointmentresponse:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read Report Policy",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"report:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Export Study Policy",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"study:export\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Extract QuestionnaireResponse Policy",
+            "description": "Allowed whenever the caller holds questionnaireresponse:create - $extract is no longer a separately grantable permission.",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"questionnaireresponse:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Generate Token Policy",
+            "description": "Same role as questionnaireresponse:create - generating a QR token is creating a QuestionnaireResponse on the patient's behalf. /fhir/token/generate previously fell to the generic Admin Resource catch-all (superadmin-only).",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"questionnaireresponse:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6157,7 +6203,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "fetchRoles": "false",
+              "fetchRoles": "true",
               "roles": "[{\"id\":\"codesystem:create\",\"required\":false}]"
             }
           },
@@ -6168,7 +6214,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "fetchRoles": "false",
+              "fetchRoles": "true",
               "roles": "[{\"id\":\"codesystem:update\",\"required\":false}]"
             }
           },
@@ -6179,7 +6225,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"auditevent:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"auditevent:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6189,7 +6236,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"auditevent:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"auditevent:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6199,7 +6247,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"auditevent:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"auditevent:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6209,7 +6258,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"auditevent:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"auditevent:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6219,7 +6269,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"auditevent:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"auditevent:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6229,7 +6280,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"auditevent:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"auditevent:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6239,7 +6291,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"binary:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"binary:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6249,7 +6302,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"binary:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"binary:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6259,7 +6313,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"binary:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"binary:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6269,7 +6324,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"binary:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"binary:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6279,7 +6335,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"binary:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"binary:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6289,7 +6346,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"binary:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"binary:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6299,7 +6357,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"bundle:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"bundle:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6309,7 +6368,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"bundle:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"bundle:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6319,7 +6379,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"bundle:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"bundle:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6329,7 +6390,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"bundle:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"bundle:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6339,7 +6401,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"bundle:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"bundle:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6349,7 +6412,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"bundle:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"bundle:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6359,7 +6423,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"capabilitystatement:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"capabilitystatement:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6369,7 +6434,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"capabilitystatement:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"capabilitystatement:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6379,7 +6445,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"capabilitystatement:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"capabilitystatement:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6389,7 +6456,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"capabilitystatement:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"capabilitystatement:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6399,7 +6467,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"capabilitystatement:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"capabilitystatement:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6409,7 +6478,18 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"capabilitystatement:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"capabilitystatement:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read AuthProfile Policy",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"profile:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6419,7 +6499,38 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"careplan:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"careplan:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create AuthProfile Policy",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"profile:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update AuthProfile Policy",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"profile:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete AuthProfile Policy",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"profile:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6429,7 +6540,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"careplan:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"careplan:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6439,7 +6551,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"careplan:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"careplan:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6449,7 +6562,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "fetchRoles": "false",
+              "fetchRoles": "true",
               "roles": "[{\"id\":\"codesystem:read\",\"required\":false}]"
             }
           },
@@ -6460,7 +6573,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"careplan:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"careplan:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6470,7 +6584,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"careplan:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"careplan:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6480,7 +6595,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"careplan:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"careplan:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6490,7 +6606,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounter:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounter:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6500,7 +6617,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounter:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounter:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6510,7 +6628,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounter:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounter:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6520,7 +6639,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounter:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounter:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6530,7 +6650,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounter:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounter:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6540,7 +6661,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounter:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounter:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6550,7 +6672,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounterhistory:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounterhistory:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6560,7 +6683,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounterhistory:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounterhistory:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6570,7 +6694,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounterhistory:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounterhistory:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6580,7 +6705,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounterhistory:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounterhistory:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6590,7 +6716,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounterhistory:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounterhistory:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6600,7 +6727,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"encounterhistory:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"encounterhistory:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6610,7 +6738,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"group:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"group:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6620,7 +6749,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"group:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"group:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6630,7 +6760,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"group:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"group:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6640,7 +6771,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"group:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"group:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6650,7 +6782,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"group:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"group:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6660,7 +6793,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"library:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"library:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6670,7 +6804,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"library:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"library:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6680,7 +6815,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"library:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"library:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6690,7 +6826,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"library:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"library:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6700,7 +6837,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"library:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"library:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6710,7 +6848,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"library:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"library:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6720,7 +6859,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"medication:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"medication:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6730,7 +6870,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "fetchRoles": "false",
+              "fetchRoles": "true",
               "roles": "[{\"id\":\"codesystem:delete\",\"required\":false}]"
             }
           },
@@ -6741,7 +6881,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "fetchRoles": "false",
+              "fetchRoles": "true",
               "roles": "[{\"id\":\"codesystem:search\",\"required\":false}]"
             }
           },
@@ -6752,7 +6892,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "fetchRoles": "false",
+              "fetchRoles": "true",
               "roles": "[{\"id\":\"codesystem:history\",\"required\":false}]"
             }
           },
@@ -6763,7 +6903,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"medication:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"medication:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6773,7 +6914,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"medication:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"medication:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6783,7 +6925,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"medication:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"medication:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6793,7 +6936,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"medication:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"medication:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6803,7 +6947,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"medication:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"medication:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6813,7 +6958,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"observation:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"observation:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6823,7 +6969,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"observation:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"observation:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6833,7 +6980,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"observation:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"observation:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6843,7 +6991,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"observation:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"observation:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6853,7 +7002,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"observation:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"observation:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6863,7 +7013,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"observation:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"observation:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6873,7 +7024,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"operationoutcome:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"operationoutcome:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6883,7 +7035,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"operationoutcome:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"operationoutcome:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6893,7 +7046,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"operationoutcome:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"operationoutcome:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6903,7 +7057,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"operationoutcome:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"operationoutcome:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6913,7 +7068,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"operationoutcome:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"operationoutcome:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6923,7 +7079,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"operationoutcome:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"operationoutcome:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6933,7 +7090,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"organization:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"organization:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6943,7 +7101,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"organization:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"organization:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6953,7 +7112,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"organization:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"organization:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6963,7 +7123,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"organization:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"organization:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6973,7 +7134,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"organization:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"organization:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6983,7 +7145,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"organization:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"organization:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -6993,7 +7156,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"parameters:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"parameters:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7003,7 +7167,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"parameters:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"parameters:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7013,7 +7178,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"parameters:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"parameters:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7023,7 +7189,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"parameters:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"parameters:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7033,7 +7200,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"parameters:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"parameters:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7043,7 +7211,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"parameters:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"parameters:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7053,7 +7222,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"patient:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"patient:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7063,7 +7233,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"patient:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"patient:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7073,7 +7244,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"patient:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"patient:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7083,7 +7255,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"patient:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"patient:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7093,7 +7266,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"patient:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"patient:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7103,7 +7277,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"patient:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"patient:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7113,7 +7288,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"permission:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"permission:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7123,7 +7299,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"permission:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"permission:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7133,7 +7310,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"permission:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"permission:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7143,7 +7321,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"permission:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"permission:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7153,7 +7332,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"permission:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"permission:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7163,7 +7343,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"permission:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"permission:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7173,7 +7354,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"plandefinition:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"plandefinition:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7183,7 +7365,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"plandefinition:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"plandefinition:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7193,7 +7376,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"plandefinition:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"plandefinition:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7203,7 +7387,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"plandefinition:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"plandefinition:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7213,7 +7398,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"plandefinition:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"plandefinition:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7223,7 +7409,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"plandefinition:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"plandefinition:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7233,7 +7420,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"practitioner:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"practitioner:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7243,7 +7431,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"practitioner:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"practitioner:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7253,7 +7442,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"practitioner:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"practitioner:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7263,7 +7453,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"practitioner:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"practitioner:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7273,7 +7464,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"practitioner:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"practitioner:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7283,7 +7475,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"practitioner:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"practitioner:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7293,7 +7486,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"procedure:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"procedure:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7303,7 +7497,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"procedure:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"procedure:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7313,7 +7508,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"procedure:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"procedure:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7323,7 +7519,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"procedure:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"procedure:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7333,7 +7530,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"procedure:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"procedure:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7343,7 +7541,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"procedure:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"procedure:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7353,7 +7552,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaire:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaire:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7363,7 +7563,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaire:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaire:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7373,7 +7574,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaire:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaire:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7383,7 +7585,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaire:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaire:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7393,7 +7596,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaire:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaire:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7403,7 +7607,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaire:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaire:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7413,7 +7618,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaireresponse:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaireresponse:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7423,7 +7629,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaireresponse:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaireresponse:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7433,7 +7640,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaireresponse:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaireresponse:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7443,7 +7651,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaireresponse:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaireresponse:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7453,7 +7662,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaireresponse:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaireresponse:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7463,7 +7673,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"questionnaireresponse:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"questionnaireresponse:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7473,7 +7684,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchstudy:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchstudy:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7483,7 +7695,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchstudy:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchstudy:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7493,7 +7706,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchstudy:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchstudy:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7503,7 +7717,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchstudy:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchstudy:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7513,7 +7728,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchstudy:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchstudy:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7523,7 +7739,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchstudy:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchstudy:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7533,7 +7750,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchsubject:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchsubject:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7543,7 +7761,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchsubject:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchsubject:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7553,7 +7772,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchsubject:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchsubject:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7563,7 +7783,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchsubject:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchsubject:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7573,7 +7794,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchsubject:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchsubject:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7583,7 +7805,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"researchsubject:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"researchsubject:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7593,7 +7816,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"searchparameter:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"searchparameter:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7603,7 +7827,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"searchparameter:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"searchparameter:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7613,7 +7838,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"searchparameter:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"searchparameter:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7623,7 +7849,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"searchparameter:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"searchparameter:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7633,7 +7860,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"searchparameter:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"searchparameter:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7643,7 +7871,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"searchparameter:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"searchparameter:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7653,7 +7882,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"task:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"task:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7663,7 +7893,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"task:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"task:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7673,7 +7904,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"task:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"task:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7683,7 +7915,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"task:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"task:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7693,7 +7926,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"task:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"task:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7703,7 +7937,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"task:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"task:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7713,7 +7948,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"consent:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"consent:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7723,7 +7959,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"consent:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"consent:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7733,7 +7970,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"consent:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"consent:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7743,7 +7981,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"consent:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"consent:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7753,7 +7992,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"consent:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"consent:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7763,7 +8003,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"consent:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"consent:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7773,7 +8014,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuredefinition:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuredefinition:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7783,7 +8025,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuredefinition:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuredefinition:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7793,7 +8036,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuredefinition:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuredefinition:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7803,7 +8047,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuredefinition:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuredefinition:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7813,7 +8058,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuredefinition:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuredefinition:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7823,7 +8069,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuredefinition:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuredefinition:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7833,7 +8080,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuremap:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuremap:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7843,7 +8091,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuremap:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuremap:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7853,7 +8102,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuremap:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuremap:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7863,7 +8113,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuremap:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuremap:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7873,7 +8124,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuremap:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuremap:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7883,7 +8135,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"structuremap:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"structuremap:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7893,7 +8146,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"valueset:create\",\"required\":false}]"
+              "roles": "[{\"id\":\"valueset:create\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7903,7 +8157,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"valueset:read\",\"required\":false}]"
+              "roles": "[{\"id\":\"valueset:read\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7913,7 +8168,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"valueset:update\",\"required\":false}]"
+              "roles": "[{\"id\":\"valueset:update\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7923,7 +8179,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"valueset:delete\",\"required\":false}]"
+              "roles": "[{\"id\":\"valueset:delete\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7933,7 +8190,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"valueset:search\",\"required\":false}]"
+              "roles": "[{\"id\":\"valueset:search\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7943,7 +8201,8 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"valueset:history\",\"required\":false}]"
+              "roles": "[{\"id\":\"valueset:history\",\"required\":false}]",
+              "fetchRoles": "true"
             }
           },
           {
@@ -7953,8 +8212,96 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "fetchRoles": "false",
+              "fetchRoles": "true",
               "roles": "[{\"id\":\"irccs/admin\",\"required\":false}]"
+            }
+          },
+          {
+            "name": "Read PatientJourney Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Read PatientJourney Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read PatientJourney Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read Report Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Read Report Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Read Report Policy\"]"
+            }
+          },
+          {
+            "name": "Export Study Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Export Study Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Export Study Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read AuthProfile Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"AuthProfile Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read AuthProfile Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create AuthProfile Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"AuthProfile Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create AuthProfile Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update AuthProfile Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"AuthProfile Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update AuthProfile Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete AuthProfile Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"AuthProfile Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Delete AuthProfile Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Associate PatientJourney Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Associate PatientJourney Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update Group Policy\"]"
             }
           },
           {
@@ -7966,7 +8313,7 @@
             "config": {
               "resources": "[\"Create CodeSystem Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create CodeSystem Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create CodeSystem Policy\"]"
             }
           },
           {
@@ -7978,7 +8325,7 @@
             "config": {
               "resources": "[\"Base CodeSystem Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update CodeSystem Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update CodeSystem Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -7990,7 +8337,7 @@
             "config": {
               "resources": "[\"Base CodeSystem Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read CodeSystem Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read CodeSystem Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8002,7 +8349,7 @@
             "config": {
               "resources": "[\"Search CodeSystem Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search CodeSystem Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search CodeSystem Policy\"]"
             }
           },
           {
@@ -8014,7 +8361,7 @@
             "config": {
               "resources": "[\"Create CodeSystem Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search CodeSystem Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search CodeSystem Policy\"]"
             }
           },
           {
@@ -8026,7 +8373,7 @@
             "config": {
               "resources": "[\"Base CodeSystem Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete CodeSystem Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete CodeSystem Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8038,7 +8385,7 @@
             "config": {
               "resources": "[\"History CodeSystem Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History CodeSystem Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History CodeSystem Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8050,7 +8397,7 @@
             "config": {
               "resources": "[\"Create ActivityDefinition Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create ActivityDefinition Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create ActivityDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8072,7 +8419,7 @@
             "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"Admin Resource\"]",
-              "scopes": "[\"DELETE\",\"GET\",\"PUT\",\"POST\"]",
+              "scopes": "[\"GET\",\"DELETE\",\"PUT\",\"POST\"]",
               "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
@@ -8085,7 +8432,7 @@
             "config": {
               "resources": "[\"Base ActivityDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read ActivityDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read ActivityDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8121,7 +8468,7 @@
             "config": {
               "resources": "[\"Search ActivityDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ActivityDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search ActivityDefinition Policy\"]"
             }
           },
           {
@@ -8133,7 +8480,7 @@
             "config": {
               "resources": "[\"History ActivityDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History ActivityDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History ActivityDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8145,7 +8492,7 @@
             "config": {
               "resources": "[\"Create ActivityDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ActivityDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search ActivityDefinition Policy\"]"
             }
           },
           {
@@ -8157,7 +8504,7 @@
             "config": {
               "resources": "[\"Create AdverseEvent Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create AdverseEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create AdverseEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8169,7 +8516,7 @@
             "config": {
               "resources": "[\"Base AdverseEvent Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read AdverseEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read AdverseEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8181,7 +8528,7 @@
             "config": {
               "resources": "[\"Base AdverseEvent Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update AdverseEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update AdverseEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8193,7 +8540,7 @@
             "config": {
               "resources": "[\"Base AdverseEvent Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete AdverseEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete AdverseEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8217,7 +8564,7 @@
             "config": {
               "resources": "[\"History AdverseEvent Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History AdverseEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History AdverseEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8241,7 +8588,7 @@
             "config": {
               "resources": "[\"Create Appointment Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Appointment Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create Appointment Policy\"]"
             }
           },
           {
@@ -8253,7 +8600,7 @@
             "config": {
               "resources": "[\"Base Appointment Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Appointment Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Appointment Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8265,7 +8612,7 @@
             "config": {
               "resources": "[\"Base Appointment Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Appointment Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Appointment Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8277,7 +8624,7 @@
             "config": {
               "resources": "[\"Base Appointment Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Appointment Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Appointment Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8289,7 +8636,7 @@
             "config": {
               "resources": "[\"Search Appointment Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Appointment Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Appointment Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8313,7 +8660,7 @@
             "config": {
               "resources": "[\"Create Appointment Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Appointment Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Appointment Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8325,7 +8672,7 @@
             "config": {
               "resources": "[\"Create AppointmentResponse Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create AppointmentResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create AppointmentResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8337,7 +8684,7 @@
             "config": {
               "resources": "[\"Base AppointmentResponse Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read AppointmentResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read AppointmentResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8349,7 +8696,7 @@
             "config": {
               "resources": "[\"Base AppointmentResponse Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update AppointmentResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update AppointmentResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8373,7 +8720,7 @@
             "config": {
               "resources": "[\"Search AppointmentResponse Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search AppointmentResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search AppointmentResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8385,7 +8732,7 @@
             "config": {
               "resources": "[\"History AppointmentResponse Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History AppointmentResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History AppointmentResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8397,7 +8744,7 @@
             "config": {
               "resources": "[\"Create AppointmentResponse Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search AppointmentResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search AppointmentResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8409,7 +8756,7 @@
             "config": {
               "resources": "[\"Create AuditEvent Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create AuditEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create AuditEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8421,7 +8768,7 @@
             "config": {
               "resources": "[\"Base AuditEvent Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read AuditEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read AuditEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8433,7 +8780,7 @@
             "config": {
               "resources": "[\"Base AuditEvent Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update AuditEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update AuditEvent Policy\"]"
             }
           },
           {
@@ -8445,7 +8792,7 @@
             "config": {
               "resources": "[\"Base AuditEvent Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete AuditEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete AuditEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8457,7 +8804,7 @@
             "config": {
               "resources": "[\"Search AuditEvent Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search AuditEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search AuditEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8469,7 +8816,7 @@
             "config": {
               "resources": "[\"History AuditEvent Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History AuditEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History AuditEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8481,7 +8828,7 @@
             "config": {
               "resources": "[\"Create AuditEvent Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search AuditEvent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search AuditEvent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8493,7 +8840,7 @@
             "config": {
               "resources": "[\"Create Binary Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Binary Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Binary Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8505,7 +8852,7 @@
             "config": {
               "resources": "[\"Base Binary Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Binary Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Binary Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8517,7 +8864,7 @@
             "config": {
               "resources": "[\"Base Binary Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update Binary Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Binary Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8529,7 +8876,7 @@
             "config": {
               "resources": "[\"Base Binary Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Binary Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Binary Policy\"]"
             }
           },
           {
@@ -8541,7 +8888,7 @@
             "config": {
               "resources": "[\"Search Binary Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search Binary Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Binary Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8553,7 +8900,7 @@
             "config": {
               "resources": "[\"History Binary Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Binary Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Binary Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8565,7 +8912,7 @@
             "config": {
               "resources": "[\"Create Binary Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search Binary Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Binary Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8577,7 +8924,7 @@
             "config": {
               "resources": "[\"History Group Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Group Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8589,7 +8936,7 @@
             "config": {
               "resources": "[\"Create Bundle Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Bundle Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Bundle Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8601,7 +8948,7 @@
             "config": {
               "resources": "[\"Base Bundle Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Bundle Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Bundle Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8613,7 +8960,7 @@
             "config": {
               "resources": "[\"Base Bundle Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Bundle Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Bundle Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8637,7 +8984,7 @@
             "config": {
               "resources": "[\"Search Bundle Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Bundle Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Bundle Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8661,7 +9008,7 @@
             "config": {
               "resources": "[\"Create Bundle Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Bundle Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Bundle Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8685,7 +9032,7 @@
             "config": {
               "resources": "[\"Base CapabilityStatement Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read CapabilityStatement Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read CapabilityStatement Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8697,7 +9044,7 @@
             "config": {
               "resources": "[\"Base CapabilityStatement Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update CapabilityStatement Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update CapabilityStatement Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8709,7 +9056,7 @@
             "config": {
               "resources": "[\"Base CapabilityStatement Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Delete CapabilityStatement Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete CapabilityStatement Policy\"]"
             }
           },
           {
@@ -8721,7 +9068,7 @@
             "config": {
               "resources": "[\"Search CapabilityStatement Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search CapabilityStatement Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search CapabilityStatement Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8733,7 +9080,7 @@
             "config": {
               "resources": "[\"History CapabilityStatement Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History CapabilityStatement Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History CapabilityStatement Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8745,7 +9092,7 @@
             "config": {
               "resources": "[\"Create CapabilityStatement Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search CapabilityStatement Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search CapabilityStatement Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8757,7 +9104,7 @@
             "config": {
               "resources": "[\"Create CarePlan Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create CarePlan Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create CarePlan Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8769,7 +9116,7 @@
             "config": {
               "resources": "[\"Base CarePlan Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Read CarePlan Policy\"]"
+              "applyPolicies": "[\"Read CarePlan Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8781,7 +9128,7 @@
             "config": {
               "resources": "[\"Base CarePlan Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update CarePlan Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update CarePlan Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8793,7 +9140,7 @@
             "config": {
               "resources": "[\"Base CarePlan Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete CarePlan Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete CarePlan Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8805,7 +9152,7 @@
             "config": {
               "resources": "[\"Search CarePlan Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search CarePlan Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search CarePlan Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8817,7 +9164,7 @@
             "config": {
               "resources": "[\"History CarePlan Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History CarePlan Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History CarePlan Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8829,7 +9176,7 @@
             "config": {
               "resources": "[\"Create CarePlan Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search CarePlan Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search CarePlan Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8841,7 +9188,7 @@
             "config": {
               "resources": "[\"Create Group Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Group Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search Group Policy\"]"
             }
           },
           {
@@ -8853,7 +9200,7 @@
             "config": {
               "resources": "[\"Create Encounter Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Encounter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Encounter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8865,7 +9212,7 @@
             "config": {
               "resources": "[\"Base Encounter Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Encounter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Encounter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8877,7 +9224,7 @@
             "config": {
               "resources": "[\"Base Encounter Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update Encounter Policy\"]"
+              "applyPolicies": "[\"Update Encounter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8889,7 +9236,7 @@
             "config": {
               "resources": "[\"Base Encounter Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Encounter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Encounter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8901,7 +9248,7 @@
             "config": {
               "resources": "[\"Search Encounter Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Encounter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Encounter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8913,7 +9260,7 @@
             "config": {
               "resources": "[\"History Encounter Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History Encounter Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Encounter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8925,7 +9272,7 @@
             "config": {
               "resources": "[\"Create Encounter Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Encounter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Encounter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8949,7 +9296,7 @@
             "config": {
               "resources": "[\"Base EncounterHistory Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read EncounterHistory Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read EncounterHistory Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8961,7 +9308,7 @@
             "config": {
               "resources": "[\"Base EncounterHistory Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update EncounterHistory Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update EncounterHistory Policy\"]"
             }
           },
           {
@@ -8973,7 +9320,7 @@
             "config": {
               "resources": "[\"Base EncounterHistory Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete EncounterHistory Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete EncounterHistory Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -8997,7 +9344,7 @@
             "config": {
               "resources": "[\"History EncounterHistory Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History EncounterHistory Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History EncounterHistory Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9021,7 +9368,7 @@
             "config": {
               "resources": "[\"Create Group Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Create Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create Group Policy\"]"
             }
           },
           {
@@ -9033,7 +9380,7 @@
             "config": {
               "resources": "[\"Base Group Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Group Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9057,7 +9404,7 @@
             "config": {
               "resources": "[\"Base Group Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Group Policy\"]"
+              "applyPolicies": "[\"Delete Group Policy\",\"Admin Group Policy\",\"Delete Organization Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9069,7 +9416,7 @@
             "config": {
               "resources": "[\"Search Group Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Group Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search Group Policy\"]"
             }
           },
           {
@@ -9081,7 +9428,7 @@
             "config": {
               "resources": "[\"Create Library Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Library Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9093,7 +9440,7 @@
             "config": {
               "resources": "[\"Base Library Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Read Library Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Read Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9117,7 +9464,7 @@
             "config": {
               "resources": "[\"Base Library Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Library Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9129,7 +9476,7 @@
             "config": {
               "resources": "[\"Search Library Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Library Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9141,7 +9488,7 @@
             "config": {
               "resources": "[\"History Library Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Library Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9153,7 +9500,7 @@
             "config": {
               "resources": "[\"Create Library Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Library Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9165,7 +9512,7 @@
             "config": {
               "resources": "[\"Create Medication Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Medication Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Medication Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9177,7 +9524,7 @@
             "config": {
               "resources": "[\"Base Medication Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Medication Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Read Medication Policy\"]"
             }
           },
           {
@@ -9189,7 +9536,7 @@
             "config": {
               "resources": "[\"Base Medication Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Medication Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Medication Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9201,7 +9548,7 @@
             "config": {
               "resources": "[\"Base Medication Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Medication Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Medication Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9249,7 +9596,7 @@
             "config": {
               "resources": "[\"Create Observation Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Observation Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Observation Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9261,7 +9608,7 @@
             "config": {
               "resources": "[\"Base Observation Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Observation Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Observation Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9273,7 +9620,7 @@
             "config": {
               "resources": "[\"Base Observation Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Observation Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Observation Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9297,7 +9644,7 @@
             "config": {
               "resources": "[\"Search Observation Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Observation Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search Observation Policy\"]"
             }
           },
           {
@@ -9321,7 +9668,7 @@
             "config": {
               "resources": "[\"Create Observation Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Observation Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Search Observation Policy\"]"
             }
           },
           {
@@ -9333,7 +9680,7 @@
             "config": {
               "resources": "[\"Create OperationOutcome Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create OperationOutcome Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create OperationOutcome Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9345,7 +9692,7 @@
             "config": {
               "resources": "[\"Base OperationOutcome Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read OperationOutcome Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read OperationOutcome Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9357,7 +9704,7 @@
             "config": {
               "resources": "[\"Base OperationOutcome Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update OperationOutcome Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update OperationOutcome Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9369,7 +9716,7 @@
             "config": {
               "resources": "[\"Base OperationOutcome Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete OperationOutcome Policy\"]"
+              "applyPolicies": "[\"Delete OperationOutcome Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9381,7 +9728,7 @@
             "config": {
               "resources": "[\"Search OperationOutcome Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search OperationOutcome Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search OperationOutcome Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9393,7 +9740,7 @@
             "config": {
               "resources": "[\"History OperationOutcome Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History OperationOutcome Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History OperationOutcome Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9405,7 +9752,7 @@
             "config": {
               "resources": "[\"Create OperationOutcome Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search OperationOutcome Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search OperationOutcome Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9429,7 +9776,7 @@
             "config": {
               "resources": "[\"Base Organization Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Organization Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9441,7 +9788,7 @@
             "config": {
               "resources": "[\"Base Organization Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Organization Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9453,7 +9800,7 @@
             "config": {
               "resources": "[\"Base Organization Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Organization Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9465,7 +9812,7 @@
             "config": {
               "resources": "[\"Search Organization Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Organization Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9477,7 +9824,7 @@
             "config": {
               "resources": "[\"History Organization Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History Organization Policy\"]"
             }
           },
           {
@@ -9489,7 +9836,7 @@
             "config": {
               "resources": "[\"Create Organization Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Organization Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9501,7 +9848,7 @@
             "config": {
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Organization Policy\",\"Admin Group Policy\",\"Create Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Create Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\",\"Create Group Policy\"]"
             }
           },
           {
@@ -9513,7 +9860,7 @@
             "config": {
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Group Policy\",\"Read Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Organization Policy\",\"Read Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9525,7 +9872,7 @@
             "config": {
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\",\"Update Group Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Organization Policy\",\"Admin Role Policy\",\"Update Group Policy\"]"
             }
           },
           {
@@ -9537,7 +9884,7 @@
             "config": {
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Group Policy\"]"
+              "applyPolicies": "[\"Delete Group Policy\",\"Admin Group Policy\",\"Delete Organization Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9549,7 +9896,7 @@
             "config": {
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Organization Policy\",\"Search Group Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Organization Policy\",\"Admin Role Policy\",\"Search Group Policy\"]"
             }
           },
           {
@@ -9561,7 +9908,7 @@
             "config": {
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Group Policy\",\"History Organization Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Group Policy\",\"Admin Role Policy\",\"History Organization Policy\"]"
             }
           },
           {
@@ -9573,7 +9920,7 @@
             "config": {
               "resources": "[\"AuthGroup Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Organization Policy\",\"Search Group Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Organization Policy\",\"Admin Role Policy\",\"Search Group Policy\"]"
             }
           },
           {
@@ -9585,7 +9932,7 @@
             "config": {
               "resources": "[\"Create Parameters Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Parameters Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Parameters Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9597,7 +9944,7 @@
             "config": {
               "resources": "[\"Base Parameters Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Parameters Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Parameters Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9609,7 +9956,7 @@
             "config": {
               "resources": "[\"Base Parameters Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Parameters Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Parameters Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9621,7 +9968,7 @@
             "config": {
               "resources": "[\"Base Parameters Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Parameters Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Parameters Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9633,7 +9980,7 @@
             "config": {
               "resources": "[\"Search Parameters Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Parameters Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Parameters Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9657,7 +10004,7 @@
             "config": {
               "resources": "[\"Create Parameters Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Parameters Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Parameters Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9669,7 +10016,7 @@
             "config": {
               "resources": "[\"Create Patient Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Patient Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Patient Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9681,7 +10028,7 @@
             "config": {
               "resources": "[\"Base Patient Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Patient Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Patient Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9693,7 +10040,7 @@
             "config": {
               "resources": "[\"Base Patient Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Patient Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Patient Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9717,7 +10064,7 @@
             "config": {
               "resources": "[\"Search Patient Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Patient Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Patient Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9729,7 +10076,7 @@
             "config": {
               "resources": "[\"History Patient Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Patient Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History Patient Policy\"]"
             }
           },
           {
@@ -9741,7 +10088,7 @@
             "config": {
               "resources": "[\"Create Patient Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Patient Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Patient Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9753,7 +10100,7 @@
             "config": {
               "resources": "[\"Create Permission Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create Permission Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Permission Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9765,7 +10112,7 @@
             "config": {
               "resources": "[\"Base Permission Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Permission Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Permission Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9777,7 +10124,7 @@
             "config": {
               "resources": "[\"Base Permission Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Permission Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Permission Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9801,7 +10148,7 @@
             "config": {
               "resources": "[\"Search Permission Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Permission Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Permission Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9825,7 +10172,7 @@
             "config": {
               "resources": "[\"Create Permission Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Permission Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Permission Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9861,7 +10208,7 @@
             "config": {
               "resources": "[\"Base PlanDefinition Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update PlanDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update PlanDefinition Policy\"]"
             }
           },
           {
@@ -9885,7 +10232,7 @@
             "config": {
               "resources": "[\"Search PlanDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search PlanDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search PlanDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9897,7 +10244,7 @@
             "config": {
               "resources": "[\"History PlanDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History PlanDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History PlanDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9909,7 +10256,7 @@
             "config": {
               "resources": "[\"Create PlanDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search PlanDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search PlanDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9945,7 +10292,7 @@
             "config": {
               "resources": "[\"Base Practitioner Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Practitioner Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Practitioner Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9957,7 +10304,7 @@
             "config": {
               "resources": "[\"Base Practitioner Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Practitioner Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Practitioner Policy\"]"
             }
           },
           {
@@ -9969,7 +10316,7 @@
             "config": {
               "resources": "[\"Search Practitioner Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Practitioner Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Practitioner Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -9981,7 +10328,7 @@
             "config": {
               "resources": "[\"History Practitioner Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"History Practitioner Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History Practitioner Policy\"]"
             }
           },
           {
@@ -9993,7 +10340,7 @@
             "config": {
               "resources": "[\"Create Practitioner Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Practitioner Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Practitioner Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10005,7 +10352,7 @@
             "config": {
               "resources": "[\"Create Procedure Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Procedure Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Procedure Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10017,7 +10364,7 @@
             "config": {
               "resources": "[\"Base Procedure Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Procedure Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Procedure Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10029,7 +10376,7 @@
             "config": {
               "resources": "[\"Base Procedure Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Procedure Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Procedure Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10041,7 +10388,7 @@
             "config": {
               "resources": "[\"Base Procedure Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Procedure Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Procedure Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10053,7 +10400,7 @@
             "config": {
               "resources": "[\"Search Procedure Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Procedure Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Procedure Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10065,7 +10412,7 @@
             "config": {
               "resources": "[\"History Procedure Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Procedure Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Procedure Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10077,7 +10424,7 @@
             "config": {
               "resources": "[\"Create Procedure Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Procedure Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Procedure Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10089,7 +10436,7 @@
             "config": {
               "resources": "[\"Create Questionnaire Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Questionnaire Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10101,7 +10448,7 @@
             "config": {
               "resources": "[\"Base Questionnaire Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Questionnaire Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10113,7 +10460,7 @@
             "config": {
               "resources": "[\"Base Questionnaire Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Questionnaire Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10125,7 +10472,7 @@
             "config": {
               "resources": "[\"Base Questionnaire Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete Questionnaire Policy\"]"
             }
           },
           {
@@ -10137,7 +10484,7 @@
             "config": {
               "resources": "[\"Search Questionnaire Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Questionnaire Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10149,7 +10496,7 @@
             "config": {
               "resources": "[\"History Questionnaire Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History Questionnaire Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Questionnaire Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10161,7 +10508,7 @@
             "config": {
               "resources": "[\"Create Questionnaire Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Questionnaire Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Questionnaire Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10173,7 +10520,7 @@
             "config": {
               "resources": "[\"Create QuestionnaireResponse Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create QuestionnaireResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create QuestionnaireResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10197,7 +10544,7 @@
             "config": {
               "resources": "[\"Base QuestionnaireResponse Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update QuestionnaireResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update QuestionnaireResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10209,7 +10556,7 @@
             "config": {
               "resources": "[\"Base QuestionnaireResponse Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete QuestionnaireResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete QuestionnaireResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10233,7 +10580,7 @@
             "config": {
               "resources": "[\"History QuestionnaireResponse Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"History QuestionnaireResponse Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History QuestionnaireResponse Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10257,7 +10604,7 @@
             "config": {
               "resources": "[\"Create ResearchStudy Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Create ResearchStudy Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create ResearchStudy Policy\"]"
             }
           },
           {
@@ -10269,7 +10616,7 @@
             "config": {
               "resources": "[\"Base ResearchStudy Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read ResearchStudy Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read ResearchStudy Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10281,7 +10628,7 @@
             "config": {
               "resources": "[\"Base ResearchStudy Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update ResearchStudy Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update ResearchStudy Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10293,7 +10640,7 @@
             "config": {
               "resources": "[\"Base ResearchStudy Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete ResearchStudy Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete ResearchStudy Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10305,7 +10652,7 @@
             "config": {
               "resources": "[\"Search ResearchStudy Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ResearchStudy Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ResearchStudy Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10317,7 +10664,7 @@
             "config": {
               "resources": "[\"History ResearchStudy Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History ResearchStudy Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History ResearchStudy Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10329,7 +10676,7 @@
             "config": {
               "resources": "[\"Create ResearchStudy Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ResearchStudy Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ResearchStudy Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10341,7 +10688,7 @@
             "config": {
               "resources": "[\"Create ResearchSubject Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create ResearchSubject Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create ResearchSubject Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10353,7 +10700,7 @@
             "config": {
               "resources": "[\"Base ResearchSubject Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Read ResearchSubject Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Read ResearchSubject Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10377,7 +10724,7 @@
             "config": {
               "resources": "[\"Base ResearchSubject Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete ResearchSubject Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Delete ResearchSubject Policy\"]"
             }
           },
           {
@@ -10389,7 +10736,7 @@
             "config": {
               "resources": "[\"Search ResearchSubject Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ResearchSubject Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ResearchSubject Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10401,7 +10748,7 @@
             "config": {
               "resources": "[\"History ResearchSubject Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History ResearchSubject Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History ResearchSubject Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10413,7 +10760,7 @@
             "config": {
               "resources": "[\"Create ResearchSubject Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ResearchSubject Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ResearchSubject Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10425,7 +10772,7 @@
             "config": {
               "resources": "[\"Create SearchParameter Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create SearchParameter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create SearchParameter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10437,7 +10784,7 @@
             "config": {
               "resources": "[\"Base SearchParameter Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read SearchParameter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read SearchParameter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10461,7 +10808,7 @@
             "config": {
               "resources": "[\"Base SearchParameter Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete SearchParameter Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete SearchParameter Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10509,7 +10856,7 @@
             "config": {
               "resources": "[\"Create StructureDefinition Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create StructureDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create StructureDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10521,7 +10868,7 @@
             "config": {
               "resources": "[\"Base StructureDefinition Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read StructureDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read StructureDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10533,7 +10880,7 @@
             "config": {
               "resources": "[\"Base StructureDefinition Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update StructureDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update StructureDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10545,7 +10892,7 @@
             "config": {
               "resources": "[\"Base StructureDefinition Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete StructureDefinition Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete StructureDefinition Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10593,7 +10940,7 @@
             "config": {
               "resources": "[\"Create StructureMap Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create StructureMap Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create StructureMap Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10605,7 +10952,7 @@
             "config": {
               "resources": "[\"Base StructureMap Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read StructureMap Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read StructureMap Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10617,7 +10964,7 @@
             "config": {
               "resources": "[\"Base StructureMap Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update StructureMap Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update StructureMap Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10653,7 +11000,7 @@
             "config": {
               "resources": "[\"History StructureMap Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History StructureMap Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History StructureMap Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10677,7 +11024,7 @@
             "config": {
               "resources": "[\"Create ValueSet Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create ValueSet Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create ValueSet Policy\"]"
             }
           },
           {
@@ -10689,7 +11036,7 @@
             "config": {
               "resources": "[\"Base ValueSet Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read ValueSet Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read ValueSet Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10701,7 +11048,7 @@
             "config": {
               "resources": "[\"Base ValueSet Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Update ValueSet Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update ValueSet Policy\"]"
             }
           },
           {
@@ -10713,7 +11060,7 @@
             "config": {
               "resources": "[\"Base ValueSet Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete ValueSet Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete ValueSet Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10725,7 +11072,7 @@
             "config": {
               "resources": "[\"Search ValueSet Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ValueSet Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ValueSet Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10737,7 +11084,7 @@
             "config": {
               "resources": "[\"History ValueSet Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History ValueSet Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History ValueSet Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10749,7 +11096,7 @@
             "config": {
               "resources": "[\"Create ValueSet Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search ValueSet Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ValueSet Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10760,7 +11107,18 @@
             "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"Extract QuestionnaireResponse\"]",
-              "applyPolicies": "[\"Create QuestionnaireResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Extract QuestionnaireResponse Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Generate Token Permission",
+            "description": "",
+            "type": "resource",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Generate Token Resource\"]",
+              "applyPolicies": "[\"Generate Token Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10771,7 +11129,7 @@
             "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"Evaluate Library\"]",
-              "applyPolicies": "[\"Update Library Policy\",\"Create Library Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Update Library Policy\",\"Admin Group Policy\",\"Create Library Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10783,7 +11141,7 @@
             "config": {
               "resources": "[\"Create Task Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Create Task Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Create Task Policy\"]"
             }
           },
           {
@@ -10795,7 +11153,7 @@
             "config": {
               "resources": "[\"Base Task Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Read Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Task Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10807,7 +11165,7 @@
             "config": {
               "resources": "[\"Base Task Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Update Task Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Update Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10819,7 +11177,7 @@
             "config": {
               "resources": "[\"Base Task Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Task Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10831,7 +11189,7 @@
             "config": {
               "resources": "[\"Search Task Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Task Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10855,7 +11213,7 @@
             "config": {
               "resources": "[\"Create Task Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Search Task Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Task Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10867,7 +11225,7 @@
             "config": {
               "resources": "[\"Create Consent Resource\"]",
               "scopes": "[\"POST\"]",
-              "applyPolicies": "[\"Create Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Consent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10891,7 +11249,7 @@
             "config": {
               "resources": "[\"Base Consent Resource\"]",
               "scopes": "[\"PUT\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Update Consent Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Consent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10903,7 +11261,7 @@
             "config": {
               "resources": "[\"Base Consent Resource\"]",
               "scopes": "[\"DELETE\"]",
-              "applyPolicies": "[\"Delete Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Consent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -10927,7 +11285,7 @@
             "config": {
               "resources": "[\"History Consent Resource\"]",
               "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"History Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+              "applyPolicies": "[\"Admin Group Policy\",\"History Consent Policy\",\"Admin Role Policy\"]"
             }
           },
           {
@@ -11655,6 +12013,45 @@
             "user.attribute.region": "region",
             "access.token.claim": "true",
             "user.attribute.locality": "locality"
+          }
+        }
+      ]
+    },
+    {
+      "id": "53d993a5-402f-4e3a-92bc-3e00bb4ef91c",
+      "name": "client-roles-only",
+      "description": "Client roles (resource_access) only, no realm_access. Keeps uma_protection on the service account without the huge realm role list.",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "id": "a73c63e1-ece6-42a2-9323-1a75860058fd",
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false",
+            "introspection.token.claim": "true",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "752312d8-8165-4a75-b302-8393ab3847d4",
+          "name": "audience resolve",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-resolve-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "false",
+            "introspection.token.claim": "true"
           }
         }
       ]

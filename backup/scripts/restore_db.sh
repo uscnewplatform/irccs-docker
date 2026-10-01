@@ -80,7 +80,10 @@ case "$DB_KIND" in
     ;;
 esac
 
-if ! docker ps --format '{{.Names}}' | grep -qx "$CONTAINER"; then
+# Here-string invece di pipe: con `set -o pipefail` un `grep -q`/`grep -m1`/`head` che chiude la
+# pipe in anticipo fa morire il produttore con SIGPIPE (exit 141) in modo intermittente.
+RUNNING_CONTAINERS="$(docker ps --format '{{.Names}}')"
+if ! grep -qx "$CONTAINER" <<< "$RUNNING_CONTAINERS"; then
   die "container non in esecuzione: $CONTAINER"
 fi
 
@@ -94,7 +97,7 @@ DUMP_SIZE="$(du -h "$DUMP_FILE" | cut -f1)"
 # lo si sta per restorare) — non sostituisce la conferma hostname, la precede.
 DUMP_LIST="$(pg_restore --list "$DUMP_FILE" 2>&1)" || die "dump illeggibile/corrotto, impossibile ispezionarlo (pg_restore --list fallito): $DUMP_FILE"
 
-DUMP_DBNAME="$(printf '%s\n' "$DUMP_LIST" | grep -m1 '^; *dbname:' | sed 's/^; *dbname: *//')"
+DUMP_DBNAME="$(grep -m1 '^; *dbname:' <<< "$DUMP_LIST" | sed 's/^; *dbname: *//' || true)"
 if [ -n "$DUMP_DBNAME" ] && [ "$DUMP_DBNAME" != "$DB_NAME" ]; then
   log_warn "ANOMALIA: il dump e' stato creato per il database \"$DUMP_DBNAME\", ma si sta per restorarlo su \"$DB_NAME\" — verificare che non sia il dump sbagliato prima di confermare"
 fi
@@ -105,7 +108,7 @@ echo "container target  : $CONTAINER" >&2
 echo "database target   : $DB_NAME (verra' droppato e ricreato)" >&2
 echo "dump da ripristinare: $DUMP_FILE ($DUMP_SIZE)" >&2
 echo "--- anteprima dump (pg_restore --list, prime 20 righe) ---" >&2
-printf '%s\n' "$DUMP_LIST" | head -20 >&2
+head -20 <<< "$DUMP_LIST" >&2
 echo "===============================================" >&2
 
 CONFIRMED=false

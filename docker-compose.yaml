@@ -146,6 +146,12 @@ services:
       - ./httpd-config/zammad.conf:/usr/local/apache2/conf/sites/zammad.conf
       - ./httpd-config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./httpd-config/config-prod.js:/usr/local/apache2/htdocs/config.js
+      # versions.json generato ad ogni deploy da httpd-config/generate-versions-env.sh
+      # (chiamato dai Jenkinsfile di deploy in irccs-jenkinsfile). Pagina pubblica
+      # /versions del dashboard lo legge via fetch. Se il file non esiste ancora
+      # (primo deploy dopo questa modifica), i Jenkinsfile lo creano prima dello
+      # start del container; in locale: bash httpd-config/generate-versions-env.sh .env httpd-config/versions.json
+      - ./httpd-config/versions.json:/usr/local/apache2/htdocs/versions.json:ro
       - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
       - ./httpd-config/maintenance.html:/usr/local/apache2/htdocs/maintenance.html:ro
       - ./httpd-config/.maintenance-flag:/usr/local/apache2/htdocs/.maintenance-flag #vuoto=sito attivo, non vuoto=manutenzione
@@ -230,7 +236,11 @@ services:
     image: hapiproject/hapi:${HAPI_IMAGE_VERSION}
     container_name: irccs-hapi-fhir
     ports:
-      - "8080:8080"
+      # HAPI non e' esposto in rete: solo i microservizi (rete `irccs`) e gli script di
+      # setup sull'host lo raggiungono. Bind su 127.0.0.1 -> gli script set/reindex/
+      # install_searchparameters usano localhost:8080, ma nessun client esterno puo'
+      # arrivare a HAPI bypassando i microservizi e l'audit trail.
+      - "127.0.0.1:8080:8080"
     depends_on:
       - postgres-hapi-fhir
     volumes:
@@ -337,7 +347,7 @@ services:
   # Output -> Alloy -> Loki -> regole Grafana irccs-audit-integrity-*.
   # Nessuna dipendenza: lo script usa solo la stdlib di Python.
   irccs-audit-integrity:
-    image: python:${AUDIT_INTEGRITY_PYTHON_VERSION}
+    image: python:${AUDIT_INTEGRITY_PYTHON_VERSION:-3.12-alpine}
     container_name: irccs-audit-integrity
     restart: always
     logging: *default-logging
