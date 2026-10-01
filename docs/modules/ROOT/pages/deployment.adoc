@@ -59,7 +59,7 @@ minimo per far partire i container; senza SearchParameter/trigger/pgaudit instal
 (xref:audit-trail.adoc#attivazione-deploy[sezione "Attivazione (deploy)"]) l'audit trail
 gira ma senza le protezioni di immodificabilità e senza la consultazione via dashboard.
 Per un ambiente che ha **già** lo stack con dati e va aggiornato alla versione corrente
-dell'audit trail, usare `setup/upgrade_audit_trail.sh` invece di ripetere i passi a mano —
+dell'audit trail, usare `setup/upgrade/upgrade_audit_trail.sh` invece di ripetere i passi a mano —
 vedi xref:audit-trail.adoc#checklist-upgrade-2026-09-16[].
 
 == Avvio

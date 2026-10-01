@@ -61,5 +61,6 @@ first=true
   echo "}"
 } > "$TMP_FILE"
 
+chmod 644 "$TMP_FILE"
 mv "$TMP_FILE" "$OUT_FILE"
 echo "versions.json generato -> $OUT_FILE"

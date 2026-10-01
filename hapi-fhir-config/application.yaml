@@ -207,7 +207,7 @@ hapi:
     # comma-separated package names, will be @ComponentScan'ed by Spring to allow for creating custom Spring beans
     # Audit trail Fase 1. Il jar e' montato in /app/extra-classes/ da docker-compose.yaml
     # (hapi-fhir-config/interceptors/audit-partition-interceptor.jar). La partizione AUDIT
-    # va creata una tantum dopo il primo avvio: setup/setup_audit_partition.sh <host>.
+    # va creata una tantum dopo il primo avvio: setup/install/setup_audit_partition.sh <host>.
     # Vedi irccs-common/hapi-audit-interceptor/README.md.
     custom-bean-packages: org.irccs.hapi.audit
 

@@ -20,7 +20,7 @@
 #
 # NB: i sotto-ruoli elencati devono gia' esistere nel realm (lo sono nel realm pascale).
 # I gruppi per-centro "<Org> Farmaco vigilanza" sono creati a runtime da OrganizationFlow
-# alla creazione del centro; per i centri esistenti usare setup/backfill_farmacovigilanza.py.
+# alla creazione del centro; per i centri esistenti usare setup/upgrade/backfill_farmacovigilanza.py.
 #
 # Uso:
 #   KC_URL=http://localhost:9445 REALM=pascale \

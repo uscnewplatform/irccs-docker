@@ -78,13 +78,13 @@ disco a tempo indeterminato. `ingestion_rate_mb`/`ingestion_burst_size_mb` alzat
 **Retention attuale: 3 mesi** (`retention_period: 2160h`). Oltre i 3 mesi il compactor cancella i
 chunk da `/loki/chunks` (dentro il volume `loki_data`) — dato non piu' interrogabile da Grafana.
 
-**Archiviazione oltre i 3 mesi**: `setup/archive_loki_snapshot.sh` — snapshot compresso dell'intero
+**Archiviazione oltre i 3 mesi**: `setup/maintenance/archive_loki_snapshot.sh` — snapshot compresso dell'intero
 volume `loki_data` su disco host (default `/var/backup/loki-archive/`, path configurabile come primo
 argomento). Installazione della schedulazione automatica (idempotente):
 
 [source,bash]
 ----
-./setup/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
+./setup/install/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
 # default: /var/backup/loki-archive, 12 mesi
 ----
 

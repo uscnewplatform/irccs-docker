@@ -10,14 +10,14 @@ Il frontend recupera i vocabolari direttamente da HAPI, senza passare da microse
 |===
 | Libreria | CodeSystem URL | ValueSet URL | Cartella
 
-| CTCAE v4 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4-adverse-events` | `importCrfLibraries/ctcae-v4/`
-| CTCAE v5 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5-adverse-events` | `importCrfLibraries/ctcae-v5/`
-| CTCAE v6 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6-adverse-events` | `importCrfLibraries/ctcae-v6/`
-| PRO-CTCAE v1 | `https://healthcaredelivery.cancer.gov/pro-ctcae` | `https://healthcaredelivery.cancer.gov/pro-ctcae-adverse-events` | `importCrfLibraries/proctc-v1/`
-| EORTC QLQ-C30 | `https://www.eortc.org/qlq-c30` | `https://www.eortc.org/qlq-c30-items` | `importCrfLibraries/eortc-qlq-c30/`
-| EORTC QLQ-HCC18 | `https://www.eortc.org/qlq-hcc18` | `https://www.eortc.org/qlq-hcc18-items` | `importCrfLibraries/eortc_hcc18/`
-| EuroQol EQ-5D-5L | `https://euroqol.org/eq-5d-5l` | `https://euroqol.org/eq-5d-5l-items` | `importCrfLibraries/euroqol_eq5d5l/`
-| USC PROFFIT | `https://irccs-pascale.it/fhir/CodeSystem/usc-proffit` | `https://irccs-pascale.it/fhir/ValueSet/usc-proffit-items` | `importCrfLibraries/usc_proffit/`
+| CTCAE v4 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v4-adverse-events` | `data-import/crf-libraries/ctcae-v4/`
+| CTCAE v5 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v5-adverse-events` | `data-import/crf-libraries/ctcae-v5/`
+| CTCAE v6 | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6` | `https://ncicb.nci.nih.gov/xml/owl/EVS/ctcae-v6-adverse-events` | `data-import/crf-libraries/ctcae-v6/`
+| PRO-CTCAE v1 | `https://healthcaredelivery.cancer.gov/pro-ctcae` | `https://healthcaredelivery.cancer.gov/pro-ctcae-adverse-events` | `data-import/crf-libraries/proctc-v1/`
+| EORTC QLQ-C30 | `https://www.eortc.org/qlq-c30` | `https://www.eortc.org/qlq-c30-items` | `data-import/crf-libraries/eortc-qlq-c30/`
+| EORTC QLQ-HCC18 | `https://www.eortc.org/qlq-hcc18` | `https://www.eortc.org/qlq-hcc18-items` | `data-import/crf-libraries/eortc_hcc18/`
+| EuroQol EQ-5D-5L | `https://euroqol.org/eq-5d-5l` | `https://euroqol.org/eq-5d-5l-items` | `data-import/crf-libraries/euroqol_eq5d5l/`
+| USC PROFFIT | `https://irccs-pascale.it/fhir/CodeSystem/usc-proffit` | `https://irccs-pascale.it/fhir/ValueSet/usc-proffit-items` | `data-import/crf-libraries/usc_proffit/`
 |===
 
 == Struttura di ogni libreria
@@ -26,7 +26,7 @@ Ogni cartella contiene:
 
 [source]
 ----
-importCrfLibraries/<libreria>/
+data-import/crf-libraries/<libreria>/
 ├── <sorgente>                  # CSV (librerie nuove) oppure Excel (CTCAE, EORTC QLQ-C30)
 ├── import-<libreria>.py        # genera il bundle FHIR dalla sorgente
 ├── install-<libreria>.sh       # push del bundle su HAPI (solo curl)
@@ -40,7 +40,7 @@ Il bundle FHIR è di tipo `transaction` (PUT idempotenti, ri-eseguibile senza du
 * `StructureDefinition` — profilo FHIR per i questionari che usano la libreria
 
 Gli `install-*.sh` caricano **solo** il bundle committato (nessuna dipendenza Python, nessun riferimento alla sorgente).
-L'helper condiviso è `importCrfLibraries/_lib.sh`.
+L'helper condiviso è `data-import/crf-libraries/_lib.sh`.
 
 == Sorgenti e rigenerazione del bundle
 
@@ -57,7 +57,7 @@ L'helper condiviso è `importCrfLibraries/_lib.sh`.
 | `python3 import-<libreria>.py <file.xlsx> --bundle-only`
 |===
 
-Le librerie CSV condividono l'helper `importCrfLibraries/_csvlib.py` (parsing CSV → CodeSystem + ValueSet + StructureDefinition + bundle).
+Le librerie CSV condividono l'helper `data-import/crf-libraries/_csvlib.py` (parsing CSV → CodeSystem + ValueSet + StructureDefinition + bundle).
 Formato CSV: intestazione `numquest, <display>, [colonne testo...], answ1..N`.
 
 Requisiti Python: `pip install requests` (CSV) oppure `pip install openpyxl requests` (Excel).
@@ -173,7 +173,7 @@ Le librerie nuove **non hanno** voci enum: esistono solo tramite discovery.
 
 === 1. Bundle FHIR (irccs-docker) — unico passo obbligatorio
 
-. Creare la cartella `importCrfLibraries/<nuova-libreria>/` con il CSV sorgente (`numquest, head|category, quest|term, answ1..N`)
+. Creare la cartella `data-import/crf-libraries/<nuova-libreria>/` con il CSV sorgente (`numquest, head|category, quest|term, answ1..N`)
 . Creare `import-<nuova-libreria>.py` sul modello di `usc_proffit/import-usc-proffit.py` (definisce solo la `LibConfig`, il resto è in `_csvlib.py`)
 . Generare il bundle: `python3 import-<nuova-libreria>.py --bundle-only`
 . Creare `install-<nuova-libreria>.sh` sul modello degli altri

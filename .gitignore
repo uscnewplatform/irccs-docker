@@ -7,20 +7,19 @@
 /keycloak-config/providers_sources/infocube-custom-provider/target/
 /keycloak-config/providers_sources/keycloak-scan-spi/target/
 # output dry-run import farmaci (non committare)
-/import-farmaci-aifa/import-confezioni-atc/codesystem-confezioni-atc.json
+/data-import/farmaci-aifa/import-confezioni-atc/codesystem-confezioni-atc.json
+__pycache__/
+*.pyc
 # checkpoint migrazione AuditEvent
-/setup/.migrate_auditevents.state
-/setup/__pycache__/
+/setup/upgrade/.migrate_auditevents.state
 # stato/output verifica integrità hash-chain (eseguita manualmente dall'host)
-/setup/.audit_integrity_checkpoint.json
-/setup/audit_integrity_checkpoint.json
-/setup/audit-integrity-last-report.json
-/setup/audit_integrity.prom
+/setup/validate/.audit_integrity_checkpoint.json
+/setup/maintenance/audit_integrity_checkpoint.json
+/setup/maintenance/audit-integrity-last-report.json
+/setup/maintenance/audit_integrity.prom
 /setup/audit-trail-e2e-report.txt
-# checkpoint migrazione AuditEvent
-
 # stato/output riconciliazione orfani (eseguita manualmente dall'host)
-/setup/.audit_coverage_checkpoint.json
-/setup/audit_coverage_checkpoint.json
-/setup/audit-coverage-last-report.json
-/setup/audit_coverage.prom
+/setup/validate/.audit_coverage_checkpoint.json
+/setup/maintenance/audit_coverage_checkpoint.json
+/setup/maintenance/audit-coverage-last-report.json
+/setup/maintenance/audit_coverage.prom

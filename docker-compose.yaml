@@ -368,7 +368,7 @@ services:
       # corrispondente, per non generare falsi positivi sulle scritture in corso.
       AUDIT_COVERAGE_GRACE_SECONDS: ${AUDIT_COVERAGE_GRACE_SECONDS:-300}
       AUDIT_COVERAGE_EXTRA_ARGS: ${AUDIT_COVERAGE_EXTRA_ARGS:-}
-    entrypoint: ["sh", "/setup/audit_integrity_loop.sh"]
+    entrypoint: ["sh", "/setup/maintenance/audit_integrity_loop.sh"]
     networks:
       - irccs
 

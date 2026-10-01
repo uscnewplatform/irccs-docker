@@ -280,7 +280,7 @@ groups:
               to: 0
             datasourceUid: loki
             model:
-              # Marker emesso da setup/verify_audit_hash_chain.py (container irccs-audit-integrity).
+              # Marker emesso da setup/validate/verify_audit_hash_chain.py (container irccs-audit-integrity).
               expr: 'sum(count_over_time({container_name="irccs-audit-integrity"} |~ "AUDIT-INTEGRITY-VIOLATION" [15m]))'
               refId: query
               queryType: instant
