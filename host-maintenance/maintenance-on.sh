@@ -23,6 +23,8 @@ if ! systemctl list-unit-files irccs-maintenance.service &>/dev/null; then
     exit 1
 fi
 
+ensure_bind_files
+
 # 1. flag livello 1
 echo "manutenzione attivata il $(date -Iseconds)" > "$FLAG_FILE"
 echo "[OK] Flag di manutenzione (livello 1, backend) attivato: $FLAG_FILE"
