@@ -53,3 +53,32 @@ stack_running() {
     # shellcheck disable=SC2086
     docker inspect -f '{{.State.Running}}' $ids 2>/dev/null | grep -q true
 }
+
+# ensure_bind_files: i file montati come bind-mount singoli da irccs-httpd DEVONO
+# esistere come FILE prima dell'up. Se mancano, Docker crea al loro posto una
+# DIRECTORY e il container non parte ("not a directory: Are you trying to mount
+# a directory onto a file"). Ripara: directory vuota -> rimossa, file mancante -> ricreato.
+ensure_bind_files() {
+    local cfg="$COMPOSE_DIR/httpd-config" f
+    for f in "$cfg/versions.json" "$FLAG_FILE"; do
+        if [ -d "$f" ]; then
+            if rmdir "$f" 2>/dev/null || sudo rmdir "$f"; then
+                echo "[FIX] $f era una directory (creata da Docker): rimossa."
+            else
+                echo "[ERRORE] $f e' una directory NON vuota: sistemala a mano." >&2
+                exit 1
+            fi
+        fi
+    done
+    [ -e "$FLAG_FILE" ] || { : > "$FLAG_FILE"; echo "[FIX] ricreato $FLAG_FILE (vuoto)."; }
+    if [ ! -e "$cfg/versions.json" ]; then
+        if [ -f "$COMPOSE_DIR/.env" ] && bash "$cfg/generate-versions-env.sh" "$COMPOSE_DIR/.env" "$cfg/versions.json"; then
+            echo "[FIX] rigenerato $cfg/versions.json."
+        else
+            echo '{}' > "$cfg/versions.json"
+            echo "[ATTENZIONE] versions.json non generabile da .env: creato '{}' (pagina /versions vuota)."
+        fi
+    fi
+    # Apache nel container gira come utente non-root: i file montati devono essere leggibili da tutti
+    chmod a+r "$cfg/versions.json" "$FLAG_FILE" 2>/dev/null || true
+}

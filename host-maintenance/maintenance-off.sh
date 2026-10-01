@@ -26,6 +26,8 @@ fi
 # main serve sempre: crea la rete "irccs" e contiene httpd
 case " ${TO_START[*]} " in *" main "*) ;; *) TO_START=(main "${TO_START[@]}") ;; esac
 
+ensure_bind_files
+
 # 1. main senza httpd
 mapfile -t MAIN_SERVICES < <(stack_compose main config --services | grep -vx "$HTTPD_SERVICE")
 echo "[..] Avvio stack main (senza $HTTPD_SERVICE)..."
