@@ -853,15 +853,6 @@
         "attributes": {}
       },
       {
-        "id": "f3f54be3-beb1-428a-bde8-bc6b8eadc781",
-        "name": "patientjourney:read",
-        "description": "Allows reading the full patient-journey design graph (ResearchStudy .../all).",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
         "id": "414782c2-c31b-4488-9c7b-8a2b1562b1ae",
         "name": "practitioner:create",
         "description": "Allows you to perform a create operation on Practitioner.",
@@ -3492,21 +3483,6 @@
             "icon_uri": ""
           },
           {
-            "name": "Read PatientJourney Resource",
-            "type": "ResearchStudy",
-            "ownerManagedAccess": false,
-            "displayName": "Read PatientJourney Resource",
-            "attributes": {},
-            "uris": [
-              "/fhir/ResearchStudy/{id}/all"
-            ],
-            "scopes": [
-              {
-                "name": "GET"
-              }
-            ]
-          },
-          {
             "name": "Read Report Resource",
             "type": "ResearchStudy",
             "ownerManagedAccess": false,
@@ -4355,7 +4331,8 @@
             "displayName": "Create Observation Resource",
             "attributes": {},
             "uris": [
-              "/fhir/Observation"
+              "/fhir/Observation",
+              "/fhir/Observation/{id}/$expunge"
             ],
             "scopes": [
               {
@@ -5454,7 +5431,8 @@
             "uris": [
               "/fhir/ResearchStudy/{id}",
               "/fhir/ResearchStudy/$bulk_delete",
-              "/fhir/ResearchStudy/{id}/groups"
+              "/fhir/ResearchStudy/{id}/groups",
+              "/fhir/ResearchStudy/{id}/all"
             ],
             "scopes": [
               {
@@ -6130,16 +6108,6 @@
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "roles": "[{\"id\":\"appointmentresponse:search\",\"required\":false}]",
-              "fetchRoles": "true"
-            }
-          },
-          {
-            "name": "Read PatientJourney Policy",
-            "type": "role",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "roles": "[{\"id\":\"patientjourney:read\",\"required\":false}]",
               "fetchRoles": "true"
             }
           },
@@ -8214,17 +8182,6 @@
             "config": {
               "fetchRoles": "true",
               "roles": "[{\"id\":\"irccs/admin\",\"required\":false}]"
-            }
-          },
-          {
-            "name": "Read PatientJourney Permission",
-            "type": "scope",
-            "logic": "POSITIVE",
-            "decisionStrategy": "AFFIRMATIVE",
-            "config": {
-              "resources": "[\"Read PatientJourney Resource\"]",
-              "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Read PatientJourney Policy\",\"Admin Role Policy\"]"
             }
           },
           {
