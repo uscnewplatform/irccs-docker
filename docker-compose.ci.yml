@@ -114,6 +114,6 @@ services:
 
   # SMTP catcher: sostituisce Gmail (le specs auth-authz leggono OTP da Mailpit REST).
   mailpit:
-    image: axllent/mailpit:latest
+    image: axllent/mailpit:${MAILPIT_VERSION:-v1.31.0}
     networks:
       - irccs
