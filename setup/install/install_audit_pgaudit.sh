@@ -17,7 +17,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-COMPOSE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+COMPOSE_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$COMPOSE_DIR"
 
 envval() { grep -E "^${1}=" .env 2>/dev/null | head -1 | cut -d= -f2-; }

@@ -14,7 +14,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SQL_FILE="$SCRIPT_DIR/audit_db_protection.sql"
-COMPOSE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+COMPOSE_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 [ -f "$SQL_FILE" ] || { echo "ERRORE: $SQL_FILE non trovato" >&2; exit 1; }
 

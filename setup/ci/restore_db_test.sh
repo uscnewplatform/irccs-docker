@@ -4,7 +4,7 @@
 # healthy e PRIMA di avviare Keycloak/HAPI/microservizi.
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-STACK_DIR="$(dirname "$SCRIPT_DIR")"
+STACK_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 DUMP_DIR="${DUMP_DIR:-/var/jenkins_home/e2e-dump}"
 : "${CI_PROJECT:?CI_PROJECT obbligatorio (es. pascale-ci-42)}"
 

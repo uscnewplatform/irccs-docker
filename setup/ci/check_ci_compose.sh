@@ -3,7 +3,7 @@
 # reti con nome legato al progetto, e che ogni ex container_name resti raggiungibile come
 # alias di rete (httpd e microservizi si chiamano per nome container). Uso: check_ci_compose.sh <env-file>
 set -euo pipefail
-cd "$(dirname "${BASH_SOURCE[0]}")/.."
+cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 ENV_FILE="${1:?uso: check_ci_compose.sh <env-file>}"
 export CI_PROJECT="${CI_PROJECT:-pascale-ci-check}"
 export CI_CONF_DIR="${CI_CONF_DIR:-/tmp/ci-conf-check}"
