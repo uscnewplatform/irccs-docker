@@ -337,7 +337,7 @@ services:
   # Output -> Alloy -> Loki -> regole Grafana irccs-audit-integrity-*.
   # Nessuna dipendenza: lo script usa solo la stdlib di Python.
   irccs-audit-integrity:
-    image: python:3.12-alpine
+    image: python:${AUDIT_INTEGRITY_PYTHON_VERSION}
     container_name: irccs-audit-integrity
     restart: always
     logging: *default-logging

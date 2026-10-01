@@ -7,7 +7,7 @@ x-logging: &default-logging
 services:
 
   grafana:
-    image: "grafana/grafana:${GRAFANA_VERSION:-latest}"
+    image: "grafana/grafana:${GRAFANA_VERSION}"
     container_name: irccs-grafana
     logging: *default-logging
     env_file:
@@ -44,7 +44,7 @@ services:
   loki:
     env_file:
       - "./.env"
-    image: "grafana/loki:3.5"
+    image: "grafana/loki:${LOKI_VERSION}"
     container_name: irccs-loki
     logging: *default-logging
     command: "-config.file=${LOKI_CONFIG_PATH}/${LOKI_CONFIG_FILE}"
@@ -62,7 +62,7 @@ services:
   alloy:
     env_file:
       - "./.env"
-    image: "grafana/alloy:v1.11.3"
+    image: "grafana/alloy:${ALLOY_VERSION}"
     container_name: irccs-alloy
     logging: *default-logging
     privileged: true

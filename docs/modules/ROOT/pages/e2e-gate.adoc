@@ -1,0 +1,34 @@
+= Gate E2E pre-PR
+:toc: macro
+
+toc::[]
+
+Le pipeline Jenkins dei branch `feature/*` eseguono, prima dell'Auto PR, uno stack Pascale effimero e la suite Playwright di `irccs-automation-test`. Il gate e' bloccante. Documentazione completa lato CI: README di `irccs-jenkinsfile`.
+
+== Stack effimero
+
+Orchestrato da `irccs-jenkinsfile/scripts/e2e/e2e-stack.sh` con
+`docker compose -p pascale-ci-<BUILD_NUMBER> -f docker-compose.yaml -f docker-compose.ci.yml`.
+
+`docker-compose.ci.yml` isola lo stack dallo staging sullo stesso host:
+
+* niente `container_name` (`!reset null`) e niente porte pubblicate sull'host (`ports: !reset []`);
+* reti con nome per-progetto (`${CI_PROJECT}-irccs`, `${CI_PROJECT}-irccs-audit-db`), altrimenti si unirebbero alle reti a nome fisso di staging;
+* *alias di rete*: httpd e microservizi si chiamano per *nome container* (`irccs-auth`, `irccs-centro-ricerca`, ...). Senza `container_name` quei nomi restano risolvibili come alias; httpd ha anche l'alias `${KC_HOSTNAME}`;
+* Keycloak senza `--import-realm` (il realm arriva dal dump);
+* httpd solo HTTP: `httpd.conf` e `irccs.conf` sono derivati con `sed` da `httpd-config/` in `.ci-conf/`, cosi' le regole di proxy non si duplicano;
+* servizio `mailpit` al posto di Gmail (le specs leggono gli OTP dalla REST API di Mailpit).
+
+Requisiti: Docker Compose >= 2.24 (`!reset`).
+
+== Dump di test
+
+`setup/restore_db_test.sh` ripristina `keycloak.dump`, `hapi.dump` e, se presente, `hapi-audit.dump` da `$DUMP_DIR` (default `/var/jenkins_home/e2e-dump`) riusando `backup/scripts/restore_db.sh`, con i soli Postgres attivi e prima di Keycloak/HAPI. Stampa gli sha256 dei dump. Il `pg_restore --list` locale di `restore_db.sh` e' servito da uno shim (PATH temporaneo) che lo esegue nel container Postgres: nell'immagine Jenkins non serve alcun client (`setup/test_restore_db_test_shim.sh`). Il gate lavora in `/opt/jenkins/e2e-work/ci-<BUILD_NUMBER>` (path identico host/container Jenkins, perche' il daemon risolve i bind mount sull'host) e `up` fa il pull esplicito delle immagini `nexus.infocube.it/` non `e2e-*`. Contenuto e regole (dati sintetici, redirect URI `http://<host>/*`, `KC_HOSTNAME` / `KC_HOSTNAME_URL`, client secret coerente, studio `J-LI` presente): `setup/README_e2e_dump.md`.
+
+== Verifica dell'override
+
+`setup/check_ci_compose.sh <env-file>` controlla che l'override CI mantenga l'isolamento: nessun `container_name`, nessuna porta host, reti legate al progetto e ogni ex `container_name` del compose base raggiungibile come alias. Va rilanciato ogni volta che si aggiunge o rinomina un servizio in `docker-compose.yaml`, aggiornando `docker-compose.ci.yml`.
+
+== Nuovo servizio
+
+Aggiungere: alias di rete e `container_name: !reset null` in `docker-compose.ci.yml`, la variabile di versione in `scripts/e2e/service-version-var.sh` e in `build-services-with-common.sh` (repo `irccs-jenkinsfile`).
