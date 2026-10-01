@@ -6,11 +6,11 @@ Supporta versionamento annuale: versioni diverse coesistono, nessun duplicato.
 
 == Struttura cartella
 
-I file si trovano in `irccs-docker/import-farmaci-aifa/`.
+I file si trovano in `irccs-docker/data-import/farmaci-aifa/`.
 
 [source]
 ----
-import-farmaci-aifa/
+data-import/farmaci-aifa/
 ├── import-aifa-farmaci.py       ← script (non modificare)
 ├── README.md
 ├── 2026-05/                     ← snapshot maggio 2026 (nel repo)
@@ -42,7 +42,7 @@ pip install requests
 
 [source,bash]
 ----
-cd irccs-docker/import-farmaci-aifa
+cd irccs-docker/data-import/farmaci-aifa
 
 # Import della cartella 2026-05 già presente nel repo
 python3 import-aifa-farmaci.py http://localhost:8080/fhir --version 2026-05
@@ -169,7 +169,7 @@ Procedura consigliata (es. ottobre 2026):
 
 [source,bash]
 ----
-mkdir import-farmaci-aifa/2026-10
+mkdir data-import/farmaci-aifa/2026-10
 ----
 
 [start=2]

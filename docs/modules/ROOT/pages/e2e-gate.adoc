@@ -24,11 +24,11 @@ Requisiti: Docker Compose >= 2.24 (`!reset`).
 
 == Dump di test
 
-`setup/restore_db_test.sh` ripristina `keycloak.dump`, `hapi.dump` e, se presente, `hapi-audit.dump` da `$DUMP_DIR` (default `/var/jenkins_home/e2e-dump`) riusando `backup/scripts/restore_db.sh`, con i soli Postgres attivi e prima di Keycloak/HAPI. Stampa gli sha256 dei dump. Il `pg_restore --list` locale di `restore_db.sh` e' servito da uno shim (PATH temporaneo) che lo esegue nel container Postgres: nell'immagine Jenkins non serve alcun client (`setup/test_restore_db_test_shim.sh`). Il gate lavora in `/opt/jenkins/e2e-work/ci-<BUILD_NUMBER>` (path identico host/container Jenkins, perche' il daemon risolve i bind mount sull'host) e `up` fa il pull esplicito delle immagini `nexus.infocube.it/` non `e2e-*`. Contenuto e regole (dati sintetici, redirect URI `http://<host>/*`, `KC_HOSTNAME` / `KC_HOSTNAME_URL`, client secret coerente, studio `J-LI` presente): `setup/README_e2e_dump.md`.
+`setup/ci/restore_db_test.sh` ripristina `keycloak.dump`, `hapi.dump` e, se presente, `hapi-audit.dump` da `$DUMP_DIR` (default `/var/jenkins_home/e2e-dump`) riusando `backup/scripts/restore_db.sh`, con i soli Postgres attivi e prima di Keycloak/HAPI. Stampa gli sha256 dei dump. Il `pg_restore --list` locale di `restore_db.sh` e' servito da uno shim (PATH temporaneo) che lo esegue nel container Postgres: nell'immagine Jenkins non serve alcun client (`setup/ci/test_restore_db_test_shim.sh`). Il gate lavora in `/opt/jenkins/e2e-work/ci-<BUILD_NUMBER>` (path identico host/container Jenkins, perche' il daemon risolve i bind mount sull'host) e `up` fa il pull esplicito delle immagini `nexus.infocube.it/` non `e2e-*`. Contenuto e regole (dati sintetici, redirect URI `http://<host>/*`, `KC_HOSTNAME` / `KC_HOSTNAME_URL`, client secret coerente, studio `J-LI` presente): `setup/README_e2e_dump.md`.
 
 == Verifica dell'override
 
-`setup/check_ci_compose.sh <env-file>` controlla che l'override CI mantenga l'isolamento: nessun `container_name`, nessuna porta host, reti legate al progetto e ogni ex `container_name` del compose base raggiungibile come alias. Va rilanciato ogni volta che si aggiunge o rinomina un servizio in `docker-compose.yaml`, aggiornando `docker-compose.ci.yml`.
+`setup/ci/check_ci_compose.sh <env-file>` controlla che l'override CI mantenga l'isolamento: nessun `container_name`, nessuna porta host, reti legate al progetto e ogni ex `container_name` del compose base raggiungibile come alias. Va rilanciato ogni volta che si aggiunge o rinomina un servizio in `docker-compose.yaml`, aggiornando `docker-compose.ci.yml`.
 
 == Nuovo servizio
 

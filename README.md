@@ -57,30 +57,20 @@ Da eseguire **una volta** dopo `docker-compose up -d`, con lo stack sano
 (keycloak `healthy`, HAPI raggiungibile). `HAPI` = `http://irccs-hapi-fhir:8080/fhir`
 (dal container) o `http://localhost:8080/fhir` (dalla macchina host, porta esposta 8080).
 
-| # | Passo | Sezione |
-|---|-------|---------|
-| 1 | SearchParameters FHIR | [§1](#1-installazione-searchparameters-fhir) |
-| 2 | SMTP Keycloak | [§2](#2-configurazione-smtp-in-keycloak) |
-| 3 | Rigenera CLIENT_SECRET Keycloak | [§3-cambio-secret-keycloak](#3-cambio-secret-keycloak) |
-| 4 | Lingua IT + theme | [§4](#4-aggiunta-lingua-italiano-e-themes-customizzati) |
-| 5 | J-LI | [Installazione PJ J-LI](#installazione-pj-j-li) |
-| 6 | Tipi di consenso | [Installazione tipi di consenso](#installazione-tipi-di-consenso) |
-| 7 | CRF Libraries (CTCAE, EORTC, EuroQol…) | [Installazione CRF Libraries](#installazione-crf-libraries) |
-| 8 | Farmaci AIFA (opzionale) | [Import Farmaci AIFA](#import-farmaci-aifa) |
+| # | Passo | Tipo |
+|---|-------|------|
+| 1 | SMTP Keycloak | Manuale (UI) |
+| 2 | Rigenera CLIENT_SECRET Keycloak | Manuale (UI) |
+| 3 | Lingua IT + theme | Manuale (UI) |
+| 4-9 | SearchParameters, J-LI, tipi di consenso, librerie CRF, farmaci AIFA | Automatico — un comando |
 
+> Gli step manuali (1-3) vanno fatti a mano da UI Keycloak, vedi sotto.
+> Gli step automatici (4-9) sono un unico comando:
+> ```bash
+> ./setup/install/install-all.sh http://irccs-hapi-fhir:8080/fhir
+> ```
+> Guida completa passo-passo, con dettaglio di cosa fa ciascuno step e cosa resta manuale (LOINC): `docs/modules/ROOT/pages/installazione.adoc`.
 > Tutti gli step sono **idempotenti** (PUT/POST conditional): ri-lanciabili senza duplicati.
-
-## 1. Installazione SearchParameters FHIR
-
-Portarsi nella cartella setup ed eseguire il comando
-```bash
-chmod +x install_searchparameters.sh
-bash install_searchparameters.sh hostname:port
-Usage: install_searchparameters.sh hostname:port
-```
-##### hostname:port deve corrispondere all’istanza FHIR target.
-
-Lo script installerà i parametri di ricerca necessari per garantire il corretto funzionamento dei microservizi che interagiscono con il server FHIR.
 
 ## 2. Configurazione SMTP in Keycloak
 
@@ -116,67 +106,22 @@ Accedi al realm pascale e poi clicca su REALM CONFIG
 Cliccare sulla tab Languages e aggiungere italiano
 Clicca su Themes e poi su Custom Theme e selezionare il provider customizzato pascale-theme per il tema
 
-## Installazione PJ J-LI
-Portarsi nella cartella setup ed eseguire il comando
-chmod +x install_jli.sh
+## Installazione dati FHIR (SearchParameters, J-LI, consensi, librerie CRF, farmaci AIFA)
 
-Eseguire poi il comando
-```bash
-./install_jli.sh http://{ip}:{port}/fhir  
-```
-
-ip e port sono quelle del container di fhir (vedi docker-compose, la porta esposta per hapi-fhir è 8080) : http://irccs-hapi-fhir:8080/fhir
-
-## Installazione tipi di consenso
-Registry dinamico dei tipi di consenso come CodeSystem FHIR (`urn:irccs:consent-type`). Precarica i 9 tipi base (terminologia HL7). Necessario per il designer e per il tipo `privacy`.
-```bash
-chmod +x install_consent_types.sh
-bash install_consent_types.sh hostname:port
-```
-Idempotente (PUT conditional). Gestione successiva da dashboard: Back-office → Tipi di consenso (SuperAdmin).
-
-## Installazione CRF Libraries
-Carica le terminologie CRF (CTCAE v4/v5/v6, PRO-CTCAE, EORTC QLQ-C30/HCC18, EuroQol EQ-5D-5L, USC PROFFIT)
-come `CodeSystem + ValueSet + StructureDefinition` su HAPI. Ogni libreria ha un `*-bundle.json`
-committato = unica sorgente (solo `curl`, zero dipendenze). Idempotenti (PUT per url).
+Un solo comando esegue tutti gli step di import dati (idempotenti, rilanciabili senza duplicati):
 
 ```bash
-cd importCrfLibraries
-HAPI=http://irccs-hapi-fhir:8080/fhir   # o http://localhost:8080/fhir dall'host
-
-bash ctcae-v4/install-ctcae-v4.sh             "$HAPI"
-bash ctcae-v5/install-ctcae-v5.sh             "$HAPI"
-bash ctcae-v6/install-ctcae-v6.sh             "$HAPI"
-bash proctc-v1/install-proctc-v1.sh           "$HAPI"
-bash eortc-qlq-c30/install-eortc-v1.sh        "$HAPI"
-bash eortc_hcc18/install-eortc-hcc18.sh       "$HAPI"
-bash euroqol_eq5d5l/install-euroqol-eq5d5l.sh "$HAPI"
-bash usc_proffit/install-usc-proffit.sh       "$HAPI"
+./setup/install/install-all.sh http://irccs-hapi-fhir:8080/fhir
 ```
 
-La UI scopre le library **automaticamente** da HAPI: caricata una libreria, il bottone di import
-compare nel Questionnaire builder senza modifiche al frontend.
-Dettagli e rigenerazione bundle: `importCrfLibraries/README.md`.
+Lo script richiede il modulo Python `requests` per gli step farmaci AIFA (su host con Python
+gestito dal sistema, PEP 668, serve un venv — lo script lo segnala con le istruzioni se manca).
 
-## Import Farmaci AIFA
-Catalogo farmaci AIFA come terminology FHIR. Due pipeline **indipendenti** (vedi
-`import-farmaci-aifa/README.md`). Richiede `requests` (usa un venv, PEP 668):
+Dettaglio di cosa fa ciascuno step, esecuzione singola per debug, e guida completa alla prima
+installazione (incluso cosa resta manuale — LOINC): `docs/modules/ROOT/pages/installazione.adoc`.
 
-```bash
-cd import-farmaci-aifa
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-HAPI=http://localhost:8080/fhir
-
-# Pipeline A — Classe A/H (~12.9k, snapshot committato)
-.venv/bin/python import-aifa-per-classi/import-aifa-farmaci.py "$HAPI" --version 2026-05
-
-# Pipeline B — Confezioni ATC (~159k, a lotti; prima uno smoke test)
-.venv/bin/python import-confezioni-atc/import-confezioni-atc-batch.py "$HAPI" --limit 2000
-.venv/bin/python import-confezioni-atc/import-confezioni-atc-batch.py "$HAPI"
-```
-
-La ricerca `$expand?filter` richiede la pre-espansione ValueSet (`pre_expand_value_sets: true`
-già attivo su HAPI): gira in background dopo l'import, nessun `$reindex` necessario.
+Per la sola architettura/rigenerazione delle librerie CRF: `data-import/crf-libraries/README.md`.
+Per il solo dettaglio pipeline farmaci AIFA: `data-import/farmaci-aifa/README.md`.
 
 NOTE:
 
@@ -253,7 +198,7 @@ di retention. Installazione automatica (idempotente, sostituisce il vecchio
 effettivamente eseguito):
 
 ```bash
-./setup/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
+./setup/install/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
 # default: /var/backup/loki-archive, 12 mesi
 ```
 
