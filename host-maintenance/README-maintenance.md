@@ -88,54 +88,49 @@ confligga con altri servizi nginx eventualmente gia' presenti sull'host.
 
 ## Uso combinato
 
-Script in questa cartella, entrambi eseguibili da `irccs-docker/`. Fanno
-TUTTI i passaggi in un colpo (richiedono il fallback gia' installato, vedi
-sopra):
+Script in questa cartella (`maintenance-lib.sh` = funzioni comuni, non va
+lanciato). Gestiscono TUTTI gli stack, con il fallback gia' installato (vedi sopra):
+
+| Stack | Compose |
+|---|---|
+| main (incl. `irccs-httpd-dashboard`) | `docker-compose.yaml` |
+| monitoring (Loki/Grafana/Alloy) | `docker-compose-monitoring.yaml` |
+| zammad | `zammad-ticketing/docker-compose.yaml` |
+| pwa | `docker-compose.pwa.yml` |
 
 ```bash
 ./host-maintenance/maintenance-on.sh
 ```
-1. Scrive il flag Livello 1 (backend).
-2. `docker compose down` — DEVE succedere prima del fallback: nginx e
-   `irccs-httpd-dashboard` vogliono la stessa porta, non possono coesistere;
-   se nginx parte con httpd ancora su, fallisce con
-   "Address already in use" (bug visto in lab, corretto).
-3. Avvia il fallback host-level (`sudo systemctl start irccs-maintenance`)
-   se non gia' attivo.
+1. Scrive il flag Livello 1.
+2. Salva in `host-maintenance/.maintenance-stacks` quali stack erano su.
+3. Ferma PER PRIMO `irccs-httpd-dashboard` e avvia subito il nginx di
+   cortesia (`sudo systemctl start irccs-maintenance`): httpd e nginx vogliono
+   la stessa porta, httpd deve essere gia' fermo.
+4. `down` di pwa, zammad, monitoring e per ultimo main (main possiede la rete
+   `irccs` usata dagli altri).
 
-Nota: tra il passo 2 e il passo 3 c'e' inevitabilmente una finestra di
-qualche secondo in cui nessuno risponde sulla porta (httpd gia' giu', nginx
-non ancora su) — stessa cosa, in ordine inverso, della finestra descritta
-sotto per `maintenance-off.sh`. Non eliminabile con questa architettura.
+La pagina di assistenza e' visibile ovunque: nginx risponde 503 a qualunque
+host/path sulla porta (dashboard, `/app` della PWA, host Zammad `pj-tk...`);
+in piu', col solo Livello 1 (httpd su), anche il vhost Zammad
+(`httpd-config/zammad.conf`) onora `.maintenance-flag`.
 
 ```bash
 ./host-maintenance/maintenance-off.sh
 ```
-1. Ferma il fallback host-level (nginx) — DEVE succedere prima, nginx e
-   `irccs-httpd-dashboard` vogliono la stessa porta e non possono coesistere;
-   con nginx ancora attivo `docker compose up` fallisce con
-   "address already in use" (bug visto in lab, corretto).
-2. `docker compose up -d`.
-3. Attende (fino a 60s) che `irccs-httpd-dashboard` sia up. Se non ce la fa,
-   esce con errore (il fallback resta gia' fermo — la porta puo' restare
-   scoperta finche' non risolvi; puoi rimettere su il fallback a mano nel
-   frattempo con `sudo systemctl start irccs-maintenance`).
-4. Svuota il flag Livello 1.
+1. Rialza lo stack main SENZA httpd (nginx serve ancora la pagina).
+2. Ferma nginx, avvia `irccs-httpd-dashboard` (flag ancora ON: 503 + pagina)
+   e attende fino a 60s. Se non parte, rimette su nginx da solo ed esce con errore.
+3. Rialza monitoring, zammad, pwa — solo quelli che erano su prima (se il file
+   di stato manca, tutti). Un errore su uno di questi non blocca: exit 2 e
+   elenco degli stack falliti.
+4. Svuota il flag Livello 1 e cancella il file di stato.
 
-Nota: tra il passo 1 e il passo 2/3 c'e' inevitabilmente una finestra di
-qualche secondo in cui nessuno risponde sulla porta (nginx gia' fermo,
-httpd non ancora pronto). Non e' eliminabile con questa architettura —
-solo un layer esterno sempre attivo (fuori scope, vedi conversazione
-iniziale su questa feature) toglierebbe anche quella finestra.
+La finestra senza risposta si riduce a pochi secondi (tra stop httpd e avvio
+nginx in "on", e tra stop nginx e avvio httpd in "off"): non eliminabile
+senza un layer esterno sempre attivo.
 
-Richiede `sudo` senza password per `systemctl start/stop irccs-maintenance`
-(o va lanciato con utente che ha i permessi), altrimenti si ferma a
-chiedere la password a meta' sequenza.
-
-Rilevano da soli quale comando compose usare: `docker compose` (v2, plugin)
-se disponibile, altrimenti fallback su `docker-compose` (v1, binario a
-parte) — non tutte le macchine hanno entrambi. Se non trovano ne' l'uno ne'
-l'altro, escono con errore prima di toccare nulla.
+Richiede `sudo` senza password per `systemctl start/stop irccs-maintenance`.
+Rilevano da soli `docker compose` (v2) o `docker-compose` (v1).
 
 ## Test in lab prima di prod
 

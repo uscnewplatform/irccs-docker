@@ -1,53 +1,83 @@
 #!/usr/bin/env bash
-# Disattiva la manutenzione COMPLETA: ferma il nginx fallback, riavvia lo
-# stack Docker, aspetta che irccs-httpd-dashboard sia up, svuota il flag.
+# Disattiva la manutenzione COMPLETA e riporta TUTTI gli stack come prima
+# (rialza solo quelli che maintenance-on.sh aveva trovato attivi; se il file
+# di stato manca, rialza tutti).
+# Sequenza (nginx resta su il piu' possibile, per ridurre la finestra senza risposta):
+#   1. main: tutti i servizi TRANNE irccs-httpd (nginx serve ancora la pagina)
+#   2. ferma nginx e avvia irccs-httpd (stessa porta: non possono coesistere)
+#      -> il flag e' ancora ON: httpd serve 503 + pagina finche' non e' tutto su
+#   3. rialza monitoring, zammad, pwa
+#   4. svuota il flag livello 1
 #
-# Nginx va fermato PRIMA di "docker compose up": tengono entrambi la stessa
-# porta (80/443), non possono stare su insieme. Con nginx ancora attivo
-# "docker compose up" fallisce con "address already in use" (visto in lab).
-# C'e' quindi una finestra di qualche secondo, tra lo stop di nginx e
-# l'avvio di httpd, in cui la porta non risponde: inevitabile, non
-# eliminabile senza un layer esterno (vedi discussione in README).
+# Se httpd non parte entro 60s, il nginx di cortesia viene rimesso su
+# automaticamente (il sito non resta scoperto) e lo script esce con errore.
 set -euo pipefail
 
-COMPOSE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-FLAG_FILE="$COMPOSE_DIR/httpd-config/.maintenance-flag"
+# shellcheck source=maintenance-lib.sh
+source "$(dirname "${BASH_SOURCE[0]}")/maintenance-lib.sh"
 
-if docker compose version &>/dev/null; then
-    COMPOSE=(docker compose)
-elif command -v docker-compose &>/dev/null; then
-    COMPOSE=(docker-compose)
+if [ -s "$STATE_FILE" ]; then
+    mapfile -t TO_START < "$STATE_FILE"
+    echo "[OK] Stack da ripristinare (da $STATE_FILE): ${TO_START[*]}"
 else
-    echo "[ERRORE] Ne' 'docker compose' (v2) ne' 'docker-compose' (v1) trovati." >&2
-    exit 1
+    TO_START=("${STACK_ORDER[@]}")
+    echo "[ATTENZIONE] $STATE_FILE assente: ripristino tutti gli stack: ${TO_START[*]}"
 fi
+# main serve sempre: crea la rete "irccs" e contiene httpd
+case " ${TO_START[*]} " in *" main "*) ;; *) TO_START=(main "${TO_START[@]}") ;; esac
 
+# 1. main senza httpd
+mapfile -t MAIN_SERVICES < <(stack_compose main config --services | grep -vx "$HTTPD_SERVICE")
+echo "[..] Avvio stack main (senza $HTTPD_SERVICE)..."
+stack_compose main up -d "${MAIN_SERVICES[@]}"
+echo "[OK] Stack main su (httpd escluso)."
+
+# 2. nginx giu', httpd su
 if systemctl is-active --quiet irccs-maintenance 2>/dev/null; then
     echo "[..] Fermo il fallback host-level (nginx) per liberare la porta..."
     sudo systemctl stop irccs-maintenance
     echo "[OK] Fallback host-level fermato."
 fi
+echo "[..] Avvio $HTTPD_CONTAINER..."
+stack_compose main up -d "$HTTPD_SERVICE"
 
-echo "[..] Riavvio lo stack Docker (${COMPOSE[*]} up -d)..."
-(cd "$COMPOSE_DIR" && "${COMPOSE[@]}" up -d)
-
-echo "[..] Attendo che irccs-httpd-dashboard sia up (max 60s)..."
+echo "[..] Attendo che $HTTPD_CONTAINER sia up (max 60s)..."
+UP=0
 for i in $(seq 1 30); do
-    if docker ps --filter "name=^irccs-httpd-dashboard$" --filter "status=running" --format '{{.Names}}' | grep -q .; then
-        echo "[OK] irccs-httpd-dashboard e' up."
-        break
+    if docker ps --filter "name=^${HTTPD_CONTAINER}$" --filter "status=running" --format '{{.Names}}' | grep -q .; then
+        UP=1; break
     fi
     sleep 2
-    if [ "$i" -eq 30 ]; then
-        echo "[ATTENZIONE] irccs-httpd-dashboard non risulta up dopo 60s."
-        echo "  Il nginx fallback e' gia' fermo: la porta potrebbe restare"
-        echo "  scoperta finche' non risolvi. Controlla 'docker compose logs irccs-httpd'."
-        echo "  Puoi rimettere su il fallback nel frattempo:"
-        echo "    sudo systemctl start irccs-maintenance"
-        exit 1
+done
+if [ "$UP" -ne 1 ]; then
+    echo "[ATTENZIONE] $HTTPD_CONTAINER non risulta up dopo 60s: rimetto su il fallback nginx."
+    sudo systemctl start irccs-maintenance || true
+    echo "  Controlla 'docker compose logs $HTTPD_SERVICE', poi rilancia questo script."
+    exit 1
+fi
+echo "[OK] $HTTPD_CONTAINER e' up (flag ancora ON: pagina di assistenza via httpd)."
+
+# 3. stack accessori (non bloccanti: un errore qui non deve lasciare il sito in manutenzione)
+FAILED=()
+for s in "${STACK_ORDER[@]}"; do
+    [ "$s" = "main" ] && continue
+    case " ${TO_START[*]} " in *" $s "*) ;; *) continue ;; esac
+    stack_exists "$s" || { echo "[--] Stack $s: compose non trovato, salto."; continue; }
+    echo "[..] Avvio stack $s..."
+    if stack_compose "$s" up -d; then
+        echo "[OK] Stack $s su."
+    else
+        echo "[ATTENZIONE] avvio stack $s fallito."
+        FAILED+=("$s")
     fi
 done
 
+# 4. flag OFF
 : > "$FLAG_FILE"
+rm -f "$STATE_FILE"
 echo "[OK] Flag di manutenzione (livello 1) svuotato."
-echo "[OK] Sito tornato operativo."
+if [ "${#FAILED[@]}" -gt 0 ]; then
+    echo "[ATTENZIONE] Sito operativo, ma stack NON ripartiti: ${FAILED[*]}"
+    exit 2
+fi
+echo "[OK] Sito tornato operativo, tutti gli stack ripristinati."
