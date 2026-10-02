@@ -3920,6 +3920,21 @@
             ]
           },
           {
+            "name": "ResourceTypes Resource",
+            "type": "ResourceTypes",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "uris": [
+              "/fhir/auth/resourceTypes",
+              "/fhir/auth/resourceTypes/*"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ]
+          },
+          {
             "name": "Associate PatientJourney Resource",
             "type": "ResearchStudy",
             "ownerManagedAccess": false,
@@ -8248,6 +8263,17 @@
               "resources": "[\"AuthProfile Resource\"]",
               "scopes": "[\"DELETE\"]",
               "applyPolicies": "[\"Delete AuthProfile Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read ResourceTypes Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"ResourceTypes Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Read AuthProfile Policy\",\"Create AuthProfile Policy\",\"Update AuthProfile Policy\"]"
             }
           },
           {
