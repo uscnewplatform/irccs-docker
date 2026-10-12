@@ -174,6 +174,37 @@ I tipi di consenso sono un *registry dinamico* persistito come `CodeSystem` FHIR
 
 Per i dettagli sulle librerie CRF vedere xref:librerie-crf.adoc[Librerie CRF — Gestione e Import].
 
+=== B2. Attributi personalizzati Zammad (ticketing)
+
+Se il modulo ticketing (Zammad) è attivo, su ogni istanza Zammad nuova vanno creati gli *attributi personalizzati* (Object Manager) usati dalla dashboard. Non fa parte di `install-all.sh` perché agisce su Zammad, non su HAPI, e richiede un token admin Zammad.
+
+[source,bash]
+----
+cd irccs-docker
+ZAMMAD_TOKEN=<token admin Zammad> ./setup/install/install_zammad_attributes.sh https://<zammad>
+----
+
+* Il token va passato come variabile d'ambiente (non come argomento, per non lasciarlo in history/`ps`) e deve appartenere a un utente con permesso `admin.object`.
+* L'URL è la radice di Zammad; il suffisso `/api/v1` viene aggiunto dallo script.
+* Lo script è *idempotente*: gli attributi già presenti vengono saltati e la migrazione dell'Object Manager viene sempre rieseguita (copre un giro interrotto).
+
+[cols="1,3"]
+|===
+|Oggetto |Attributi creati
+
+|Ticket |`crf`, `crfdisplay`, `careplan`, `careplandisplay`, `patient`, `patientdisplay`, `patientjourneydisplay`, `directlink`
+|Group |`organization`
+|===
+
+[IMPORTANT]
+====
+Senza questi attributi Zammad *scarta in silenzio* i campi inviati alla creazione del ticket: il ticket nasce senza collegamento a paziente/CRF/percorso e il contatore ticket della dashboard (che raggruppa per `patientjourneydisplay`) non lo conta. I ticket creati prima dell'installazione degli attributi restano senza questi campi.
+====
+
+Il microservizio Zammad verifica la presenza degli attributi Ticket all'avvio (log `ERROR` con l'elenco di quelli mancanti) e rifiuta con *HTTP 422* la creazione di un ticket che usa un attributo assente. Il token del microservizio deve avere il permesso `admin.object` perché la verifica funzioni; senza, la verifica viene saltata con un warning.
+
+Dopo lo script restano manuali: la creazione dello stato ticket "annuncio" e la valorizzazione di `organization` sui gruppi `annunci_*` (vedi la documentazione del microservizio Zammad).
+
 === C. Import terminologia LOINC (opzionale, MANUALE)
 
 Per abilitare la validazione e ricerca di codici LOINC nel server FHIR è necessario importare la terminologia.
