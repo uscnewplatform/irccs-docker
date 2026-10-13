@@ -2427,6 +2427,30 @@
           "clientRole": true,
           "containerId": "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
           "attributes": {}
+        },
+        {
+          "id": "b7d2a3c1-6e4f-4a58-8c9d-1f0e2a3b4c5d",
+          "name": "scanner",
+          "description": "Patient PWA scan-session service user: read Questionnaire/PlanDefinition/ResearchStudy/CarePlan/QuestionnaireResponse, create/update QuestionnaireResponse ($extract is gated by questionnaireresponse:create). No admin, no realm-management.",
+          "composite": true,
+          "composites": {
+            "realm": [
+              "questionnaire:read",
+              "questionnaire:search",
+              "plandefinition:read",
+              "researchstudy:read",
+              "researchstudy:search",
+              "careplan:read",
+              "careplan:search",
+              "questionnaireresponse:read",
+              "questionnaireresponse:search",
+              "questionnaireresponse:create",
+              "questionnaireresponse:update"
+            ]
+          },
+          "clientRole": true,
+          "containerId": "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
+          "attributes": {}
         }
       ],
       "security-admin-console": [],
@@ -2719,6 +2743,30 @@
       "groups": [
         "/admin"
       ]
+    },
+    {
+      "id": "5ca77e4b-0d1c-4f6e-9a52-7b3d2e8c1f40",
+      "username": "scanner-svc",
+      "firstName": "Scanner",
+      "lastName": "Service",
+      "emailVerified": true,
+      "createdTimestamp": 1760313600000,
+      "enabled": true,
+      "totp": false,
+      "credentials": [],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "clientRoles": {
+        "irccs": [
+          "uma_protection",
+          "scanner"
+        ]
+      },
+      "notBefore": 0,
+      "groups": []
     }
   ],
   "scopeMappings": [
