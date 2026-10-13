@@ -169,6 +169,7 @@ services:
     # mergiato senza editare questo file a mano.
     image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/${IRCCS_HTTPD_BRANCH:-develop}:${IRCCS_HTTPD_VERSION}
     container_name: irccs-httpd-dashboard
+    restart: always
     ports:
       - "80:80"
     volumes:
@@ -415,6 +416,7 @@ services:
 
   cache:
     container_name: irccs-redis
+    restart: always
     hostname: redis
     image: redis:${REDIS_VERSION}
     networks:
