@@ -59,7 +59,7 @@ x-shared:
       ZAMMAD_PROXY: "true"
       ZAMMAD_SESSION_STORE_HTTPS: "true"
 
-    image: ${IMAGE_REPO:-ghcr.io/zammad/zammad}:${VERSION:-7.2.2-0000}
+    image: ${IMAGE_REPO:-ghcr.io/zammad/zammad}:${VERSION:-6.5.2-22}
     restart: ${RESTART:-always}
     logging: *default-logging
     volumes:
