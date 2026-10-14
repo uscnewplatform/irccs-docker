@@ -20,9 +20,11 @@ spring:
     driverClassName: org.postgresql.Driver
     max-active: 15
 
-    # database connection pool size
+    # database connection pool size. 10 saturava con piu' utenti in contemporanea (ricerche
+    # parallele del search coordinator): "Connection is not available, request timed out"
+    # su preprod mentre Postgres (max_connections=100) era quasi inattivo. Override via env.
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: ${HAPI_HIKARI_MAX_POOL_SIZE:30}
   jpa:
     properties:
       hibernate.format_sql: false
