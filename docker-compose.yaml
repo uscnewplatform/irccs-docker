@@ -20,10 +20,22 @@ x-logging: &default-logging
     max-size: "50m"
     max-file: "5"
 
+# Limiti di memoria: senza mem_limit la JVM dimensiona l'heap sul 25% della RAM
+# dell'HOST (non del container) e nessun container e' limitato -> a ottobre 2026
+# la somma dei processi Java ha esaurito i 32 GB dell'host (global OOM, kill
+# casuale di un java, anche irccs-hapi-audit). I valori sono tetti, non
+# prenotazioni: sovrascrivibili da .env con MEM_LIMIT_<SERVIZIO>.
+# JAVA_TOOL_OPTIONS: MaxRAMPercentage calcola l'heap sul limite (70% sui servizi grandi, 55%
+# su quelli da 1 GB: meno spazio per metaspace/thread/buffer nativi); G1PeriodicGCInterval
+# fa restituire all'OS l'heap inutilizzato nei periodi di calma. Valori non ancora misurati.
+
 services:
   irccs-microservice-clinical-reasoning:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-clinical-reasoning:${IRCCS_CLINICAL_REASONING_VERSION}
     container_name: irccs-clinical-reasoning
+    mem_limit: ${MEM_LIMIT_CLINICAL_REASONING:-3g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config:/deployments/config
     env_file:
@@ -39,6 +51,9 @@ services:
   irccs-microservice-auth:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-auth:${IRCCS_AUTH_VERSION}
     container_name: irccs-auth
+    mem_limit: ${MEM_LIMIT_AUTH:-1536m}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config:/deployments/config
     env_file:
@@ -54,6 +69,9 @@ services:
   irccs-microservice-notification:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-notification:${IRCCS_NOTIFICATION_VERSION}
     container_name: irccs-notification
+    mem_limit: ${MEM_LIMIT_NOTIFICATION:-1g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=55 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config-notification/application.properties:/deployments/config/application.properties
     env_file:
@@ -71,6 +89,9 @@ services:
   irccs-microservice-practitioner:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-practitioner:${IRCCS_PRACTITIONER_VERSION}
     container_name: irccs-practitioner
+    mem_limit: ${MEM_LIMIT_PRACTITIONER:-1g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=55 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config:/deployments/config
     env_file:
@@ -86,6 +107,9 @@ services:
   irccs-microservice-centro-ricerca:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-centro-ricerca:${IRCCS_CENTRO_RICERCA_VERSION}
     container_name: irccs-centro-ricerca
+    mem_limit: ${MEM_LIMIT_CENTRO_RICERCA:-3g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config:/deployments/config
     env_file:
@@ -101,6 +125,9 @@ services:
   irccs-microservice-studio-clinico:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-studio-clinico:${IRCCS_STUDIO_CLINICO_VERSION}
     container_name: irccs-studio-clinico
+    mem_limit: ${MEM_LIMIT_STUDIO_CLINICO:-3g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config:/deployments/config
       - ./translations:/deployments/translations
@@ -117,6 +144,9 @@ services:
   irccs-microservice-anagrafica-pazienti:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-anagrafica-pazienti:${IRCCS_ANAGRAFICA_VERSION}
     container_name: irccs-anagrafica-pazienti
+    mem_limit: ${MEM_LIMIT_ANAGRAFICA_PAZIENTI:-1g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=55 -XX:G1PeriodicGCInterval=300000
     ports:
       - "8976:8080"
     volumes:
@@ -139,6 +169,7 @@ services:
     # mergiato senza editare questo file a mano.
     image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/${IRCCS_HTTPD_BRANCH:-develop}:${IRCCS_HTTPD_VERSION}
     container_name: irccs-httpd-dashboard
+    restart: always
     ports:
       - "443:443"
     volumes:
@@ -185,6 +216,7 @@ services:
   irccs-keycloak:
     image: quay.io/keycloak/keycloak:${KEYCLOAK_IMAGE_VERSION}
     container_name: irccs-keycloak
+    mem_limit: ${MEM_LIMIT_KEYCLOAK:-3g}
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
@@ -235,6 +267,9 @@ services:
   irccs-hapi-fhir:
     image: hapiproject/hapi:${HAPI_IMAGE_VERSION}
     container_name: irccs-hapi-fhir
+    mem_limit: ${MEM_LIMIT_HAPI_FHIR:-4g}
+    restart: always
+    logging: *default-logging
     ports:
       # HAPI non e' esposto in rete: solo i microservizi (rete `irccs`) e gli script di
       # setup sull'host lo raggiungono. Bind su 127.0.0.1 -> gli script set/reindex/
@@ -254,6 +289,7 @@ services:
       - ./hapi-fhir-config/interceptors/audit-partition-interceptor.jar:/app/extra-classes/audit-partition-interceptor.jar
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:G1PeriodicGCInterval=300000
     env_file:
       - .env
     networks:
@@ -317,6 +353,12 @@ services:
   irccs-hapi-audit:
     image: hapiproject/hapi:${HAPI_IMAGE_VERSION}
     container_name: irccs-hapi-audit
+    # restart: senza, un crash (es. OOM-kill dell'host) lasciava l'audit store fermo e
+    # il fail-closed bloccava la creazione delle risorse critiche finche' qualcuno
+    # non lo riavviava a mano (incidente prod 2026-10-13).
+    restart: always
+    logging: *default-logging
+    mem_limit: ${MEM_LIMIT_HAPI_AUDIT:-2g}
     ports:
       # Solo host-locale, per gli script di setup (install_searchparameters / db_protection).
       - "127.0.0.1:8081:8080"
@@ -330,6 +372,7 @@ services:
       - ./hapi-fhir-config/interceptors/audit-partition-interceptor.jar:/app/extra-classes/audit-partition-interceptor.jar
     environment:
       SPRING_CONFIG_LOCATION: '/home/application.yaml'
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:G1PeriodicGCInterval=300000
     env_file:
       - .env
     # Su entrambe le reti: irccs per essere raggiunto dai microservizi clinici
@@ -374,6 +417,7 @@ services:
 
   cache:
     container_name: irccs-redis
+    restart: always
     hostname: redis
     image: redis:${REDIS_VERSION}
     networks:
@@ -389,6 +433,9 @@ services:
   irccs-microservice-tac:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-tac:${IRCCS_TAC_VERSION}
     container_name: irccs-tac
+    mem_limit: ${MEM_LIMIT_TAC:-1g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=55 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config-tac:/deployments/config
       - ./dicom:/data
@@ -405,6 +452,9 @@ services:
   irccs-microservice-zammad:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-zammad:${IRCCS_ZAMMAD_VERSION}
     container_name: irccs-zammad
+    mem_limit: ${MEM_LIMIT_ZAMMAD:-1g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=55 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config-zammad:/deployments/config
     env_file:
@@ -420,6 +470,9 @@ services:
   irccs-microservice-webpush:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-webpush:${IRCCS_WEBPUSH_VERSION}
     container_name: irccs-webpush
+    mem_limit: ${MEM_LIMIT_WEBPUSH:-1g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=55 -XX:G1PeriodicGCInterval=300000
     hostname: irccs-webpush
     volumes:
       - ./microservice-config-webpush:/deployments/config
@@ -480,6 +533,9 @@ services:
   irccs-microservice-patient-interview:
     image: nexus.infocube.it/org.quarkus/irccs-microservice-patient-interview:${IRCCS_PATIENT_INTERVIEW_VERSION}
     container_name: irccs-patient-interview
+    mem_limit: ${MEM_LIMIT_PATIENT_INTERVIEW:-1g}
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=55 -XX:G1PeriodicGCInterval=300000
     volumes:
       - ./microservice-config:/deployments/config
     env_file:

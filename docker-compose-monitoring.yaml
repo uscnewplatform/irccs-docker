@@ -9,6 +9,7 @@ services:
   grafana:
     image: "grafana/grafana:${GRAFANA_VERSION:-latest}"
     container_name: irccs-grafana
+    restart: always
     logging: *default-logging
     env_file:
       - "./.env"
@@ -46,6 +47,7 @@ services:
       - "./.env"
     image: "grafana/loki:${LOKI_VERSION:-3.5}"
     container_name: irccs-loki
+    restart: always
     logging: *default-logging
     command: "-config.file=${LOKI_CONFIG_PATH}/${LOKI_CONFIG_FILE}"
     # Nessuna esposizione host: Loki e' raggiunto solo da Grafana/Alloy sulla
@@ -64,6 +66,7 @@ services:
       - "./.env"
     image: "grafana/alloy:${ALLOY_VERSION:-v1.11.3}"
     container_name: irccs-alloy
+    restart: always
     logging: *default-logging
     privileged: true
     volumes:

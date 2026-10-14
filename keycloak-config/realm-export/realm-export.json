@@ -853,15 +853,6 @@
         "attributes": {}
       },
       {
-        "id": "f3f54be3-beb1-428a-bde8-bc6b8eadc781",
-        "name": "patientjourney:read",
-        "description": "Allows reading the full patient-journey design graph (ResearchStudy .../all).",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
-        "attributes": {}
-      },
-      {
         "id": "414782c2-c31b-4488-9c7b-8a2b1562b1ae",
         "name": "practitioner:create",
         "description": "Allows you to perform a create operation on Practitioner.",
@@ -2436,6 +2427,30 @@
           "clientRole": true,
           "containerId": "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
           "attributes": {}
+        },
+        {
+          "id": "b7d2a3c1-6e4f-4a58-8c9d-1f0e2a3b4c5d",
+          "name": "scanner",
+          "description": "Patient PWA scan-session service user: read Questionnaire/PlanDefinition/ResearchStudy/CarePlan/QuestionnaireResponse, create/update QuestionnaireResponse ($extract is gated by questionnaireresponse:create). No admin, no realm-management.",
+          "composite": true,
+          "composites": {
+            "realm": [
+              "questionnaire:read",
+              "questionnaire:search",
+              "plandefinition:read",
+              "researchstudy:read",
+              "researchstudy:search",
+              "careplan:read",
+              "careplan:search",
+              "questionnaireresponse:read",
+              "questionnaireresponse:search",
+              "questionnaireresponse:create",
+              "questionnaireresponse:update"
+            ]
+          },
+          "clientRole": true,
+          "containerId": "964b3ea0-8315-4f7d-b63c-4ff8670d221e",
+          "attributes": {}
         }
       ],
       "security-admin-console": [],
@@ -2728,6 +2743,31 @@
       "groups": [
         "/admin"
       ]
+    },
+    {
+      "id": "5ca77e4b-0d1c-4f6e-9a52-7b3d2e8c1f40",
+      "username": "scanner-svc@pascale.invalid",
+      "email": "scanner-svc@pascale.invalid",
+      "firstName": "Scanner",
+      "lastName": "Service",
+      "emailVerified": true,
+      "createdTimestamp": 1760313600000,
+      "enabled": true,
+      "totp": false,
+      "credentials": [],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-pascale"
+      ],
+      "clientRoles": {
+        "irccs": [
+          "uma_protection",
+          "scanner"
+        ]
+      },
+      "notBefore": 0,
+      "groups": []
     }
   ],
   "scopeMappings": [
@@ -3492,21 +3532,6 @@
             "icon_uri": ""
           },
           {
-            "name": "Read PatientJourney Resource",
-            "type": "ResearchStudy",
-            "ownerManagedAccess": false,
-            "displayName": "Read PatientJourney Resource",
-            "attributes": {},
-            "uris": [
-              "/fhir/ResearchStudy/{id}/all"
-            ],
-            "scopes": [
-              {
-                "name": "GET"
-              }
-            ]
-          },
-          {
             "name": "Read Report Resource",
             "type": "ResearchStudy",
             "ownerManagedAccess": false,
@@ -3944,6 +3969,21 @@
             ]
           },
           {
+            "name": "ResourceTypes Resource",
+            "type": "ResourceTypes",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "uris": [
+              "/fhir/auth/resourceTypes",
+              "/fhir/auth/resourceTypes/*"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ]
+          },
+          {
             "name": "Associate PatientJourney Resource",
             "type": "ResearchStudy",
             "ownerManagedAccess": false,
@@ -4355,7 +4395,8 @@
             "displayName": "Create Observation Resource",
             "attributes": {},
             "uris": [
-              "/fhir/Observation"
+              "/fhir/Observation",
+              "/fhir/Observation/{id}/$expunge"
             ],
             "scopes": [
               {
@@ -5454,7 +5495,8 @@
             "uris": [
               "/fhir/ResearchStudy/{id}",
               "/fhir/ResearchStudy/$bulk_delete",
-              "/fhir/ResearchStudy/{id}/groups"
+              "/fhir/ResearchStudy/{id}/groups",
+              "/fhir/ResearchStudy/{id}/all"
             ],
             "scopes": [
               {
@@ -6130,16 +6172,6 @@
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "roles": "[{\"id\":\"appointmentresponse:search\",\"required\":false}]",
-              "fetchRoles": "true"
-            }
-          },
-          {
-            "name": "Read PatientJourney Policy",
-            "type": "role",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "roles": "[{\"id\":\"patientjourney:read\",\"required\":false}]",
               "fetchRoles": "true"
             }
           },
@@ -8217,17 +8249,6 @@
             }
           },
           {
-            "name": "Read PatientJourney Permission",
-            "type": "scope",
-            "logic": "POSITIVE",
-            "decisionStrategy": "AFFIRMATIVE",
-            "config": {
-              "resources": "[\"Read PatientJourney Resource\"]",
-              "scopes": "[\"GET\"]",
-              "applyPolicies": "[\"Admin Group Policy\",\"Read PatientJourney Policy\",\"Admin Role Policy\"]"
-            }
-          },
-          {
             "name": "Read Report Permission",
             "type": "scope",
             "logic": "POSITIVE",
@@ -8291,6 +8312,17 @@
               "resources": "[\"AuthProfile Resource\"]",
               "scopes": "[\"DELETE\"]",
               "applyPolicies": "[\"Delete AuthProfile Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read ResourceTypes Permission",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"ResourceTypes Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Admin Role Policy\",\"Read AuthProfile Policy\",\"Create AuthProfile Policy\",\"Update AuthProfile Policy\"]"
             }
           },
           {
