@@ -2746,7 +2746,8 @@
     },
     {
       "id": "5ca77e4b-0d1c-4f6e-9a52-7b3d2e8c1f40",
-      "username": "scanner-svc",
+      "username": "scanner-svc@pascale.invalid",
+      "email": "scanner-svc@pascale.invalid",
       "firstName": "Scanner",
       "lastName": "Service",
       "emailVerified": true,
