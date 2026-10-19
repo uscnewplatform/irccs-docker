@@ -5192,7 +5192,8 @@
             "attributes": {},
             "uris": [
               "/fhir/QuestionnaireResponse/$bulk_delete",
-              "/fhir/QuestionnaireResponse/{id}"
+              "/fhir/QuestionnaireResponse/{id}",
+              "/fhir/QuestionnaireResponse/{id}/$provenance"
             ],
             "scopes": [
               {
