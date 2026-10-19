@@ -5898,6 +5898,25 @@
               }
             ],
             "icon_uri": ""
+          },
+          {
+            "name": "Audit Event Log Resource",
+            "type": "AuditEvent",
+            "ownerManagedAccess": false,
+            "displayName": "Audit Event Log Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/auth/audit-events"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
           }
         ],
         "policies": [
@@ -11331,6 +11350,30 @@
               "resources": "[\"Create Consent Resource\"]",
               "scopes": "[\"GET\"]",
               "applyPolicies": "[\"Search Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Audit Event Log Create Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Audit Event Log Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Create AuditEvent Policy\", \"Admin Group Policy\", \"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Audit Event Log Read Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Audit Event Log Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\", \"Admin Role Policy\"]"
             }
           }
         ],
