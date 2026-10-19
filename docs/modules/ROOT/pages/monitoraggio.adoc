@@ -281,12 +281,6 @@ Le principali variabili d'ambiente per il monitoraggio (da inserire nel file `.e
 |`GRAFANA_VERSION`
 |Versione dell'immagine Grafana
 
-|`LOKI_VERSION`
-|Tag dell'immagine `grafana/loki` (es. `3.5`)
-
-|`ALLOY_VERSION`
-|Tag dell'immagine `grafana/alloy` (es. `v1.11.3`)
-
 |`GRAFANA_PORT`
 |Porta esposta di Grafana (es. `3000`)
 

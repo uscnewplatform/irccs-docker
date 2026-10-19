@@ -1,0 +1,210 @@
+{
+  "_doc": "J-LI NEW: allinea tutti i bracci (Indicata/Controindicata, linee 1-3) a Treme+Durva. Ambiente: --base.",
+  "study": "32130",
+  "master_activity": "ActivityDefinition/32361",
+  "careplan_status": "active",
+  "careplan_intent": "plan",
+  "trattamento_text": "Trattamento {drug}",
+  "somm_slot": "^Somministrazione",
+  "own_somm_pattern": "mg/die|^Somministrazione",
+  "sae": {
+    "trattamento": "^SAE TRATTAMENTO",
+    "followup": "^SAE FOLLOWUP",
+    "ctcae": "^CTCAE.*SAE",
+    "desc_sae": "Evento avverso serio che si può verificare durante il trattamento in Linea {line} - {drug}\n\nClicca sul pulsante in alto \"Aggiungi SAE Follow Up\" per aggiungere una SAE Follow Up",
+    "desc_fol": "Evento avverso serio che si può verificare durante il trattamento in Linea {line} - {drug}. Copia per lo step: SAE"
+  },
+  "targets": [
+    {
+      "label": "IND-L1-Atezo+Beva",
+      "activity": "ActivityDefinition/32312",
+      "drug": "Atezo+Beva",
+      "line": 1,
+      "only_steps": [
+        "SAE"
+      ],
+      "sae_group": "IND-L1"
+    },
+    {
+      "label": "IND-L2-Sorafenib",
+      "activity": "ActivityDefinition/32492",
+      "drug": "Sorafenib",
+      "line": 2,
+      "sae_group": "IND-L2"
+    },
+    {
+      "label": "IND-L2-Lenvatinib",
+      "activity": "ActivityDefinition/32420",
+      "drug": "Lenvatinib",
+      "line": 2,
+      "sae_group": "IND-L2"
+    },
+    {
+      "label": "IND-L2-Cabozantinib",
+      "activity": "ActivityDefinition/32388",
+      "drug": "Cabozantinib",
+      "line": 2,
+      "sae_group": "IND-L2"
+    },
+    {
+      "label": "IND-L2-Regorafenib",
+      "activity": "ActivityDefinition/32447",
+      "drug": "Regorafenib",
+      "line": 2,
+      "sae_group": "IND-L2"
+    },
+    {
+      "label": "IND-L3-Regorafenib",
+      "activity": "ActivityDefinition/32532",
+      "drug": "Regorafenib",
+      "line": 3,
+      "create_missing": true,
+      "somm_from": "ActivityDefinition/32447",
+      "sae_group": "IND-L3"
+    },
+    {
+      "label": "IND-L3-Cabozantinib",
+      "activity": "ActivityDefinition/32523",
+      "drug": "Cabozantinib",
+      "line": 3,
+      "create_missing": true,
+      "somm_from": "ActivityDefinition/32388",
+      "sae_group": "IND-L3"
+    },
+    {
+      "label": "IND-L3-Sorafenib",
+      "activity": "ActivityDefinition/32537",
+      "drug": "Sorafenib",
+      "line": 3,
+      "create_missing": true,
+      "somm_from": "ActivityDefinition/32492",
+      "sae_group": "IND-L3"
+    },
+    {
+      "label": "CTR-L1-Sorafenib",
+      "activity": "ActivityDefinition/32180",
+      "drug": "Sorafenib",
+      "line": 1,
+      "sae_group": "CTR-L1"
+    },
+    {
+      "label": "CTR-L1-Lenvatinib",
+      "activity": "ActivityDefinition/32155",
+      "drug": "Lenvatinib",
+      "line": 1,
+      "sae_group": "CTR-L1"
+    },
+    {
+      "label": "CTR-L2-Sorafenib",
+      "activity": "ActivityDefinition/32264",
+      "drug": "Sorafenib",
+      "line": 2,
+      "sae_group": "CTR-L2"
+    },
+    {
+      "label": "CTR-L2-Cabozantinib",
+      "activity": "ActivityDefinition/32207",
+      "drug": "Cabozantinib",
+      "line": 2,
+      "sae_group": "CTR-L2"
+    },
+    {
+      "label": "CTR-L2-Regorafenib",
+      "activity": "ActivityDefinition/32238",
+      "drug": "Regorafenib",
+      "line": 2,
+      "sae_group": "CTR-L2"
+    },
+    {
+      "label": "CTR-L3-Regorafenib",
+      "activity": "ActivityDefinition/32301",
+      "drug": "Regorafenib",
+      "line": 3,
+      "create_missing": true,
+      "somm_from": "ActivityDefinition/32238",
+      "sae_group": "CTR-L3"
+    },
+    {
+      "label": "CTR-L3-Cabozantinib",
+      "activity": "ActivityDefinition/32292",
+      "drug": "Cabozantinib",
+      "line": 3,
+      "create_missing": true,
+      "somm_from": "ActivityDefinition/32207",
+      "sae_group": "CTR-L3"
+    }
+  ],
+  "external_lines": {
+    "source_activity": "ActivityDefinition/32342",
+    "careplan_titles": {
+      "dati basali": "Dati Basali",
+      "trattamenti locoregionali": "Trattamenti Locoregionali",
+      "farmaci e patologie concomitanti": "Farmaci E Patologie Concomitanti",
+      "follow up": "Follow Up",
+      "fine trattamento": "Fine Trattamento"
+    },
+    "targets": [
+      {
+        "plan_definition": "PlanDefinition/32149",
+        "name": "Prima linea esterna a J-LI"
+      },
+      {
+        "plan_definition": "PlanDefinition/32206",
+        "name": "Seconda linea esterna a J-LI"
+      },
+      {
+        "plan_definition": "PlanDefinition/32291",
+        "name": "Terza linea esterna a J-LI"
+      }
+    ]
+  },
+  "create_scope": {
+    "groupId": "1689f3a0-22d6-4e97-ade8-034753fe23c4",
+    "organizationId": "5579"
+  },
+  "sae_groups": {
+    "IND-L1": {
+      "master": true,
+      "_doc": "stesso SAE del master Treme+Durva: tutti e 4 i farmaci"
+    },
+    "IND-L2": {
+      "owner": "IND-L2-Sorafenib",
+      "drugs": [
+        "Sorafenib",
+        "Cabozantinib",
+        "Regorafenib",
+        "Lenvatinib"
+      ]
+    },
+    "IND-L3": {
+      "owner": "IND-L3-Regorafenib",
+      "drugs": [
+        "Sorafenib",
+        "Cabozantinib",
+        "Regorafenib"
+      ]
+    },
+    "CTR-L1": {
+      "owner": "CTR-L1-Sorafenib",
+      "drugs": [
+        "Sorafenib",
+        "Lenvatinib"
+      ]
+    },
+    "CTR-L2": {
+      "owner": "CTR-L2-Sorafenib",
+      "drugs": [
+        "Sorafenib",
+        "Cabozantinib",
+        "Regorafenib"
+      ]
+    },
+    "CTR-L3": {
+      "owner": "CTR-L3-Regorafenib",
+      "drugs": [
+        "Cabozantinib",
+        "Regorafenib"
+      ]
+    }
+  }
+}

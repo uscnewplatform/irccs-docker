@@ -2195,6 +2195,60 @@
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
+      },
+      {
+        "id": "3d45ad51-96d6-46b3-8e3f-668b33a1195a",
+        "name": "documentreference:create",
+        "description": "Allows you to perform a create operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "2709bbf4-f1a0-4f3b-b1f0-3fd77d1f91ad",
+        "name": "documentreference:read",
+        "description": "Allows you to perform a read operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "6788f6d8-425e-4955-b3e2-378228b100c9",
+        "name": "documentreference:update",
+        "description": "Allows you to perform a update operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "930a707f-d390-48c8-845a-b03c27b7e94c",
+        "name": "documentreference:delete",
+        "description": "Allows you to perform a delete operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "444084af-5600-4a67-a334-cae15e1aaf37",
+        "name": "documentreference:search",
+        "description": "Allows you to perform a search operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "dc4f8096-b6c6-47ff-8965-ee5d151c95d6",
+        "name": "documentreference:history",
+        "description": "Allows you to perform a history operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
       }
     ],
     "client": {
@@ -5192,7 +5246,8 @@
             "attributes": {},
             "uris": [
               "/fhir/QuestionnaireResponse/$bulk_delete",
-              "/fhir/QuestionnaireResponse/{id}"
+              "/fhir/QuestionnaireResponse/{id}",
+              "/fhir/QuestionnaireResponse/{id}/$provenance"
             ],
             "scopes": [
               {
@@ -5890,6 +5945,100 @@
               "/fhir/Consent/{id}/_history/{id}",
               "/fhir/Consent/{id}/_history",
               "/fhir/Consent/_history"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Audit Event Log Resource",
+            "type": "AuditEvent",
+            "ownerManagedAccess": false,
+            "displayName": "Audit Event Log Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/auth/audit-events"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "Create DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "Base DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "Search DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "History DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference/_history",
+              "/fhir/DocumentReference/{id}/_history",
+              "/fhir/DocumentReference/{id}/_history/{id}"
             ],
             "scopes": [
               {
@@ -11330,6 +11479,180 @@
               "resources": "[\"Create Consent Resource\"]",
               "scopes": "[\"GET\"]",
               "applyPolicies": "[\"Search Consent Policy\",\"Admin Group Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Audit Event Log Create Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Audit Event Log Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Create AuditEvent Policy\", \"Admin Group Policy\", \"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Audit Event Log Read Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Audit Event Log Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\", \"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create DocumentReference Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DocumentReference Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DocumentReference Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search DocumentReference Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search DocumentReference Policy\",\"Admin Role Policy\"]"
             }
           }
         ],

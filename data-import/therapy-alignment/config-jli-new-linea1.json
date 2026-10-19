@@ -1,0 +1,81 @@
+{
+  "_doc": "J-LI NEW, Linea 1: allinea Atezo+Beva (target) a Treme+Durva (master). Ambiente: passare --base.",
+  "master_activity": "ActivityDefinition/32361",
+  "target_activity": "ActivityDefinition/32312",
+  "backup_roots": [
+    "ResearchStudy/32130",
+    "ResearchStudy/32306",
+    "PlanDefinition/32311"
+  ],
+  "careplan_status": "active",
+  "careplan_intent": "plan",
+  "retire_replaced": true,
+  "repoint_responses": false,
+  "steps": {
+    "Dati Basali": {
+      "mode": "shared"
+    },
+    "Farmaci E Patologie Concomitanti": {
+      "mode": "shared"
+    },
+    "Follow Up": {
+      "mode": "shared"
+    },
+    "Stadiazione": {
+      "mode": "shared"
+    },
+    "Trattamenti Locoregionali": {
+      "mode": "shared",
+      "master_extensions_from_target": [
+        "save-disable-expression",
+        "save-disable-message"
+      ]
+    },
+    "Trattamento": {
+      "mode": "shared",
+      "copy_fields": [
+        "title"
+      ],
+      "keep_questionnaires_matching": "^Somministrazione"
+    },
+    "SAE": {
+      "mode": "per-therapy"
+    }
+  },
+  "patches": [
+    {
+      "ref": "Questionnaire/34544",
+      "why": "SAE Follow-up Atezo+Beva: allineato a 33465, precompila dal proprio SAE 32326",
+      "set": {
+        "title": "SAE FOLLOWUP TRATTAMENTO JLI1",
+        "name": "SAE FOLLOWUP TRATTAMENTO JLI1",
+        "url": "http://example.org/fhir/Questionnaire/SAE FOLLOWUP TRATTAMENTO JLI1",
+        "description": "Evento avverso serio che si può verificare durante il trattamento in Linea 1 - Atezo+Beva. Copia per lo step: SAE"
+      },
+      "extensions": {
+        "http://irccs.pascale.napoli.it/fhir/StructureDefinition/prepopulate-from-questionnaire-response": {
+          "valueString": "32326|all|autofill"
+        },
+        "http://irccs.pascale.napoli.it/fhir/StructureDefinition/render-as-patient-questionnaire": {
+          "valueBoolean": false
+        }
+      }
+    },
+    {
+      "ref": "Questionnaire/32374",
+      "why": "titolo CTCAE SAE Treme+Durva: manca la versione",
+      "set": {
+        "title": "CTCAE versione 6 - SAE",
+        "name": "CTCAE versione 6 - SAE",
+        "url": "http://example.org/fhir/Questionnaire/CTCAE versione 6 - SAE"
+      }
+    },
+    {
+      "ref": "Questionnaire/32326",
+      "why": "descrizione SAE Atezo+Beva allineata a Treme+Durva (32375)",
+      "set": {
+        "description": "Evento avverso serio che si può verificare durante il trattamento in Linea 1 - Atezo+Beva\n\nClicca sul pulsante in alto \"Aggiungi SAE Follow Up\" per aggiungere una SAE Follow Up"
+      }
+    }
+  ]
+}

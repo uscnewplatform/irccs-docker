@@ -491,3 +491,27 @@ EOF
 curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
       -H "Content-Type: application/json" \
       -d "$JSON_BODY"
+
+# ── Practitioner ────────────────────────────────────────────────────────────
+# Stato del medico per il filtro della lista Practitioners (dashboard): active | pending |
+# deactivated. "deactivated" = active=false + extension deactivatedAt (scritta dal cestino
+# della lista, che disattiva invece di cancellare); "pending" = registrato, mai attivato.
+# Un solo token cosi' il filtro multi-selezione e' un OR nativo (practitioner-status=a,b).
+# Per i Practitioner gia' esistenti: reindex una-tantum.
+JSON_BODY=$(cat <<EOF
+{
+  "resourceType": "SearchParameter",
+  "url": "http://irccs.pascale.it/SearchParameter/Practitioner-status",
+  "name": "practitioner-status",
+  "status": "active",
+  "description": "Stato del medico: active | pending | deactivated",
+  "code": "practitioner-status",
+  "base": ["Practitioner"],
+  "type": "token",
+  "expression": "Practitioner.where(active = true).select('active') | Practitioner.where(active = false and extension('deactivatedAt').empty()).select('pending') | Practitioner.where(active = false and extension('deactivatedAt').exists()).select('deactivated')"
+}
+EOF
+)
+curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
+      -H "Content-Type: application/json" \
+      -d "$JSON_BODY"
