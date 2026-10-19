@@ -2195,6 +2195,384 @@
         "clientRole": false,
         "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
         "attributes": {}
+      },
+      {
+        "id": "3d45ad51-96d6-46b3-8e3f-668b33a1195a",
+        "name": "documentreference:create",
+        "description": "Allows you to perform a create operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "2709bbf4-f1a0-4f3b-b1f0-3fd77d1f91ad",
+        "name": "documentreference:read",
+        "description": "Allows you to perform a read operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "6788f6d8-425e-4955-b3e2-378228b100c9",
+        "name": "documentreference:update",
+        "description": "Allows you to perform a update operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "930a707f-d390-48c8-845a-b03c27b7e94c",
+        "name": "documentreference:delete",
+        "description": "Allows you to perform a delete operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "444084af-5600-4a67-a334-cae15e1aaf37",
+        "name": "documentreference:search",
+        "description": "Allows you to perform a search operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "dc4f8096-b6c6-47ff-8965-ee5d151c95d6",
+        "name": "documentreference:history",
+        "description": "Allows you to perform a history operation on DocumentReference.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "df26c1bf-193f-4ea7-908c-f582df8c26e6",
+        "name": "imagingstudy:create",
+        "description": "Allows you to perform a create operation on ImagingStudy.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "b5574e3f-61db-40a8-b2fc-f5b678bdf166",
+        "name": "imagingstudy:read",
+        "description": "Allows you to perform a read operation on ImagingStudy.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "e04adfb5-6325-40b2-bbcc-53a22d468767",
+        "name": "imagingstudy:update",
+        "description": "Allows you to perform a update operation on ImagingStudy.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "b1754062-afaa-48ba-b8e4-2775ed45ec00",
+        "name": "imagingstudy:delete",
+        "description": "Allows you to perform a delete operation on ImagingStudy.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "ef5f6154-9092-4c12-8460-7fbb0e3eb38b",
+        "name": "imagingstudy:search",
+        "description": "Allows you to perform a search operation on ImagingStudy.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "f361150e-28b4-4352-94ad-4f979a927e17",
+        "name": "imagingstudy:history",
+        "description": "Allows you to perform a history operation on ImagingStudy.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "c52999ad-da61-4514-b9bb-4efe7c6f725b",
+        "name": "diagnosticreport:create",
+        "description": "Allows you to perform a create operation on DiagnosticReport.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "c034ca3d-7fdb-43ef-8943-e6d27f611df0",
+        "name": "diagnosticreport:read",
+        "description": "Allows you to perform a read operation on DiagnosticReport.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "f7be3a57-349a-4c37-b5db-d4bde7849ce2",
+        "name": "diagnosticreport:update",
+        "description": "Allows you to perform a update operation on DiagnosticReport.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "f067d10b-09ab-4407-b794-324de6f60e12",
+        "name": "diagnosticreport:delete",
+        "description": "Allows you to perform a delete operation on DiagnosticReport.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "b6f14a7f-ffb9-4b4c-bbac-38f86c2921f2",
+        "name": "diagnosticreport:search",
+        "description": "Allows you to perform a search operation on DiagnosticReport.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "6aa25a20-e828-4a6d-b1c0-9e509e68a192",
+        "name": "diagnosticreport:history",
+        "description": "Allows you to perform a history operation on DiagnosticReport.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "5a4a7c27-784c-4ca3-ac65-2604e5efd9a8",
+        "name": "guidanceresponse:create",
+        "description": "Allows you to perform a create operation on GuidanceResponse.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "c4d9f006-4aeb-40f1-853a-f79b02273f17",
+        "name": "guidanceresponse:read",
+        "description": "Allows you to perform a read operation on GuidanceResponse.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "8a5005f0-2751-4b2a-ae28-9d2dc41d365e",
+        "name": "guidanceresponse:update",
+        "description": "Allows you to perform a update operation on GuidanceResponse.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "dc176de8-be12-48e6-92da-f880edade863",
+        "name": "guidanceresponse:delete",
+        "description": "Allows you to perform a delete operation on GuidanceResponse.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "357ac516-06c1-4483-bb3e-6688a12ed687",
+        "name": "guidanceresponse:search",
+        "description": "Allows you to perform a search operation on GuidanceResponse.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "f6e04919-ed31-492c-ba25-a551a5877069",
+        "name": "guidanceresponse:history",
+        "description": "Allows you to perform a history operation on GuidanceResponse.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "332b81f2-7840-4c43-bc79-6d66247582ee",
+        "name": "person:create",
+        "description": "Allows you to perform a create operation on Person.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "bd1fcde4-77b1-4e3e-88fa-f6eb6bf1bd7e",
+        "name": "person:read",
+        "description": "Allows you to perform a read operation on Person.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "bb9181b4-e809-401b-8f11-c940ffcbc9ef",
+        "name": "person:update",
+        "description": "Allows you to perform a update operation on Person.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "e301c726-a0f5-435e-8a9d-dfd838ae8dcd",
+        "name": "person:delete",
+        "description": "Allows you to perform a delete operation on Person.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "8bfacdeb-69b1-4110-81d7-8af0f16bd458",
+        "name": "person:search",
+        "description": "Allows you to perform a search operation on Person.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "4a186e60-5c71-4173-a422-f769b3ee3b7e",
+        "name": "person:history",
+        "description": "Allows you to perform a history operation on Person.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "8f45e42a-499d-421e-8bd0-e58738e1ab95",
+        "name": "healthcareservice:create",
+        "description": "Allows you to perform a create operation on HealthcareService.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "df22ecaa-7164-43fb-a6e0-796d27e76119",
+        "name": "healthcareservice:read",
+        "description": "Allows you to perform a read operation on HealthcareService.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "cbcf9e37-9dbd-40d5-91f8-2497a7b51290",
+        "name": "healthcareservice:update",
+        "description": "Allows you to perform a update operation on HealthcareService.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "f79a35e8-7c17-4e48-9984-faeb62070e48",
+        "name": "healthcareservice:delete",
+        "description": "Allows you to perform a delete operation on HealthcareService.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "2c0c3828-be45-4fad-ae1e-2ee0ce847188",
+        "name": "healthcareservice:search",
+        "description": "Allows you to perform a search operation on HealthcareService.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "672eac1a-c482-4417-82ce-935acb70fae3",
+        "name": "healthcareservice:history",
+        "description": "Allows you to perform a history operation on HealthcareService.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "646ac725-b1d6-4b34-bf9d-14db9a2dab93",
+        "name": "practitionerrole:create",
+        "description": "Allows you to perform a create operation on PractitionerRole.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "d1653e5f-ba0e-47a2-b728-f2d2f71c46c5",
+        "name": "practitionerrole:read",
+        "description": "Allows you to perform a read operation on PractitionerRole.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "8978d843-f746-46b5-8273-8eca5fb33688",
+        "name": "practitionerrole:update",
+        "description": "Allows you to perform a update operation on PractitionerRole.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "0f7840e3-31dc-4e00-8888-af9521c34c3d",
+        "name": "practitionerrole:delete",
+        "description": "Allows you to perform a delete operation on PractitionerRole.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "e693c618-47c5-40a1-a7fb-1d7f7579d0ec",
+        "name": "practitionerrole:search",
+        "description": "Allows you to perform a search operation on PractitionerRole.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
+      },
+      {
+        "id": "a2b13aeb-249b-4fc3-8476-a1aec5b74b99",
+        "name": "practitionerrole:history",
+        "description": "Allows you to perform a history operation on PractitionerRole.",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "4de2b036-c305-4489-a5d4-67b406fa8880",
+        "attributes": {}
       }
     ],
     "client": {
@@ -5914,6 +6292,531 @@
               },
               {
                 "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "Create DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "Base DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "Search DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History DocumentReference Resource",
+            "type": "DocumentReference",
+            "ownerManagedAccess": false,
+            "displayName": "History DocumentReference Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DocumentReference/_history",
+              "/fhir/DocumentReference/{id}/_history",
+              "/fhir/DocumentReference/{id}/_history/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create ImagingStudy Resource",
+            "type": "ImagingStudy",
+            "ownerManagedAccess": false,
+            "displayName": "Create ImagingStudy Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ImagingStudy"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base ImagingStudy Resource",
+            "type": "ImagingStudy",
+            "ownerManagedAccess": false,
+            "displayName": "Base ImagingStudy Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ImagingStudy/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search ImagingStudy Resource",
+            "type": "ImagingStudy",
+            "ownerManagedAccess": false,
+            "displayName": "Search ImagingStudy Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ImagingStudy/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History ImagingStudy Resource",
+            "type": "ImagingStudy",
+            "ownerManagedAccess": false,
+            "displayName": "History ImagingStudy Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/ImagingStudy/_history",
+              "/fhir/ImagingStudy/{id}/_history",
+              "/fhir/ImagingStudy/{id}/_history/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create DiagnosticReport Resource",
+            "type": "DiagnosticReport",
+            "ownerManagedAccess": false,
+            "displayName": "Create DiagnosticReport Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DiagnosticReport"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base DiagnosticReport Resource",
+            "type": "DiagnosticReport",
+            "ownerManagedAccess": false,
+            "displayName": "Base DiagnosticReport Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DiagnosticReport/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search DiagnosticReport Resource",
+            "type": "DiagnosticReport",
+            "ownerManagedAccess": false,
+            "displayName": "Search DiagnosticReport Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DiagnosticReport/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History DiagnosticReport Resource",
+            "type": "DiagnosticReport",
+            "ownerManagedAccess": false,
+            "displayName": "History DiagnosticReport Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/DiagnosticReport/_history",
+              "/fhir/DiagnosticReport/{id}/_history",
+              "/fhir/DiagnosticReport/{id}/_history/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create GuidanceResponse Resource",
+            "type": "GuidanceResponse",
+            "ownerManagedAccess": false,
+            "displayName": "Create GuidanceResponse Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/GuidanceResponse"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base GuidanceResponse Resource",
+            "type": "GuidanceResponse",
+            "ownerManagedAccess": false,
+            "displayName": "Base GuidanceResponse Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/GuidanceResponse/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search GuidanceResponse Resource",
+            "type": "GuidanceResponse",
+            "ownerManagedAccess": false,
+            "displayName": "Search GuidanceResponse Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/GuidanceResponse/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History GuidanceResponse Resource",
+            "type": "GuidanceResponse",
+            "ownerManagedAccess": false,
+            "displayName": "History GuidanceResponse Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/GuidanceResponse/_history",
+              "/fhir/GuidanceResponse/{id}/_history",
+              "/fhir/GuidanceResponse/{id}/_history/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create Person Resource",
+            "type": "Person",
+            "ownerManagedAccess": false,
+            "displayName": "Create Person Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Person"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base Person Resource",
+            "type": "Person",
+            "ownerManagedAccess": false,
+            "displayName": "Base Person Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Person/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search Person Resource",
+            "type": "Person",
+            "ownerManagedAccess": false,
+            "displayName": "Search Person Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Person/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History Person Resource",
+            "type": "Person",
+            "ownerManagedAccess": false,
+            "displayName": "History Person Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/Person/_history",
+              "/fhir/Person/{id}/_history",
+              "/fhir/Person/{id}/_history/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create HealthcareService Resource",
+            "type": "HealthcareService",
+            "ownerManagedAccess": false,
+            "displayName": "Create HealthcareService Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/HealthcareService"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base HealthcareService Resource",
+            "type": "HealthcareService",
+            "ownerManagedAccess": false,
+            "displayName": "Base HealthcareService Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/HealthcareService/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search HealthcareService Resource",
+            "type": "HealthcareService",
+            "ownerManagedAccess": false,
+            "displayName": "Search HealthcareService Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/HealthcareService/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History HealthcareService Resource",
+            "type": "HealthcareService",
+            "ownerManagedAccess": false,
+            "displayName": "History HealthcareService Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/HealthcareService/_history",
+              "/fhir/HealthcareService/{id}/_history",
+              "/fhir/HealthcareService/{id}/_history/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Create PractitionerRole Resource",
+            "type": "PractitionerRole",
+            "ownerManagedAccess": false,
+            "displayName": "Create PractitionerRole Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/PractitionerRole"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              },
+              {
+                "name": "POST"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Base PractitionerRole Resource",
+            "type": "PractitionerRole",
+            "ownerManagedAccess": false,
+            "displayName": "Base PractitionerRole Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/PractitionerRole/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "DELETE"
+              },
+              {
+                "name": "GET"
+              },
+              {
+                "name": "PUT"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "Search PractitionerRole Resource",
+            "type": "PractitionerRole",
+            "ownerManagedAccess": false,
+            "displayName": "Search PractitionerRole Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/PractitionerRole/_search"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
+              }
+            ],
+            "icon_uri": ""
+          },
+          {
+            "name": "History PractitionerRole Resource",
+            "type": "PractitionerRole",
+            "ownerManagedAccess": false,
+            "displayName": "History PractitionerRole Resource",
+            "attributes": {},
+            "uris": [
+              "/fhir/PractitionerRole/_history",
+              "/fhir/PractitionerRole/{id}/_history",
+              "/fhir/PractitionerRole/{id}/_history/{id}"
+            ],
+            "scopes": [
+              {
+                "name": "GET"
               }
             ],
             "icon_uri": ""
@@ -11374,6 +12277,1056 @@
               "resources": "[\"Audit Event Log Resource\"]",
               "scopes": "[\"GET\"]",
               "applyPolicies": "[\"Admin Group Policy\", \"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History DocumentReference Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"documentreference:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create DocumentReference Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DocumentReference Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DocumentReference Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History DocumentReference Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search DocumentReference Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create DocumentReference Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search DocumentReference Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create ImagingStudy Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"imagingstudy:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read ImagingStudy Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"imagingstudy:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update ImagingStudy Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"imagingstudy:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete ImagingStudy Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"imagingstudy:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search ImagingStudy Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"imagingstudy:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History ImagingStudy Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"imagingstudy:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create ImagingStudy Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create ImagingStudy Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create ImagingStudy Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read ImagingStudy Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base ImagingStudy Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read ImagingStudy Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update ImagingStudy Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base ImagingStudy Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update ImagingStudy Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete ImagingStudy Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base ImagingStudy Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete ImagingStudy Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search ImagingStudy Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search ImagingStudy Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ImagingStudy Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History ImagingStudy Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History ImagingStudy Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History ImagingStudy Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search ImagingStudy Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create ImagingStudy Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search ImagingStudy Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create DiagnosticReport Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"diagnosticreport:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read DiagnosticReport Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"diagnosticreport:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update DiagnosticReport Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"diagnosticreport:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete DiagnosticReport Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"diagnosticreport:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search DiagnosticReport Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"diagnosticreport:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History DiagnosticReport Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"diagnosticreport:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create DiagnosticReport Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create DiagnosticReport Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create DiagnosticReport Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read DiagnosticReport Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DiagnosticReport Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read DiagnosticReport Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update DiagnosticReport Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DiagnosticReport Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update DiagnosticReport Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete DiagnosticReport Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base DiagnosticReport Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete DiagnosticReport Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search DiagnosticReport Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search DiagnosticReport Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search DiagnosticReport Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History DiagnosticReport Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History DiagnosticReport Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History DiagnosticReport Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search DiagnosticReport Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create DiagnosticReport Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search DiagnosticReport Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create GuidanceResponse Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"guidanceresponse:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read GuidanceResponse Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"guidanceresponse:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update GuidanceResponse Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"guidanceresponse:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete GuidanceResponse Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"guidanceresponse:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search GuidanceResponse Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"guidanceresponse:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History GuidanceResponse Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"guidanceresponse:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create GuidanceResponse Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create GuidanceResponse Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create GuidanceResponse Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read GuidanceResponse Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base GuidanceResponse Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read GuidanceResponse Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update GuidanceResponse Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base GuidanceResponse Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update GuidanceResponse Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete GuidanceResponse Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base GuidanceResponse Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete GuidanceResponse Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search GuidanceResponse Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search GuidanceResponse Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search GuidanceResponse Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History GuidanceResponse Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History GuidanceResponse Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History GuidanceResponse Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search GuidanceResponse Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create GuidanceResponse Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search GuidanceResponse Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create Person Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"person:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read Person Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"person:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update Person Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"person:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete Person Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"person:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search Person Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"person:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History Person Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"person:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create Person Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create Person Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create Person Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read Person Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Person Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read Person Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update Person Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Person Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update Person Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete Person Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base Person Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete Person Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search Person Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search Person Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Person Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History Person Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History Person Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History Person Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search Person Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create Person Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search Person Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create HealthcareService Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"healthcareservice:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read HealthcareService Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"healthcareservice:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update HealthcareService Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"healthcareservice:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete HealthcareService Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"healthcareservice:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search HealthcareService Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"healthcareservice:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History HealthcareService Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"healthcareservice:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create HealthcareService Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create HealthcareService Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create HealthcareService Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read HealthcareService Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base HealthcareService Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read HealthcareService Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update HealthcareService Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base HealthcareService Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update HealthcareService Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete HealthcareService Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base HealthcareService Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete HealthcareService Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search HealthcareService Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search HealthcareService Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search HealthcareService Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History HealthcareService Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History HealthcareService Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History HealthcareService Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search HealthcareService Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create HealthcareService Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search HealthcareService Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Create PractitionerRole Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"practitionerrole:create\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Read PractitionerRole Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"practitionerrole:read\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Update PractitionerRole Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"practitionerrole:update\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Delete PractitionerRole Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"practitionerrole:delete\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Search PractitionerRole Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"practitionerrole:search\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "History PractitionerRole Policy",
+            "description": "",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"practitionerrole:history\",\"required\":false}]",
+              "fetchRoles": "true"
+            }
+          },
+          {
+            "name": "Create PractitionerRole Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create PractitionerRole Resource\"]",
+              "scopes": "[\"POST\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Create PractitionerRole Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Read PractitionerRole Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base PractitionerRole Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Read PractitionerRole Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Update PractitionerRole Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base PractitionerRole Resource\"]",
+              "scopes": "[\"PUT\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Update PractitionerRole Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Delete PractitionerRole Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Base PractitionerRole Resource\"]",
+              "scopes": "[\"DELETE\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Delete PractitionerRole Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search PractitionerRole Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Search PractitionerRole Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search PractitionerRole Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "History PractitionerRole Permission",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"History PractitionerRole Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"History PractitionerRole Policy\",\"Admin Role Policy\"]"
+            }
+          },
+          {
+            "name": "Search PractitionerRole Permission 2",
+            "description": "",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Create PractitionerRole Resource\"]",
+              "scopes": "[\"GET\"]",
+              "applyPolicies": "[\"Admin Group Policy\",\"Search PractitionerRole Policy\",\"Admin Role Policy\"]"
             }
           }
         ],
