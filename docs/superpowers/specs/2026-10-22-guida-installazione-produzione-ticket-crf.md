@@ -10,7 +10,7 @@ Principio: **Zammad è l'unica fonte**. Il blocco della conferma chiede lo stato
 
 | # | Cosa | Perché |
 |---|---|---|
-| 1 | Token Zammad in `application.properties` è in chiaro nel repo | Ruotarlo e passarlo come secret/env prima di prod |
+| 1 | Token Zammad in `application.properties` è in chiaro nel repo | **Passo obbligatorio prima del go-live**, vedi 0b |
 | 2 | Letture **read-only** su Zammad prod (con OK esplicito): `GET /api/v1/ticket_states` (stato 7 custom: che `state_type` ha? uno sconosciuto BLOCCA), `POST /tickets/search` con `condition` funziona, tempi di risposta su dati reali | La ricerca a condizioni non richiede Elasticsearch; il timeout di 3 s va confermato |
 | 3 | Chi riceve `internal:close:ticket` e `internal:override:ticket-gate` | Decisione organizzativa (override = deroga auditata) |
 | 4 | Deroga con ticket non verificabili: `crf.confirm.override-when-unverifiable` | Default `false` (nessuna deroga con sistema in manutenzione); `true` solo se serve |
@@ -19,6 +19,16 @@ Principio: **Zammad è l'unica fonte**. Il blocco della conferma chiede lo stato
 | 7 | `zammad.visibility.patient-url` | Default `http://irccs-anagrafica-pazienti:8080/fhir/Patient`: verificare hostname in prod |
 | 8 | `crf.confirm.ticket-service-url` | Default `http://irccs-zammad:8080` (container del ms zammad): verificare il nome in prod |
 | 9 | `jwt.secret` presente nel ms zammad | Serve a `CallerScope` (capability dai gruppi) |
+
+## 0b. Rotazione del token Zammad (obbligatoria prima del go-live)
+
+1. In Zammad crea un token nuovo per l'utente di servizio (permessi: lettura e ricerca ticket, scrittura per il pannello).
+2. Mettilo SOLO nel `.env` del server (`ZAMMAD_TOKEN_SERVICE`), mai nel repository.
+3. Riavvia il microservizio Zammad e verifica una lettura (pannello ticket o `align_ticket_crf.sh --only 6`).
+4. **Revoca il token vecchio** in Zammad: quello nel repository va considerato compromesso (resta nella storia di git).
+5. Verifica: con il token vecchio una chiamata a `GET /api/v1/users/me` risponde 401.
+
+Il token deve poter cercare i ticket di *tutti* i gruppi Zammad usati dalla piattaforma, anche quelli ristretti: se non vede un gruppo, i ticket di quel gruppo non compaiono e la CRF risulta libera senza alcun errore (vedi caso di test G9).
 
 ## 1. Ordine di rilascio (la CI dei ms è rossa finché common non è rilasciato)
 
@@ -81,7 +91,7 @@ Le variabili arrivano dal `.env` del server (tutti i servizi hanno `env_file: .e
 crf.confirm.require-closed-tickets=false          # tenere false al deploy; true all'attivazione
 crf.confirm.override-when-unverifiable=false      # true = la deroga vale anche con sistema di ticket in manutenzione
 crf.confirm.ticket-service-url=http://irccs-zammad:8080
-zammad.ticket-lookup.timeout=3s
+crf.confirm.ticket-lookup-timeout=5s              # attesa verso il ms Zammad: MAGGIORE di zammad.ticket-lookup.timeout
 ```
 
 ## 6. Capability ai gruppi (UI)
@@ -102,15 +112,19 @@ Le capability vengono dai **gruppi** (membership live + `X-Context-Token`), non 
 
 ## 8. Attivazione
 
+0. **Controllo di connessione prima di accendere il flag.** Da dentro il container di studio-clinico (stessa rete e stesso nome host che userà il blocco) verifica che il ms Zammad sia raggiungibile: `curl -s -o /dev/null -w '%{http_code}' http://irccs-zammad:8080/q/health` deve rispondere 200 (o usa il nome in `crf.confirm.ticket-service-url`). Un nome sbagliato dà 503 su tutte le conferme, indistinguibile da "Zammad giù".
+
 1. Impostare `crf.confirm.require-closed-tickets=true` (env) e riavviare studio-clinico/patient-interview.
 2. Prova: CRF con ticket aperto → conferma **409 `CRF_OPEN_TICKETS`**; chiuso → OK; Zammad fermo → **503 `CRF_TICKET_STATE_UNVERIFIABLE`** e messaggio di manutenzione, **anche con deroga**; deroga con motivo di almeno 10 caratteri (header `X-Ticket-Gate-Override-Reason`) + capability su ticket aperto → OK + BusinessEvent `ticket-gate-override`; audit giù → 503 (fail-closed).
 3. Monitorare 409/503 nei log (Loki/Grafana). Un aumento di 503 = Zammad lento o giù.
+4. **Se compare il 503 subito dopo l'accensione**: quasi sempre è l'indirizzo (`crf.confirm.ticket-service-url`), il token di servizio, o un timeout troppo corto. Controlla nell'ordine: log di studio-clinico (`CrfTicketGate: stato dei ticket non verificabile`), `open-for-gate` raggiungibile dal container, token Zammad valido. Per tornare operativi subito: flag a `false` e riavvio.
 
 ## 9. Rollback
 
 - Disattivare: `crf.confirm.require-closed-tickets=false` (effetto immediato al riavvio, nessun dato da toccare).
 - Tornare alla versione con copia in HAPI e webhook: ridistribuire il branch `feature/PASTRL-720/ticket-crf-gate` (richiede la sincronizzazione e il webhook).
 - Ruoli/risorse Keycloak e attributi Zammad possono restare.
+- Se in un ambiente era già stata applicata la versione precedente: toglie a mano dal file montato `microservice-config-zammad/application.properties` la voce `quarkus.keycloak.policy-enforcer.paths.7.*` (webhook) e le variabili `ZAMMAD_TICKET_REF_*`, `ZAMMAD_WEBHOOK_SECRET`, `ZAMMAD_INSTANCE_ID` dal `.env`.
 
 ## 10. Limiti noti (non bloccanti)
 

@@ -99,7 +99,7 @@ NOTE: Il permesso di *panoramica* nell'interfaccia di Zammad dipende invece dai 
 
 | Non verificabile
 | `503` `CRF_TICKET_STATE_UNVERIFIABLE`
-| Zammad non risponde, è troppo lento (oltre `zammad.ticket-lookup.timeout`, 3 secondi di default) o risponde in modo non valido. Nel dubbio non si conferma. Il medico vede: «Sistema di ticket in manutenzione. Riprovare o contattare l'assistenza».
+| Zammad non risponde, è troppo lento (oltre `zammad.ticket-lookup.timeout`, 3 secondi di default, e comunque oltre `crf.confirm.ticket-lookup-timeout`, 5 secondi) o risponde in modo non valido. Nel dubbio non si conferma. Il medico vede: «Sistema di ticket in manutenzione. Riprovare o contattare l'assistenza».
 
 | Motivazione non valida
 | `422` `CRF_OVERRIDE_REASON_INVALID`
@@ -257,7 +257,11 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 
 | `zammad.ticket-lookup.timeout`
 | `3s`
-| Attesa massima di Zammad; oltre, l'esito è "non verificabile".
+| Attesa massima del microservizio Zammad verso Zammad (per ogni chiamata); oltre, l'esito è "non verificabile".
+
+| `crf.confirm.ticket-lookup-timeout`
+| `5s`
+| Attesa massima dei servizi che confermano verso il microservizio Zammad. Deve restare *maggiore* di quella verso Zammad, altrimenti il blocco scade prima di chi lo serve e dà falsi 503.
 
 | `zammad.ticket.closed-state-id`
 | `4`

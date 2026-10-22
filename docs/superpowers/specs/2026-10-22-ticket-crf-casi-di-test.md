@@ -90,3 +90,23 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 | G6 | Stato personalizzato 7 di Zammad in produzione | Tipo noto o blocca | Da provare |
 | G7 | Token Zammad | Ruotato e spostato in un secret prima del go-live | Da fare |
 | G8 | Log | Nessun token, risposta, nome o email | Revisione codice |
+| G9 | Token di servizio con visibilità parziale | In produzione, un ticket in OGNI gruppo Zammad (anche i ristretti) compare nel blocco; da rifare a ogni nuovo gruppo Zammad | Da provare |
+| G10 | Rotazione del token | Dopo la rotazione tutto funziona; il vecchio token risponde 401 | Da provare |
+| G11 | Indirizzo `crf.confirm.ticket-service-url` | Dal container di studio-clinico il ms Zammad risponde 200 prima di accendere il flag | Da provare |
+
+## H. Casi aggiunti dopo la revisione funzionale
+
+| ID | Scenario | Atteso | Copertura |
+|---|---|---|---|
+| H1 | Modifica/chiusura diretta in Zammad dei campi `patient`/`careplan`/`crf` o dello stato | Decisione del cliente (accettare, bloccare i campi, auditare); il comportamento scelto va provato | Da decidere |
+| H2 | Ticket riaperto o aperto DOPO la conferma | Decisione del cliente (nessuna azione / avviso / annullo) | Da decidere |
+| H3 | Due utenti concorrenti: uno apre un ticket mentre l'altro conferma | La conferma vede lo stato di Zammad al momento della richiesta; documentare la finestra | Da provare |
+| H4 | Zammad lento ma funzionante (2–4 s per chiamata) | Nessun falso 503 entro 3 s verso Zammad e 5 s verso il ms; oltre, 503 | Da provare (strumento per rallentare Zammad) |
+| H5 | Rete rotta, DNS errato, certificato scaduto | 503 di manutenzione, mai "via libera" | Da provare |
+| H6 | Ticket trovato dalla ricerca ma non leggibile | Elenco e icone rispondono 503 (non mostrano meno ticket) | Unit |
+| H7 | Qualunque errore dell'elenco in home paziente | Messaggio di manutenzione (503) o di elenco non disponibile (altri errori), mai "nessun ticket" | Unit (logica) |
+| H8 | Stesso questionario più volte nello stesso ciclo (CRF ripetibile) | Decisione del cliente: un ticket blocca tutte le istanze? | Da decidere |
+| H9 | Elenco della home = conteggio del blocco | Stesso paziente: i ticket mostrati coincidono con quelli che bloccano | Da provare |
+| H10 | Contenuto dell'audit di deroga | Chi, motivo, ticket, CRF; nessun token o testo del ticket nei log | Da provare |
+| H11 | Messaggio di manutenzione in it/en/de/fr | Presente e leggibile nelle quattro lingue | Browser locale (solo en) |
+| H12 | Manutenzione di 2 ore, regola di deroga spenta e accesa | Procedura scritta applicabile da chi non ha scritto il codice | Da provare |
