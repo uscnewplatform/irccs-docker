@@ -1,0 +1,348 @@
+= Ticket sulle CRF — Documento funzionale e architettura
+:description: Come la piattaforma usa Zammad per i ticket legati alle CRF: pannello ticket, ticket aperti in home paziente, icone, blocco della conferma CRF, visibilità, chiusura e architettura FHIR/Zammad.
+:toc:
+:toclevels: 3
+
+== Scopo
+
+Gli sperimentatori e i data manager segnalano problemi o richieste su una CRF (dato incongruente, chiarimento, correzione) aprendo un *ticket*. I ticket vivono in Zammad, ma chi lavora sulla CRF li deve poter *leggere e rispondere senza uscire dalla piattaforma*, e una CRF con ticket ancora aperti *non deve poter essere confermata*.
+
+Questa pagina descrive cosa vede e può fare ciascun utente, le regole, e come è costruito il tutto (architettura, dati, sicurezza, installazione).
+
+== Cosa fa la funzionalità
+
+[cols="1,3"]
+|===
+| Funzione | Descrizione
+
+| Apertura ticket
+| Dal pulsante *Ticket* della CRF si apre un ticket legato a paziente, ciclo (CarePlan) e questionario. Può essere di ambito *CRF* (blocca la conferma) o di ambito *STUDIO* (non blocca).
+
+| Pannello ticket
+| Nella pagina CRF il pannello laterale elenca i ticket della CRF, mostra la conversazione (solo testo), permette di rispondere e, a chi ne ha il diritto, di chiudere e riaprire.
+
+| Ticket aperti in home paziente
+| In fondo ai pulsanti della home paziente un riquadro apribile e richiudibile elenca i ticket non chiusi del paziente. Ogni riga ha il pulsante *Apri la CRF* che porta direttamente alla CRF, già sul ciclo e sulla scheda giusti.
+
+| Icone sui ticket aperti
+| Un'icona ticket compare sul *ciclo* (striscia in alto), sul *gruppo* di CRF a sinistra (Step), sulla *scheda* della singola CRF e sui tab dei gruppi importati, ma solo dove ci sono ticket aperti. Il tooltip indica quanti.
+
+| Blocco della conferma CRF
+| Con il blocco attivo, "Conferma CRF" è impedito finché la CRF ha ticket non chiusi. Esiti: confermabile, bloccata da ticket aperti, oppure stato dei ticket non verificabile.
+
+| Deroga (override)
+| Chi ha la capability apposita può confermare nonostante i ticket aperti, con una motivazione obbligatoria e un audit obbligatorio.
+
+| Chiusura e riapertura
+| Solo i gruppi con la capability `internal:close:ticket`. Chi apre un ticket, o ci risponde, non può chiuderlo da solo.
+|===
+
+== Attori e permessi
+
+I permessi applicativi (`internal:*`) arrivano dai *gruppi utente* dell'utente nel contesto attivo, non dal singolo utente: si assegnano nel form *Gruppi utenti*, sezione CRF, e dopo la modifica gli utenti devono rifare il login.
+
+[cols="2,2,3"]
+|===
+| Capability | Chi la ottiene | Cosa permette
+
+| _(nessuna capability)_
+| Chi vede il paziente nel proprio contesto
+| Leggere i ticket del paziente e rispondere.
+
+| `internal:confirm:crf`
+| Gruppi che confermano le CRF
+| Confermare la CRF (se non bloccata).
+
+| `internal:close:ticket`
+| Responsabili scelti
+| Chiudere e riaprire i ticket, con motivazione (almeno 5 caratteri) registrata nella conversazione.
+
+| `internal:override:ticket-gate`
+| Pochi responsabili
+| Confermare nonostante ticket aperti o non verificabili, con motivazione di 10-500 caratteri e audit sincrono.
+|===
+
+== Visibilità
+
+La regola è una sola: *chi vede il paziente nell'applicazione, nel contesto (organizzazione/gruppo) attivo, vede i suoi ticket*. Il microservizio non copia le regole di visibilità: chiede all'anagrafica pazienti se quel paziente è visibile per quell'utente.
+
+* La verifica è `GET /fhir/Patient/{id}` sull'anagrafica con le credenziali dell'utente e gli header di contesto (`X-Context-Token`, `X-Active-Group`). `200` = visibile, qualunque altra risposta = non visibile.
+* È *fail-closed*: se la verifica non è possibile, si nega. Esito in cache 30 secondi.
+* Vale per elenco, conversazione, risposta, chiusura, riapertura, riepilogo, elenco per paziente e creazione. Un ticket di ambito CRF richiede un paziente visibile; quelli di ambito STUDIO non sono legati a un paziente.
+* Le *note interne* di Zammad le vede solo chi ha permesso di modifica sul gruppo Zammad o è assegnatario del ticket.
+* Se Zammad nega la scrittura all'utente ma l'applicazione la consente, il microservizio scrive con l'identità di servizio e antepone `[Nome - via piattaforma]` al testo, così l'autore resta riconoscibile.
+
+NOTE: Il permesso di *panoramica* nell'interfaccia di Zammad dipende invece dai permessi sui gruppi Zammad (`full` o `overview`), assegnati dallo scheduler di sincronizzazione con Keycloak. La piattaforma non dipende da quella vista.
+
+== Il blocco della conferma CRF
+
+=== Regole
+
+* Il blocco è controllato dal flag `crf.confirm.require-closed-tickets` (*spento di default*). Spento, nessuna conferma cambia comportamento.
+* Un ticket *blocca* se il suo stato è di tipo `new`, `open`, `pending reminder` o `pending action`. *Non* bloccano `closed` e `merged`. Uno stato sconosciuto blocca.
+* Il blocco guarda i ticket della *stessa CRF*: stesso paziente, stesso ciclo, stesso questionario.
+* La decisione si basa solo sui dati su HAPI (vedi architettura): la conferma non chiama mai Zammad.
+
+=== Esiti
+
+[cols="1,1,3"]
+|===
+| Esito | Risposta | Quando
+
+| Confermabile
+| 200
+| Nessun ticket bloccante.
+
+| Bloccata
+| `409` `CRF_OPEN_TICKETS`
+| Almeno un ticket non chiuso. Viene registrato l'evento di audit `crf-confirm-blocked-by-tickets`.
+
+| Non verificabile
+| `503` `CRF_TICKET_STATE_UNVERIFIABLE`
+| La sincronizzazione con Zammad è ferma oltre la soglia (`crf.confirm.ticket-sync-max-age`, 10 minuti di default). Nel dubbio non si conferma.
+
+| Motivazione non valida
+| `422` `CRF_OVERRIDE_REASON_INVALID`
+| Deroga richiesta con motivazione troppo corta o troppo lunga.
+|===
+
+=== Deroga
+
+Con l'header `X-Ticket-Gate-Override-Reason` e la capability `internal:override:ticket-gate` la conferma passa. L'audit è *sincrono e obbligatorio*: se non si riesce a scrivere l'audit (evento `ticket-gate-override`), la conferma *fallisce* con `503`. Una deroga non lascia mai tracce mancanti.
+
+=== Dove si applica
+
+* *Conferma CRF dell'operatore:* controllo completo, con deroga.
+* *Percorso paziente* (compilazione dal link con token, e CRF create già completate dal paziente): blocca solo per i ticket già noti, senza deroga.
+* *Certificazione (`/certify`):* blocca se *una qualunque* CRF del paziente ha ticket aperti, senza deroga.
+* *SAE:* esclusi dal blocco.
+
+== Architettura
+
+=== Principio
+
+*Zammad è il motore dei ticket* (testo, allegati, conversazione, notifiche, SLA). *HAPI FHIR tiene solo una traccia minima dello stato* dei ticket collegati a una CRF, in una risorsa `Task`. Il blocco della conferma legge solo HAPI.
+
+Motivi della scelta:
+
+* nessun testo clinico duplicato in HAPI (meno dati sensibili in più posti);
+* la conferma non dipende dalla disponibilità né dalla velocità di Zammad: se Zammad è giù si ottiene un esito esplicito (503), non un'attesa o un errore casuale;
+* modello FHIR standard (`Task`), valido anche con R5.
+
+=== Componenti
+
+[source]
+----
+ Utente ── Dashboard React ──► ms-zammad ───────► Zammad (ticket veri)
+                │                 ▲  │
+                │                 │  └─ webhook (solo notifica, HMAC-SHA1)
+                │                 │     + riconciliazione periodica
+                │                 ▼
+                │           HAPI: Task "ticket-ref"          (stato, niente testo)
+                │           HAPI: Task "ticket-sync-heartbeat" (ultima sync riuscita)
+                ▼                 ▲
+         studio-clinico / patient-interview
+         └─ CrfTicketGate (irccs-common) legge i Task ─► 200 / 409 / 503
+----
+
+[cols="1,3"]
+|===
+| Componente | Ruolo
+
+| Dashboard React
+| Pannello ticket, riquadro in home paziente, icone, pulsante di conferma con deroga, form dei gruppi con le capability.
+
+| `irccs-microservice-zammad`
+| Unica porta verso Zammad: elenco, conversazione, risposta, chiusura/riapertura, riepilogo, elenco per paziente; riceve il webhook; riconcilia; mantiene i Task su HAPI.
+
+| `irccs-common` (`CrfTicketGate`, `CrfKey`, `TicketStateMapper`)
+| Regola unica del blocco, condivisa da tutti i servizi che confermano. Si innesta in `QuestionnaireResponseFlow`.
+
+| `irccs-microservice-studio-clinico`, `irccs-microservice-patient-interview`
+| Applicano il blocco alla conferma, al completamento del paziente e (studio-clinico) alla certificazione.
+
+| Anagrafica pazienti
+| Fonte di verità della visibilità del paziente.
+
+| Keycloak
+| Identità, gruppi, capability `internal:*`, risorse di autorizzazione degli endpoint.
+
+| HAPI FHIR
+| Tiene i Task `ticket-ref` e `ticket-sync-heartbeat`.
+|===
+
+=== Modello dati su HAPI
+
+Per ogni ticket collegato a una CRF esiste un `Task` con `code = ticket-ref`:
+
+[cols="1,3"]
+|===
+| Elemento | Contenuto
+
+| `identifier` (`urn:zammad:<istanza>`)
+| Id numerico del ticket in Zammad. L'id di istanza (`ZAMMAD_INSTANCE_ID`) non va cambiato dopo l'attivazione.
+
+| `identifier` (`.../crf-key`)
+| Chiave canonica della CRF: `Patient/{p}\|CarePlan/{c}\|Questionnaire/{q}`.
+
+| `for`
+| Il paziente.
+
+| `businessStatus`
+| Stato del ticket mappato per *tipo di stato* di Zammad (non per nome), così gli stati personalizzati non rompono il blocco.
+
+| Estensioni
+| Ambito (`CRF` / `STUDY`), ultimo evento, ultima sincronizzazione, eventuale errore di sincronizzazione, ticket di destinazione se unito (merge).
+|===
+
+Un secondo `Task`, `ticket-sync-heartbeat`, riporta in `executionPeriod.end` l'istante dell'ultima riconciliazione completata con successo. È ciò che permette di distinguere "nessun ticket aperto" da "non so più com'è la situazione".
+
+=== Come lo stato resta allineato
+
+[cols="1,3"]
+|===
+| Meccanismo | Dettaglio
+
+| Webhook
+| Zammad avvisa a ogni creazione e aggiornamento. L'avviso è *solo una notifica* firmata (HMAC-SHA1, header `X-Hub-Signature`): il microservizio *rilegge il ticket* da Zammad e non si fida del contenuto. Il percorso è escluso dall'autenticazione Keycloak perché protetto dalla firma. Possono arrivare duplicati.
+
+| Riconciliazione periodica
+| Ogni 5 minuti di default (`ZAMMAD_TICKET_REF_RECONCILE_EVERY`) scansiona tutti i ticket. Serve perché Zammad *non invia eventi alla cancellazione* e perché i webhook possono perdersi. Se una scansione non riesce, il battito non avanza e dopo 10 minuti il blocco passa a "non verificabile".
+
+| Verifica del battito
+| Il blocco rifiuta (503) se il battito è più vecchio della soglia.
+|===
+
+=== Flusso: apertura di un ticket
+
+. L'utente apre il ticket dalla CRF; la dashboard invia il ticket al microservizio con paziente, ciclo, questionario, ambito (e id della compilazione se già salvata).
+. Il microservizio verifica che il paziente sia visibile all'utente e crea il ticket su Zammad (attributi personalizzati `crf`, `careplan`, `patient`, `crfscope`, `qrid`).
+. Zammad invia il webhook; il microservizio rilegge il ticket e crea il `Task ticket-ref` su HAPI.
+. La riconciliazione successiva conferma e corregge eventuali differenze.
+
+=== Flusso: conferma di una CRF
+
+. L'utente preme *Conferma CRF*; `studio-clinico` esegue il `QuestionnaireResponseFlow`.
+. `CrfTicketGate` costruisce la chiave della CRF, legge i Task `ticket-ref` su HAPI e il battito.
+. Esito `CLEAR` → conferma; `BLOCKED` → `409`; `INDETERMINATE` → `503`.
+. Con header di deroga e capability: si scrive l'audit in modo sincrono (`ticket-gate-override`) e poi si conferma; se l'audit fallisce, `503`.
+
+=== Flusso: ticket aperti in home paziente e icone
+
+. La dashboard chiama `GET /fhir/zammad/tickets/by-patient?patient=<id>`: il microservizio legge i Task del paziente da HAPI, verifica la visibilità, rilegge da Zammad lo stato di ciascun ticket e restituisce solo quelli non chiusi, con ciclo e questionario.
+. Una sola chiamata per paziente alimenta il riquadro in home e le icone su cicli, gruppi a sinistra e schede.
+. Il pulsante *Apri la CRF* costruisce il link alla terapia e usa il collegamento diretto `?careplanId=<ciclo>&crfId=<questionario>` già supportato dalla pagina CRF. Se il ciclo non appartiene a nessuna terapia nota alla home, la riga resta senza pulsante.
+
+=== Endpoint del microservizio Zammad
+
+Tutti sotto `/fhir/zammad/tickets`.
+
+[cols="2,1,3"]
+|===
+| Percorso | Metodo | Scopo
+
+| `/by-crf?patient=&careplan=&questionnaire=&all=`
+| GET
+| Ticket di una CRF (di default solo non chiusi).
+
+| `/by-patient?patient=&all=`
+| GET
+| Ticket di tutte le CRF del paziente, con `carePlanId` e `questionnaireId`.
+
+| `/crf-summary?patient=&careplan=&questionnaire=`
+| GET
+| Esito del blocco e ticket bloccanti (solo id e stato, mai testo).
+
+| `/{id}/articles`
+| GET, POST
+| Conversazione (solo testo) e risposta.
+
+| `/{id}/close`, `/{id}/reopen`
+| POST
+| Chiusura (motivazione obbligatoria) e riapertura; solo con `internal:close:ticket`.
+
+| `/ticket-ref-report`
+| GET
+| Rapporto di attivazione (ticket senza chiave o paziente, errori di sincronizzazione). Chiuso di default (`zammad.admin-endpoints.enabled`).
+
+| `/webhook`
+| POST
+| Notifica da Zammad, autenticata dalla firma HMAC.
+|===
+
+Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create dallo script `keycloak-config/add-zammad-authz.py`.
+
+== Sicurezza e privacy
+
+* *Nessun testo clinico in HAPI*: nei `Task` ci sono identificativi e stato, non titoli né conversazioni. Anche il riepilogo del blocco espone solo id e stato.
+* *Testo sempre plain*: il microservizio rimuove HTML, script e indirizzi email dalle conversazioni prima di mostrarle.
+* *Identità dell'utente*: le scritture avvengono a nome dell'utente (`X-On-Behalf-Of`), legato all'utente Zammad tramite `keycloak_ref` = `sub` del token. Un utente sconosciuto a Zammad non scrive come altri.
+* *Fail-closed* su visibilità, capability, stato non verificabile e audit della deroga.
+* *Audit*: eventi `crf-confirm-blocked-by-tickets` e `ticket-gate-override`; l'audit della deroga è obbligatorio.
+* *Log*: si registrano successo, servizio e identificativi; mai token, risposte o dati personali.
+* *Webhook*: firma HMAC-SHA1 verificata; solo notifica.
+* *Segreti*: il token Zammad e il segreto del webhook vanno gestiti come segreti dell'ambiente. Il token oggi è in chiaro in `application.properties` e va ruotato e spostato in un secret prima della produzione.
+
+== Configurazione
+
+[cols="2,2,3"]
+|===
+| Chiave | Default | Significato
+
+| `crf.confirm.require-closed-tickets`
+| `false`
+| Accende il blocco (servizi che confermano: studio-clinico, patient-interview).
+
+| `crf.confirm.ticket-sync-max-age`
+| 10 minuti
+| Oltre questa età del battito l'esito è "non verificabile".
+
+| `zammad.ticket-ref.enabled`
+| `false`
+| Attiva la sincronizzazione Zammad → HAPI nel microservizio Zammad.
+
+| `zammad.instance-id`
+| —
+| Identificativo dell'istanza Zammad nell'`identifier` dei Task.
+
+| `zammad.webhook.secret`
+| —
+| Segreto HMAC del webhook (uguale a quello configurato su Zammad).
+
+| `zammad.ticket.closed-state-id`
+| `4`
+| Id dello stato "chiuso" (da verificare per ciascun Zammad).
+
+| `zammad.visibility.enforce`
+| `true`
+| Verifica la visibilità del paziente tramite l'anagrafica.
+
+| `zammad.visibility.patient-url`
+| `http://irccs-anagrafica-pazienti:8080/fhir/Patient`
+| Endpoint dell'anagrafica usato per la verifica.
+
+| `zammad.admin-endpoints.enabled`
+| `false`
+| Riapre l'endpoint `ticket-ref-report`.
+|===
+
+== Installazione e attivazione
+
+. Rilasciare `irccs-common` e aggiornare la versione nei microservizi; deploy di microservizi, dashboard e httpd con le procedure standard.
+. Allineare l'ambiente con `setup/install/align_ticket_crf.sh` (ruoli e risorse Keycloak, attributi e webhook Zammad, controllo della configurazione, battito su HAPI).
+. Assegnare le capability ai gruppi e far rifare il login.
+. Provare con il *blocco spento*; poi accendere `crf.confirm.require-closed-tickets=true`.
+. Rollback: rimettere il flag a `false` e riavviare; i `Task ticket-ref` restano e sono innocui.
+
+La procedura dettagliata è in `docs/superpowers/specs/` (guida di installazione) e nel file `setup/install/align_ticket_crf.sh`.
+
+== Limiti noti
+
+* Gli allegati dei ticket non sono scaricabili dal pannello.
+* Nessuna notifica né aggiornamento in tempo reale: i dati si aggiornano al ritorno sulla finestra e ogni 15 secondi nelle liste.
+* Il flag del blocco è *globale*, non per singolo studio.
+* Il blocco non copre la modifica diretta (PATCH) delle compilazioni né l'import.
+* Il percorso paziente blocca solo per ticket già noti; `/certify` non ha deroga.
+* Un ticket aperto su una CRF di uno Step importato in un ciclo segna lo Step proprietario del ciclo.
+* In Zammad senza motore di ricerca (Elasticsearch) le ricerche per campo restituiscono risultati vuoti; la piattaforma non ne dipende (usa i `Task`).
+* Il permesso di panoramica nell'interfaccia di Zammad segue i gruppi Zammad, non la visibilità dell'applicazione.
