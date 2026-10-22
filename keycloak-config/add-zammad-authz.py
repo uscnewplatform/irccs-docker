@@ -84,9 +84,12 @@ def build(t, path):
         # GET /tickets/crf-summary?patient=&careplan=&questionnaire= (stato dei ticket di una CRF per la dashboard)
         resources.append(("CrfSummary %s Resource" % t, [base + "/crf-summary"], ["GET"]))
         perms.append(("CrfSummary %s Permission" % t, "CrfSummary %s Resource" % t, "GET", "read"))
-        # GET /tickets/open-for-gate (ticket non chiusi di una CRF, per il blocco della conferma degli altri microservizi):
-        # volutamente SENZA risorsa qui. Resta coperto solo da "Admin Resource" /fhir/*, quindi lo chiama soltanto
-        # il service account dei microservizi (ruolo admin) e nessun utente normale.
+        # GET /tickets/open-for-gate (ticket non chiusi di una CRF, per il blocco della conferma degli altri microservizi).
+        # Serve una risorsa PROPRIA: senza, il percorso e' catturato da "Base ... /{id}" (che non ha lo scope GET) e
+        # nemmeno il service account passa. Il permesso e' solo per le policy admin (op None): lo chiamano i
+        # microservizi con il service account, nessun ruolo zammadticket:* lo abilita.
+        resources.append(("OpenForGate %s Resource" % t, [base + "/open-for-gate"], ["GET"]))
+        perms.append(("OpenForGate %s Permission" % t, "OpenForGate %s Resource" % t, "GET", None))
         # Gestione dei ticket di una CRF dentro la piattaforma: elenco, conversazione, risposta, chiusura/riapertura.
         resources.append(("ByCrf %s Resource" % t, [base + "/by-crf"], ["GET"]))
         # GET /tickets/by-patient?patient= (ticket aperti di tutte le CRF del paziente, per la home paziente)
@@ -227,7 +230,7 @@ def main():
                 created = call("POST", rs + "/permission/scope", tok, {
                     "name": name, "logic": "POSITIVE", "decisionStrategy": "AFFIRMATIVE",
                     "resources": [resource], "scopes": [scope],
-                    "policies": [policies[n] for n in ADMIN_POLICIES] + [policies[policy_name(t, op)]]})
+                    "policies": [policies[n] for n in ADMIN_POLICIES] + ([policies[policy_name(t, op)]] if op else [])})
                 policies[name] = created["id"] if created else name
                 print("+ permission %s" % name)
 
