@@ -95,7 +95,7 @@ def build(t, path):
         # GET /tickets/by-patient?patient= (ticket aperti di tutte le CRF del paziente, per la home paziente)
         resources.append(("ByPatient %s Resource" % t, [base + "/by-patient"], ["GET"]))
         resources.append(("Articles %s Resource" % t, [base + "/{id}/articles"], ["GET", "POST"]))
-        resources.append(("StateChange %s Resource" % t, [base + "/{id}/close", base + "/{id}/reopen"], ["POST"]))
+        resources.append(("StateChange %s Resource" % t, [base + "/{id}/close", base + "/{id}/reopen", base + "/{id}/validate-closure"], ["POST"]))
         perms.append(("ByCrf %s Permission" % t, "ByCrf %s Resource" % t, "GET", "read"))
         perms.append(("ByPatient %s Permission" % t, "ByPatient %s Resource" % t, "GET", "read"))
         perms.append(("ReadArticles %s Permission" % t, "Articles %s Resource" % t, "GET", "read"))
@@ -196,8 +196,19 @@ def main():
 
         # 2. Risorse
         for name, uris, scopes in resources:
-            if call("GET", "%s/resource?name=%s&exact=true" % (rs, q(name)), tok):
-                print("= risorsa %s" % name)
+            existing = call("GET", "%s/resource?name=%s&exact=true" % (rs, q(name)), tok)
+            if existing:
+                # risorsa gia' presente: se mancano percorsi (versioni successive dello script) si aggiungono
+                current = call("GET", "%s/resource/%s" % (rs, existing[0]["_id"]), tok)
+                missing = [u for u in uris if u not in (current.get("uris") or [])]
+                if missing and not DRY:
+                    current["uris"] = list(current.get("uris") or []) + missing
+                    call("PUT", "%s/resource/%s" % (rs, existing[0]["_id"]), tok, current)
+                    print("~ risorsa %s: aggiunti %s" % (name, missing))
+                elif missing:
+                    print("~ risorsa %s: aggiungerebbe %s (dry-run)" % (name, missing))
+                else:
+                    print("= risorsa %s" % name)
             elif DRY:
                 print("+ risorsa %s (dry-run)" % name)
             else:
