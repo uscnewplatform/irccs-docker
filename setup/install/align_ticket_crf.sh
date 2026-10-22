@@ -11,24 +11,22 @@
 #   2  Keycloak: ruoli internal:confirm:crf / internal:close:ticket / internal:override:ticket-gate
 #   3  Keycloak: risorse e permessi del microservizio Zammad (crf-summary, by-crf, by-patient, articles, close/reopen)
 #   4  Zammad: attributi personalizzati (crfscope, qrid, ...)
-#   5  Zammad: webhook + trigger verso il microservizio (HMAC)
-#   6  microservizio Zammad: configurazione effettiva del container (sola lettura)
-#   7  HAPI: battito di sincronizzazione e Task ticket-ref (sola lettura, facoltativo)
-#   8  promemoria dei passaggi MANUALI (capability ai gruppi, login, prove, attivazione del blocco)
+#   5  microservizio Zammad: configurazione effettiva del container (sola lettura)
+#   6  Zammad: la ricerca a condizioni dei ticket funziona (sola lettura)
+#   7  promemoria dei passaggi MANUALI (capability ai gruppi, login, prove, attivazione del blocco)
+#
+# I ticket NON si copiano in HAPI: il blocco della conferma chiede lo stato a Zammad al momento (via ms Zammad).
+# Niente webhook, niente riconciliazione. Zammad non raggiungibile = conferma impossibile (503).
 #
 # Segreti SOLO da ambiente (mai da argomento: finirebbero in history/ps):
-#   ZAMMAD_TOKEN      token admin di Zammad (admin.object, admin.webhook, admin.trigger)
-#   WEBHOOK_SECRET    stesso valore di ZAMMAD_WEBHOOK_SECRET del microservizio
+#   ZAMMAD_TOKEN      token admin di Zammad (admin.object per gli attributi; lettura ticket per la ricerca)
 #   ADMIN_PASS        password dell'admin Keycloak
 # Variabili:
 #   ZAMMAD_URL        es. https://zammad.infocube.it
-#   WEBHOOK_URL       URL con cui ZAMMAD raggiunge il microservizio, es. http://irccs-zammad:8080/fhir/zammad/webhook
 #   KC_URL            es. https://host/backoffice        (default http://localhost:9445)
 #   REALM             default pascale
 #   ADMIN_USER        default admin
 #   ZAMMAD_MS_CONTAINER   nome del container del microservizio Zammad (default: il primo che contiene "microservice-zammad")
-#   HAPI_URL          facoltativo, base FHIR di HAPI raggiungibile da qui (es. http://localhost:8080/fhir)
-#   HAPI_AUTH         facoltativo, header completo (es. "Authorization: Bearer ...")
 #
 # Opzioni: --yes (non chiede conferme)   --from N (riparte dal passo N)   --only N (solo il passo N)
 set -euo pipefail
@@ -63,7 +61,7 @@ need_var() { [ -n "${!1:-}" ] || die "variabile $1 non impostata"; }
 if run_step 1; then
   say 1 "controlli preliminari"
   for t in curl python3; do command -v "$t" >/dev/null || die "manca $t"; done; ok "curl e python3 presenti"
-  for v in ZAMMAD_URL ZAMMAD_TOKEN WEBHOOK_SECRET WEBHOOK_URL ADMIN_PASS; do need_var "$v"; done; ok "variabili obbligatorie impostate"
+  for v in ZAMMAD_URL ZAMMAD_TOKEN ADMIN_PASS; do need_var "$v"; done; ok "variabili obbligatorie impostate"
   code="$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $ZAMMAD_TOKEN" "${ZAMMAD_URL%/}/api/v1/users/me" || true)"
   [ "$code" = "200" ] && ok "Zammad raggiungibile e token valido" || die "Zammad: GET /users/me ha risposto $code (URL o token errati?)"
   code="$(curl -s -o /dev/null -w '%{http_code}' "${KC_URL%/}/realms/$REALM/.well-known/openid-configuration" || true)"
@@ -95,14 +93,7 @@ fi
 
 # ---------------------------------------------------------------- 5
 if run_step 5; then
-  say 5 "Zammad: webhook e trigger"
-  echo "  Zammad chiamera' $WEBHOOK_URL (deve essere raggiungibile DA Zammad, non da qui)."
-  confirm "Creo webhook e trigger mancanti?" && "$HERE/install_zammad_webhook.sh" "$ZAMMAD_URL" "$WEBHOOK_URL" && ok "webhook allineato" || warn "passo 5 saltato"
-fi
-
-# ---------------------------------------------------------------- 6
-if run_step 6; then
-  say 6 "microservizio Zammad: configurazione effettiva"
+  say 5 "microservizio Zammad: configurazione effettiva"
   if ! command -v docker >/dev/null; then
     warn "docker non disponibile qui: controllo saltato (lancia il passo 6 sul server dove gira il microservizio)"
   else
@@ -110,61 +101,45 @@ if run_step 6; then
     [ -n "$C" ] || die "container del microservizio Zammad non trovato (imposta ZAMMAD_MS_CONTAINER)"
     echo "  container: $C   immagine: $(docker inspect -f '{{.Config.Image}}' "$C")"
     envof() { docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$C" | sed -n "s/^$1=//p" | head -1; }
-    [ "$(envof ZAMMAD_TICKET_REF_ENABLED)" = "true" ] && ok "ZAMMAD_TICKET_REF_ENABLED=true" || warn "ZAMMAD_TICKET_REF_ENABLED non e' true: nessun Task ticket-ref verra' scritto"
-    [ -n "$(envof ZAMMAD_WEBHOOK_SECRET)" ] && ok "ZAMMAD_WEBHOOK_SECRET impostato" || warn "ZAMMAD_WEBHOOK_SECRET mancante: il webhook verra' rifiutato"
-    [ -n "$(envof ZAMMAD_INSTANCE_ID)" ] && ok "ZAMMAD_INSTANCE_ID=$(envof ZAMMAD_INSTANCE_ID)" || warn "ZAMMAD_INSTANCE_ID non impostato (si usa il default): non cambiarlo piu' dopo l'attivazione"
     base="$(envof ZAMMAD_BASE_URL)"; [ -n "$base" ] && ok "ZAMMAD_BASE_URL=$base" || warn "ZAMMAD_BASE_URL non impostato"
     # staging/prod: il file montato legge il token da ZAMMAD_TOKEN_SERVICE; negli ambienti locali puo' essere ZAMMAD_TOKEN
     if [ -n "$(envof ZAMMAD_TOKEN_SERVICE)" ] || [ -n "$(envof ZAMMAD_TOKEN)" ]; then ok "token Zammad del servizio impostato"; else warn "token Zammad del servizio mancante (ZAMMAD_TOKEN_SERVICE)"; fi
-    # il file montato /deployments/config puo' sovrascrivere gli indici del policy enforcer: il webhook deve restare escluso
-    if docker exec "$C" sh -c 'grep -q "/fhir/zammad/webhook" /deployments/config/application.properties' 2>/dev/null; then ok "webhook escluso dal policy enforcer nel file montato"; elif docker exec "$C" test -f /deployments/config/application.properties 2>/dev/null; then warn "il file montato non esclude /fhir/zammad/webhook dal policy enforcer: Zammad non riuscira' a notificare (resta la riconciliazione ogni 5 minuti)"; else ok "nessun file di configurazione montato: vale quello del microservizio"; fi
+    t="$(envof ZAMMAD_TICKET_LOOKUP_TIMEOUT)"; echo "  timeout verso Zammad: ${t:-3s (default)}"
+    ov="$(envof CRF_CONFIRM_OVERRIDE_WHEN_UNVERIFIABLE)"
+    if [ "${ov:-false}" = "true" ]; then warn "la DEROGA vale anche con ticket non verificabili (CRF_CONFIRM_OVERRIDE_WHEN_UNVERIFIABLE=true)"; else ok "nessuna deroga con ticket non verificabili (default)"; fi
     flag="$(envof CRF_CONFIRM_REQUIRE_CLOSED_TICKETS)"
     if [ "${flag:-false}" = "true" ]; then warn "il BLOCCO e' ATTIVO (CRF_CONFIRM_REQUIRE_CLOSED_TICKETS=true) su questo container"; else ok "blocco spento (come previsto per la fase di prova)"; fi
-    logs="$(docker logs --tail 2000 "$C" 2>&1 || true)"   # in variabile: grep -q chiuderebbe la pipe e pipefail darebbe un falso errore
-    if grep -qi 'TicketRefSyncService' <<<"$logs"; then ok "il microservizio ha avviato la sincronizzazione ticket-ref"; else warn "nessuna traccia della sincronizzazione nei log recenti (attendi il primo ciclo di 5 minuti)"; fi
   fi
+fi
+
+# ---------------------------------------------------------------- 6
+if run_step 6; then
+  say 6 "Zammad: ricerca a condizioni dei ticket"
+  # la ricerca testuale per campo (query=patient:X) senza indice non trova nulla; la ricerca a condizioni si'
+  code="$(curl -s -o /dev/null -w '%{http_code}' -X POST -H "Authorization: Bearer $ZAMMAD_TOKEN" -H 'Content-Type: application/json' \
+    "${ZAMMAD_URL%/}/api/v1/tickets/search?per_page=1" -d '{"condition":{"ticket.patient":{"operator":"is","value":"0"}}}' || true)"
+  [ "$code" = "200" ] && ok "POST tickets/search con condition risponde 200" || warn "la ricerca a condizioni ha risposto $code: il blocco non potra' leggere i ticket"
+  states="$(curl -sf -H "Authorization: Bearer $ZAMMAD_TOKEN" "${ZAMMAD_URL%/}/api/v1/ticket_states" | python3 -I -c 'import sys,json;print(" ".join("%s=%s" % (s["id"], s["name"]) for s in json.load(sys.stdin)))' || true)"
+  [ -n "$states" ] && echo "  stati: $states  (uno stato personalizzato con tipo non riconosciuto BLOCCA la conferma)" || warn "elenco stati non leggibile"
 fi
 
 # ---------------------------------------------------------------- 7
 if run_step 7; then
-  say 7 "HAPI: battito e Task ticket-ref"
-  if [ -z "${HAPI_URL:-}" ]; then
-    warn "HAPI_URL non impostato: controllo saltato"
-  else
-    H=(); [ -n "${HAPI_AUTH:-}" ] && H=(-H "$HAPI_AUTH")
-    hb="$(curl -sf "${H[@]}" "${HAPI_URL%/}/Task?code=http://irccs.pascale.it/fhir/CodeSystem/ticket-ref%7Cticket-sync-heartbeat&_count=1&_elements=executionPeriod" || true)"
-    if [ -z "$hb" ]; then warn "HAPI non risponde o accesso negato"; else
-      python3 -I -c '
-import sys, json, datetime
-b = json.loads(sys.argv[1]); e = b.get("entry", [])
-if not e: print("ATT_NOHB")
-else:
-    end = e[0]["resource"].get("executionPeriod", {}).get("end")
-    t = datetime.datetime.fromisoformat(end.replace("Z", "+00:00")); age = (datetime.datetime.now(datetime.timezone.utc) - t).total_seconds()
-    print("HB", int(age))
-' "$hb" | { read -r k v; case "$k" in HB) [ "${v:-99999}" -le 600 ] && ok "battito recente (${v}s fa)" || warn "battito vecchio (${v}s): la riconciliazione non gira o fallisce";; *) warn "nessun battito: la riconciliazione non e' ancora partita (attendi 5 minuti)";; esac; }
-    fi
-    n="$(curl -sf "${H[@]}" "${HAPI_URL%/}/Task?code=http://irccs.pascale.it/fhir/CodeSystem/ticket-ref%7Cticket-ref&_summary=count" | python3 -I -c 'import sys,json;print(json.load(sys.stdin).get("total","?"))' || echo '?')"
-    echo "  Task ticket-ref presenti: $n"
-  fi
-fi
-
-# ---------------------------------------------------------------- 8
-if run_step 8; then
-  say 8 "passaggi manuali"
+  say 7 "passaggi manuali"
   cat <<'EOF'
   1. Dashboard -> Gruppi utenti -> sezione CRF: assegna ai gruppi scelti
        internal:confirm:crf       conferma CRF
        internal:close:ticket      chiude/riapre i ticket (chi apre un ticket non puo' chiuderlo da solo)
        internal:override:ticket-gate   deroga con motivazione (audit obbligatorio)
      Gli utenti devono rifare il login (le capability vengono dai gruppi, non dal token).
-  2. Prove con il blocco SPENTO: crea un ticket da una CRF di TEST -> compare il Task ticket-ref su HAPI;
-     pannello ticket (elenco, risposta, chiusura), riquadro "Open tickets" nella home paziente e icone
-     su cicli/gruppi/schede. Verifica che un utente di un'altra organizzazione NON veda i ticket (403/vuoto).
+  2. Prove con il blocco SPENTO: crea un ticket da una CRF di TEST; pannello ticket (elenco, risposta,
+     chiusura), riquadro "Open tickets" nella home paziente e icone su cicli/gruppi/schede. Verifica che un
+     utente di un'altra organizzazione NON veda i ticket (403/vuoto).
   3. Accensione del blocco: CRF_CONFIRM_REQUIRE_CLOSED_TICKETS=true sui servizi che confermano
      (studio-clinico, patient-interview) + riavvio. Attesi: 409 CRF_OPEN_TICKETS con ticket aperti, 200 dopo la
-     chiusura, 503 CRF_TICKET_STATE_UNVERIFIABLE con sincronizzazione ferma oltre 10 minuti, deroga con motivo.
-  4. Rollback: rimetti il flag a false e riavvia; i Task ticket-ref restano e sono innocui.
+     chiusura, deroga con motivo (10-500 caratteri) + capability, 503 CRF_TICKET_STATE_UNVERIFIABLE con Zammad
+     fermo ("Sistema di ticket in manutenzione"), SENZA deroga (salvo CRF_CONFIRM_OVERRIDE_WHEN_UNVERIFIABLE=true).
+  4. Rollback: rimetti il flag a false e riavvia; non c'e' nessun dato da ripulire.
 EOF
 fi
 
