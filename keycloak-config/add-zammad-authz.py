@@ -84,9 +84,9 @@ def build(t, path):
         # GET /tickets/crf-summary?patient=&careplan=&questionnaire= (stato dei ticket di una CRF per la dashboard)
         resources.append(("CrfSummary %s Resource" % t, [base + "/crf-summary"], ["GET"]))
         perms.append(("CrfSummary %s Permission" % t, "CrfSummary %s Resource" % t, "GET", "read"))
-        # GET /tickets/ticket-ref-report (rapporto per attivare il blocco): il microservizio lo tiene chiuso di default
-        # (zammad.admin-endpoints.enabled=false), qui si autorizza solo il percorso per chi ha zammadticket:read.
-        resources.append(("TicketRefReport %s Resource" % t, [base + "/ticket-ref-report"], ["GET"]))
+        # GET /tickets/open-for-gate (ticket non chiusi di una CRF, per il blocco della conferma degli altri microservizi):
+        # volutamente SENZA risorsa qui. Resta coperto solo da "Admin Resource" /fhir/*, quindi lo chiama soltanto
+        # il service account dei microservizi (ruolo admin) e nessun utente normale.
         # Gestione dei ticket di una CRF dentro la piattaforma: elenco, conversazione, risposta, chiusura/riapertura.
         resources.append(("ByCrf %s Resource" % t, [base + "/by-crf"], ["GET"]))
         # GET /tickets/by-patient?patient= (ticket aperti di tutte le CRF del paziente, per la home paziente)
@@ -98,7 +98,6 @@ def build(t, path):
         perms.append(("ReadArticles %s Permission" % t, "Articles %s Resource" % t, "GET", "read"))
         perms.append(("ReplyArticles %s Permission" % t, "Articles %s Resource" % t, "POST", "update"))
         perms.append(("StateChange %s Permission" % t, "StateChange %s Resource" % t, "POST", "update"))
-        perms.append(("TicketRefReport %s Permission" % t, "TicketRefReport %s Resource" % t, "GET", "read"))
     return resources, perms
 
 
