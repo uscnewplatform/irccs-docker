@@ -114,7 +114,10 @@ if run_step 6; then
     [ -n "$(envof ZAMMAD_WEBHOOK_SECRET)" ] && ok "ZAMMAD_WEBHOOK_SECRET impostato" || warn "ZAMMAD_WEBHOOK_SECRET mancante: il webhook verra' rifiutato"
     [ -n "$(envof ZAMMAD_INSTANCE_ID)" ] && ok "ZAMMAD_INSTANCE_ID=$(envof ZAMMAD_INSTANCE_ID)" || warn "ZAMMAD_INSTANCE_ID non impostato (si usa il default): non cambiarlo piu' dopo l'attivazione"
     base="$(envof ZAMMAD_BASE_URL)"; [ -n "$base" ] && ok "ZAMMAD_BASE_URL=$base" || warn "ZAMMAD_BASE_URL non impostato"
-    [ -n "$(envof ZAMMAD_TOKEN)" ] && ok "ZAMMAD_TOKEN impostato" || warn "ZAMMAD_TOKEN mancante"
+    # staging/prod: il file montato legge il token da ZAMMAD_TOKEN_SERVICE; negli ambienti locali puo' essere ZAMMAD_TOKEN
+    if [ -n "$(envof ZAMMAD_TOKEN_SERVICE)" ] || [ -n "$(envof ZAMMAD_TOKEN)" ]; then ok "token Zammad del servizio impostato"; else warn "token Zammad del servizio mancante (ZAMMAD_TOKEN_SERVICE)"; fi
+    # il file montato /deployments/config puo' sovrascrivere gli indici del policy enforcer: il webhook deve restare escluso
+    if docker exec "$C" sh -c 'grep -q "/fhir/zammad/webhook" /deployments/config/application.properties' 2>/dev/null; then ok "webhook escluso dal policy enforcer nel file montato"; elif docker exec "$C" test -f /deployments/config/application.properties 2>/dev/null; then warn "il file montato non esclude /fhir/zammad/webhook dal policy enforcer: Zammad non riuscira' a notificare (resta la riconciliazione ogni 5 minuti)"; else ok "nessun file di configurazione montato: vale quello del microservizio"; fi
     flag="$(envof CRF_CONFIRM_REQUIRE_CLOSED_TICKETS)"
     if [ "${flag:-false}" = "true" ]; then warn "il BLOCCO e' ATTIVO (CRF_CONFIRM_REQUIRE_CLOSED_TICKETS=true) su questo container"; else ok "blocco spento (come previsto per la fase di prova)"; fi
     logs="$(docker logs --tail 2000 "$C" 2>&1 || true)"   # in variabile: grep -q chiuderebbe la pipe e pipefail darebbe un falso errore
