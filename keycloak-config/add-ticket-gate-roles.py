@@ -4,6 +4,7 @@ Crea (idempotente) i ruoli realm usati dal blocco "Conferma CRF" per ticket aper
 
   - internal:override:ticket-gate  conferma una CRF nonostante ticket aperti o non verificabili
                                    (motivazione obbligatoria, audit obbligatorio)
+  - internal:close:ticket          chiude e riapre i ticket di una CRF (chi li apre non puo' chiuderli da solo)
   - internal:confirm:crf           conferma una CRF (se manca nel realm)
 
 Sono capability da assegnare ai GRUPPI (form "Gruppi utenti" -> sezione CRF): il nome del gruppo non conta mai.
@@ -31,6 +32,8 @@ DRY = "--dry-run" in sys.argv
 
 ROLES = [
     ("internal:confirm:crf", "Puo' confermare una CRF"),
+    ("internal:close:ticket",
+     "Puo' chiudere e riaprire i ticket di una CRF (chi ha solo aperto il ticket o vi ha risposto non puo')"),
     ("internal:override:ticket-gate",
      "Puo' confermare una CRF nonostante ticket aperti o non verificabili (motivazione e audit obbligatori)"),
 ]
