@@ -87,6 +87,14 @@ def build(t, path):
         # GET /tickets/ticket-ref-report (rapporto per attivare il blocco): il microservizio lo tiene chiuso di default
         # (zammad.admin-endpoints.enabled=false), qui si autorizza solo il percorso per chi ha zammadticket:read.
         resources.append(("TicketRefReport %s Resource" % t, [base + "/ticket-ref-report"], ["GET"]))
+        # Gestione dei ticket di una CRF dentro la piattaforma: elenco, conversazione, risposta, chiusura/riapertura.
+        resources.append(("ByCrf %s Resource" % t, [base + "/by-crf"], ["GET"]))
+        resources.append(("Articles %s Resource" % t, [base + "/{id}/articles"], ["GET", "POST"]))
+        resources.append(("StateChange %s Resource" % t, [base + "/{id}/close", base + "/{id}/reopen"], ["POST"]))
+        perms.append(("ByCrf %s Permission" % t, "ByCrf %s Resource" % t, "GET", "read"))
+        perms.append(("ReadArticles %s Permission" % t, "Articles %s Resource" % t, "GET", "read"))
+        perms.append(("ReplyArticles %s Permission" % t, "Articles %s Resource" % t, "POST", "update"))
+        perms.append(("StateChange %s Permission" % t, "StateChange %s Resource" % t, "POST", "update"))
         perms.append(("TicketRefReport %s Permission" % t, "TicketRefReport %s Resource" % t, "GET", "read"))
     return resources, perms
 
