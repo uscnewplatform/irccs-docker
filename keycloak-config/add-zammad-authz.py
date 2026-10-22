@@ -89,9 +89,12 @@ def build(t, path):
         resources.append(("TicketRefReport %s Resource" % t, [base + "/ticket-ref-report"], ["GET"]))
         # Gestione dei ticket di una CRF dentro la piattaforma: elenco, conversazione, risposta, chiusura/riapertura.
         resources.append(("ByCrf %s Resource" % t, [base + "/by-crf"], ["GET"]))
+        # GET /tickets/by-patient?patient= (ticket aperti di tutte le CRF del paziente, per la home paziente)
+        resources.append(("ByPatient %s Resource" % t, [base + "/by-patient"], ["GET"]))
         resources.append(("Articles %s Resource" % t, [base + "/{id}/articles"], ["GET", "POST"]))
         resources.append(("StateChange %s Resource" % t, [base + "/{id}/close", base + "/{id}/reopen"], ["POST"]))
         perms.append(("ByCrf %s Permission" % t, "ByCrf %s Resource" % t, "GET", "read"))
+        perms.append(("ByPatient %s Permission" % t, "ByPatient %s Resource" % t, "GET", "read"))
         perms.append(("ReadArticles %s Permission" % t, "Articles %s Resource" % t, "GET", "read"))
         perms.append(("ReplyArticles %s Permission" % t, "Articles %s Resource" % t, "POST", "update"))
         perms.append(("StateChange %s Permission" % t, "StateChange %s Resource" % t, "POST", "update"))
