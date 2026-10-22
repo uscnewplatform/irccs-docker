@@ -32,7 +32,9 @@ Anti-obiettivo: se Zammad non risponde, **mai** lasciar confermare "per sicurezz
 - Zammad non raggiungibile o lento: **errore e conferma impossibile** (fail-closed).
 - Messaggio mostrato al medico: «Sistema di ticket in manutenzione. Riprovare o contattare l'assistenza».
 - Con il sistema ticket in manutenzione **nessuna deroga** alla conferma: la deroga con capability vale solo quando
-  Zammad risponde e ci sono ticket aperti, mai quando lo stato non e' verificabile.
+  Zammad risponde e ci sono ticket aperti, mai quando lo stato non e' verificabile. La regola e' **attivabile a
+  richiesta** con la proprieta' `crf.confirm.override-when-unverifiable` (default `false`): se messa a `true`, la
+  deroga vale anche con stato non verificabile (comportamento della versione precedente).
 
 ## 4. Verifica tecnica gia' fatta (Zammad locale, Elasticsearch spento)
 
