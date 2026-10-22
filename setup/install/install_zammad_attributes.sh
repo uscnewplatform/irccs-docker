@@ -2,7 +2,7 @@
 # Crea su Zammad gli attributi personalizzati (Object Manager) usati dalla piattaforma.
 #
 #   Ticket: crf, crfdisplay, careplan, careplandisplay, patient, patientdisplay,
-#           patientjourneydisplay, directlink, crfscope, qrid
+#           patientjourneydisplay, directlink, crfscope, qrid, crfclosure
 #   Group : organization
 #
 # Senza questi attributi Zammad SCARTA IN SILENZIO i campi inviati dalla dashboard alla
@@ -19,7 +19,9 @@
 # Il token e' letto dall'ambiente (non da argomento) per non lasciarlo nella history/ps.
 # Il token deve essere di un utente con permesso admin.object (Admin -> Oggetti).
 #
-# Idempotente: gli attributi gia' presenti vengono saltati, non modificati.
+# Idempotente: gli attributi gia' presenti vengono saltati, non modificati. Fa eccezione la visibilita' in
+# modifica dei campi che identificano la CRF (patient, careplan, crf, crfscope, qrid, crfclosure): si nascondono
+# nella maschera di modifica di Zammad, cosi' un operatore non puo' togliere il ticket dal blocco cambiandoli.
 set -euo pipefail
 
 if [ $# -lt 1 ] || [ -z "${ZAMMAD_TOKEN:-}" ]; then
@@ -73,6 +75,9 @@ crea_attributo() {
 }
 
 TICKET_SCREENS='{"create_middle":{"ticket.agent":{"shown":true,"required":false,"item_class":"column"}},"edit":{"ticket.agent":{"shown":true,"required":false}}}'
+# Campi che identificano la CRF e il segno di "chiuso dalla piattaforma": non si modificano dall'interfaccia di
+# Zammad (la piattaforma li scrive via API alla creazione e alla chiusura convalidata).
+KEY_SCREENS='{"create_middle":{"ticket.agent":{"shown":false,"required":false}},"edit":{"ticket.agent":{"shown":false,"required":false}}}'
 GROUP_SCREENS='{"create":{"admin.group":{"shown":true,"required":false}},"edit":{"admin.group":{"shown":true,"required":false}}}'
 
 echo "Zammad: $API"
@@ -89,6 +94,26 @@ crea_attributo Ticket directlink            "Link diretto"                 texta
 # QuestionnaireResponse. Nomi vincolati da Zammad: "scope" e' riservato e i nomi non possono finire per _id.
 crea_attributo Ticket crfscope              "Ambito (CRF/STUDY)"           input    50   "$TICKET_SCREENS"
 crea_attributo Ticket qrid                  "QuestionnaireResponse (id)"   input    50   "$TICKET_SCREENS"
+# Chiusura convalidata dalla piattaforma: "<utente>|<data ISO>" scritto alla chiusura dal pannello (o alla convalida).
+# Un ticket chiuso SENZA questo segno (chiuso direttamente in Zammad) continua a bloccare la conferma della CRF.
+crea_attributo Ticket crfclosure            "Chiusura convalidata"         input    255  "$KEY_SCREENS"
+
+# Nasconde in modifica i campi chiave anche dove esistevano gia' (installazioni precedenti). Zammad accetta
+# l'aggiornamento solo con il corpo completo dell'attributo (con i soli "screens" risponde 500).
+nascondi_in_modifica() {
+  local name="$1" body id
+  body="$(curl -sf -H "$AUTH" "$API/object_manager_attributes" | python3 -I -c 'import sys,json
+name, screens = sys.argv[1], json.loads(sys.argv[2])
+for a in json.load(sys.stdin):
+    if a["object"] == "Ticket" and a["name"] == name:
+        print(json.dumps({"id": a["id"], "object": "Ticket", "name": name, "display": a["display"], "active": a["active"],
+                          "data_type": a["data_type"], "data_option": a["data_option"], "screens": screens}))' "$name" "$KEY_SCREENS")" || true
+  [ -n "$body" ] || return 0
+  id="$(python3 -I -c 'import sys,json;print(json.loads(sys.argv[1])["id"])' "$body")"
+  curl -sf -o /dev/null -X PUT -H "$AUTH" -H 'Content-Type: application/json' -d "$body" "$API/object_manager_attributes/$id" \
+    && echo "  ~ Ticket.$name nascosto in modifica" || echo "  ! Ticket.$name: aggiornamento visibilita' non riuscito" >&2
+}
+for n in patient careplan crf crfscope qrid; do nascondi_in_modifica "$n"; done
 
 echo "Attributi Group"
 crea_attributo Group organization           "Organization FHIR (id)"       input    255  "$GROUP_SCREENS"

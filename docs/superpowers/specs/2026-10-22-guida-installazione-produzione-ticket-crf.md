@@ -58,7 +58,8 @@ Dalla cartella `irccs-docker/keycloak-config/` (backup realm prima!):
 
 ```bash
 python3 add-ticket-gate-roles.py   # crea ruoli internal:confirm:crf, internal:close:ticket, internal:override:ticket-gate
-python3 add-zammad-authz.py        # risorse authz: CrfSummary, ByCrf, ByPatient, Articles, StateChange
+python3 add-zammad-authz.py        # risorse authz: CrfSummary, ByCrf, ByPatient, Articles, StateChange (close, reopen, validate-closure), OpenForGate
+# se il realm ha gia' le risorse della versione precedente, rilanciare lo script: aggiunge validate-closure
 ```
 
 Gli script richiedono credenziali admin Keycloak (variabili d'ambiente, vedere l'header dello script). `GET /fhir/zammad/tickets/open-for-gate` NON ha una risorsa propria: lo chiamano solo i microservizi con il service account (ruolo admin, coperto da "Admin Resource" `/fhir/*`); gli utenti normali ricevono 403. Verificarlo dopo il deploy.
@@ -67,9 +68,11 @@ Gli script richiedono credenziali admin Keycloak (variabili d'ambiente, vedere l
 
 ```bash
 cd irccs-docker/setup/install
-bash install_zammad_attributes.sh   # attributi oggetto crfscope (CRF|STUDY) e qrid
+bash install_zammad_attributes.sh   # attributi crfscope (CRF|STUDY), qrid, crfclosure; nasconde in modifica i campi chiave
 ```
 
+- `crfclosure` e' il segno di "chiuso dalla piattaforma": senza, ogni ticket chiuso risulterebbe chiuso senza convalida e bloccherebbe. I campi `patient`, `careplan`, `crf`, `crfscope`, `qrid` e `crfclosure` diventano non modificabili nell'interfaccia di Zammad (lo script lo fa anche dove esistevano gia').
+- Dopo l'aggiornamento della piattaforma, i ticket gia' chiusi PRIMA di questa versione non hanno il segno e bloccano finche' non si convalidano dal pannello (o si scrive il segno con uno script di bonifica concordato col cliente).
 - Attributi: nomi `crfscope`/`qrid` (i nomi `scope` e `*_id` sono riservati in Zammad). I ticket creati dalla piattaforma portano anche `patient`, `careplan`, `crf`: sono i campi su cui cerca il blocco.
 - **Niente webhook** da installare.
 

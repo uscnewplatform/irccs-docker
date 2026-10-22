@@ -83,6 +83,25 @@ NOTE: Il permesso di *panoramica* nell'interfaccia di Zammad dipende invece dai 
 * Il blocco guarda i ticket della *stessa CRF*: stesso paziente, stesso ciclo, stesso questionario.
 * La decisione si basa sullo stato che Zammad ha *in quel momento* (vedi architettura): se Zammad non risponde la conferma è impossibile.
 
+=== Chiusura convalidata dalla piattaforma
+
+Un ticket conta come chiuso per il blocco *solo se la chiusura è passata dalla piattaforma*:
+
+* chi ha la capability `internal:close:ticket` chiude dal pannello con una motivazione; la piattaforma scrive sul ticket il segno `crfclosure` (`v1|<utente>|<data>`) nella stessa richiesta dello stato;
+* un ticket *chiuso direttamente in Zammad* (senza quel segno) *continua a bloccare*: nel pannello compare «Chiuso senza convalida» e un utente con la capability può convalidarlo («Convalida chiusura», con motivazione obbligatoria);
+* un segno vecchio non copre una nuova chiusura diretta: vale solo se è contemporaneo o successivo all'ultima chiusura in Zammad;
+* riaprire dal pannello toglie il segno;
+* i ticket uniti (`merged`) non bloccano;
+* i campi `patient`, `careplan`, `crf`, `crfscope`, `qrid` e `crfclosure` non sono modificabili dall'interfaccia di Zammad (li nasconde lo script `install_zammad_attributes.sh`).
+
+=== Dopo la conferma
+
+Se *dalla piattaforma* si apre un ticket su una CRF già confermata, o si riapre un ticket, la CRF torna *da confermare*: la compilazione torna in corso, le estensioni di conferma si tolgono e si scrive l'evento di audit `crf-confirmation-reverted-by-ticket`. Va riconfermata dopo la chiusura del ticket. Le azioni fatte direttamente in Zammad (aprire o riaprire un ticket) *non* sono rilevate dalla piattaforma.
+
+=== Una compilazione, i suoi ticket
+
+Ogni compilazione (QuestionnaireResponse) ha i suoi ticket anche se lo stesso questionario compare più volte nello stesso ciclo. Il ticket si lega alla compilazione con l'attributo `qrid`; un ticket aperto prima che la compilazione sia salvata (senza `qrid`) blocca per prudenza *tutte* le compilazioni di quella CRF nel ciclo.
+
 === Esiti
 
 [cols="1,1,3"]
@@ -95,7 +114,7 @@ NOTE: Il permesso di *panoramica* nell'interfaccia di Zammad dipende invece dai 
 
 | Bloccata
 | `409` `CRF_OPEN_TICKETS`
-| Almeno un ticket non chiuso. Viene registrato l'evento di audit `crf-confirm-blocked-by-tickets`.
+| Almeno un ticket non chiuso, o chiuso senza convalida della piattaforma. Viene registrato l'evento di audit `crf-confirm-blocked-by-tickets`.
 
 | Non verificabile
 | `503` `CRF_TICKET_STATE_UNVERIFIABLE`
@@ -169,7 +188,7 @@ Conseguenza voluta: se Zammad non è raggiungibile o è lento, *la conferma dell
 
 === Come si trovano i ticket di una CRF
 
-Ogni ticket creato dalla piattaforma porta gli attributi personalizzati `patient`, `careplan` e `crf` (più `crfscope`). Il microservizio Zammad usa la *ricerca a condizioni* di Zammad (`POST /api/v1/tickets/search` con `condition`), che filtra in modo esatto sui campi personalizzati *anche senza Elasticsearch*. La ricerca testuale per campo (`query=patient:X`) senza motore di ricerca non trova nulla e non si usa.
+Ogni ticket creato dalla piattaforma porta gli attributi personalizzati `patient`, `careplan` e `crf` (più `crfscope`, `qrid` e, alla chiusura, `crfclosure`). Il microservizio Zammad usa la *ricerca a condizioni* di Zammad (`POST /api/v1/tickets/search` con `condition`), che filtra in modo esatto sui campi personalizzati *anche senza Elasticsearch*. La ricerca testuale per campo (`query=patient:X`) senza motore di ricerca non trova nulla e non si usa.
 
 Gli stati si classificano per *tipo di stato* di Zammad (non per nome): `new`, `open`, `pending reminder`, `pending action` bloccano; `closed`, `merged` no; un tipo sconosciuto blocca. I ticket di ambito `STUDY` non bloccano mai. Si legge una pagina da 200; oltre 1000 ticket per paziente l'esito è "non verificabile".
 
@@ -216,11 +235,11 @@ Tutti sotto `/fhir/zammad/tickets`.
 | GET, POST
 | Conversazione (solo testo) e risposta.
 
-| `/{id}/close`, `/{id}/reopen`
+| `/{id}/close`, `/{id}/reopen`, `/{id}/validate-closure`
 | POST
-| Chiusura (motivazione obbligatoria) e riapertura; solo con `internal:close:ticket`.
+| Chiusura (motivazione obbligatoria, lascia il segno della piattaforma), riapertura (toglie il segno e riporta da confermare la CRF) e convalida di una chiusura fatta in Zammad; solo con `internal:close:ticket`.
 
-| `/open-for-gate?patient=&careplan=&questionnaire=`
+| `/open-for-gate?patient=&careplan=&questionnaire=&qr=`
 | GET
 | Ticket non chiusi di una CRF (o di tutto il paziente), solo id e stato. Chiamata tra servizi: raggiungibile solo dal service account (non ha una risorsa propria, è coperta dalla sola "Admin Resource").
 |===
@@ -291,6 +310,8 @@ La procedura dettagliata è in `docs/superpowers/specs/` (guida di installazione
 * Gli allegati dei ticket non sono scaricabili dal pannello.
 * Nessuna notifica né aggiornamento in tempo reale: i dati si aggiornano al ritorno sulla finestra e ogni 15 secondi nelle liste.
 * Il flag del blocco è *globale*, non per singolo studio.
+* Aprire o riaprire un ticket direttamente in Zammad non riporta da confermare la CRF già confermata (la piattaforma non lo rileva).
+* Una chiusura fatta in Zammad da un'automazione (per esempio "chiudi dopo N giorni") resta bloccante finché non la si convalida dal pannello.
 * Il blocco non copre la modifica diretta (PATCH) delle compilazioni né l'import.
 * Il percorso paziente blocca solo per ticket già noti; `/certify` non ha deroga.
 * Un ticket aperto su una CRF di uno Step importato in un ciclo segna lo Step proprietario del ciclo.

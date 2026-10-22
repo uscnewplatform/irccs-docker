@@ -32,3 +32,16 @@ Data: 2026-10-22. Nate dalla revisione funzionale della versione "tutto a Zammad
 ## Per il collaudo in staging
 
 16. Disponibilità di uno Zammad di staging con Elasticsearch acceso e spento, gli stessi gruppi e ruoli di produzione, almeno quattro utenti (senza capability, con chiusura, con deroga, di un'altra organizzazione), due studi, due cicli, una CRF ripetibile, un paziente con più di 200 ticket di prova, ticket in tutti i tipi di stato, un modo per rallentare Zammad e l'accesso ai log (Loki/Grafana).
+
+## Risposte ricevute (22/10)
+
+| # | Risposta del cliente | Cosa è stato fatto |
+|---|---|---|
+| 1 | La chiusura diretta in Zammad non deve sbloccare: si deve bloccare | Chiusura valida solo se passa dalla piattaforma (segno `crfclosure`), convalida dal pannello, campi chiave non modificabili in Zammad |
+| 2 | Decisione interna: i sistemisti attivano la proprietà e riavviano | Nessuna modifica: la regola `crf.confirm.override-when-unverifiable` si cambia con la proprietà e un riavvio. Serve una procedura scritta interna |
+| 3 | Di nuovo il flusso come prima (la CRF torna da confermare) | Solo per azioni dalla piattaforma (aprire/riaprire un ticket): la CRF torna in corso con audit. Per le azioni in Zammad la piattaforma non se ne accorge |
+| 4 | Sì, un ticket in attesa blocca; le notifiche le gestisce Zammad | Nessuna modifica. Da verificare con chi amministra Zammad che le notifiche e-mail dei ticket in attesa siano configurate |
+| 5 | No: ogni CRF è a sé anche nello stesso ciclo (più compilazioni) | Ogni compilazione ha i suoi ticket (attributo `qrid`); un ticket senza compilazione indicata blocca tutte le compilazioni di quella CRF |
+| 6 | Ok (blocco globale) | Nessuna modifica |
+
+Restano aperte le domande 7–16.

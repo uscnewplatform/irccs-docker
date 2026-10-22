@@ -94,18 +94,37 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 | G10 | Rotazione del token | Dopo la rotazione tutto funziona; il vecchio token risponde 401 | Da provare |
 | G11 | Indirizzo `crf.confirm.ticket-service-url` | Dal container di studio-clinico il ms Zammad risponde 200 prima di accendere il flag | Da provare |
 
+## I. Decisioni del cliente del 22/10 (chiusura convalidata, dopo la conferma, per compilazione)
+
+| ID | Scenario | Atteso | Copertura |
+|---|---|---|---|
+| I1 | Ticket chiuso direttamente in Zammad (senza segno) | La conferma resta bloccata (409); il pannello mostra «Chiuso senza convalida» | Unit + E2E locale |
+| I2 | Ticket chiuso dal pannello (capability + motivazione) | Lascia il segno `crfclosure`; la conferma passa | Unit + E2E locale |
+| I3 | Convalida di una chiusura diretta («Convalida chiusura», motivazione ≥ 5 caratteri) | Scrive la motivazione e il segno; poi non blocca | Unit + E2E locale |
+| I4 | Convalida senza capability / senza motivazione / su ticket non chiuso | 403 / 422 / 409 | Unit + E2E locale |
+| I5 | Segno vecchio + nuova chiusura diretta | Blocca (il segno non copre la nuova chiusura) | Unit |
+| I6 | Riapertura dal pannello | Toglie il segno; il ticket blocca | Unit + E2E locale |
+| I7 | Ticket chiuso da un'automazione di Zammad | Blocca finché non convalidato dal pannello | Da provare (Zammad di staging) |
+| I8 | Campi `patient`/`careplan`/`crf`/`crfscope`/`qrid`/`crfclosure` nella maschera di modifica di Zammad | Non visibili/modificabili dall'interfaccia | E2E locale (script attributi) |
+| I9 | Ticket aperto dalla piattaforma su una CRF già confermata | La CRF torna in corso (da confermare), estensioni di conferma tolte, evento di audit | Unit + E2E locale |
+| I10 | Ticket riaperto dal pannello su una CRF confermata | Come I9 | Unit + E2E locale |
+| I11 | Ticket aperto o riaperto direttamente in Zammad dopo la conferma | Nessuna azione sulla CRF (limite documentato); il ticket blocca una nuova conferma | Documentato |
+| I12 | Due compilazioni dello stesso questionario nello stesso ciclo, ticket su una sola | Blocca solo quella; l'altra si conferma | Unit + E2E locale |
+| I13 | Ticket senza `qrid` (aperto prima del salvataggio) | Blocca tutte le compilazioni di quella CRF | Unit + E2E locale |
+| I14 | Riabilitare la CRF dopo la chiusura del ticket | Riconferma normale | E2E locale |
+
 ## H. Casi aggiunti dopo la revisione funzionale
 
 | ID | Scenario | Atteso | Copertura |
 |---|---|---|---|
-| H1 | Modifica/chiusura diretta in Zammad dei campi `patient`/`careplan`/`crf` o dello stato | Decisione del cliente (accettare, bloccare i campi, auditare); il comportamento scelto va provato | Da decidere |
-| H2 | Ticket riaperto o aperto DOPO la conferma | Decisione del cliente (nessuna azione / avviso / annullo) | Da decidere |
+| H1 | Modifica/chiusura diretta in Zammad dei campi `patient`/`careplan`/`crf` o dello stato | Deciso: la chiusura diretta non sblocca, i campi non sono modificabili: vedi I1–I8 | Vedi sezione I |
+| H2 | Ticket riaperto o aperto DOPO la conferma | Deciso: la CRF torna da confermare per le azioni dalla piattaforma: vedi I9–I11 | Vedi sezione I |
 | H3 | Due utenti concorrenti: uno apre un ticket mentre l'altro conferma | La conferma vede lo stato di Zammad al momento della richiesta; documentare la finestra | Da provare |
 | H4 | Zammad lento ma funzionante (2–4 s per chiamata) | Nessun falso 503 entro 3 s verso Zammad e 5 s verso il ms; oltre, 503 | Da provare (strumento per rallentare Zammad) |
 | H5 | Rete rotta, DNS errato, certificato scaduto | 503 di manutenzione, mai "via libera" | Da provare |
 | H6 | Ticket trovato dalla ricerca ma non leggibile | Elenco e icone rispondono 503 (non mostrano meno ticket) | Unit |
 | H7 | Qualunque errore dell'elenco in home paziente | Messaggio di manutenzione (503) o di elenco non disponibile (altri errori), mai "nessun ticket" | Unit (logica) |
-| H8 | Stesso questionario più volte nello stesso ciclo (CRF ripetibile) | Decisione del cliente: un ticket blocca tutte le istanze? | Da decidere |
+| H8 | Stesso questionario più volte nello stesso ciclo (CRF ripetibile) | Deciso: ogni compilazione ha i suoi ticket: vedi I12–I13 | Vedi sezione I |
 | H9 | Elenco della home = conteggio del blocco | Stesso paziente: i ticket mostrati coincidono con quelli che bloccano | Da provare |
 | H10 | Contenuto dell'audit di deroga | Chi, motivo, ticket, CRF; nessun token o testo del ticket nei log | Da provare |
 | H11 | Messaggio di manutenzione in it/en/de/fr | Presente e leggibile nelle quattro lingue | Browser locale (solo en) |

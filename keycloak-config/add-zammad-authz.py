@@ -95,7 +95,7 @@ def build(t, path):
         # GET /tickets/by-patient?patient= (ticket aperti di tutte le CRF del paziente, per la home paziente)
         resources.append(("ByPatient %s Resource" % t, [base + "/by-patient"], ["GET"]))
         resources.append(("Articles %s Resource" % t, [base + "/{id}/articles"], ["GET", "POST"]))
-        resources.append(("StateChange %s Resource" % t, [base + "/{id}/close", base + "/{id}/reopen"], ["POST"]))
+        resources.append(("StateChange %s Resource" % t, [base + "/{id}/close", base + "/{id}/reopen", base + "/{id}/validate-closure"], ["POST"]))
         perms.append(("ByCrf %s Permission" % t, "ByCrf %s Resource" % t, "GET", "read"))
         perms.append(("ByPatient %s Permission" % t, "ByPatient %s Resource" % t, "GET", "read"))
         perms.append(("ReadArticles %s Permission" % t, "Articles %s Resource" % t, "GET", "read"))
