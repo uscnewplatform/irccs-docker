@@ -1,6 +1,6 @@
 # Guida installazione in produzione — Gate ticket CRF + pannello ticket Zammad (versione "tutto a Zammad")
 
-Data: 2026-10-22. Branch unico per repo: `feature/PASTRL-720/ticket-crf-zammad-live` (common, zammad, studio-clinico, patient-interview, dashboard → remote `origin`; irccs-docker → remote `infocube-it`). La versione precedente, con copia dei ticket in HAPI e webhook, resta nel branch `feature/PASTRL-720/ticket-crf-gate`.
+Data: 2026-10-22. Branch unico per repo: `feature/PASTRL-720/ticket-crf-zammad-live` (common, zammad, studio-clinico, dashboard → remote `origin`; irccs-docker → remote `infocube-it`). La versione precedente, con copia dei ticket in HAPI e webhook, resta nel branch `feature/PASTRL-720/ticket-crf-gate`.
 
 Le modifiche sono **spente di default** (`crf.confirm.require-closed-tickets=false`): si installa tutto, si verifica, poi si attiva il flag. Nessun passo rompe il comportamento attuale finché il flag è off, e con il flag spento non parte nessuna chiamata a Zammad per il blocco.
 
@@ -33,11 +33,11 @@ Il token deve poter cercare i ticket di *tutti* i gruppi Zammad usati dalla piat
 ## 1. Ordine di rilascio (la CI dei ms è rossa finché common non è rilasciato)
 
 1. **irccs-common** — PR → develop, merge, release (job `irccs-release`, non tag a mano). Annotare la nuova versione (la `27.0.0` è già rilasciata: serve una versione nuova, schema da decidere).
-2. Nei ms (**zammad, studio-clinico, patient-interview**): aggiornare `i3.common.version` alla nuova versione, push, PR → develop → master.
+2. Nei ms (**zammad, studio-clinico**): aggiornare `i3.common.version` alla nuova versione, push, PR → develop → master.
 3. **irccs-react-dashboard** e **irccs-docker**: PR → develop → master.
 4. Tag `yyyy-mm` e deploy: job Jenkins `Deploy-Preprod-Jenkinsfile` (poi prod). Mai tag manuali.
 
-Immagini da ricostruire/ridistribuire: `irccs-microservice-zammad`, `studio-clinico`, `patient-interview`, **tutti i ms che usano common** (stessa versione), `irccs-react-dashboard`.
+Immagini da ricostruire/ridistribuire: `irccs-microservice-zammad`, `studio-clinico`, **tutti i ms che usano common** (stessa versione), `irccs-react-dashboard`.
 
 ## 1b. Script di allineamento (consigliato per staging/preprod/prod)
 
@@ -88,7 +88,7 @@ zammad.visibility.patient-url=http://irccs-anagrafica-pazienti:8080/fhir/Patient
 
 Le variabili arrivano dal `.env` del server (tutti i servizi hanno `env_file: .env`; esempio in `.env_example`). Il file `microservice-config-zammad/application.properties` montato su `/deployments/config` ha priorità su quello impacchettato: **non** serve più nessuna voce per il webhook (la voce `paths.7` della versione precedente va tolta, se già applicata).
 
-## 5. Config gate (studio-clinico, patient-interview e ms con Flow)
+## 5. Config gate (studio-clinico e ms con Flow)
 
 ```properties
 crf.confirm.require-closed-tickets=false          # tenere false al deploy; true all'attivazione
@@ -117,7 +117,7 @@ Le capability vengono dai **gruppi** (membership live + `X-Context-Token`), non 
 
 0. **Controllo di connessione prima di accendere il flag.** Da dentro il container di studio-clinico (stessa rete e stesso nome host che userà il blocco) verifica che il ms Zammad sia raggiungibile: `curl -s -o /dev/null -w '%{http_code}' http://irccs-zammad:8080/q/health` deve rispondere 200 (o usa il nome in `crf.confirm.ticket-service-url`). Un nome sbagliato dà 503 su tutte le conferme, indistinguibile da "Zammad giù".
 
-1. Impostare `crf.confirm.require-closed-tickets=true` (env) e riavviare studio-clinico/patient-interview.
+1. Impostare `crf.confirm.require-closed-tickets=true` (env) e riavviare studio-clinico.
 2. Prova: CRF con ticket aperto → conferma **409 `CRF_OPEN_TICKETS`**; chiuso → OK; Zammad fermo → **503 `CRF_TICKET_STATE_UNVERIFIABLE`** e messaggio di manutenzione, **anche con deroga**; deroga con motivo di almeno 10 caratteri (header `X-Ticket-Gate-Override-Reason`) + capability su ticket aperto → OK + BusinessEvent `ticket-gate-override`; audit giù → 503 (fail-closed).
 3. Monitorare 409/503 nei log (Loki/Grafana). Un aumento di 503 = Zammad lento o giù.
 4. **Se compare il 503 subito dopo l'accensione**: quasi sempre è l'indirizzo (`crf.confirm.ticket-service-url`), il token di servizio, o un timeout troppo corto. Controlla nell'ordine: log di studio-clinico (`CrfTicketGate: stato dei ticket non verificabile`), `open-for-gate` raggiungibile dal container, token Zammad valido. Per tornare operativi subito: flag a `false` e riavvio.
@@ -131,7 +131,7 @@ Le capability vengono dai **gruppi** (membership live + `X-Context-Token`), non 
 
 ## 10. Limiti noti (non bloccanti)
 
-Allegati non scaricabili; niente notifiche/tempo reale; `myTicket`, PUT ticket, annunci e ricerca gruppi ancora su permessi Zammad; flag globale; PATCH QR e import non coperti dal gate; `/certify` senza override; paziente (link) blocca solo se sa con certezza di ticket aperti; ticket creati direttamente in Zammad senza `patient`/`careplan`/`crf` non sono visti; ogni conferma con il blocco acceso fa una chiamata a Zammad (se è giù nessuno conferma); percorso paziente E2E, patient-interview non verificati.
+Allegati non scaricabili; niente notifiche/tempo reale; `myTicket`, PUT ticket, annunci e ricerca gruppi ancora su permessi Zammad; flag globale; PATCH QR e import non coperti dal gate; `/certify` senza override; le compilazioni del paziente (link con token, patient-interview) non sono toccate dal blocco; ticket creati direttamente in Zammad senza `patient`/`careplan`/`crf` non sono visti; ogni conferma con il blocco acceso fa una chiamata a Zammad (se è giù nessuno conferma); percorso paziente e patient-interview fuori ambito.
 
 ## 11. Port su `git pascale/irccs-docker` (prod)
 

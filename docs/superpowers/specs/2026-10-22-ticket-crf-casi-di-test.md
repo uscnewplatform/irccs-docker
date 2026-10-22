@@ -40,7 +40,7 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 | C5 | Zammad risponde con corpo non valido / HTTP 5xx / più di 1000 ticket per paziente | Come C1, mai "via libera" | Unit |
 | C6 | Zammad torna disponibile | Conferma di nuovo possibile, senza interventi | E2E locale |
 | C7 | Messaggio al medico | «Sistema di ticket in manutenzione. Riprovare o contattare l'assistenza» in it/en/de/fr | Browser locale (en) |
-| C8 | Percorso del paziente (link con token) con Zammad giù | Il paziente NON viene fermato; evento tracciato nei log | Unit |
+| C8 | Compilazioni del paziente (link con token, `patient-interview`) | Fuori ambito: nessuna gestione dei ticket (decisione del cliente) | Non applicabile |
 | C9 | Certificazione (`/certify`) con Zammad giù | 503, nessun OTP emesso, nessuna deroga | Unit |
 
 ## D. Certificazione e altri percorsi
@@ -49,7 +49,7 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 |---|---|---|---|
 | D1 | Certificazione con ticket aperti su una qualunque CRF del paziente | 409, nessun OTP | Unit |
 | D2 | Certificazione senza ticket aperti | Procede alla sfida OTP | Unit |
-| D3 | CRF che nasce già completata dal paziente con ticket aperti noti | 409 | Unit |
+| D3 | CRF completata dal paziente con ticket aperti | Fuori ambito: nessun blocco (decisione del cliente) | Non applicabile |
 | D4 | SAE | Esclusi dal blocco | Da provare |
 | D5 | PATCH diretta della compilazione / import | Non coperti dal blocco (limite noto) | Documentato |
 

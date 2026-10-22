@@ -27,7 +27,7 @@ Data: 2026-10-22. Nate dalla revisione funzionale della versione "tutto a Zammad
 
 13. Chi è "l'assistenza" del messaggio di manutenzione, con quali orari e contatti? Va indicato nel testo?
 14. Chi può chiudere i ticket (capability `internal:close:ticket`) e chi può derogare (`internal:override:ticket-gate`)? Servono i nomi dei gruppi per i test.
-15. Il paziente (link con token) può compilare anche con stato dei ticket non verificabile; il medico vede il blocco solo alla conferma. Confermate?
+15. ~~Compilazioni del paziente con ticket non verificabili~~ — **Risposta del cliente (22/10): `patient-interview` e i questionari al paziente non richiedono la gestione dei ticket delle CRF.** Rimossa ogni gestione in quei percorsi.
 
 ## Per il collaudo in staging
 

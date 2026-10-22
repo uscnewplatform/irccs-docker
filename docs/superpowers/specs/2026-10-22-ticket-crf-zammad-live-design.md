@@ -57,10 +57,10 @@ Anti-obiettivo: se Zammad non risponde, **mai** lasciar confermare "per sicurezz
 ```
 Dashboard ─┐
 studio-clinico ──► ms zammad ──► Zammad (POST /tickets/search con condition)
-patient-interview ─┘     └─ 1 sola chiamata, nessuna copia
+└─ 1 sola chiamata, nessuna copia
 ```
 
-- **Solo il ms zammad parla con Zammad** (il token resta li'). Studio-clinico e patient-interview non ricevono mai il
+- **Solo il ms zammad parla con Zammad** (il token resta li'). Studio-clinico non riceve mai il
   token: il gate in `irccs-common` chiama un endpoint interno del ms zammad.
 - Nuovo endpoint del ms zammad: ticket non chiusi di una CRF (paziente + percorso + questionario), di un paziente,
   e conteggio. Risposta: elenco di `{ticketId, state}` oppure errore.
@@ -128,3 +128,8 @@ Restano: attributi Zammad (`crfscope`, `qrid`, `patient`, `careplan`, `crf`), sc
 - E2E su `pascale-local` + Zammad di prova: ticket aperto -> 409; chiuso -> ok; Zammad fermo -> 503 con il messaggio;
   deroga con capability su ticket aperto -> ok + audit; home paziente e icone.
 - Il Zammad di prova locale ha Elasticsearch spento: e' lo scenario peggiore, quindi una buona prova.
+
+
+## Aggiornamento 22/10 (sera)
+
+Decisione del cliente: `patient-interview` e le compilazioni del paziente (link con token) sono fuori dal blocco dei ticket. Il blocco resta sulla conferma del medico (`QuestionnaireResponseFlow`) e sulla certificazione.

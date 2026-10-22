@@ -134,7 +134,7 @@ La deroga vale solo per i ticket aperti (`409`). Con il sistema di ticket in man
 === Dove si applica
 
 * *Conferma CRF dell'operatore:* controllo completo, con deroga.
-* *Percorso paziente* (compilazione dal link con token, e CRF create già completate dal paziente): blocca solo per i ticket già noti, senza deroga.
+* *Compilazioni del paziente* (link con token, `patient-interview`): fuori dal blocco, nessuna gestione dei ticket delle CRF (decisione del cliente).
 * *Certificazione (`/certify`):* blocca se *una qualunque* CRF del paziente ha ticket aperti, senza deroga.
 * *SAE:* esclusi dal blocco.
 
@@ -159,7 +159,7 @@ Conseguenza voluta: se Zammad non è raggiungibile o è lento, *la conferma dell
  Utente ── Dashboard React ──► ms-zammad ──► Zammad (POST /tickets/search con condition)
                 │                 ▲
                 ▼                 │ GET /tickets/open-for-gate (identità di servizio)
-         studio-clinico / patient-interview
+         studio-clinico
          └─ CrfTicketGate (irccs-common) ─► 200 / 409 / 503
 ----
 
@@ -176,7 +176,7 @@ Conseguenza voluta: se Zammad non è raggiungibile o è lento, *la conferma dell
 | `irccs-common` (`CrfTicketGate`, `ZammadTicketLookup`, `CrfKey`)
 | Regola unica del blocco, condivisa da tutti i servizi che confermano. Si innesta in `QuestionnaireResponseFlow`. Chiede i ticket aperti al microservizio Zammad.
 
-| `irccs-microservice-studio-clinico`, `irccs-microservice-patient-interview`
+| `irccs-microservice-studio-clinico`
 | Applicano il blocco alla conferma, al completamento del paziente e (studio-clinico) alla certificazione.
 
 | Anagrafica pazienti
@@ -264,7 +264,7 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 
 | `crf.confirm.require-closed-tickets`
 | `false`
-| Accende il blocco (servizi che confermano: studio-clinico, patient-interview).
+| Accende il blocco (servizio che conferma: studio-clinico).
 
 | `crf.confirm.override-when-unverifiable`
 | `false`
@@ -313,7 +313,7 @@ La procedura dettagliata è in `docs/superpowers/specs/` (guida di installazione
 * Aprire o riaprire un ticket direttamente in Zammad non riporta da confermare la CRF già confermata (la piattaforma non lo rileva).
 * Una chiusura fatta in Zammad da un'automazione (per esempio "chiudi dopo N giorni") resta bloccante finché non la si convalida dal pannello.
 * Il blocco non copre la modifica diretta (PATCH) delle compilazioni né l'import.
-* Il percorso paziente blocca solo per ticket già noti; `/certify` non ha deroga.
+* Le compilazioni del paziente (link con token, `patient-interview`) non sono toccate dal blocco; `/certify` non ha deroga.
 * Un ticket aperto su una CRF di uno Step importato in un ciclo segna lo Step proprietario del ciclo.
 * In Zammad senza motore di ricerca (Elasticsearch) la ricerca testuale per campo restituisce risultati vuoti; la piattaforma non ne dipende (usa la ricerca a condizioni).
 * Un ticket creato direttamente in Zammad senza gli attributi `patient`, `careplan` e `crf` non è visto dal blocco.
