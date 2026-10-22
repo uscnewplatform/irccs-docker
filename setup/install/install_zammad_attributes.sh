@@ -2,7 +2,7 @@
 # Crea su Zammad gli attributi personalizzati (Object Manager) usati dalla piattaforma.
 #
 #   Ticket: crf, crfdisplay, careplan, careplandisplay, patient, patientdisplay,
-#           patientjourneydisplay, directlink
+#           patientjourneydisplay, directlink, crfscope, qrid
 #   Group : organization
 #
 # Senza questi attributi Zammad SCARTA IN SILENZIO i campi inviati dalla dashboard alla
@@ -85,6 +85,10 @@ crea_attributo Ticket patient               "Paziente (id)"                input
 crea_attributo Ticket patientdisplay        "Paziente"                     input    255  "$TICKET_SCREENS"
 crea_attributo Ticket patientjourneydisplay "Studio / percorso paziente"   input    255  "$TICKET_SCREENS"
 crea_attributo Ticket directlink            "Link diretto"                 textarea 2000 "$TICKET_SCREENS"
+# Ambito del ticket (CRF = blocca la conferma della CRF; STUDY = annuncio di studio, non blocca) e id della
+# QuestionnaireResponse. Nomi vincolati da Zammad: "scope" e' riservato e i nomi non possono finire per _id.
+crea_attributo Ticket crfscope              "Ambito (CRF/STUDY)"           input    50   "$TICKET_SCREENS"
+crea_attributo Ticket qrid                  "QuestionnaireResponse (id)"   input    50   "$TICKET_SCREENS"
 
 echo "Attributi Group"
 crea_attributo Group organization           "Organization FHIR (id)"       input    255  "$GROUP_SCREENS"
