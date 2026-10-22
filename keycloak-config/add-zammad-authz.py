@@ -81,6 +81,9 @@ def build(t, path):
         # GET /tickets/{userId}/myTicket
         resources.append(("MyTicket %s Resource" % t, [base + "/{id}/myTicket"], ["GET"]))
         perms.append(("MyTicket %s Permission" % t, "MyTicket %s Resource" % t, "GET", "read"))
+        # GET /tickets/crf-summary?patient=&careplan=&questionnaire= (stato dei ticket di una CRF per la dashboard)
+        resources.append(("CrfSummary %s Resource" % t, [base + "/crf-summary"], ["GET"]))
+        perms.append(("CrfSummary %s Permission" % t, "CrfSummary %s Resource" % t, "GET", "read"))
     return resources, perms
 
 
