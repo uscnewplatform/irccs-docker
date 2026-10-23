@@ -88,6 +88,15 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
     per i ticket senza paziente (annunci) la lettura segue i permessi del gruppo Zammad (lettura) o l'essere parte del ticket, e `canReply`/`canClose` sono falsi; risposta e chiusura restano riservate ai ticket con paziente.
 18. **Stato Zammad «annuncio studio» (id 7).** Gli annunci si creano con `state_id: 7`, uno stato personalizzato che in produzione esiste; su una Zammad nuova (come staging) va creato: tipo «pending reminder» (3), `ignore_escalation`,
     e deve ricevere proprio l'id 7 (la dashboard lo legge da `zammadStateTicketStudyAnnunce`, default 7). La scadenza e' il `pending_time`. Gli annunci non bloccano mai nessuna CRF (`crfscope: STUDY`).
+19. **Priorita' dei ticket.** La sceglie solo chi apre il ticket (bassa 1, normale 2, alta 3; default normale), sia sui ticket di CRF sia sulle news; il ms la accetta alla creazione (`priority_id` 1-3, altro = 422)
+    e la espone negli elenchi. Etichetta rossa «Alta» o grigia «Bassa» nel pannello CRF, in «I miei ticket» e nel popup delle news, dove le piu' importanti vanno in cima (poi la piu' recente).
+    Dopo la creazione la priorita' resta modificabile da Zammad, non dalla piattaforma.
+20. **Allegati: solo sulle news di studio.** Fino a 3 file da 10 MB, tipi PDF, PNG, JPG, DOCX, XLSX, CSV, TXT. Il ms li controlla sul contenuto vero (firma del file, non il tipo dichiarato), ripulisce il nome, ricava il tipo dall'estensione
+    e li rifiuta (422) su ticket di CRF o con paziente. Chi vede il ticket li scarica (`GET /tickets/{id}/articles/{articleId}/attachments/{attachmentId}`): risposta sempre come file da salvare, mai da aprire nel browser
+    (`application/octet-stream`, `nosniff`, `no-store`), con il controllo che l'allegato sia di quell'articolo e non interno; ogni accesso e' nell'audit. **I file stanno solo in Zammad** (nessuna copia nella piattaforma): valgono
+    i backup di Zammad e, se Zammad e' fermo, non si scaricano. Serve: la risorsa Keycloak `Attachments` (`add-zammad-authz.py`, commit successivo al 1073a51) e `quarkus.http.limits.max-body-size=45M` nel
+    `microservice-config-zammad/application.properties` (3 x 10 MB in base64 superano il default di 10 MB; su staging aggiunto a mano al file del server). Apache ha `LimitRequestBody` a 1 GB. **Nessun antivirus**: da valutare (per esempio ClamAV)
+    prima di aprire gli allegati in produzione, e con il DPO per il rischio di dati personali nei file.
 
 ## 5. Da NON portare in produzione
 
