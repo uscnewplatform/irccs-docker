@@ -75,6 +75,14 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
 13. **Il ciclo (`CarePlan`) di una CRF e' un modello senza paziente.** Il `careplan` del ticket e' il CarePlan del percorso dello studio, condiviso da tutti i pazienti e senza `subject`
     (su staging 200/200 campionati cosi'). La verifica dei riferimenti pretendeva il paziente e dava 422 «Riferimenti non coerenti con il paziente» su ogni ticket. Dalla 27.1.0 (commit 2437e54):
     il ciclo senza paziente vale, quello con un paziente deve essere quello indicato; la compilazione (`qrid`) resta vincolata al paziente, alla CRF e al ciclo. Il controllo ora ha test diretti.
+14. **Gruppi del nuovo ticket = quelli del centro del paziente.** Nuovo `GET /fhir/zammad/tickets/groups-for-patient?patient=` (ms 27.1.0, commit 514e1e5): paziente -> `managingOrganization` -> `Organization.identifier`
+    (UUID del gruppo radice Keycloak) -> gruppi Zammad con `organization` uguale a quell'UUID, esclusi gli `annunci_*`, intersecati con i gruppi in cui il chiamante puo' creare. La creazione di un ticket di CRF
+    rifiuta un gruppo di un altro centro (403). Centro non riconoscibile = nessun gruppo (mai tutti). **Serve la risorsa Keycloak `GroupsForPatient`**: la crea `add-zammad-authz.py` (commit 1073a51); senza, la dashboard non riceve i gruppi.
+    La dashboard mostra UN solo gruppo da scegliere (prima selezione multipla = un ticket per gruppo, quindi piu' ticket da chiudere e piu' blocchi sulla stessa CRF).
+15. **CRF compilate dal paziente = niente ticket.** Il questionario con l'estensione `http://irccs.pascale.napoli.it/fhir/StructureDefinition/render-as-patient-questionnaire` (valueBoolean true, diario compreso) non ha ticket:
+    il ms risponde «nessun ticket» a blocco e riepilogo senza chiamare Zammad (quindi nessun 503 se Zammad e' fermo) e rifiuta la creazione (422); la dashboard non mostra «Ticket» ne' «Conferma CRF».
+    Questionario non leggibile = trattato come CRF normale (cache 5 minuti, gli errori non si memorizzano).
+16. **Dove sta la visibilita'.** Nella piattaforma un ticket di CRF e' visibile a chi vede il paziente nel contesto attivo; il gruppo Zammad decide chi lo prende in carico e chi riceve le notifiche in Zammad. Non sono la stessa cosa.
 
 ## 5. Da NON portare in produzione
 
