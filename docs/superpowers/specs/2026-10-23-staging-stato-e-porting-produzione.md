@@ -72,6 +72,9 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
     «puo' essere aperto solo a nome del chiamante», per qualsiasi utente. Dalla 27.1.0 (commit 31cd35a) il ms accetta anche la stringa di sole cifre, purche' sia il chiamante; la dashboard
     (3dd1b938) invia ora un numero. Il log del rifiuto riporta il motivo. Lezione: i test locali mandavano un numero e non vedevano il problema; provare sempre la creazione dal dialogo reale.
 12. **Disco di staging ampliato** il 23/10 (da 24 a 77 GB): le soglie alzate di Elasticsearch (4.1) non servono piu' e possono tornare ai valori standard.
+13. **Il ciclo (`CarePlan`) di una CRF e' un modello senza paziente.** Il `careplan` del ticket e' il CarePlan del percorso dello studio, condiviso da tutti i pazienti e senza `subject`
+    (su staging 200/200 campionati cosi'). La verifica dei riferimenti pretendeva il paziente e dava 422 «Riferimenti non coerenti con il paziente» su ogni ticket. Dalla 27.1.0 (commit 2437e54):
+    il ciclo senza paziente vale, quello con un paziente deve essere quello indicato; la compilazione (`qrid`) resta vincolata al paziente, alla CRF e al ciclo. Il controllo ora ha test diretti.
 
 ## 5. Da NON portare in produzione
 
