@@ -302,7 +302,7 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 | Controlla che il token di servizio veda tutti i gruppi Zammad (altrimenti 503).
 
 | `zammad.ticket-lookup.coverage-ignore-groups`
-| vuoto
+| `Users`
 | Gruppi (id o nome, separati da virgola) da non controllare.
 
 | `zammad.ticket-lookup.timeout`
