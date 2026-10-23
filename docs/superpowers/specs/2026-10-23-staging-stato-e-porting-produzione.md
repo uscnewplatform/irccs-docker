@@ -83,6 +83,11 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
     il ms risponde «nessun ticket» a blocco e riepilogo senza chiamare Zammad (quindi nessun 503 se Zammad e' fermo) e rifiuta la creazione (422); la dashboard non mostra «Ticket» ne' «Conferma CRF».
     Questionario non leggibile = trattato come CRF normale (cache 5 minuti, gli errori non si memorizzano).
 16. **Dove sta la visibilita'.** Nella piattaforma un ticket di CRF e' visibile a chi vede il paziente nel contesto attivo; il gruppo Zammad decide chi lo prende in carico e chi riceve le notifiche in Zammad. Non sono la stessa cosa.
+17. **News di studio nel popup della home.** Il click su «News studio: N» nella card dello studio non porta piu' a Zammad: apre un popup con le news (ticket-annuncio) dello studio, dalla piu' recente, con numero,
+    data, scadenza (`pending_time`) ed eventuale «Scaduta»; la prima e' gia' aperta e le altre si aprono al click. Il testo e' la conversazione del ticket in sola lettura. Lato ms (`GET tickets/{id}/articles`):
+    per i ticket senza paziente (annunci) la lettura segue i permessi del gruppo Zammad (lettura) o l'essere parte del ticket, e `canReply`/`canClose` sono falsi; risposta e chiusura restano riservate ai ticket con paziente.
+18. **Stato Zammad «annuncio studio» (id 7).** Gli annunci si creano con `state_id: 7`, uno stato personalizzato che in produzione esiste; su una Zammad nuova (come staging) va creato: tipo «pending reminder» (3), `ignore_escalation`,
+    e deve ricevere proprio l'id 7 (la dashboard lo legge da `zammadStateTicketStudyAnnunce`, default 7). La scadenza e' il `pending_time`. Gli annunci non bloccano mai nessuna CRF (`crfscope: STUDY`).
 
 ## 5. Da NON portare in produzione
 
