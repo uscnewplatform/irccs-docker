@@ -3,7 +3,7 @@
 #
 #   Ticket: crf, crfdisplay, careplan, careplandisplay, patient, patientdisplay,
 #           patientjourneydisplay, directlink, crfscope, qrid, crfclosure
-#   Group : organization
+#   Group : organization, keycloak_ref   (e keycloak_ref su User e Organization: collegamento con Keycloak)
 #
 # Senza questi attributi Zammad SCARTA IN SILENZIO i campi inviati dalla dashboard alla
 # creazione del ticket: il ticket nasce senza collegamento a paziente/CRF/percorso e il
@@ -117,6 +117,17 @@ for n in patient careplan crf crfscope qrid; do nascondi_in_modifica "$n"; done
 
 echo "Attributi Group"
 crea_attributo Group organization           "Organization FHIR (id)"       input    255  "$GROUP_SCREENS"
+
+# Collegamento con Keycloak: la sincronizzazione utenti/organizzazioni/gruppi (ms Zammad) scrive qui l'id Keycloak e
+# da qui il ms riconosce l'utente che chiama (un utente senza keycloak_ref riceve 403 "Utente non presente su Zammad").
+# Non sono campi da compilare a mano: nascosti nelle schermate.
+KC_USER_SCREENS='{"create":{"admin.user":{"shown":false,"required":false}},"edit":{"admin.user":{"shown":false,"required":false}}}'
+KC_ORG_SCREENS='{"create":{"admin.organization":{"shown":false,"required":false}},"edit":{"admin.organization":{"shown":false,"required":false}}}'
+KC_GROUP_SCREENS='{"create":{"admin.group":{"shown":false,"required":false}},"edit":{"admin.group":{"shown":false,"required":false}}}'
+echo "Attributi per il collegamento con Keycloak"
+crea_attributo User         keycloak_ref    "Keycloak (id)"                input    255  "$KC_USER_SCREENS"
+crea_attributo Organization keycloak_ref    "Keycloak (id)"                input    255  "$KC_ORG_SCREENS"
+crea_attributo Group        keycloak_ref    "Keycloak (id)"                input    255  "$KC_GROUP_SCREENS"
 
 # Gli attributi diventano colonne del DB solo dopo la migrazione. Si esegue sempre (idempotente
 # in Zammad): copre anche il caso di un giro precedente interrotto dopo la creazione.
