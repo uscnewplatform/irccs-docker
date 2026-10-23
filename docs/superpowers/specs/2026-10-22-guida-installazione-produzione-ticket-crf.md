@@ -28,7 +28,7 @@ Principio: **Zammad è l'unica fonte**. Il blocco della conferma chiede lo stato
 4. **Revoca il token vecchio** in Zammad: quello nel repository va considerato compromesso (resta nella storia di git).
 5. Verifica: con il token vecchio una chiamata a `GET /api/v1/users/me` risponde 401.
 
-Il token deve poter cercare i ticket di *tutti* i gruppi Zammad usati dalla piattaforma, anche quelli ristretti: se non vede un gruppo, i ticket di quel gruppo non compaiono e la CRF risulta libera senza alcun errore (vedi caso di test G9).
+Il token deve poter cercare i ticket di *tutti* i gruppi Zammad usati dalla piattaforma, anche quelli ristretti (permesso `read`, `change` o `full` sul gruppo, anche tramite ruolo). Se non vede un gruppo, i suoi ticket non compaiono: per questo il ms Zammad controlla la copertura (`zammad.ticket-lookup.coverage-check`, default acceso) e con un gruppo scoperto risponde 503 invece di «nessun ticket». I gruppi senza ticket di CRF (per esempio il gruppo `Users` di default) si escludono con `ZAMMAD_TICKET_LOOKUP_COVERAGE_IGNORE_GROUPS`. Nei log compare «il token di servizio non ha accesso ai gruppi Zammad [...]» (caso di test G9, J9).
 
 ## 1. Ordine di rilascio (la CI dei ms è rossa finché common non è rilasciato)
 

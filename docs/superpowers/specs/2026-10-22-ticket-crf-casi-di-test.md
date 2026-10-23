@@ -10,7 +10,7 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 |---|---|---|---|---|
 | A1 | CRF senza ticket | Conferma una CRF senza ticket | 200, CRF confermata | Unit + E2E locale |
 | A2 | CRF con ticket aperto | Apri un ticket sulla CRF, conferma | 409 `CRF_OPEN_TICKETS`, CRF non confermata | Unit + E2E locale |
-| A3 | Ticket chiuso | Chiudi il ticket (anche direttamente in Zammad), conferma | 200 subito, senza attese | E2E locale |
+| A3 | Ticket chiuso dalla piattaforma | Chiudi il ticket dal pannello (o convalida la chiusura), conferma | 200 subito, senza attese. Chiuso direttamente in Zammad: 409 (vedi I1) | E2E locale |
 | A4 | Ticket unito (merged) | Unisci il ticket a un altro chiuso, conferma | Non blocca | Unit (classificazione) |
 | A5 | Ticket in attesa (pending reminder / pending action) | Metti il ticket in attesa, conferma | Blocca | Unit (classificazione) |
 | A6 | Stato personalizzato di Zammad | Ticket in uno stato custom di tipo sconosciuto | Blocca (mai considerato chiuso) | Unit |
@@ -70,7 +70,7 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 
 | ID | Scenario | Atteso | Copertura |
 |---|---|---|---|
-| F1 | Riquadro «Ticket aperti» in fondo ai pulsanti, chiuso di default, apribile | Elenco con numero, stato, titolo, CRF | E2E locale (browser) |
+| F1 | Riquadro «Ticket aperti» in testa ai pulsanti, chiuso di default, apribile | Elenco con numero, stato, titolo, CRF | E2E locale (browser) |
 | F2 | «Apri la CRF» | Porta alla CRF con `careplanId` e `crfId` | E2E locale (browser) |
 | F3 | Icone su cicli, passi a sinistra, schede CRF e gruppi | Presenti dove ci sono ticket aperti | E2E locale (browser) |
 | F4 | Ticket chiuso | Sparisce subito dall'elenco e dalle icone | E2E locale |
@@ -112,6 +112,34 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 | I12 | Due compilazioni dello stesso questionario nello stesso ciclo, ticket su una sola | Blocca solo quella; l'altra si conferma | Unit + E2E locale |
 | I13 | Ticket senza `qrid` (aperto prima del salvataggio) | Blocca tutte le compilazioni di quella CRF | Unit + E2E locale |
 | I14 | Riabilitare la CRF dopo la chiusura del ticket | Riconferma normale | E2E locale |
+
+## J. Controlli di sicurezza aggiunti dopo la revisione tecnica
+
+| ID | Scenario | Atteso | Copertura |
+|---|---|---|---|
+| J1 | Ticket creato con `crfscope` diverso da CRF/STUDY | 422, nessuna chiamata a Zammad (non si salta la visibilita') | Unit |
+| J2 | Ticket con ciclo o compilazione di un altro paziente | 422; con HAPI non raggiungibile 503 | Unit |
+| J3 | Ticket in un gruppo in cui l'utente non puo' aprire ticket | 403 | Unit |
+| J4 | Id non numerici o con prefissi (Patient/1, 1\|2) | 422 / normalizzati | Unit |
+| J5 | `PUT /tickets/{id}` con `state_id` | 422 (chiudi/riapri passano dal pannello) | Unit |
+| J6 | Riporto da confermare su una SAE | Non si tocca | Unit |
+| J7 | Riporto da confermare con audit non registrabile | La CRF non si tocca, errore nei log | Unit |
+| J8 | Riporto: compilazione gia' tornata in corso mentre si cerca | Non si riscrive | Unit |
+| J9 | Token di servizio senza accesso a un gruppo Zammad | 503 (mai «nessun ticket»); permesso via ruolo valido; gruppo ignorabile | Unit + E2E locale |
+| J10 | Zammad con limite di pagina inferiore a 200 | Nessun troncamento silenzioso | Unit |
+| J11 | Conferma con ciclo alterato nel corpo inviato | Il blocco usa la compilazione salvata (decisione piu' restrittiva) | Unit |
+| J12 | `create` completato con l'id di una compilazione gia' confermata | E' una conferma: ruolo e blocco si applicano | Unit |
+
+## K. Interfaccia: pagina I miei ticket, icona in tabella, riquadro in testa
+
+| ID | Scenario | Atteso | Copertura |
+|---|---|---|---|
+| K1 | Clic su «I miei ticket» nel menu del profilo | Apre `/my-tickets` | E2E locale (browser) |
+| K2 | Numero nel menu = righe della scheda «Aperti» | Coincidono | E2E locale |
+| K3 | Scheda «Tutti», ricerca testuale, «Apri la CRF» | Piu' righe; filtro; porta alla CRF con careplanId e crfId | E2E locale |
+| K4 | Ticket di un gruppo che l'utente non legge in Zammad, su paziente visibile | In home si', in «I miei ticket» no (differenza voluta, da confermare col cliente) | Documentato |
+| K5 | Icona accanto allo stato nella tabella pazienti | Presente sul paziente con ticket; una sola chiamata per le righe visibili | E2E locale (browser) |
+| K6 | Riquadro «Ticket aperti» nella home paziente | Primo elemento sopra i pulsanti | E2E locale (browser) |
 
 ## H. Casi aggiunti dopo la revisione funzionale
 

@@ -1,6 +1,8 @@
 # Ticket CRF "tutto a Zammad" — piano di implementazione
 
-> **Per chi esegue:** usare superpowers:subagent-driven-development (consigliato) o superpowers:executing-plans. I passi usano le caselle `- [ ]`.
+> **Stato: eseguito** (23/10). Dopo l'esecuzione sono arrivate le decisioni del cliente del 22/10 (chiusura convalidata, riporto da confermare, ticket per compilazione, patient-interview fuori) e gli interventi della revisione tecnica: sono nei documenti `casi-di-test` (sezioni I, J, K) e nella pagina Antora.
+
+> **Per chi esegue:** usare superpowers:subagent-driven-development (consigliato) o superpowers:executing-plans. I passi usano le caselle `- [x]`.
 
 **Obiettivo:** il blocco della conferma CRF e gli elenchi di ticket leggono lo stato direttamente da Zammad, senza la copia `Task ticket-ref` in HAPI, senza webhook, riconciliazione e heartbeat.
 
@@ -36,8 +38,8 @@
 
 **Files:** nessuno.
 
-- [ ] **Step 1:** nei worktree `irccs-common/.claude/worktrees/ticket-gate`, `irccs-microservice-zammad/.claude/worktrees/ticket-drawer`, `irccs-microservice-studio-clinico/.claude/worktrees/ticket-gate`, `irccs-microservice-patient-interview/.claude/worktrees/ticket-gate`, `irccs-react-dashboard/.claude/worktrees/ticket-gate-ui` eseguire `git switch -c feature/PASTRL-720/ticket-crf-zammad-live`. (`irccs-docker` ha gia' il branch con il design.)
-- [ ] **Step 2:** verificare con `git branch --show-current` e `git status --porcelain` (vuoto) in ognuno.
+- [x] **Step 1:** nei worktree `irccs-common/.claude/worktrees/ticket-gate`, `irccs-microservice-zammad/.claude/worktrees/ticket-drawer`, `irccs-microservice-studio-clinico/.claude/worktrees/ticket-gate`, `irccs-microservice-patient-interview/.claude/worktrees/ticket-gate`, `irccs-react-dashboard/.claude/worktrees/ticket-gate-ui` eseguire `git switch -c feature/PASTRL-720/ticket-crf-zammad-live`. (`irccs-docker` ha gia' il branch con il design.)
+- [x] **Step 2:** verificare con `git branch --show-current` e `git status --porcelain` (vuoto) in ognuno.
 
 ### Task 1: Ricerca dei ticket su Zammad (ms zammad)
 
@@ -53,7 +55,7 @@
   - `public ZammadTicketSearch(String baseUrl, String token, Duration timeout, ObjectMapper mapper)` (costruttore per i test) piu' un produttore CDI `@ApplicationScoped` che legge `zammad.base-url`, `zammad.token`, `zammad.ticket-lookup.timeout`
   - `public List<FoundTicket> find(String patientId, String carePlanId, String questionnaireId, boolean onlyBlocking) throws ZammadUnavailableException` — `carePlanId`/`questionnaireId` null = non filtrare; `onlyBlocking=true` esclude closed/merged e ticket di studio.
 
-- [ ] **Step 1: test (server finto con `com.sun.net.httpserver.HttpServer`)** — nomi e asserzioni:
+- [x] **Step 1: test (server finto con `com.sun.net.httpserver.HttpServer`)** — nomi e asserzioni:
   - `findPostsConditionWithExactPatientCarePlanAndCrf`: il corpo ricevuto contiene `ticket.patient`/`ticket.careplan`/`ticket.crf` con `"operator":"is"` e i valori passati; la richiesta e' `POST /api/v1/tickets/search`.
   - `onlyBlockingExcludesClosedAndMergedStateIds`: con `/ticket_states` che dice closed=4 (tipo closed), merged=5 (tipo merged), la condizione contiene `ticket.state_id` `"is not"` con `["4","5"]`; con `onlyBlocking=false` la condizione di stato manca.
   - `unknownStateTypeStillBlocks`: uno stato con `state_type` fuori dall'elenco non entra tra gli esclusi.
@@ -63,10 +65,10 @@
   - `ticketWithoutCrfFieldsIsIgnoredForCrfQuery`.
   - `malformedBodyIsUnavailable` (corpo `{}` e corpo non JSON), `http500IsUnavailable`, `timeoutIsUnavailable` (server che dorme oltre il timeout).
   - `invalidIdsAreRejected`: id con caratteri non numerici -> `IllegalArgumentException` (si validano con `CrfKey.idOf`).
-- [ ] **Step 2:** eseguire `mvn -q test -Dtest=ZammadTicketSearchTest -Di3.common.version=27.0.0-ticketgate`; atteso: FAIL (classe mancante).
-- [ ] **Step 3:** implementare. Approccio: `GET ticket_states` (tipo da `state_type_id` con la stessa mappa 1..6 di `ZammadHttpApi`), con TTL 10 minuti; `POST tickets/search` con `condition` e `per_page=200&page=N` (verificare sul Zammad di prova che `per_page`/`page` siano onorati dal POST; altrimenti usare `limit`/`page` come visto in prova). Header `Authorization: Bearer <token>` come `ZammadHttpApi`. Qualunque errore di rete, HTTP non 200 o JSON non lista -> `ZammadUnavailableException`.
-- [ ] **Step 4:** stesso comando; atteso: PASS.
-- [ ] **Step 5: commit** `feat(zammad): ricerca dei ticket di una CRF direttamente su Zammad`.
+- [x] **Step 2:** eseguire `mvn -q test -Dtest=ZammadTicketSearchTest -Di3.common.version=27.0.0-ticketgate`; atteso: FAIL (classe mancante).
+- [x] **Step 3:** implementare. Approccio: `GET ticket_states` (tipo da `state_type_id` con la stessa mappa 1..6 di `ZammadHttpApi`), con TTL 10 minuti; `POST tickets/search` con `condition` e `per_page=200&page=N` (verificare sul Zammad di prova che `per_page`/`page` siano onorati dal POST; altrimenti usare `limit`/`page` come visto in prova). Header `Authorization: Bearer <token>` come `ZammadHttpApi`. Qualunque errore di rete, HTTP non 200 o JSON non lista -> `ZammadUnavailableException`.
+- [x] **Step 4:** stesso comando; atteso: PASS.
+- [x] **Step 5: commit** `feat(zammad): ricerca dei ticket di una CRF direttamente su Zammad`.
 
 ### Task 2: Collegamento nel ms zammad e rimozione della sincronizzazione
 
@@ -83,11 +85,11 @@
 - Consumes: `ZammadTicketSearch.find(...)`, `FoundTicket` (Task 1).
 - Produces: `GET /fhir/zammad/tickets/open-for-gate?patient=&careplan=&questionnaire=` (careplan e questionnaire facoltativi; senza entrambi = tutto il paziente). Risposta 200 `{"tickets":[{"id":123,"state":"open"}]}` (solo id e tipo di stato, mai testo ne' titoli); 400 id non validi; 503 se Zammad non disponibile. **Nessun controllo `PatientVisibility`**: e' una chiamata tra servizi, ma l'accesso e' limitato dall'authz di Keycloak (Task 5).
 
-- [ ] **Step 1: test** `OpenForGateResourceTest`: 200 con lista (mock di `ZammadTicketSearch`), 200 con lista vuota, 400 con `patient=abc`, 503 con `ZammadUnavailableException`; il corpo non contiene altri campi oltre `id` e `state`. Aggiornare `TicketThreadServiceTest` e `CrfTicketLookupTest` ai nuovi collaboratori; `CrfSummaryService` con flag spento non chiama Zammad.
-- [ ] **Step 2:** eseguire i test del modulo; atteso: FAIL.
-- [ ] **Step 3:** implementare; cancellare le classi elencate e ogni riferimento (`grep -rn "ticketref\|TicketRef" src` deve restare vuoto tranne `ZammadTicketSearch`/`CrfTicketLookup`/`CrfSummaryService`).
-- [ ] **Step 4:** `mvn -q test -Di3.common.version=27.0.0-ticketgate`; atteso: tutti PASS.
-- [ ] **Step 5: commit** `refactor(zammad): i ticket di una CRF si leggono da Zammad, via la sincronizzazione su HAPI`.
+- [x] **Step 1: test** `OpenForGateResourceTest`: 200 con lista (mock di `ZammadTicketSearch`), 200 con lista vuota, 400 con `patient=abc`, 503 con `ZammadUnavailableException`; il corpo non contiene altri campi oltre `id` e `state`. Aggiornare `TicketThreadServiceTest` e `CrfTicketLookupTest` ai nuovi collaboratori; `CrfSummaryService` con flag spento non chiama Zammad.
+- [x] **Step 2:** eseguire i test del modulo; atteso: FAIL.
+- [x] **Step 3:** implementare; cancellare le classi elencate e ogni riferimento (`grep -rn "ticketref\|TicketRef" src` deve restare vuoto tranne `ZammadTicketSearch`/`CrfTicketLookup`/`CrfSummaryService`).
+- [x] **Step 4:** `mvn -q test -Di3.common.version=27.0.0-ticketgate`; atteso: tutti PASS.
+- [x] **Step 5: commit** `refactor(zammad): i ticket di una CRF si leggono da Zammad, via la sincronizzazione su HAPI`.
 
 ### Task 3: Il gate in `irccs-common` chiama il ms zammad
 
@@ -106,14 +108,14 @@
   - `CrfTicketGate.configured(TicketLookup)`, `CrfTicketGate.knownBlock(QuestionnaireResponse, TicketLookup)`, `new CrfTicketGate(TicketLookup)`, stessi `evaluate(qr)`, `evaluate(patient, carePlan, questionnaire)`, `evaluatePatient(patient)`; `Decision`/`Outcome`/`Blocking` invariati.
 - Cambia: `TicketGatePolicy.resolve(decision, rawReason, canOverride, overrideWhenUnverifiable)` — con `decision.outcome()==INDETERMINATE` e `overrideWhenUnverifiable=false` (default) il verdetto e' **sempre** `reject(503, ERROR_UNVERIFIABLE, ...)`, anche con motivo e capability; con `true` la deroga vale anche per INDETERMINATE (come prima). Il 403/422 della deroga valgono come prima. La proprieta' e' `crf.confirm.override-when-unverifiable` (env `CRF_CONFIRM_OVERRIDE_WHEN_UNVERIFIABLE`, **default `false`**), letta da `CrfTicketGate.overrideWhenUnverifiable()` (statico, via `ConfigProvider`) e passata dal chiamante.
 
-- [ ] **Step 1: test**
+- [x] **Step 1: test**
   - `CrfTicketGateTest`: lookup vuoto -> CLEAR; due ticket -> BLOCKED con i loro id; lookup che lancia -> INDETERMINATE; QR senza paziente/questionario -> INDETERMINATE; `evaluatePatient` chiama il lookup con carePlan e questionnaire null; `knownBlock` ritorna presente solo per BLOCKED (mai per INDETERMINATE).
   - `TicketGatePolicyTest`: `overrideIsIgnoredWhenIndeterminate` (motivo valido + `canOverride=true` + flag false -> 503 `CRF_TICKET_STATE_UNVERIFIABLE`); `overrideWorksWhenIndeterminateAndFlagTrue` (stessi input con flag true -> `OVERRIDE`); `overrideStillWorksWhenBlocked` (-> `OVERRIDE`); motivo troppo corto con `BLOCKED` -> 422; senza capability con `BLOCKED` -> 403.
   - `ZammadTicketLookupTest` (server finto): manda `Authorization: Bearer <token del supplier>` e i parametri `patient`/`careplan`/`questionnaire`; legge `{"tickets":[...]}`; HTTP 503, corpo non JSON, corpo senza `tickets`, timeout -> eccezione.
-- [ ] **Step 2:** `mvn -q test -pl i3-client`; atteso: FAIL.
-- [ ] **Step 3:** implementare; in `QuestionnaireResponseFlow.enforceTicketGate` sostituire la lambda su `taskClient` con `ZammadTicketLookup.fromConfig(() -> getServiceAccountJwt().getRawToken())`; l'audit `crf-confirm-blocked-by-tickets` si scrive anche per l'esito 503. Togliere da `TicketRefConstants` solo cio' che serve ai Task (codici Task, sistemi identifier, heartbeat); restano ruoli, intestazione, limiti della motivazione, codici di errore.
-- [ ] **Step 4:** `mvn -q test -pl i3-client,i3-annotations`; atteso: PASS. Poi `mvn install -DskipTests` come `27.0.0-ticketgate`.
-- [ ] **Step 5: commit** `feat(common): il blocco ticket interroga il ms zammad; nessuna deroga se i ticket non sono verificabili`.
+- [x] **Step 2:** `mvn -q test -pl i3-client`; atteso: FAIL.
+- [x] **Step 3:** implementare; in `QuestionnaireResponseFlow.enforceTicketGate` sostituire la lambda su `taskClient` con `ZammadTicketLookup.fromConfig(() -> getServiceAccountJwt().getRawToken())`; l'audit `crf-confirm-blocked-by-tickets` si scrive anche per l'esito 503. Togliere da `TicketRefConstants` solo cio' che serve ai Task (codici Task, sistemi identifier, heartbeat); restano ruoli, intestazione, limiti della motivazione, codici di errore.
+- [x] **Step 4:** `mvn -q test -pl i3-client,i3-annotations`; atteso: PASS. Poi `mvn install -DskipTests` come `27.0.0-ticketgate`.
+- [x] **Step 5: commit** `feat(common): il blocco ticket interroga il ms zammad; nessuna deroga se i ticket non sono verificabili`.
 
 ### Task 4: studio-clinico e patient-interview
 
@@ -124,21 +126,21 @@
 
 **Interfaces:** Consumes `ZammadTicketLookup.fromConfig(...)`, `CrfTicketGate.configured/knownBlock` (Task 3).
 
-- [ ] **Step 1: test** — con il lookup finto: certificazione blocca (409) con ticket aperti, risponde 503 con lookup che lancia, nessuna deroga; il percorso del paziente (`knownBlock`) non si ferma se il lookup lancia (resta loggato).
-- [ ] **Step 2:** eseguire i test; atteso: FAIL (firma cambiata).
-- [ ] **Step 3:** sostituire le lambda su `taskClient` con `ZammadTicketLookup.fromConfig(<supplier del token di servizio gia' usato dal servizio>)`; togliere gli `@Inject FhirClient<Task>` rimasti inutilizzati.
-- [ ] **Step 4:** `mvn -q test -Di3.common.version=27.0.0-ticketgate`; atteso: PASS in entrambi i repo.
-- [ ] **Step 5: commit** in ciascun repo `feat(...): il blocco ticket usa il lookup su Zammad`.
+- [x] **Step 1: test** — con il lookup finto: certificazione blocca (409) con ticket aperti, risponde 503 con lookup che lancia, nessuna deroga; il percorso del paziente (`knownBlock`) non si ferma se il lookup lancia (resta loggato).
+- [x] **Step 2:** eseguire i test; atteso: FAIL (firma cambiata).
+- [x] **Step 3:** sostituire le lambda su `taskClient` con `ZammadTicketLookup.fromConfig(<supplier del token di servizio gia' usato dal servizio>)`; togliere gli `@Inject FhirClient<Task>` rimasti inutilizzati.
+- [x] **Step 4:** `mvn -q test -Di3.common.version=27.0.0-ticketgate`; atteso: PASS in entrambi i repo.
+- [x] **Step 5: commit** in ciascun repo `feat(...): il blocco ticket usa il lookup su Zammad`.
 
 ### Task 5: Autorizzazioni Keycloak per l'endpoint di servizio
 
 **Files:**
 - Modify: `irccs-docker/keycloak-config/add-zammad-authz.py` (e la copia in `git pascale/irccs-docker`)
 
-- [ ] **Step 1:** leggere lo script e `realm-export` per capire come i servizi si autenticano tra loro (service account dei client di studio-clinico/patient-interview e degli altri ms con `QuestionnaireResponseFlow`) e quale ruolo/permesso usano gli altri endpoint chiamati cosi'.
-- [ ] **Step 2:** aggiungere la risorsa `OpenForGate` (`GET /open-for-gate`) con il permesso riservato ai service account dei ms che usano il gate (stesso schema delle risorse `ByPatient`, `CrfSummary`); nessun accesso per gli utenti normali. Lo script resta idempotente e con `--dry-run`.
-- [ ] **Step 3:** eseguire in dry-run sul Keycloak locale (`pascale-local`), poi applicare; atteso: la risorsa esiste, un utente normale riceve 403, il service account riceve 200.
-- [ ] **Step 4: commit** `feat(keycloak): risorsa open-for-gate riservata ai servizi`.
+- [x] **Step 1:** leggere lo script e `realm-export` per capire come i servizi si autenticano tra loro (service account dei client di studio-clinico/patient-interview e degli altri ms con `QuestionnaireResponseFlow`) e quale ruolo/permesso usano gli altri endpoint chiamati cosi'.
+- [x] **Step 2:** aggiungere la risorsa `OpenForGate` (`GET /open-for-gate`) con il permesso riservato ai service account dei ms che usano il gate (stesso schema delle risorse `ByPatient`, `CrfSummary`); nessun accesso per gli utenti normali. Lo script resta idempotente e con `--dry-run`.
+- [x] **Step 3:** eseguire in dry-run sul Keycloak locale (`pascale-local`), poi applicare; atteso: la risorsa esiste, un utente normale riceve 403, il service account riceve 200.
+- [x] **Step 4: commit** `feat(keycloak): risorsa open-for-gate riservata ai servizi`.
 
 ### Task 6: Dashboard
 
@@ -153,11 +155,11 @@
 
 Testo italiano `crf.ticketGate.maintenance` e `patients.openTicketsMaintenance`: «Sistema di ticket in manutenzione. Riprovare o contattare l'assistenza». Tradurre in en/de/fr.
 
-- [ ] **Step 1:** in `CrfConfirmButton`, `mustOverride` vale solo `blocked`; con `unverifiable` il bottone e' disabilitato e il tooltip e' `crf.ticketGate.maintenance`.
-- [ ] **Step 2:** `npx tsc --noEmit`; atteso: nessun errore nuovo.
-- [ ] **Step 3:** aggiornare i quattro file di traduzione con le stesse chiavi; `npm run build`.
-- [ ] **Step 4:** verifica a vista nel browser (Task 8).
-- [ ] **Step 5: commit** `feat(dashboard): messaggio di manutenzione e nessuna deroga se i ticket non sono verificabili`.
+- [x] **Step 1:** in `CrfConfirmButton`, `mustOverride` vale solo `blocked`; con `unverifiable` il bottone e' disabilitato e il tooltip e' `crf.ticketGate.maintenance`.
+- [x] **Step 2:** `npx tsc --noEmit`; atteso: nessun errore nuovo.
+- [x] **Step 3:** aggiornare i quattro file di traduzione con le stesse chiavi; `npm run build`.
+- [x] **Step 4:** verifica a vista nel browser (Task 8).
+- [x] **Step 5: commit** `feat(dashboard): messaggio di manutenzione e nessuna deroga se i ticket non sono verificabili`.
 
 ### Task 7: Installazione e documentazione (irccs-docker e produzione)
 
@@ -169,17 +171,17 @@ Testo italiano `crf.ticketGate.maintenance` e `patients.openTicketsMaintenance`:
 - Modify: `docs/modules/ROOT/pages/ticket-crf.adoc`, `docs/superpowers/specs/2026-10-22-guida-installazione-produzione-ticket-crf.md` (sezioni di sincronizzazione, webhook, heartbeat, configurazione montata)
 - Mirror con edit mirati in `git pascale/irccs-docker` (solo script, `.env_example` e `application.properties` del ms zammad; mai il `.env` di produzione)
 
-- [ ] **Step 1:** applicare le modifiche nel repo di sviluppo e verificare con `bash -n setup/install/align_ticket_crf.sh` e `grep -rniE "webhook|heartbeat|ticket-ref|INSTANCE_ID" setup .env_example microservice-config-zammad` (restano solo riferimenti storici nei documenti marcati come tali).
-- [ ] **Step 2:** copiare gli stessi file nel repo di produzione e confrontarli con `cmp`.
-- [ ] **Step 3: commit** in entrambi i repo `chore(ticket): via webhook e sincronizzazione dall'installazione`.
+- [x] **Step 1:** applicare le modifiche nel repo di sviluppo e verificare con `bash -n setup/install/align_ticket_crf.sh` e `grep -rniE "webhook|heartbeat|ticket-ref|INSTANCE_ID" setup .env_example microservice-config-zammad` (restano solo riferimenti storici nei documenti marcati come tali).
+- [x] **Step 2:** copiare gli stessi file nel repo di produzione e confrontarli con `cmp`.
+- [x] **Step 3: commit** in entrambi i repo `chore(ticket): via webhook e sincronizzazione dall'installazione`.
 
 ### Task 8: Prova completa in locale
 
 **Files:** nessun file di prodotto; script di prova solo nello scratchpad (mai in commit).
 
-- [ ] **Step 1:** ricostruire common (`27.0.0-ticketgate`), ms zammad, studio-clinico, patient-interview, dashboard; ricreare `pascale-local` con il Zammad di prova (`E2E_ZAMMAD_TOKEN` nello stesso comando di `docker compose up`, `-f e2e-full.yml`).
-- [ ] **Step 2: scenari** (atteso tra parentesi): ticket aperto sulla CRF -> conferma 409 `CRF_OPEN_TICKETS`; chiuso -> conferma ok; deroga con capability e motivo di 10+ caratteri su ticket aperto -> ok + evento `ticket-gate-override`; **Zammad fermo** (`docker stop zspike-zammad-railsserver-1`) -> conferma 503 `CRF_TICKET_STATE_UNVERIFIABLE`, **anche con deroga** e senza evento di override; con `CRF_CONFIRM_OVERRIDE_WHEN_UNVERIFIABLE=true` la stessa deroga passa e scrive l'evento; home paziente mostra il messaggio di manutenzione, le icone spariscono senza errori in console; riavvio di Zammad -> tutto torna; ticket cancellato in Zammad smette di bloccare subito; flag spento -> nessuna chiamata a Zammad (log).
-- [ ] **Step 3:** riportare l'esito per scenario. Nessun commit; i risultati vanno nel resoconto all'utente.
+- [x] **Step 1:** ricostruire common (`27.0.0-ticketgate`), ms zammad, studio-clinico, patient-interview, dashboard; ricreare `pascale-local` con il Zammad di prova (`E2E_ZAMMAD_TOKEN` nello stesso comando di `docker compose up`, `-f e2e-full.yml`).
+- [x] **Step 2: scenari** (atteso tra parentesi): ticket aperto sulla CRF -> conferma 409 `CRF_OPEN_TICKETS`; chiuso -> conferma ok; deroga con capability e motivo di 10+ caratteri su ticket aperto -> ok + evento `ticket-gate-override`; **Zammad fermo** (`docker stop zspike-zammad-railsserver-1`) -> conferma 503 `CRF_TICKET_STATE_UNVERIFIABLE`, **anche con deroga** e senza evento di override; con `CRF_CONFIRM_OVERRIDE_WHEN_UNVERIFIABLE=true` la stessa deroga passa e scrive l'evento; home paziente mostra il messaggio di manutenzione, le icone spariscono senza errori in console; riavvio di Zammad -> tutto torna; ticket cancellato in Zammad smette di bloccare subito; flag spento -> nessuna chiamata a Zammad (log).
+- [x] **Step 3:** riportare l'esito per scenario. Nessun commit; i risultati vanno nel resoconto all'utente.
 
 ---
 

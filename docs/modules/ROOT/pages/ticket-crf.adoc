@@ -22,7 +22,13 @@ Questa pagina descrive cosa vede e può fare ciascun utente, le regole, e come �
 | Nella pagina CRF il pannello laterale elenca i ticket della CRF, mostra la conversazione (solo testo), permette di rispondere e, a chi ne ha il diritto, di chiudere e riaprire.
 
 | Ticket aperti in home paziente
-| In fondo ai pulsanti della home paziente un riquadro apribile e richiudibile elenca i ticket non chiusi del paziente. Ogni riga ha il pulsante *Apri la CRF* che porta direttamente alla CRF, già sul ciclo e sulla scheda giusti.
+| In *testa* ai pulsanti della home paziente un riquadro apribile e richiudibile elenca i ticket non chiusi del paziente. Ogni riga ha il pulsante *Apri la CRF* che porta direttamente alla CRF, già sul ciclo e sulla scheda giusti.
+
+| Icona nella tabella pazienti
+| Accanto allo stato di ogni paziente compare un'icona se ha ticket aperti sulle CRF (si vedono entrando nella home). Una sola chiamata per le righe visibili; vale solo per i pazienti che l'utente vede. Se il servizio non risponde l'icona non compare.
+
+| I miei ticket
+| La voce *I miei ticket* del menu del profilo apre una pagina interna con tutti i ticket di CRF dell'utente (aperti da lui, assegnati a lui o dei gruppi che legge in Zammad), schede *Aperti* e *Tutti*, ricerca e pulsante *Apri la CRF*. Il numero nel menu coincide con le righe di *Aperti*. Un ticket chiuso direttamente in Zammad senza convalida resta tra gli *Aperti* (è bloccante). Differenza voluta con la home paziente: la home segue la visibilità del paziente, la pagina segue anche i permessi Zammad sul gruppo.
 
 | Icone sui ticket aperti
 | Un'icona ticket compare sul *ciclo* (striscia in alto), sul *gruppo* di CRF a sinistra (Step), sulla *scheda* della singola CRF e sui tab dei gruppi importati, ma solo dove ci sono ticket aperti. Il tooltip indica quanti.
@@ -177,7 +183,7 @@ Conseguenza voluta: se Zammad non è raggiungibile o è lento, *la conferma dell
 | Regola unica del blocco, condivisa da tutti i servizi che confermano. Si innesta in `QuestionnaireResponseFlow`. Chiede i ticket aperti al microservizio Zammad.
 
 | `irccs-microservice-studio-clinico`
-| Applicano il blocco alla conferma, al completamento del paziente e (studio-clinico) alla certificazione.
+| Applicano il blocco alla conferma del medico e (studio-clinico) alla certificazione. Le compilazioni del paziente non sono toccate.
 
 | Anagrafica pazienti
 | Fonte di verità della visibilità del paziente.
@@ -227,6 +233,14 @@ Tutti sotto `/fhir/zammad/tickets`.
 | GET
 | Ticket di tutte le CRF del paziente, con `carePlanId` e `questionnaireId`.
 
+| `/patients-with-open?patients=1,2,3`
+| GET
+| Quali tra i pazienti indicati (massimo 100, solo quelli visibili al chiamante) hanno ticket aperti sulle CRF: solo gli id. Alimenta l'icona nella tabella pazienti.
+
+| `/mine?all=`
+| GET
+| Tutti i ticket di CRF dell'utente loggato, con stato, studio, paziente, CRF e collegamento diretto (massimo 300). Pagina *I miei ticket*.
+
 | `/crf-summary?patient=&careplan=&questionnaire=`
 | GET
 | Esito del blocco e ticket bloccanti (solo id e stato, mai testo).
@@ -256,6 +270,15 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 * *Log*: si registrano successo, servizio e identificativi; mai token, risposte o dati personali.
 * *Segreti*: il token Zammad va gestito come segreti dell'ambiente. Il token oggi è in chiaro in `application.properties` e va ruotato e spostato in un secret prima della produzione.
 
+== Controlli sulla creazione e sul riporto da confermare
+
+* *Creazione ticket:* `crfscope` solo `CRF` o `STUDY`; paziente, ciclo, CRF e compilazione devono essere id numerici (si salvano normalizzati); ciclo e compilazione devono appartenere al paziente indicato; il gruppo deve essere uno di quelli in cui l'utente può aprire ticket (`create`, `change` o `full`); il paziente deve essere visibile all'utente.
+* *Cambio di stato:* il `PUT /tickets/{id}` generico non cambia più lo stato (solo priorità e scadenza): chiudere, riaprire e convalidare passano dal pannello.
+* *Riporto da confermare:* esclude le SAE (firma con OTP); rilegge la compilazione subito prima di scriverla; l'audit è obbligatorio e precede la scrittura (se non si registra, la CRF non si tocca); un errore non impedisce di creare il ticket ma resta nei log.
+* *Blocco:* la chiave della CRF si valuta sulla compilazione *salvata* oltre che su quella inviata (con la decisione più restrittiva); un `create` già completato è sempre una conferma (l'id inviato dal client non vale).
+* *Copertura dei gruppi:* il token di servizio deve avere accesso (`read`, `change` o `full`, anche tramite ruolo) a tutti i gruppi Zammad attivi; altrimenti i ticket di quei gruppi non comparirebbero e il blocco direbbe «nessun ticket». Con il controllo acceso (default) un gruppo scoperto dà 503. I gruppi senza ticket di CRF si ignorano con la proprietà `zammad.ticket-lookup.coverage-ignore-groups`.
+* *Ricerca:* si legge fino alla pagina vuota (un limite di pagina più basso di Zammad non tronca in silenzio); oltre 1000 ticket per ricerca l'esito è «non verificabile».
+
 == Configurazione
 
 [cols="2,2,3"]
@@ -273,6 +296,14 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 | `crf.confirm.ticket-service-url`
 | `http://irccs-zammad:8080`
 | Indirizzo del microservizio Zammad usato dal blocco (servizi che confermano).
+
+| `zammad.ticket-lookup.coverage-check`
+| `true`
+| Controlla che il token di servizio veda tutti i gruppi Zammad (altrimenti 503).
+
+| `zammad.ticket-lookup.coverage-ignore-groups`
+| vuoto
+| Gruppi (id o nome, separati da virgola) da non controllare.
 
 | `zammad.ticket-lookup.timeout`
 | `3s`
