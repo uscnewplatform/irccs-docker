@@ -68,6 +68,11 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
 9. **Container Zammad che ripartono.** `websocket`, `rails` e `scheduler` hanno decine di riavvii (exit code 0, policy `always`): causa non indagata.
 10. **Il corpo degli errori del gate e' un `OperationOutcome` FHIR:** il codice sta in `issue[0].details.coding[0].code` (`CRF_OPEN_TICKETS`, `CRF_TICKET_STATE_UNVERIFIABLE`).
 
+11. **`customer_id` come stringa.** La dashboard inviava l'id dell'utente Zammad come testo (`"3"`) e il controllo piu' severo del ms (solo numero) rifiutava ogni creazione con 403
+    «puo' essere aperto solo a nome del chiamante», per qualsiasi utente. Dalla 27.1.0 (commit 31cd35a) il ms accetta anche la stringa di sole cifre, purche' sia il chiamante; la dashboard
+    (3dd1b938) invia ora un numero. Il log del rifiuto riporta il motivo. Lezione: i test locali mandavano un numero e non vedevano il problema; provare sempre la creazione dal dialogo reale.
+12. **Disco di staging ampliato** il 23/10 (da 24 a 77 GB): le soglie alzate di Elasticsearch (4.1) non servono piu' e possono tornare ai valori standard.
+
 ## 5. Da NON portare in produzione
 
 - le soglie alzate di Elasticsearch (4.1);
