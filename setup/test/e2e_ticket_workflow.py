@@ -16,7 +16,7 @@ dashboard (httpd -> microservizi), e alla fine CANCELLA tutto (utenti Keycloak e
 Va lanciato sul server dell'ambiente (legge i segreti dal .env e parla con httpd/Keycloak/HAPI in locale):
     python3 -I e2e_ticket_workflow.py [--keep] [--no-restart]
 
-Variabili d'ambiente opzionali: E2E_PATIENT (default 35276), E2E_CAREPLAN (34961), E2E_ADMIN_GROUP, E2E_SPER_GROUP, E2E_ORG.
+Variabili d'ambiente OBBLIGATORIE: E2E_PATIENT (id del paziente di prova) ed E2E_CAREPLAN (CarePlan modello); opzionali: E2E_ADMIN_GROUP, E2E_SPER_GROUP, E2E_ORG.
 """
 import base64
 import json
@@ -37,8 +37,10 @@ for _l in open(HOME + "/irccs-docker/.env"):
         ENV[_k.strip()] = _v.strip().strip('"')
 
 REALM = ENV.get("KEYCLOAK_REALM") or "pascale"
-PATIENT = os.environ.get("E2E_PATIENT", "35276")
-CAREPLAN = os.environ.get("E2E_CAREPLAN", "34961")
+PATIENT = os.environ.get("E2E_PATIENT", "")
+CAREPLAN = os.environ.get("E2E_CAREPLAN", "")
+if not PATIENT or not CAREPLAN:
+    raise SystemExit("Impostare E2E_PATIENT ed E2E_CAREPLAN: nessun default, per non creare ticket su un paziente reale per sbaglio")
 ORG = os.environ.get("E2E_ORG", "9ec10f85-ad24-426c-ab2b-b6a74c4c08e1")           # radice del centro (IRCCS)
 GROUP_ADMIN = os.environ.get("E2E_ADMIN_GROUP", "1689f3a0-22d6-4e97-ade8-034753fe23c4")   # Admins del centro
 GROUP_SPER = os.environ.get("E2E_SPER_GROUP", "772b0cec-87c2-4f39-8d7c-66a83eb11ee0")     # Sperimentatori del centro
