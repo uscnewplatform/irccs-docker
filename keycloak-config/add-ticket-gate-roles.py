@@ -38,6 +38,8 @@ ROLES = [
      "Puo' chiudere e riaprire i ticket di una CRF (chi ha solo aperto il ticket o vi ha risposto non puo')"),
     ("internal:override:ticket-gate",
      "Puo' confermare una CRF nonostante ticket aperti o non verificabili (motivazione e audit obbligatori)"),
+    ("internal:manage:center-tickets",
+     "Admin del centro: vede e gestisce i ticket di tutti i gruppi del centro (il sync da' full su tutta la famiglia di gruppi Zammad). Assegnarlo ai gruppi Admins"),
 ]
 
 

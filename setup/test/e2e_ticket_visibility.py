@@ -17,6 +17,7 @@ Scenari:
       poi Farmacovigilanza lo chiude.
 
 Usa le funzioni di e2e_ticket_workflow.py (stessa cartella). Opzioni: --keep (non cancella i dati), --no-restart.
+Con il ruolo internal:manage:center-tickets sul gruppo Admins, l'admin del centro vede e chiude i ticket di tutti i gruppi (V3 e V4).
 Il gruppo Farmacovigilanza deve avere la capability internal:close:ticket (su staging assegnata a regime il 2026-10-24).
 """
 import os
@@ -77,6 +78,8 @@ def scenario():
     base.USERS["sper2"] = {"username": "e2e.sper2.%s" % base.RUN, "email": "e2e.sper2.%s@example.org" % base.RUN, "last": "Sperimentatore2", "group": base.GROUP_SPER}
     base.USERS["farmaco"] = {"username": "e2e.farmaco.%s" % base.RUN, "email": "e2e.farmaco.%s@example.org" % base.RUN, "last": "Farmacovigilanza", "group": gid_farmaco}
     caps_f = base.group_capabilities(gid_farmaco)
+    centre_admin = "internal:manage:center-tickets" in base.group_capabilities(base.GROUP_ADMIN)
+    print("capacita' (informativo): gli admin del centro gestiscono i ticket di tutto il centro=%s" % centre_admin, flush=True)
     print("capacita' (informativo): farmacovigilanza chiude=%s conferma=%s" % ("internal:close:ticket" in caps_f, "internal:confirm:crf" in caps_f), flush=True)
 
     base.create_keycloak_users()
@@ -142,8 +145,11 @@ def scenario():
         assert_sees("V3. sper (ha aperto il ticket)", S["sper"], tid3, q3, True)
         assert_sees("V3. farmaco (gruppo destinatario)", S["farmaco"], tid3, q3, True)
         assert_sees("V3. sper2 (stesso gruppo di chi l'ha aperto, ma non destinatario)", S["sper2"], tid3, q3, False)
-        r = sees(S["admin"], tid3, q3)
-        print("INFO V3. admin del centro: %s (atteso: vede, perche' amministra tutta la famiglia di gruppi)" % ("vede" if all(r.values()) else r), flush=True)
+        if centre_admin:
+            assert_sees("V3. admin del centro (ruolo internal:manage:center-tickets)", S["admin"], tid3, q3, True)
+        else:
+            r = sees(S["admin"], tid3, q3)
+            print("INFO V3. admin del centro senza il ruolo internal:manage:center-tickets: %s" % ("vede" if all(r.values()) else r), flush=True)
         c, t = base.api(S["farmaco"], "GET", "/zammad/tickets/%s/articles" % tid3)
         th = base.js(t) or {}
         can_close = th.get("canClose") is True
@@ -154,6 +160,20 @@ def scenario():
         z = base.js(tz) or {}
         check("V3. il ticket risulta chiuso con il segno della piattaforma", z.get("state_id") == 4 and str(z.get("crfclosure", "")).startswith("v1|"), z.get("state_id"))
         assert_sees("V3. dopo la chiusura sper2 continua a NON vederlo", S["sper2"], tid3, q3, False)
+
+    # ---------------------------------------------------------------- V4
+    if centre_admin:
+        q4, r4 = base.create_fhir_crf()
+        c, tid4, t4 = open_ticket(S["sper"], zids["sper"], gid_sper_z, q4, r4, "E2E-VIS %s V4 sper->sper" % base.RUN)
+        check("V4. lo sperimentatore apre un ticket al proprio gruppo", c == 201 and tid4, (c, base.error_code(t4) if c != 201 else ""))
+        if tid4:
+            assert_sees("V4. admin del centro (non ha aperto il ticket, gruppo diverso dal suo)", S["admin"], tid4, q4, True)
+            assert_sees("V4. farmaco (altro gruppo)", S["farmaco"], tid4, q4, False)
+            c, t = base.api(S["admin"], "POST", "/zammad/tickets/%s/close" % tid4, {"reason": "Chiuso dall'admin del centro"})
+            check("V4. l'admin del centro chiude il ticket di un altro gruppo", c == 200, (c, base.error_code(t)))
+            cz, tz = base.zammad("GET", "/tickets/%s" % tid4)
+            z = base.js(tz) or {}
+            check("V4. il ticket risulta chiuso con il segno della piattaforma", z.get("state_id") == 4 and str(z.get("crfclosure", "")).startswith("v1|"), z.get("state_id"))
 
 
 def cleanup_or_keep():
