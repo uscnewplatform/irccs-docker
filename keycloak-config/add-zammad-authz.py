@@ -35,7 +35,9 @@ KC_URL = os.environ.get("KC_URL", "http://localhost:9445").rstrip("/")
 REALM = os.environ.get("REALM", "pascale")
 CLIENT_ID = os.environ.get("CLIENT_ID", "irccs")
 ADMIN_USER = os.environ.get("ADMIN_USER", "admin")
-ADMIN_PASS = os.environ.get("ADMIN_PASS", "admin")
+ADMIN_PASS = os.environ.get("ADMIN_PASS", "")
+if not ADMIN_PASS:
+    raise SystemExit("ADMIN_PASS non impostata: la password dell'amministratore Keycloak va passata dall'ambiente (nessun default)")
 ADMIN_REALM = os.environ.get("ADMIN_REALM", "master")
 DRY = "--dry-run" in sys.argv
 DELETE = "--delete" in sys.argv

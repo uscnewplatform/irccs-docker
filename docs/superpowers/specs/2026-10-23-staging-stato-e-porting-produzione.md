@@ -48,6 +48,8 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
 10. Verificare la copertura: nei log «N gruppi Zammad aperti in full al token di servizio», e nessun avviso «non aperti».
 11. Capability ai gruppi (`internal:confirm:crf`, `internal:close:ticket`, `internal:override:ticket-gate`) e nuovo login degli utenti.
 12. Prove con il flag spento (pannello ticket, home paziente, "I miei ticket"), poi accensione `CRF_CONFIRM_REQUIRE_CLOSED_TICKETS=true` su studio-clinico e prove 409 / 200 / deroga / 503.
+12bis. **Segreto HMAC del segno di chiusura:** `ZAMMAD_CLOSURE_HMAC_SECRET` nel `.env` (lungo e casuale, `openssl rand -base64 48`) e la riga `zammad.closure.hmac-secret=${ZAMMAD_CLOSURE_HMAC_SECRET:}` nella config del ms zammad. Senza, il ms logga un WARN e i segni non sono firmati. Il segreto si genera sul server e non si salva nel repo.
+12ter. **Farmacovigilanza** (e ogni gruppo che deve chiudere ticket) ha bisogno del ruolo `internal:close:ticket` sul gruppo Keycloak: su staging assegnato il 24/10 a Farmacovigilanza IRCCS.
 13. **Ticket gia' chiusi prima della versione:** non hanno il marcatore `crfclosure` e continuano a bloccare finche' non convalidati (script di bonifica da decidere con il cliente).
 
 ## 4. Cose scoperte su staging (da non ripetere in produzione)
@@ -119,5 +121,20 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
 - domande al cliente 7-16 (`2026-10-22-ticket-crf-domande-al-cliente.md`) e differenza di visibilita' del gruppo 4 in «I miei ticket»;
 - decisione su deroga alla certificazione con sistema ticket in manutenzione;
 - capacita' di staging (disco e RAM) e riavvii dei container Zammad;
-- HMAC del marcatore `crfclosure`, catalogo unico degli stati, limiti 100/300 su elenchi, audit di lettura;
+- catalogo unico degli stati, limiti 100/300 su elenchi, audit di lettura;
 - `irccs-tac`, `irccs-webpush` e `irccs-antora-docs` risultavano fermi su staging dalle 11:41 del 23/10 (SIGTERM, non fermati da noi): da verificare e riavviare se serve.
+
+## 8. Aggiornamento 24/10: visibilita' per gruppo, segno firmato, revisione di sicurezza
+
+**Visibilita' dei ticket di CRF** (ms zammad `TicketThreadService`): un ticket si vede solo se si vede il paziente E si e' aperto il ticket oppure si ha lettura sul gruppo Zammad a cui e' assegnato. Stessa regola per conversazione, allegati, elenchi per CRF/paziente, «I miei ticket». Rispondere, chiudere, riaprire richiedono la scrittura (aver aperto il ticket o `change`/`full` sul gruppo): la sola lettura non basta e il ripiego sull'identita' di servizio non la aggira. Il blocco della conferma CRF non cambia: decide il server per tutti, anche per chi non vede il ticket (il riepilogo mostra solo id e stato). Gli admin del centro hanno `full` solo sul proprio gruppo (sync Keycloak->Zammad): non vedono i ticket assegnati ad altri gruppi. Decisione aperta con il cliente.
+
+**Segno di chiusura firmato:** `crfclosure` = `v1|utente|data|firma` (HMAC-SHA256 legata all'id del ticket). Con il segreto impostato i segni non firmati o con firma errata non valgono: le chiusure fatte prima vanno riconvalidate dal pannello.
+
+**Altre correzioni (revisione):** news di studio senza paziente/CRF; sync con collegamento per email solo se verificata e senza email nei log; `PUT` ticket e «I miei ticket» con visibilita' del paziente; risposte di creazione/modifica ridotte ai soli campi ammessi; timeout sulle chiamate a Zammad; elenchi letti in parallelo; token Zammad non piu' nel default impacchettato; blocco ticket anche sul completamento da link e sull'import Bundle (studio-clinico), fail-closed se la QR salvata non si legge, WARN a blocco spento, deroga legata alla sola scrittura `completed` (common, dashboard); `ADMIN_PASS` e paziente di prova senza default negli script.
+
+**Test E2E su staging** (`setup/test/`, girano sul server, stdlib Python, utenti Keycloak temporanei):
+- `e2e_ticket_workflow.py` — admin apre il ticket, lo sperimentatore risponde, l'admin chiude e conferma (25 controlli). Servono `E2E_PATIENT` ed `E2E_CAREPLAN`.
+- `e2e_ticket_visibility.py [--keep]` — visibilita' per gruppo con admin, due sperimentatori e Farmacovigilanza (36 controlli); `--keep` lascia i dati.
+Richiedono `.env` del server e il token Zammad in `~/ticket-crf-align/.zammad-token`.
+
+**Ancora aperti:** rotazione del token Zammad e pulizia della storia git (era in chiaro in `application.properties` dal primo commit); completamento da link e import Bundle non provati su staging; TLS interno verso Zammad; 11 test di studio-clinico gia' falliti prima (TokenResource, controller link).
