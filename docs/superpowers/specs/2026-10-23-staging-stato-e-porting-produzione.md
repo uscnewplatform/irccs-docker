@@ -139,3 +139,17 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
 Richiedono `.env` del server e il token Zammad in `~/ticket-crf-align/.zammad-token`.
 
 **Ancora aperti:** rotazione del token Zammad e pulizia della storia git (era in chiaro in `application.properties` dal primo commit); completamento da link e import Bundle non provati su staging; TLS interno verso Zammad; 11 test di studio-clinico gia' falliti prima (TokenResource, controller link).
+
+## 9. Aggiornamento 25/10: nuova interfaccia dei ticket
+
+Dashboard (`ticket-gate-ui`, commit 7f5455fc e bf98acf7) e ms zammad (b039d52, campo `assignedToMe` in `/mine`) installati su staging con il metodo delta (immagine della dashboard costruita da `stg-build` con la patch applicata, `config.js` del server lasciato com'e'; jar del ms con lo stesso hash della build locale). Nessuna modifica di Keycloak, Zammad o configurazione.
+
+Cosa cambia per gli utenti: pannello ticket con filtri, avanzamento e cronologia (a pagina intera su mobile), banner «conferma bloccata», nuovo ticket in tre passi, «I miei ticket» con filtri e anteprima, fascia «Ticket da seguire» in home paziente, news ridisegnate. Dettagli e componenti: pagina `ticket-crf.adoc`, sezione «Interfaccia e schermi».
+
+Verifica: schermate provate in un browser vero su staging a 1440, 820 e 390 pixel con un utente temporaneo admin del centro (poi cancellato). Non viste a schermo: popup delle news e fascia in home paziente (nessun ticket di prova li faceva comparire).
+
+Porting in produzione: nessun passo in piu' rispetto alla sezione 3; il ms zammad deve essere 27.1.0 con questo commit, altrimenti i filtri «Assegnati a me» di «I miei ticket» restano a zero (la dashboard tollera il campo mancante).
+
+Pulsante «Conferma CRF» (25/10): ora e' disabilitato ogni volta che la conferma non e' possibile (ticket bloccanti, stato non verificabile, riepilogo in caricamento). La deroga e' un pulsante a parte, «Conferma con deroga…», visibile solo a chi ha il ruolo e solo se il server la ammette. Nessuna modifica lato server.
+
+Audit: l'analisi dell'audit dei ticket (cosa e' tracciato e i limiti noti) e' nella pagina `ticket-crf.adoc`, sezione «Audit e log».

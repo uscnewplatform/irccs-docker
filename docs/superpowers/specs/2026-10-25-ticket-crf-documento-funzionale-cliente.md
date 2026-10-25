@@ -77,14 +77,66 @@ Conseguenze:
 
 **Chiusura fatta direttamente nel sistema di ticketing.** Se qualcuno chiude un ticket **fuori dalla piattaforma** (o con un'automazione), il ticket **continua a bloccare** la CRF e nel pannello compare «Chiuso senza convalida». Chi ha il diritto di chiusura può **convalidare** quella chiusura dal pannello con una motivazione. Il segno di chiusura è firmato dalla piattaforma: non si può simulare scrivendolo a mano.
 
-# 6. Il blocco della conferma e la deroga
+# 6. Chiudere un ticket e confermare una CRF
 
-- Con il blocco attivo, il pulsante **Conferma CRF** non funziona se la CRF ha ticket non chiusi: il sistema spiega quanti sono.
+Sono **due azioni distinte**, con regole proprie, che possono essere fatte da persone diverse: prima si chiude il ticket, poi si conferma la CRF.
+
+```
+ticket aperto  →  risposta del gruppo  →  chiusura del ticket
+                                               ↓
+                         ticket chiuso con il segno firmato della piattaforma
+                                               ↓
+                              conferma della CRF
+```
+
+## 6.1 Chiudere un ticket
+
+Servono **tre condizioni insieme**:
+
+1. **Il diritto di chiusura** nel proprio gruppo (assegnato ai gruppi autorizzati; su staging: Admins del centro e Farmacovigilanza).
+2. **Poter intervenire sul ticket**: averlo aperto, oppure appartenere al gruppo a cui è assegnato con diritto di modifica, oppure essere admin del centro. Chi può solo leggere il ticket non può chiuderlo.
+3. **Una motivazione** di almeno 5 caratteri, che resta nella conversazione.
+
+Chi non ha il diritto di chiusura (per esempio uno sperimentatore, anche se ha aperto lui il ticket) riceve un rifiuto. La chiusura vale per la CRF **solo se passa dalla piattaforma**: viene scritto sul ticket un segno di chiusura firmato. Una chiusura fatta direttamente nel sistema di ticketing non basta (vedi paragrafo 5).
+
+## 6.2 Confermare una CRF
+
+Servono **due condizioni**, controllate in quest'ordine:
+
+1. **Il diritto di conferma** nel proprio gruppo. Se manca, la conferma è rifiutata (su staging il diritto ce l'hanno gli Admins del centro; Sperimentatori e Farmacovigilanza no).
+2. **Nessun ticket di CRF bloccante.** Se ce n'è almeno uno, la conferma è rifiutata e il sistema indica quanti sono.
+
+Quali ticket **bloccano**:
+
+| Stato del ticket | Blocca la conferma? |
+|---|---|
+| Nuovo, aperto, in attesa | **Sì** |
+| Chiuso dalla piattaforma (con il segno firmato) | No |
+| Chiuso direttamente nel sistema di ticketing, senza convalida | **Sì**, finché non viene convalidato |
+| Unito a un altro ticket | No |
+| News di studio | No, mai |
+
+Il blocco **vale per tutti**, anche per chi non vede il ticket: lo decide il server. Se il sistema di ticketing non risponde, la conferma non è possibile (si preferisce fermarsi piuttosto che confermare alla cieca).
+
+## 6.3 Riepilogo per gruppo (staging)
+
+| Gruppo | Può chiudere un ticket | Può confermare una CRF | Un ticket aperto blocca la conferma |
+|---|---|---|---|
+| Sperimentatori | No | No | Sì |
+| Farmacovigilanza | Sì | No | Sì |
+| Admin del centro | Sì | Sì | Sì |
+
+Chi ha il diritto di **deroga** può confermare anche con ticket aperti (paragrafo 7).
+
+# 7. Il blocco della conferma e la deroga
+
+- Il pulsante **Conferma CRF** è **disabilitato** ogni volta che la conferma non è possibile: ci sono ticket non chiusi, oppure il sistema di ticketing non risponde, oppure la CRF si sta ancora salvando o importando. Sopra i pulsanti un avviso giallo spiega quanti ticket bloccano e quali. Chi ha il diritto di deroga vede accanto un secondo pulsante, **«Conferma con deroga…»**.
+- Le regole di chi può chiudere e confermare sono nel paragrafo 6. Con il blocco attivo, il pulsante **Conferma CRF** non funziona se la CRF ha ticket non chiusi: il sistema spiega quanti sono.
 - Se il sistema di ticketing **non risponde**, la conferma è impossibile (per prudenza), salvo diversa scelta di configurazione.
 - La **deroga** consente a pochi responsabili di confermare comunque, con una **motivazione obbligatoria (10–500 caratteri)**. Ogni deroga è registrata in audit con motivazione, utente e ticket coinvolti; se l'audit non si registra, la deroga viene rifiutata. La motivazione non deve contenere dati identificativi del paziente.
 - Il blocco vale anche per il completamento di una CRF da **link di compilazione** e per l'**import** di CRF già completate (queste ultime richiedono il diritto di conferma).
 
-# 7. Esempi (provati su staging)
+# 8. Esempi (provati su staging)
 
 **Esempio A — lo sperimentatore apre a Farmacovigilanza, che chiude.**
 Lo sperimentatore apre un ticket sulla CRF assegnandolo a Farmacovigilanza. La CRF è subito bloccata. Farmacovigilanza lo vede, risponde e lo chiude con una motivazione. Lo sperimentatore legge l'intera conversazione, non può chiudere il ticket lui stesso. A ticket chiuso la CRF si conferma.
@@ -98,15 +150,26 @@ L'admin apre due ticket sulla stessa CRF, uno a Sperimentatori e uno a Farmacovi
 **Esempio D — un utente di un altro gruppo.**
 Un utente di Farmacovigilanza non vede un ticket assegnato a Sperimentatori (anche se vede lo stesso paziente) e non può rispondere. Vede però che la conferma della CRF è bloccata da un ticket aperto.
 
-# 8. Tracciabilità e sicurezza
+# 9. Le schermate
 
-- Ogni apertura, risposta, chiusura, riapertura, convalida e deroga è **registrata in audit**.
+L'interfaccia si adatta al dispositivo: computer, tablet e telefono.
+
+- **Pannello ticket nella CRF.** Si apre dal pulsante *Ticket* e mostra a sinistra i filtri (**Aperti**, **Tutti**, **Da convalidare**) con i conteggi, e sotto la conversazione del ticket scelto. Un pallino segnala i ticket con messaggi nuovi. Per ogni ticket si vede a che punto è: **Aperto → Preso in carico → Chiuso**. In basso si scrive la risposta e, per chi ha il diritto, si chiude il ticket con una motivazione. Sul telefono elenco e conversazione sono due pagine, con la freccia per tornare indietro.
+- **Avviso «Conferma bloccata».** Sopra i pulsanti della CRF un riquadro giallo dice quanti ticket aperti impediscono la conferma e quali sono.
+- **Nuovo ticket.** Una sola finestra in tre passi: a quale gruppo inviarlo, la priorità, e cosa succede (con scorciatoie come «Dato incongruente» o «Chiarimento»). Ricorda in testa paziente, ciclo e CRF, e avvisa che la CRF resta non confermabile finché il ticket non è chiuso.
+- **I miei ticket.** Elenco di tutti i ticket dell'utente con filtri (**Aperti**, **Assegnati a me**, **Aperti da me**, **Da convalidare**, **Chiusi**) e ricerca. Su schermi larghi a destra c'è l'anteprima con gli ultimi messaggi e il pulsante **Apri la CRF**.
+- **Home del paziente.** In alto la fascia **Ticket da seguire**, con una carta per ogni ticket aperto e il pulsante per andare alla CRF.
+- **News di studio.** Una finestra con la comunicazione più recente aperta, con scadenza, priorità ed eventuali allegati.
+
+# 10. Tracciabilità e sicurezza
+
+- Ogni apertura, risposta, chiusura, riapertura, convalida e deroga è **registrata in audit**: chi l'ha fatta, quando, da quale indirizzo, su quale ticket e con quale esito, anche quando l'accesso viene negato. Per la deroga si registra anche la motivazione; il testo di una chiusura resta nella conversazione del ticket.
 - Il testo dei ticket resta nel sistema di ticketing: la piattaforma non ne tiene copia e, per il blocco, scambia solo numero e stato dei ticket.
 - Le conversazioni sono mostrate come solo testo (niente HTML, script o indirizzi e-mail).
 - I diritti di visibilità sono verificati dal server a ogni richiesta; se un controllo non è possibile, l'accesso è negato.
 - Gli allegati (solo news di studio) sono verificati per tipo, contenuto e dimensione. **Non è attivo un antivirus sugli allegati.**
 
-# 9. Esiti delle prove su staging (24–25 ottobre 2026)
+# 11. Esiti delle prove su staging (24–25 ottobre 2026)
 
 | Prova | Esito |
 |---|---|
@@ -114,7 +177,7 @@ Un utente di Farmacovigilanza non vede un ticket assegnato a Sperimentatori (anc
 | Visibilità per gruppo (admin, due sperimentatori, farmacovigilanza; tre scenari più chiusura da parte di admin del centro) | 42/42 controlli superati |
 | Sperimentatore → Farmacovigilanza che chiude; stesso caso con risposta e chiusura anche dell'admin | 33/33 controlli superati |
 
-# 10. Scelte concordate e punti da ricordare
+# 12. Scelte concordate e punti da ricordare
 
 - Gli **admin del centro vedono e chiudono tutti i ticket del centro** (decisione del cliente). Il diritto si assegna ai gruppi Admins di ogni centro.
 - **Farmacovigilanza** può chiudere i ticket.
