@@ -328,37 +328,58 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 
 == Audit e log
 
-Cosa viene tracciato oggi:
+Due livelli, entrambi su ogni operazione sui ticket:
+
+. *Audit generico* (`ZammadTicketAuditFilter`): ogni chiamata al ms zammad (elenchi, conversazione, creazione, risposta, chiusura, riapertura, convalida, allegati) produce un `AuditEvent` sullo store di audit isolato (azione C/R/U/D dal metodo HTTP, esito success/failure dallo status, utente, IP, id del ticket, metodo e percorso) e una riga di log strutturata `AUDIT ...` verso Loki, che sopravvive se lo store è giù. Il dettaglio riporta anche i riferimenti non personali della richiesta (`patient`, `questionnaire`, `careplan`, `qr`; per `patients-with-open` solo quanti pazienti), così le consultazioni di un paziente si ritrovano dall'audit. Anche i rifiuti (403) risultano come `failure`. Best-effort: un guasto dell'audit non blocca la richiesta.
+. *Eventi di business* (`TicketAuditService`), solo per gli esiti riusciti, con i riferimenti del ticket (`ticketId`, `patient`, `questionnaire`, `careplan`, `qrid`, `scope`) e, dove c'è, la motivazione (max 500 caratteri, ripulita):
+
+[cols="2,3"]
+|===
+| Evento (`subtype`) | Quando
+
+| `ticket-created`
+| Apertura di un ticket (con gruppo e priorità; l'id è quello del nuovo ticket).
+
+| `ticket-replied`
+| Risposta nella conversazione.
+
+| `ticket-closed` / `ticket-reopened`
+| Chiusura e riapertura dal pannello, con la motivazione.
+
+| `ticket-closure-validated`
+| Convalida di una chiusura fatta fuori dalla piattaforma, con la motivazione.
+
+| `ticket-service-identity-used`
+| Zammad ha negato la scrittura all'utente e il ms ha scritto con l'identità di servizio (operazione: articolo, chiusura, riapertura, convalida).
+|===
+
+Eventi della conferma delle CRF (già presenti):
 
 [cols="2,3"]
 |===
 | Evento | Dove e cosa
 
-| Qualsiasi chiamata ai ticket del ms zammad (elenchi, conversazione, creazione, risposta, chiusura, riapertura, convalida, allegati)
-| `ZammadTicketAuditFilter`: un `AuditEvent` sullo store di audit isolato (azione C/R/U/D dal metodo HTTP, esito success/failure dallo status, utente, IP, id del ticket, metodo e percorso) e una riga di log strutturata `AUDIT ...` verso Loki. Anche i rifiuti (403) risultano come `failure`. Best-effort: un guasto dell'audit non blocca la richiesta.
+| `crf-confirm-blocked-by-tickets`
+| Conferma rifiutata dai ticket (409/503), con esito e ticket bloccanti. Anche per il completamento da *link* bloccato (origine `link`, senza utente Keycloak).
 
-| Conferma bloccata dai ticket (409/503)
-| Evento `crf-confirm-blocked-by-tickets` con esito e ticket bloccanti.
+| `ticket-gate-override`
+| Deroga del blocco con motivazione, esito, ticket e utente. *Audit obbligatorio*: se non si registra, la deroga è rifiutata (503).
 
-| Deroga del blocco
-| Evento `ticket-gate-override` con motivazione, esito del blocco, ticket e utente. *Audit obbligatorio*: se non si registra, la deroga è rifiutata (503).
+| `crf-confirmed`
+| CRF confermata.
 
-| CRF confermata
-| Evento `crf-confirmed`.
+| `crf-confirmation-reverted-by-ticket`
+| CRF riportata da confermare perché un ticket è stato aperto o riaperto dalla piattaforma; audit obbligatorio prima della scrittura.
 
-| CRF riportata da confermare da un ticket
-| Evento `crf-confirmation-reverted-by-ticket`, audit obbligatorio prima della scrittura.
-
-| Accesso negato per mancanza di ruolo (conferma, deroga)
-| Audit di accesso negato.
+| Accesso negato
+| Mancanza del ruolo di conferma o di deroga; import Bundle con CRF già completate senza la capability di conferma.
 |===
 
-Limiti noti dell'audit (da migliorare):
+Limiti noti:
 
-* l'audit generico distingue le operazioni solo da metodo e percorso (`.../close`, `.../reopen`, `.../validate-closure`): non c'è un evento di business per «ticket chiuso» o «risposta»; la motivazione di chiusura resta nella conversazione del ticket in Zammad, non nello store di audit;
-* nell'audit dei ticket non compare il *paziente* né la CRF, e per creazione ed elenchi l'id è `all`/`search`: non si risponde con una sola interrogazione a «chi ha guardato i ticket del paziente X»;
-* il completamento di una CRF da link bloccato dai ticket è solo nel log applicativo, senza evento di audit;
-* quando Zammad nega la scrittura e il ms scrive con l'identità di servizio, l'audit indica l'utente ma non che si è usato il ripiego.
+* i codici degli eventi di business dei ticket sono definiti nel ms zammad (`TicketAuditService`), non nella libreria comune: vanno allineati a mano con `monitoring-config` se si vogliono dashboard o alert dedicati;
+* la motivazione resta anche nella conversazione del ticket in Zammad; nello store di audit è quella registrata al momento dell'azione;
+* gli eventi di business non coprono le letture (elenchi, conversazione): quelle restano nell'audit generico, che ora porta paziente e CRF nel dettaglio.
 
 == Controlli sulla creazione e sul riporto da confermare
 

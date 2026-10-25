@@ -163,7 +163,7 @@ L'interfaccia si adatta al dispositivo: computer, tablet e telefono.
 
 # 10. Tracciabilità e sicurezza
 
-- Ogni apertura, risposta, chiusura, riapertura, convalida e deroga è **registrata in audit**: chi l'ha fatta, quando, da quale indirizzo, su quale ticket e con quale esito, anche quando l'accesso viene negato. Per la deroga si registra anche la motivazione; il testo di una chiusura resta nella conversazione del ticket.
+- Ogni apertura, risposta, chiusura, riapertura, convalida e deroga è **registrata in audit** come evento a sé, con chi l'ha fatta, quando, da quale indirizzo, su quale ticket, su quale paziente e CRF, con quale esito; per chiusure, riaperture, convalide e deroghe anche la motivazione. Anche gli accessi negati e le conferme bloccate dai ticket (compreso il completamento da link) sono registrati. Se Zammad rifiuta la scrittura a nome dell'utente e la piattaforma la esegue con l'identità di servizio, ne resta traccia separata. Le consultazioni dei ticket di un paziente si ritrovano dall'audit.
 - Il testo dei ticket resta nel sistema di ticketing: la piattaforma non ne tiene copia e, per il blocco, scambia solo numero e stato dei ticket.
 - Le conversazioni sono mostrate come solo testo (niente HTML, script o indirizzi e-mail).
 - I diritti di visibilità sono verificati dal server a ogni richiesta; se un controllo non è possibile, l'accesso è negato.
