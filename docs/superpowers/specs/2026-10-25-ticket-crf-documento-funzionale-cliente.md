@@ -130,7 +130,7 @@ Chi ha il diritto di **deroga** può confermare anche con ticket aperti (paragra
 
 # 7. Il blocco della conferma e la deroga
 
-- Il pulsante **Conferma CRF** è **disabilitato** ogni volta che la conferma non è possibile: ci sono ticket non chiusi, oppure il sistema di ticketing non risponde, oppure la CRF si sta ancora salvando o importando. Sopra i pulsanti un avviso giallo spiega quanti ticket bloccano e quali. Chi ha il diritto di deroga vede accanto un secondo pulsante, **«Conferma con deroga…»**.
+- Il pulsante **Conferma CRF** lo **vedono solo i gruppi che hanno il diritto di conferma**: per gli altri gruppi non compare affatto (nemmeno grigio), e non vedono neppure l'avviso di conferma bloccata. Per chi lo vede, è **disabilitato** ogni volta che la conferma non è possibile: ci sono ticket non chiusi, oppure il sistema di ticketing non risponde, oppure la CRF si sta ancora salvando o importando. Sopra i pulsanti un avviso giallo spiega quanti ticket bloccano e quali. Chi ha il diritto di deroga vede accanto un secondo pulsante, **«Conferma con deroga…»**.
 - Le regole di chi può chiudere e confermare sono nel paragrafo 6. Con il blocco attivo, il pulsante **Conferma CRF** non funziona se la CRF ha ticket non chiusi: il sistema spiega quanti sono.
 - Se il sistema di ticketing **non risponde**, la conferma è impossibile (per prudenza), salvo diversa scelta di configurazione.
 - La **deroga** consente a pochi responsabili di confermare comunque, con una **motivazione obbligatoria (10–500 caratteri)**. Ogni deroga è registrata in audit con motivazione, utente e ticket coinvolti; se l'audit non si registra, la deroga viene rifiutata. La motivazione non deve contenere dati identificativi del paziente.
