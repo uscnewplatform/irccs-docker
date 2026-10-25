@@ -18,7 +18,7 @@ Legenda: **[TU]** = serve una persona con i permessi (Zammad, Keycloak admin, Je
 | Cosa | Scelta consigliata |
 |---|---|
 | Quali gruppi chiudono i ticket (`internal:close:ticket`) | Admins del centro + Farmacovigilanza (come staging) |
-| Quali gruppi confermano le CRF (`internal:confirm:crf`) | Admins del centro (come staging) |
+| Quali gruppi confermano le CRF (`internal:confirm:crf`) | Admins del centro e Farmacovigilanza (come staging). Gli altri gruppi non vedono il pulsante «Conferma CRF» |
 | Chi ha la deroga (`internal:override:ticket-gate`) | Pochi responsabili: servono i nomi dei gruppi |
 | Chi sono gli admin del centro (`internal:manage:center-tickets`) | I gruppi Admins di **ogni** centro |
 | Deroga con Zammad non verificabile (`crf.confirm.override-when-unverifiable`) | `false` |
@@ -86,7 +86,7 @@ Dashboard → **Gruppi utenti** → sezione CRF (oppure Keycloak → Groups → 
 
 | Ruolo | A chi |
 |---|---|
-| `internal:confirm:crf` | Gruppi Admins del centro |
+| `internal:confirm:crf` | Gruppi Admins del centro e Farmacovigilanza (solo chi lo ha vede il pulsante «Conferma CRF») |
 | `internal:close:ticket` | Admins del centro e Farmacovigilanza |
 | `internal:override:ticket-gate` | Pochi responsabili |
 | `internal:manage:center-tickets` | Gruppi **Admins di ogni centro** (vedono e gestiscono i ticket di tutti i gruppi del centro) |

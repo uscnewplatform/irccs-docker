@@ -42,7 +42,7 @@ I diritti dipendono dal **gruppo di utenti** di appartenenza (gestiti in *Gruppi
 |---|---|
 | **Qualsiasi utente che vede il paziente** | Aprire un ticket sulle CRF del paziente; vedere e rispondere ai ticket che ha aperto o che sono assegnati al proprio gruppo |
 | **Sperimentatori** | Come sopra; non chiudono i ticket |
-| **Farmacovigilanza** | Vede e risponde ai ticket assegnati a Farmacovigilanza; li **chiude** |
+| **Farmacovigilanza** | Vede e risponde ai ticket assegnati a Farmacovigilanza; li **chiude**; **conferma** le CRF |
 | **Admin del centro** | Vede e gestisce **tutti** i ticket di **tutti** i gruppi del centro; risponde e **chiude**; conferma le CRF |
 | Chi ha il diritto di **conferma CRF** | Conferma una CRF quando non ci sono ticket aperti |
 | Chi ha il diritto di **deroga** (pochi responsabili) | Conferma una CRF nonostante ticket aperti, con motivazione obbligatoria e audit |
@@ -103,7 +103,7 @@ Chi non ha il diritto di chiusura (per esempio uno sperimentatore, anche se ha a
 
 Servono **due condizioni**, controllate in quest'ordine:
 
-1. **Il diritto di conferma** nel proprio gruppo. Se manca, la conferma è rifiutata (su staging il diritto ce l'hanno gli Admins del centro; Sperimentatori e Farmacovigilanza no).
+1. **Il diritto di conferma** nel proprio gruppo. Se manca, la conferma è rifiutata (su staging il diritto ce l'hanno gli Admins del centro e Farmacovigilanza; gli Sperimentatori no).
 2. **Nessun ticket di CRF bloccante.** Se ce n'è almeno uno, la conferma è rifiutata e il sistema indica quanti sono.
 
 Quali ticket **bloccano**:
@@ -123,7 +123,7 @@ Il blocco **vale per tutti**, anche per chi non vede il ticket: lo decide il ser
 | Gruppo | Può chiudere un ticket | Può confermare una CRF | Un ticket aperto blocca la conferma |
 |---|---|---|---|
 | Sperimentatori | No | No | Sì |
-| Farmacovigilanza | Sì | No | Sì |
+| Farmacovigilanza | Sì | Sì | Sì |
 | Admin del centro | Sì | Sì | Sì |
 
 Chi ha il diritto di **deroga** può confermare anche con ticket aperti (paragrafo 7).
@@ -180,7 +180,7 @@ L'interfaccia si adatta al dispositivo: computer, tablet e telefono.
 # 12. Scelte concordate e punti da ricordare
 
 - Gli **admin del centro vedono e chiudono tutti i ticket del centro** (decisione del cliente). Il diritto si assegna ai gruppi Admins di ogni centro.
-- **Farmacovigilanza** può chiudere i ticket.
+- **Farmacovigilanza** può chiudere i ticket e confermare le CRF.
 - Un **ticket «in attesa»** continua a bloccare la conferma; le notifiche e-mail le gestisce il sistema di ticketing.
 - Il blocco è **globale** (non per singolo studio).
 - Un ticket aperto o riaperto **direttamente nel sistema di ticketing** non riporta da confermare una CRF già confermata, perché la piattaforma non se ne accorge; se fatto dalla piattaforma sì.

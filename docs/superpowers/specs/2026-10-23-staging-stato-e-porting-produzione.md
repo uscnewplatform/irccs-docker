@@ -50,7 +50,7 @@ Per le 9 immagini cambiate solo nei jar di common si e' usato un "delta" sopra l
 12. Prove con il flag spento (pannello ticket, home paziente, "I miei ticket"), poi accensione `CRF_CONFIRM_REQUIRE_CLOSED_TICKETS=true` su studio-clinico e prove 409 / 200 / deroga / 503.
 12bis. **Segreto HMAC del segno di chiusura:** `ZAMMAD_CLOSURE_HMAC_SECRET` nel `.env` (lungo e casuale, `openssl rand -base64 48`) e la riga `zammad.closure.hmac-secret=${ZAMMAD_CLOSURE_HMAC_SECRET:}` nella config del ms zammad. Senza, il ms logga un WARN e i segni non sono firmati. Il segreto si genera sul server e non si salva nel repo.
 12quater. **Admin del centro:** assegnare `internal:manage:center-tickets` ai gruppi Admins (vedi sezione 8).
-12ter. **Farmacovigilanza** (e ogni gruppo che deve chiudere ticket) ha bisogno del ruolo `internal:close:ticket` sul gruppo Keycloak: su staging assegnato il 24/10 a Farmacovigilanza IRCCS.
+12ter. **Farmacovigilanza** (e ogni gruppo che deve chiudere ticket) ha bisogno del ruolo `internal:close:ticket` sul gruppo Keycloak: su staging assegnato il 24/10 a Farmacovigilanza IRCCS. Dal 25/10 Farmacovigilanza IRCCS ha anche `internal:confirm:crf`: il pulsante «Conferma CRF» lo vedono solo i gruppi con quel ruolo (Admins e Farmacovigilanza).
 13. **Ticket gia' chiusi prima della versione:** non hanno il marcatore `crfclosure` e continuano a bloccare finche' non convalidati (script di bonifica da decidere con il cliente).
 
 ## 4. Cose scoperte su staging (da non ripetere in produzione)
