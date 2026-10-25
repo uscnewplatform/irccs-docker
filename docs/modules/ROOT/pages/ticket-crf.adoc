@@ -353,6 +353,8 @@ Due livelli, entrambi su ogni operazione sui ticket:
 | Zammad ha negato la scrittura all'utente e il ms ha scritto con l'identità di servizio (operazione: articolo, chiusura, riapertura, convalida).
 |===
 
+Ogni evento di business e ogni consultazione con `patient` nella richiesta porta il *paziente* come entità dell'`AuditEvent` (ruolo Patient) e come `auditPatient` nella riga di log, insieme a `auditBusinessEvent`, `auditQuestionnaire` e `auditUser`: gli eventi dei ticket compaiono quindi nella dashboard Grafana «Timeline paziente», che ha una sezione *Ticket sulle CRF* (conteggi di aperti, risposte, chiusure/convalide, riaperture e scritture con identità di servizio, più il dettaglio degli eventi). Per le interrogazioni FHIR: `AuditEvent?subtype=ticket-closed`.
+
 Eventi della conferma delle CRF (già presenti):
 
 [cols="2,3"]
@@ -379,7 +381,8 @@ Limiti noti:
 
 * i codici degli eventi di business dei ticket sono definiti nel ms zammad (`TicketAuditService`), non nella libreria comune: vanno allineati a mano con `monitoring-config` se si vogliono dashboard o alert dedicati;
 * la motivazione resta anche nella conversazione del ticket in Zammad; nello store di audit è quella registrata al momento dell'azione;
-* gli eventi di business non coprono le letture (elenchi, conversazione): quelle restano nell'audit generico, che ora porta paziente e CRF nel dettaglio.
+* gli eventi di business non coprono le letture (elenchi, conversazione): quelle restano nell'audit generico, che ora porta paziente e CRF nel dettaglio e il paziente come entità quando la richiesta lo indica;
+* i pannelli Grafana sono provisionati da `monitoring-config/dashboards/irccs-patient-timeline.json`: lo staging non ha lo stack di monitoraggio, quindi li ho verificati solo nel formato delle query e dei campi emessi dal ms (`auditPatient`, `auditBusinessEvent`, `auditQuestionnaire`), non a schermo.
 
 == Controlli sulla creazione e sul riporto da confermare
 
