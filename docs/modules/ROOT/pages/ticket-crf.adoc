@@ -41,6 +41,18 @@ Questa pagina descrive cosa vede e può fare ciascun utente, le regole, e come �
 
 | Chiusura e riapertura
 | Solo i gruppi con la capability `internal:close:ticket`. Chi apre un ticket, o ci risponde, non può chiuderlo da solo.
+
+| Gruppo destinatario
+| Un ticket di CRF si assegna a *un solo gruppo*, scelto tra i gruppi del *centro del paziente* (e sottogruppi) in cui l'utente può aprire ticket (`GET tickets/groups-for-patient`). Per coinvolgere due gruppi si aprono due ticket.
+
+| Priorità
+| Alta, normale (default) o bassa, scelta *solo da chi apre* il ticket. Compare come etichetta nel pannello, in «I miei ticket» e nel popup delle news.
+
+| News di studio
+| Ticket di ambito *STUDIO* nel gruppo `annunci_<centro>`, senza paziente: non bloccano mai. Dalla card dello studio nella home il click su «News studio» apre un popup in sola lettura (dalla più recente, prima le aperte, con scadenza). Solo le news possono avere *allegati* (max 3 file da 10 MB; pdf, png, jpg, docx, xlsx, csv, txt; tipo e contenuto verificati dal microservizio; nessun antivirus).
+
+| CRF compilate dal paziente
+| Le CRF con l'estensione `render-as-patient-questionnaire` (compresi i diari) non hanno ticket né «Conferma CRF»: il microservizio non crea ticket e il blocco risponde sempre «libero».
 |===
 
 == Attori e permessi
@@ -53,7 +65,7 @@ I permessi applicativi (`internal:*`) arrivano dai *gruppi utente* dell'utente n
 
 | _(nessuna capability)_
 | Chi vede il paziente nel proprio contesto
-| Leggere i ticket del paziente e rispondere.
+| Aprire ticket e vedere/rispondere a quelli che ha aperto o assegnati al proprio gruppo (vedi _Visibilità_).
 
 | `internal:confirm:crf`
 | Gruppi che confermano le CRF
@@ -66,17 +78,29 @@ I permessi applicativi (`internal:*`) arrivano dai *gruppi utente* dell'utente n
 | `internal:override:ticket-gate`
 | Pochi responsabili
 | Confermare nonostante ticket aperti o non verificabili, con motivazione di 10-500 caratteri e audit sincrono.
+
+| `internal:manage:center-tickets`
+| Gruppi Admins del centro
+| Admin del centro: il sync Keycloak->Zammad dà `full` su *tutti* i gruppi Zammad del centro; vedono e gestiscono i ticket di ogni gruppo del centro (la chiusura richiede comunque `internal:close:ticket`). Si crea con `add-ticket-gate-roles.py` e si assegna ai gruppi Admins.
 |===
 
 == Visibilità
 
-La regola è una sola: *chi vede il paziente nell'applicazione, nel contesto (organizzazione/gruppo) attivo, vede i suoi ticket*. Il microservizio non copia le regole di visibilità: chiede all'anagrafica pazienti se quel paziente è visibile per quell'utente.
+Un ticket di CRF lo vede chi soddisfa *entrambe* le condizioni:
+
+. vede il paziente nell'applicazione, nel contesto (organizzazione/gruppo) attivo;
+. ha *a che fare col ticket*: l'ha aperto, oppure ha il permesso di lettura (`read`, `change`, `full`) sul *gruppo Zammad a cui è assegnato*.
+
+Chi vede il paziente ma non appartiene al gruppo del ticket (e non l'ha aperto) *non* lo vede in nessuna vista (elenco della CRF, del paziente, «I miei ticket», conversazione, allegati) e non può rispondere, chiudere o riaprire. Il *blocco della conferma* resta invece valido per tutti: lo decide il server con una ricerca di servizio, e a chi non vede il ticket il riepilogo mostra solo id e stato. Rispondere, chiudere e riaprire richiedono in più la *scrittura* (aver aperto il ticket o `change`/`full` sul gruppo): la sola lettura non basta. Gli *admin del centro* (ruolo `internal:manage:center-tickets`) hanno `full` su tutti i gruppi del centro.
+
+Il microservizio non copia le regole di visibilità del paziente: chiede all'anagrafica pazienti se quel paziente è visibile per quell'utente.
 
 * La verifica è `GET /fhir/Patient/{id}` sull'anagrafica con le credenziali dell'utente e gli header di contesto (`X-Context-Token`, `X-Active-Group`). `200` = visibile, qualunque altra risposta = non visibile.
 * È *fail-closed*: se la verifica non è possibile, si nega. Esito in cache 30 secondi.
 * Vale per elenco, conversazione, risposta, chiusura, riapertura, riepilogo, elenco per paziente e creazione. Un ticket di ambito CRF richiede un paziente visibile; quelli di ambito STUDIO non sono legati a un paziente.
 * Le *note interne* di Zammad le vede solo chi ha permesso di modifica sul gruppo Zammad o è assegnatario del ticket.
-* Se Zammad nega la scrittura all'utente ma l'applicazione la consente, il microservizio scrive con l'identità di servizio e antepone `[Nome - via piattaforma]` al testo, così l'autore resta riconoscibile.
+* Se Zammad nega la scrittura all'utente ma l'applicazione la consente (aperto da lui o `change`/`full` sul gruppo), il microservizio scrive con l'identità di servizio e antepone `[Nome - via piattaforma]` al testo, così l'autore resta riconoscibile.
+* Anche `PUT /tickets/{id}` (priorità e scadenza) e «I miei ticket» applicano la visibilità del paziente.
 
 NOTE: Il permesso di *panoramica* nell'interfaccia di Zammad dipende invece dai permessi sui gruppi Zammad (`full` o `overview`), assegnati dallo scheduler di sincronizzazione con Keycloak. La piattaforma non dipende da quella vista.
 
@@ -93,7 +117,7 @@ NOTE: Il permesso di *panoramica* nell'interfaccia di Zammad dipende invece dai 
 
 Un ticket conta come chiuso per il blocco *solo se la chiusura è passata dalla piattaforma*:
 
-* chi ha la capability `internal:close:ticket` chiude dal pannello con una motivazione; la piattaforma scrive sul ticket il segno `crfclosure` (`v1|<utente>|<data>`) nella stessa richiesta dello stato;
+* chi ha la capability `internal:close:ticket` chiude dal pannello con una motivazione; la piattaforma scrive sul ticket il segno `crfclosure` nella stessa richiesta dello stato. Il segno è *firmato*: `v1|<utente>|<data>|<firma>`, con firma HMAC-SHA256 legata all'id del ticket e segreto `zammad.closure.hmac-secret` (variabile `ZAMMAD_CLOSURE_HMAC_SECRET`). Con il segreto impostato, un segno scritto a mano in Zammad, con firma errata o copiato da un altro ticket *non vale*; senza segreto il ms logga un WARN e usa il formato non firmato `v1|<utente>|<data>` (da evitare). Cambiare il segreto invalida i segni già scritti: le chiusure vanno riconvalidate dal pannello;
 * un ticket *chiuso direttamente in Zammad* (senza quel segno) *continua a bloccare*: nel pannello compare «Chiuso senza convalida» e un utente con la capability può convalidarlo («Convalida chiusura», con motivazione obbligatoria);
 * un segno vecchio non copre una nuova chiusura diretta: vale solo se è contemporaneo o successivo all'ultima chiusura in Zammad;
 * riaprire dal pannello toglie il segno;
@@ -268,7 +292,10 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 * *Fail-closed* su visibilità, capability, stato non verificabile e audit della deroga.
 * *Audit*: eventi `crf-confirm-blocked-by-tickets` e `ticket-gate-override`; l'audit della deroga è obbligatorio.
 * *Log*: si registrano successo, servizio e identificativi; mai token, risposte o dati personali.
-* *Segreti*: il token Zammad va gestito come segreti dell'ambiente. Il token oggi è in chiaro in `application.properties` e va ruotato e spostato in un secret prima della produzione.
+* *Segreti*: il token Zammad (`ZAMMAD_TOKEN_SERVICE`) e il segreto HMAC (`ZAMMAD_CLOSURE_HMAC_SECRET`) arrivano dall'ambiente e non stanno nel repository. Il default impacchettato del token è ora vuoto; il token che era in chiaro nella storia git del ms zammad e nelle immagini già pubblicate va *ruotato*.
+* *Risposte ridotte*: dopo creazione o modifica di un ticket il ms restituisce solo i campi ammessi (mai articoli o campi interni) e, in caso di errore, un messaggio generico; le chiamate a Zammad hanno timeout.
+* *Sync Keycloak->Zammad*: un utente Zammad esistente si collega a un account Keycloak per email *solo se l'email è verificata*; le email non compaiono nei log.
+* *News di studio*: non possono indicare paziente, ciclo, compilazione o CRF.
 
 == Controlli sulla creazione e sul riporto da confermare
 
@@ -321,6 +348,10 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 | `true`
 | Verifica la visibilità del paziente tramite l'anagrafica.
 
+| `zammad.closure.hmac-secret`
+| _(vuoto = segni non firmati)_
+| Segreto per firmare il segno di chiusura dei ticket (`ZAMMAD_CLOSURE_HMAC_SECRET`, es. `openssl rand -base64 48`).
+
 | `zammad.visibility.patient-url`
 | `http://irccs-anagrafica-pazienti:8080/fhir/Patient`
 | Endpoint dell'anagrafica usato per la verifica.
@@ -336,17 +367,27 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 
 La procedura dettagliata è in `docs/superpowers/specs/` (guida di installazione) e nel file `setup/install/align_ticket_crf.sh`.
 
+== Test E2E su staging
+
+Script in `setup/test/` (Python standard library, girano sul server con utenti Keycloak temporanei; richiedono `E2E_PATIENT` ed `E2E_CAREPLAN`):
+
+* `e2e_ticket_workflow.py` — admin apre, sperimentatore risponde, admin chiude e conferma la CRF (25 controlli).
+* `e2e_ticket_visibility.py [--keep]` — visibilità per gruppo con admin, due sperimentatori e Farmacovigilanza, più admin del centro (42 controlli).
+* `e2e_ticket_roles.py [--keep]` — sperimentatore apre a Farmacovigilanza che chiude; stesso caso con risposta e chiusura dell'admin del centro (33 controlli).
+
 == Limiti noti
 
-* Gli allegati dei ticket non sono scaricabili dal pannello.
+* Gli allegati sono previsti solo per le *news di studio* (sulle CRF non ci sono); nessun antivirus.
 * Nessuna notifica né aggiornamento in tempo reale: i dati si aggiornano al ritorno sulla finestra e ogni 15 secondi nelle liste.
 * Il flag del blocco è *globale*, non per singolo studio.
 * Aprire o riaprire un ticket direttamente in Zammad non riporta da confermare la CRF già confermata (la piattaforma non lo rileva).
 * Una chiusura fatta in Zammad da un'automazione (per esempio "chiudi dopo N giorni") resta bloccante finché non la si convalida dal pannello.
-* Il blocco non copre la modifica diretta (PATCH) delle compilazioni né l'import.
-* Le compilazioni del paziente (link con token, `patient-interview`) non sono toccate dal blocco; `/certify` non ha deroga.
+* Il blocco non copre la modifica diretta (PATCH) delle compilazioni. L'import Bundle con CRF già completate richiede la capability di conferma; il completamento da link (token) passa dal blocco.
+* `patient-interview` e le CRF compilate dal paziente non gestiscono ticket; `/certify` non ha deroga.
 * Un ticket aperto su una CRF di uno Step importato in un ciclo segna lo Step proprietario del ciclo.
 * In Zammad senza motore di ricerca (Elasticsearch) la ricerca testuale per campo restituisce risultati vuoti; la piattaforma non ne dipende (usa la ricerca a condizioni).
 * Un ticket creato direttamente in Zammad senza gli attributi `patient`, `careplan` e `crf` non è visto dal blocco.
 * Ogni conferma con il blocco acceso fa una chiamata a Zammad: se Zammad è giù, nessuno conferma.
 * Il permesso di panoramica nell'interfaccia di Zammad segue i gruppi Zammad, non la visibilità dell'applicazione.
+* Il blocco, se la compilazione salvata non si legge per un guasto (non 404), rifiuta la conferma con 503 invece di fidarsi del body; con il blocco spento il log lo segnala una volta con un WARN.
+* La deroga (motivazione) viaggia solo sulla scrittura che porta la CRF a `completed`; la motivazione può essere codificata (`utf8-uri:`) per i caratteri non Latin-1. La motivazione resta in audit come testo libero: non inserire dati identificativi.
