@@ -421,6 +421,214 @@
         "wrapLogMessage": true,
         "enableLogDetails": true
       }
+    },
+    {
+      "id": 11,
+      "type": "row",
+      "title": "Ticket sulle CRF",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "panels": []
+    },
+    {
+      "id": 12,
+      "type": "stat",
+      "title": "Ticket aperti",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 46
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "0"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "queryType": "range",
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=\"ticket-created\"} | json p=\"mdc.auditPatient\" | p=~\"(Patient/)?${patient}\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "stat",
+      "title": "Risposte ai ticket",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 46
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "0"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "queryType": "range",
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=\"ticket-replied\"} | json p=\"mdc.auditPatient\" | p=~\"(Patient/)?${patient}\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "type": "stat",
+      "title": "Ticket chiusi / convalidati",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 46
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "0"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "queryType": "range",
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=~\"ticket-closed|ticket-closure-validated\"} | json p=\"mdc.auditPatient\" | p=~\"(Patient/)?${patient}\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "stat",
+      "title": "Ticket riaperti / scritture con identità di servizio",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 46
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "0"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "queryType": "range",
+          "expr": "sum(count_over_time({audit_trail=\"true\", audit_business_event=~\"ticket-reopened|ticket-service-identity-used\"} | json p=\"mdc.auditPatient\" | p=~\"(Patient/)?${patient}\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "type": "table",
+      "title": "Ticket: dettaglio degli eventi",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 51
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Time",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "queryType": "range",
+          "expr": "{audit_trail=\"true\", audit_business_event=~\"ticket-.*|ticket-gate-override|crf-confirm-blocked-by-tickets|crf-confirmation-reverted-by-ticket\"} | json p=\"mdc.auditPatient\", evento=\"mdc.auditBusinessEvent\", ticket=\"mdc.auditResourceId\", utente=\"mdc.auditUser\", crf=\"mdc.auditQuestionnaire\", azione=\"mdc.auditAction\", esito=\"mdc.auditOutcome\" | p=~\"(Patient/)?${patient}\" | line_format \"\""
+        }
+      ]
     }
   ]
 }
