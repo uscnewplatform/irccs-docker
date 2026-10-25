@@ -19,19 +19,25 @@ Questa pagina descrive cosa vede e può fare ciascun utente, le regole, e come �
 | Dal pulsante *Ticket* della CRF si apre un ticket legato a paziente, ciclo (CarePlan) e questionario. Può essere di ambito *CRF* (blocca la conferma) o di ambito *STUDIO* (non blocca).
 
 | Pannello ticket
-| Nella pagina CRF il pannello laterale elenca i ticket della CRF, mostra la conversazione (solo testo), permette di rispondere e, a chi ne ha il diritto, di chiudere e riaprire.
+| Nella pagina CRF il pannello laterale elenca i ticket della CRF con filtri a chip e conteggi (*Aperti*, *Tutti*, *Da convalidare*), mostra la conversazione (solo testo) in cronologia con l'avanzamento del ticket (aperto, preso in carico, chiuso), permette di rispondere e, a chi ne ha il diritto, di chiudere e riaprire. Un pallino segnala i ticket aggiornati dopo l'ultima apertura da questo browser (ricordata nel `localStorage`, solo per chi guarda).
+
+| Banner «conferma bloccata»
+| Sopra i pulsanti della CRF, con il blocco acceso e ticket bloccanti, un banner dice quanti ticket bloccano e quali (id e stato), usando lo stesso riepilogo del pulsante «Conferma CRF».
 
 | Ticket aperti in home paziente
-| In *testa* ai pulsanti della home paziente un riquadro apribile e richiudibile elenca i ticket non chiusi del paziente. Ogni riga ha il pulsante *Apri la CRF* che porta direttamente alla CRF, già sul ciclo e sulla scheda giusti.
+| In *testa* ai pulsanti della home paziente una fascia «Ticket da seguire», aperta di default e comprimibile, mostra una carta per ogni ticket non chiuso del paziente, con priorità, stato e il pulsante *Apri la CRF* che porta direttamente alla CRF, già sul ciclo e sulla scheda giusti.
 
 | Icona nella tabella pazienti
 | Accanto allo stato di ogni paziente compare un'icona se ha ticket aperti sulle CRF (si vedono entrando nella home). Una sola chiamata per le righe visibili; vale solo per i pazienti che l'utente vede. Se il servizio non risponde l'icona non compare.
 
 | I miei ticket
-| La voce *I miei ticket* del menu del profilo apre una pagina interna con tutti i ticket di CRF dell'utente (aperti da lui, assegnati a lui o dei gruppi che legge in Zammad), schede *Aperti* e *Tutti*, ricerca e pulsante *Apri la CRF*. Il numero nel menu coincide con le righe di *Aperti*. Un ticket chiuso direttamente in Zammad senza convalida resta tra gli *Aperti* (è bloccante). Differenza voluta con la home paziente: la home segue la visibilità del paziente, la pagina segue anche i permessi Zammad sul gruppo.
+| La voce *I miei ticket* del menu del profilo apre una pagina interna con tutti i ticket di CRF dell'utente (aperti da lui, assegnati a lui o dei gruppi che legge in Zammad), filtri a chip con conteggi (*Aperti*, *Assegnati a me*, *Aperti da me*, *Da convalidare*, *Chiusi*), ricerca e pulsante *Apri la CRF*. Su schermi larghi (da 1200 pixel) un'anteprima a destra mostra gli ultimi messaggi del ticket selezionato; su schermi stretti la tabella diventa un elenco di carte. Il numero nel menu coincide con le righe di *Aperti*. Un ticket chiuso direttamente in Zammad senza convalida resta tra gli *Aperti* (è bloccante). Differenza voluta con la home paziente: la home segue la visibilità del paziente, la pagina segue anche i permessi Zammad sul gruppo.
 
 | Icone sui ticket aperti
 | Un'icona ticket compare sul *ciclo* (striscia in alto), sul *gruppo* di CRF a sinistra (Step), sulla *scheda* della singola CRF e sui tab dei gruppi importati, ma solo dove ci sono ticket aperti. Il tooltip indica quanti.
+
+| Pulsante «Conferma CRF»
+| Disabilitato quando la conferma non è possibile: ticket bloccanti, stato dei ticket non verificabile (sistema in manutenzione), riepilogo ancora in caricamento, salvataggio o importazione in corso, utente senza il diritto di conferma. Con ticket bloccanti o stato non verificabile, chi ha il ruolo di deroga (e il server la ammette) vede accanto il pulsante *«Conferma con deroga…»*, che apre la finestra con motivazione obbligatoria. La decisione vera resta del server (409/503): il pulsante la anticipa, non la sostituisce.
 
 | Blocco della conferma CRF
 | Con il blocco attivo, "Conferma CRF" è impedito finché la CRF ha ticket non chiusi. Esiti: confermabile, bloccata da ticket aperti, oppure stato dei ticket non verificabile.
@@ -83,6 +89,29 @@ I permessi applicativi (`internal:*`) arrivano dai *gruppi utente* dell'utente n
 | Gruppi Admins del centro
 | Admin del centro: il sync Keycloak->Zammad dà `full` su *tutti* i gruppi Zammad del centro; vedono e gestiscono i ticket di ogni gruppo del centro (la chiusura richiede comunque `internal:close:ticket`). Si crea con `add-ticket-gate-roles.py` e si assegna ai gruppi Admins.
 |===
+
+== Interfaccia e schermi
+
+L'interfaccia dei ticket si adatta alla larghezza dello schermo (punti di rottura MUI: *mobile* sotto 600 pixel, *tablet* 600–1199, *desktop* da 1200):
+
+[cols="1,3"]
+|===
+| Schermata | Comportamento
+
+| Pannello ticket
+| Desktop e tablet: cassetto a destra (520–560 pixel) con elenco in alto e conversazione sotto, affiancati. Mobile: a tutta pagina, elenco e conversazione sono due pagine con la freccia per tornare; risposta e «Chiudi ticket…» restano in basso.
+
+| Nuovo ticket
+| Finestra in tre passi su una schermata: *a chi* (carte dei gruppi del centro del paziente, senza il prefisso comune del centro), *priorità* (bassa, normale, alta) e *cosa succede* (scorciatoie «Dato incongruente», «Chiarimento», «Correzione richiesta»; titolo e messaggio). In testa i riferimenti (paziente, ciclo, CRF) e l'avviso che la CRF resta non confermabile finché il ticket non è chiuso. Su mobile è a tutto schermo.
+
+| I miei ticket
+| Filtri a chip, ricerca, tabella con anteprima (desktop) o carte (mobile).
+
+| Home paziente e news di studio
+| Fascia di carte (home); popup con la news più recente aperta, scadenza e priorità evidenziate e allegati (news).
+|===
+
+Componenti: `TicketDrawer`, `NewTicketDialog`, `TicketBlockBanner`, `TicketStatusChip`, `TicketStepper`, `TicketGroupSelect`, `TicketPrioritySelect`, `MyTicketsPage`, `PatientOpenTickets`, `StudyNewsDialog`. I colori e la logica di presentazione (tono dello stato, tappa di avanzamento, conteggi, ultima lettura, nomi dei gruppi) stanno in `src/fhir/service/Ticket/ticketUi.ts`, con test. Nessuna regola di visibilità o di blocco è nel client: decide sempre il server. Le traduzioni sono in it, en, de e fr.
 
 == Visibilità
 
@@ -198,7 +227,7 @@ Conseguenza voluta: se Zammad non è raggiungibile o è lento, *la conferma dell
 | Componente | Ruolo
 
 | Dashboard React
-| Pannello ticket, riquadro in home paziente, icone, pulsante di conferma con deroga, form dei gruppi con le capability.
+| Pannello ticket, banner di conferma bloccata, fascia in home paziente, icone, pulsante di conferma con deroga, nuovo ticket, form dei gruppi con le capability.
 
 | `irccs-microservice-zammad`
 | Unica porta verso Zammad (e unico detentore del suo token): elenco, conversazione, risposta, chiusura/riapertura, riepilogo, elenco per paziente, `open-for-gate`.
@@ -263,7 +292,7 @@ Tutti sotto `/fhir/zammad/tickets`.
 
 | `/mine?all=`
 | GET
-| Tutti i ticket di CRF dell'utente loggato, con stato, studio, paziente, CRF e collegamento diretto (massimo 300). Pagina *I miei ticket*.
+| Tutti i ticket di CRF dell'utente loggato, con stato, studio, paziente, CRF e collegamento diretto (massimo 300), più `mine` (aperto da lui) e `assignedToMe` (assegnato a lui come proprietario). Pagina *I miei ticket*.
 
 | `/crf-summary?patient=&careplan=&questionnaire=`
 | GET
@@ -296,6 +325,40 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 * *Risposte ridotte*: dopo creazione o modifica di un ticket il ms restituisce solo i campi ammessi (mai articoli o campi interni) e, in caso di errore, un messaggio generico; le chiamate a Zammad hanno timeout.
 * *Sync Keycloak->Zammad*: un utente Zammad esistente si collega a un account Keycloak per email *solo se l'email è verificata*; le email non compaiono nei log.
 * *News di studio*: non possono indicare paziente, ciclo, compilazione o CRF.
+
+== Audit e log
+
+Cosa viene tracciato oggi:
+
+[cols="2,3"]
+|===
+| Evento | Dove e cosa
+
+| Qualsiasi chiamata ai ticket del ms zammad (elenchi, conversazione, creazione, risposta, chiusura, riapertura, convalida, allegati)
+| `ZammadTicketAuditFilter`: un `AuditEvent` sullo store di audit isolato (azione C/R/U/D dal metodo HTTP, esito success/failure dallo status, utente, IP, id del ticket, metodo e percorso) e una riga di log strutturata `AUDIT ...` verso Loki. Anche i rifiuti (403) risultano come `failure`. Best-effort: un guasto dell'audit non blocca la richiesta.
+
+| Conferma bloccata dai ticket (409/503)
+| Evento `crf-confirm-blocked-by-tickets` con esito e ticket bloccanti.
+
+| Deroga del blocco
+| Evento `ticket-gate-override` con motivazione, esito del blocco, ticket e utente. *Audit obbligatorio*: se non si registra, la deroga è rifiutata (503).
+
+| CRF confermata
+| Evento `crf-confirmed`.
+
+| CRF riportata da confermare da un ticket
+| Evento `crf-confirmation-reverted-by-ticket`, audit obbligatorio prima della scrittura.
+
+| Accesso negato per mancanza di ruolo (conferma, deroga)
+| Audit di accesso negato.
+|===
+
+Limiti noti dell'audit (da migliorare):
+
+* l'audit generico distingue le operazioni solo da metodo e percorso (`.../close`, `.../reopen`, `.../validate-closure`): non c'è un evento di business per «ticket chiuso» o «risposta»; la motivazione di chiusura resta nella conversazione del ticket in Zammad, non nello store di audit;
+* nell'audit dei ticket non compare il *paziente* né la CRF, e per creazione ed elenchi l'id è `all`/`search`: non si risponde con una sola interrogazione a «chi ha guardato i ticket del paziente X»;
+* il completamento di una CRF da link bloccato dai ticket è solo nel log applicativo, senza evento di audit;
+* quando Zammad nega la scrittura e il ms scrive con l'identità di servizio, l'audit indica l'utente ma non che si è usato il ripiego.
 
 == Controlli sulla creazione e sul riporto da confermare
 
