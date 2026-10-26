@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Guida utente - Conferma delle CRF</title>
+<style>
+  @page { size: 612pt 792pt; margin: 36pt 34pt 40pt 34pt; }
+  * { box-sizing: border-box; }
+  body { font-family: "DejaVu Sans", sans-serif; font-size: 10.5pt; line-height: 1.5; color: #222; margin: 0; }
+  h1 { font-size: 20pt; line-height: 1.25; margin: 0 0 6pt; padding-bottom: 8pt; border-bottom: 2px solid #ff8000; }
+  h2 { font-size: 15pt; color: #b35900; margin: 20pt 0 8pt; page-break-after: avoid; }
+  h3 { font-size: 12pt; margin: 14pt 0 6pt; page-break-after: avoid; }
+  p { margin: 6pt 0; }
+  ul, ol { margin: 4pt 0 6pt 18pt; padding: 0; } li { margin: 3pt 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0 10pt; font-size: 9.5pt; page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  th, td { border: 1px solid #ccc; padding: 5pt 7pt; vertical-align: top; text-align: left; }
+  th { background: #f5f5f5; text-align: center; }
+  .callout { background: #fff6ef; border-left: 4px solid #ff8000; padding: 8pt 12pt; margin: 12pt 0; }
+  .ver { font-weight: bold; margin: 10pt 0 8pt; }
+  code { font-family: "DejaVu Sans Mono", monospace; font-size: 9pt; background: #f5f5f5; padding: 0 2pt; }
+  figure { margin: 10pt 0 12pt; page-break-inside: avoid; } figcaption { font-size: 9pt; color: #555; margin-top: 3pt; }
+  hr { border: 0; border-top: 1px solid #ddd; margin: 14pt 0; }
+</style>
+</head>
+<body>
+
+<h1>Guida utente — Conferma delle CRF</h1>
+<p class="ver">Piattaforma Pascale · Versione del documento: bozza 1 (26 ottobre 2026)</p>
+
+<p>Questa guida descrive la <strong>conferma delle CRF</strong> (tutte le CRF tranne le SAE) e come si intreccia con i <strong>ticket</strong> (per esempio le query della farmacovigilanza) e con la <strong>certificazione</strong>. La conferma delle SAE è un flusso a parte (firma con OTP): è nella guida «Conferma e certificazione delle CRF», § 9.</p>
+
+<div class="callout">Gli schemi delle schermate sono disegni illustrativi dei pulsanti e degli avvisi; i testi sono quelli dell'interfaccia.</div>
+
+<h2>1. Come funziona, in breve</h2>
+
+<table>
+  <tr><th>Passo</th><th>Chi lo fa</th><th>Cosa succede</th></tr>
+  <tr><td>1</td><td>Chi compila la CRF</td><td>Salva la CRF: la scheda passa a <em>In compilazione</em>.</td></tr>
+  <tr><td>2</td><td>Chi ha la capacità <strong>«Può confermare le CRF»</strong></td><td>Preme <em>Conferma CRF</em> in fondo alla scheda e conferma la domanda di sicurezza.</td></tr>
+  <tr><td>3</td><td>Il sistema</td><td>Controlla il permesso e che <strong>non ci siano ticket aperti</strong> sulla CRF. Se tutto è in regola registra <strong>chi</strong> ha confermato, <strong>quando</strong>, e la scheda diventa <em>Confermata</em>.</td></tr>
+  <tr><td>4</td><td>Se ci sono ticket aperti</td><td>La conferma è <strong>bloccata</strong> finché i ticket non sono chiusi. Chi ha il diritto di deroga può confermare comunque, con una motivazione registrata in audit (§ 4.4).</td></tr>
+  <tr><td>5</td><td>Chiunque modifichi la CRF dopo la conferma</td><td>La scheda risulta <em>Modificata – Da confermare</em> e va riconfermata.</td></tr>
+  <tr><td>6</td><td>Dopo la conferma di tutte le CRF</td><td>Si può passare alla delega e alla certificazione con OTP (§ 5).</td></tr>
+</table>
+
+<p><strong>Principio di fondo:</strong> i permessi dipendono dalle <strong>capacità impostate sul gruppo</strong>, mai dal suo nome. Il controllo è fatto <strong>sempre dal server</strong>: nascondere o disattivare un pulsante nell'interfaccia non basta e non è un controllo.</p>
+
+<h2>2. Configurare i gruppi</h2>
+
+<p>Nella gestione dei gruppi (<em>Gruppi</em>) le capacità che riguardano la conferma sono indipendenti: nessuna ne implica un'altra.</p>
+
+<table>
+  <tr><th>Capacità (come si legge nel gruppo)</th><th>Cosa consente</th></tr>
+  <tr><td><strong>Può confermare le CRF</strong></td><td>Usare il pulsante <em>Conferma CRF</em>.</td></tr>
+  <tr><td><strong>Può chiudere e riaprire i ticket</strong></td><td>Chiudere (con motivazione) e riaprire i ticket di una CRF, per sbloccare la conferma. Di norma è assegnata alla Farmacovigilanza.</td></tr>
+  <tr><td><strong>Può confermare una CRF anche con ticket aperti (con motivazione)</strong></td><td>Usare <em>Conferma con deroga…</em> quando ci sono ticket aperti (§ 4.4).</td></tr>
+</table>
+
+<ul>
+  <li>Un gruppo può avere più capacità e più gruppi possono avere la stessa capacità. Chi può chiudere i ticket non può per questo confermare, e viceversa.</li>
+  <li>L'amministratore di sistema (superadmin) può confermare e scavalcare il blocco.</li>
+  <li>Le modifiche ai gruppi si applicano entro circa un minuto.</li>
+  <li><strong>Interruttore del blocco dei ticket:</strong> è una impostazione dell'ambiente (<code>CRF_CONFIRM_REQUIRE_CLOSED_TICKETS</code>). Acceso, i ticket aperti bloccano la conferma; spento, non c'è nessun blocco. È lo stesso interruttore per le CRF e per le SAE.</li>
+</ul>
+
+<h2>3. Il flusso, passo per passo</h2>
+
+<h3>3.1 Lo stato della scheda</h3>
+
+<table>
+  <tr><th>Stato</th><th>Significato</th></tr>
+  <tr><td><strong>Da compilare</strong></td><td>Nessuna risposta ancora salvata. Una CRF mai aperta conta come «non confermata».</td></tr>
+  <tr><td><strong>In compilazione</strong></td><td>Risposte salvate, la CRF non è ancora confermata.</td></tr>
+  <tr><td><strong>Confermata</strong></td><td>Sulla scheda compare «Confermata da <em>nome</em> il <em>data</em>».</td></tr>
+  <tr><td><strong>Modificata – Da confermare</strong></td><td>Era confermata ed è stata modificata dopo la conferma: va riconfermata.</td></tr>
+</table>
+
+<h3>3.2 Il pulsante «Conferma CRF»</h3>
+
+<p>In fondo alla scheda, accanto a <em>Salva CRF</em> e <em>Stampa CRF</em>, compare il pulsante arancione <strong>Conferma CRF</strong>. Si presenta in tre modi:</p>
+
+<figure>
+<svg viewBox="0 0 700 150" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="DejaVu Sans, sans-serif">
+  <rect x="2" y="2" width="696" height="146" rx="6" fill="#fff" stroke="#ddd"/>
+  <!-- 1 attivo -->
+  <rect x="20" y="40" width="150" height="34" rx="4" fill="#ff9800"/><text x="95" y="62" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">✔ CONFERMA CRF</text>
+  <text x="95" y="100" text-anchor="middle" font-size="11" fill="#222" font-weight="bold">Attivo</text>
+  <text x="95" y="118" text-anchor="middle" font-size="10" fill="#555">chi può confermare</text>
+  <text x="95" y="132" text-anchor="middle" font-size="10" fill="#555">e senza ticket aperti</text>
+  <!-- 2 disabilitato con tooltip -->
+  <rect x="215" y="12" width="210" height="22" rx="3" fill="#616161"/><text x="320" y="27" text-anchor="middle" font-size="10" fill="#fff">Il tuo gruppo non può confermare le CRF.</text>
+  <rect x="270" y="40" width="100" height="34" rx="4" fill="#e0e0e0"/><text x="320" y="62" text-anchor="middle" font-size="12" fill="#9e9e9e" font-weight="bold">✔ CONFERMA CRF</text>
+  <text x="320" y="100" text-anchor="middle" font-size="11" fill="#222" font-weight="bold">Disabilitato, con il motivo</text>
+  <text x="320" y="118" text-anchor="middle" font-size="10" fill="#555">il motivo compare passando il mouse</text>
+  <!-- 3 bloccato dai ticket -->
+  <rect x="470" y="12" width="212" height="22" rx="3" fill="#616161"/><text x="576" y="27" text-anchor="middle" font-size="10" fill="#fff">Chiudi … 2 ticket su questa CRF …</text>
+  <rect x="525" y="40" width="100" height="34" rx="4" fill="#e0e0e0"/><text x="575" y="62" text-anchor="middle" font-size="12" fill="#9e9e9e" font-weight="bold">✔ CONFERMA CRF</text>
+  <text x="575" y="100" text-anchor="middle" font-size="11" fill="#222" font-weight="bold">Bloccato dai ticket</text>
+  <text x="575" y="118" text-anchor="middle" font-size="10" fill="#555">+ avviso giallo sopra i pulsanti (§ 4.2)</text>
+</svg>
+<figcaption>I tre aspetti del pulsante (disegno illustrativo).</figcaption>
+</figure>
+
+<table>
+  <tr><th>Situazione</th><th>Cosa vede l'utente</th></tr>
+  <tr><td>Gruppo con la capacità «Può confermare le CRF» (o superadmin), nessun ticket aperto</td><td>Pulsante attivo.</td></tr>
+  <tr><td>Gruppo <strong>senza</strong> la capacità</td><td>Pulsante <strong>visibile ma disabilitato</strong>; passando il mouse: «Il tuo gruppo non può confermare le CRF.»</td></tr>
+  <tr><td>Ticket aperti sulla CRF, o sistema dei ticket non raggiungibile</td><td>Pulsante disabilitato con il motivo (§ 4).</td></tr>
+  <tr><td>Salvataggio o importazione in corso</td><td>Pulsante disabilitato fino alla fine.</td></tr>
+  <tr><td>CRF già confermata, CRF compilata dal paziente, scheda per il radiologo, <strong>SAE</strong></td><td>Il pulsante <strong>non compare</strong>. Le SAE si firmano con OTP.</td></tr>
+</table>
+
+<h3>3.3 Confermare</h3>
+<ol>
+  <li>Salva la CRF, poi preme <strong>Conferma CRF</strong>.</li>
+  <li>Compare la domanda «Sei sicuro di voler confermare la CRF come completata?». Confermando, il server controlla di nuovo permesso e ticket.</li>
+  <li>Il server scrive sulla CRF <strong>data e ora</strong> e <strong>l'identificativo di chi ha confermato</strong>: li imposta lui, non si possono falsificare dal browser. La scheda mostra «Confermata da … il …».</li>
+</ol>
+<p>Se manca il permesso, il server rifiuta la conferma anche se il pulsante fosse stato attivato in qualche modo (§ 6).</p>
+
+<h3>3.4 Cosa copre lo stesso controllo</h3>
+<ul>
+  <li>Il <strong>completamento da link</strong> (CRF compilate dal paziente tramite link) e l'<strong>importazione di Bundle</strong> con CRF già completate seguono le stesse regole: senza la capacità di conferma, o con ticket aperti, vengono rifiutati e l'evento è registrato in audit.</li>
+  <li>Una CRF già confermata che viene soltanto risalvata <strong>non</strong> è una nuova conferma.</li>
+</ul>
+
+<h3>3.5 Modificare una CRF dopo la conferma</h3>
+<p>La CRF resta modificabile. Dopo la modifica la scheda risulta <em>Modificata – Da confermare</em> e va riconfermata. Se esisteva una richiesta di certificazione, o una certificazione già firmata, la richiesta decade e la firma non è più corrente (resta nello storico); vedi § 5.</p>
+
+<h2>4. I ticket (query) e il blocco della conferma</h2>
+
+<h3>4.1 Aprire un ticket</h3>
+<p>Dal pulsante <strong>Ticket</strong> della scheda si apre un ticket legato a paziente, ciclo e CRF: si sceglie il gruppo destinatario, la priorità e si scrive il messaggio. Il pulsante mostra quanti ticket aperti ci sono. I testi dei ticket restano nel sistema di ticketing (Zammad).</p>
+
+<h3>4.2 Cosa succede finché il ticket è aperto</h3>
+<ul>
+  <li>Sopra i pulsanti compare un avviso giallo: <strong>«Conferma bloccata da N ticket aperti»</strong> — «Chiudi i ticket per poter confermare la CRF. Il blocco vale per tutti, anche per chi non vede i ticket.»</li>
+  <li>Il pulsante <em>Conferma CRF</em> è disabilitato: «Chiudi (o convalida la chiusura dei) N ticket su questa CRF per poterla confermare.» Accanto compare il segnalino «N ticket aperti».</li>
+  <li>L'avviso e il segnalino li vede <strong>solo chi potrebbe confermare</strong>: per gli altri sarebbero solo rumore.</li>
+</ul>
+
+<h3>4.3 Chiudere il ticket</h3>
+<ul>
+  <li>Lo chiude chi ha la capacità <strong>«Può chiudere e riaprire i ticket»</strong> (di norma la Farmacovigilanza), scrivendo una <strong>motivazione</strong> che resta nella conversazione. Chi ha solo aperto il ticket, o vi ha risposto, non può chiuderlo.</li>
+  <li>Un ticket chiuso <strong>fuori dalla piattaforma</strong> (direttamente nel sistema di ticketing) <strong>continua a bloccare</strong> e compare come «Chiuso senza convalida»: chi può chiudere lo <strong>convalida</strong> dal pannello, con una motivazione.</li>
+  <li>Quando tutti i ticket sono chiusi, l'avviso scompare e chi può confermare preme <em>Conferma CRF</em>.</li>
+</ul>
+
+<h3>4.4 Confermare con deroga</h3>
+<p>Chi ha la capacità <strong>«Può confermare una CRF anche con ticket aperti (con motivazione)»</strong> (o è superadmin) vede, accanto al pulsante, <strong>«Conferma con deroga…»</strong>. Si apre la finestra <em>«Conferma CRF nonostante il blocco dei ticket»</em>:</p>
+<ul>
+  <li>mostra «Su questa CRF ci sono N ticket non chiusi» e i ticket coinvolti;</li>
+  <li><strong>«Motivazione (obbligatoria)»</strong>: da <strong>10 a 500 caratteri</strong>; non vanno inseriti dati identificativi del paziente;</li>
+  <li>il pulsante <strong>«Conferma comunque»</strong> registra la conferma forzata in audit con la motivazione. Se l'audit non si riesce a scrivere, la deroga è rifiutata.</li>
+</ul>
+
+<h3>4.5 Sistema dei ticket in manutenzione</h3>
+<p>Se il sistema dei ticket non risponde, lo stato dei ticket non è verificabile: compare «Ticket in manutenzione» e il pulsante resta disabilitato con «Sistema di ticket in manutenzione. Riprovare o contattare l'assistenza.» Per prudenza la conferma <strong>non</strong> passa, e la deroga non vale in questo caso (salvo una regola dell'ambiente attivabile).</p>
+
+<h3>4.6 Aprire un ticket su una CRF già confermata</h3>
+<p>Aprire, o riaprire, un ticket di una CRF <strong>già confermata</strong> la riporta a <em>Da confermare</em> (le informazioni di conferma si tolgono e l'evento è registrato in audit). Una richiesta di certificazione in corso decade. Chiuso il ticket, la CRF si riconferma come al solito. Questo <strong>non</strong> vale per le SAE.</p>
+
+<div class="callout"><strong>Riepilogo del blocco.</strong> Ticket aperto → conferma bloccata per tutti; chiusura (o convalida) → si sblocca; deroga → solo con il diritto dedicato e una motivazione registrata; sistema dei ticket giù → conferma sospesa.</div>
+
+<h2>5. Dalla conferma alla certificazione</h2>
+<p>Quando <strong>tutte</strong> le CRF richieste del paziente sono confermate, chi ha la capacità «Può scegliere il gruppo che certifica le CRF» assegna il gruppo certificatore e un membro di quel gruppo firma con OTP. Se in seguito una CRF cambia (modifica, o ticket aperto su una CRF confermata), la certificazione risulta <em>non più corrente</em> e va rifatta. I dettagli sono nella guida «Conferma e certificazione delle CRF», §§ 2–3. Le CRF SAE, i questionari compilati dal paziente, le schede di eleggibilità e le schede del Diario non contano come CRF da confermare.</p>
+
+<h2>6. Messaggi e cause</h2>
+
+<table>
+  <tr><th>Messaggio (sintesi)</th><th>Quando</th></tr>
+  <tr><td>«Il tuo gruppo non può confermare le CRF.» (tooltip del pulsante)</td><td>Il gruppo attivo non ha la capacità di conferma.</td></tr>
+  <tr><td>«You are not authorized to confirm CRFs.» (403)</td><td>La conferma è arrivata al server senza la capacità (per esempio da un'altra applicazione). Il messaggio del server è in inglese.</td></tr>
+  <tr><td>«Non puoi confermare la CRF: ci sono ticket non chiusi. Chiudili e riprova.» (409)</td><td>Conferma con ticket aperti, senza deroga.</td></tr>
+  <tr><td>«Sistema di ticket in manutenzione. Riprovare o contattare l'assistenza.» (503)</td><td>Il sistema dei ticket non risponde: conferma sospesa.</td></tr>
+  <tr><td>«Non autorizzato a scavalcare il blocco dei ticket.» (403)</td><td>Deroga richiesta da chi non ha il diritto.</td></tr>
+  <tr><td>«La motivazione dell'override non è valida.» (422)</td><td>Motivazione troppo breve o troppo lunga (10–500 caratteri).</td></tr>
+</table>
+
+<h2>7. Cosa viene registrato</h2>
+<ul>
+  <li><strong>Sulla CRF:</strong> data e ora della conferma e identificativo di chi ha confermato; se la CRF viene riportata da confermare, queste informazioni si tolgono.</li>
+  <li><strong>In audit</strong> (chi, quando, su quale paziente e CRF, con quale esito):
+    <ul>
+      <li>CRF confermata;</li>
+      <li>conferma bloccata dai ticket (anche quando il blocco è per sistema non verificabile e per completamento da link o import);</li>
+      <li>deroga al blocco, con motivazione, ticket coinvolti e autore;</li>
+      <li>CRF riportata da confermare perché è stato aperto o riaperto un ticket;</li>
+      <li>ogni apertura, risposta, chiusura, riapertura e convalida dei ticket.</li>
+    </ul>
+  </li>
+  <li>I testi e gli allegati dei ticket restano <strong>solo</strong> nel sistema di ticketing: la piattaforma scambia solo numero e stato dei ticket.</li>
+</ul>
+
+<h2>8. Come è stata provata la funzione</h2>
+<p>Sulla piattaforma di prova (staging), il 23–25 ottobre 2026:</p>
+<ul>
+  <li>prove del blocco con ticket aperti, chiusi e chiusi fuori piattaforma, deroga e sistema dei ticket spento: tutte superate;</li>
+  <li>prove automatiche del flusso dei ticket (apertura, risposta, chiusura, convalida, riapertura): 25 su 25; e della visibilità dei ticket per gruppo: 42 su 42.</li>
+</ul>
+<p><strong>Da collaudare in questa bozza:</strong> il pulsante «Conferma CRF» visibile ma disabilitato, con il motivo nel tooltip, per i gruppi senza la capacità (comportamento ripristinato il 26 ottobre); le schermate vere al posto dei disegni di § 3.2.</p>
+
+</body>
+</html>
