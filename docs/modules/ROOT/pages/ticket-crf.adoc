@@ -55,7 +55,7 @@ Questa pagina descrive cosa vede e può fare ciascun utente, le regole, e come �
 | Alta, normale (default) o bassa, scelta *solo da chi apre* il ticket. Compare come etichetta nel pannello, in «I miei ticket» e nel popup delle news.
 
 | News di studio
-| Ticket di ambito *STUDIO* nel gruppo `annunci_<centro>`, senza paziente: non bloccano mai. Dalla card dello studio nella home il click su «News studio» apre un popup in sola lettura (dalla più recente, prima le aperte, con scadenza). Solo le news possono avere *allegati* (max 3 file da 10 MB; pdf, png, jpg, docx, xlsx, csv, txt; tipo e contenuto verificati dal microservizio; nessun antivirus).
+| Ticket di ambito *STUDIO* senza paziente: non bloccano mai. Una news è *un solo ticket* nel gruppo Zammad globale `annunci_tutti`, creato dal sync (senza organizzazione): ogni utente sincronizzato ha `read`/`overview`; chi ha il ruolo admin in una famiglia ha `full` e può pubblicare. Dalla card dello studio nella home il click su «News studio» apre un popup (dalla più recente, prima le aperte, con scadenza). Chi pubblica ha nel popup il blocco «Gestisci la news»: aggiungere un aggiornamento, cambiare scadenza e priorità, chiudere con motivazione (una news chiusa non si riapre). Gli altri utenti la leggono soltanto (`canReply`/`canClose` falsi, 403 se ci provano). I segnaposto `00000` in paziente, ciclo e compilazione sono accettati come vuoti. Solo le news possono avere *allegati* (max 3 file da 10 MB; pdf, png, jpg, docx, xlsx, csv, txt; tipo e contenuto verificati dal microservizio; nessun antivirus).
 
 | CRF compilate dal paziente
 | Le CRF con l'estensione `render-as-patient-questionnaire` (compresi i diari) non hanno ticket né «Conferma CRF»: il microservizio non crea ticket e il blocco risponde sempre «libero».
@@ -317,14 +317,14 @@ Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create d
 
 * *Nessuna copia dei ticket*: il testo resta in Zammad e il blocco espone solo id e stato dei ticket aperti.
 * *Testo sempre plain*: il microservizio rimuove HTML, script e indirizzi email dalle conversazioni prima di mostrarle.
-* *Identità dell'utente*: le scritture avvengono a nome dell'utente (`X-On-Behalf-Of`), legato all'utente Zammad tramite `keycloak_ref` = `sub` del token. Un utente sconosciuto a Zammad non scrive come altri.
+* *Identità dell'utente*: le scritture, *compresa la creazione del ticket e del suo primo messaggio*, avvengono a nome dell'utente (`X-On-Behalf-Of`), legato all'utente Zammad tramite `keycloak_ref` = `sub` del token. Un utente sconosciuto a Zammad non scrive come altri.
 * *Fail-closed* su visibilità, capability, stato non verificabile e audit della deroga.
 * *Audit*: eventi `crf-confirm-blocked-by-tickets` e `ticket-gate-override`; l'audit della deroga è obbligatorio.
 * *Log*: si registrano successo, servizio e identificativi; mai token, risposte o dati personali.
 * *Segreti*: il token Zammad (`ZAMMAD_TOKEN_SERVICE`) e il segreto HMAC (`ZAMMAD_CLOSURE_HMAC_SECRET`) arrivano dall'ambiente e non stanno nel repository. Il default impacchettato del token è ora vuoto; il token che era in chiaro nella storia git del ms zammad e nelle immagini già pubblicate va *ruotato*.
 * *Risposte ridotte*: dopo creazione o modifica di un ticket il ms restituisce solo i campi ammessi (mai articoli o campi interni) e, in caso di errore, un messaggio generico; le chiamate a Zammad hanno timeout.
 * *Sync Keycloak->Zammad*: un utente Zammad esistente si collega a un account Keycloak per email *solo se l'email è verificata*; le email non compaiono nei log.
-* *News di studio*: non possono indicare paziente, ciclo, compilazione o CRF.
+* *News di studio*: non possono indicare paziente, ciclo, compilazione o CRF (il segnaposto `00000` vale come vuoto). Rispondere, cambiare scadenza/priorità e chiudere richiedono `change` o `full` sul gruppo `annunci_tutti` (e `internal:close:ticket` per chiudere); la sola lettura non basta.
 
 == Audit e log
 

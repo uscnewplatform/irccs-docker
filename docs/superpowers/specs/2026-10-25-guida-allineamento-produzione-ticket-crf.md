@@ -134,6 +134,8 @@ Il job rigenera `versions.json`. Se si deploya a mano: `bash httpd-config/genera
 3. **Nessun** avviso «zammad.closure.hmac-secret non impostato».
 4. Dal container del ms zammad: `curl -s -o /dev/null -w '%{http_code}' http://irccs-zammad:8080/q/health` → 200; da studio-clinico: l'indirizzo in `crf.confirm.ticket-service-url` risponde.
 5. `GET /fhir/zammad/tickets/open-for-gate?patient=<id>` con il service account → 200; con un utente normale → 403.
+6. Esiste il gruppo Zammad **`annunci_tutti`** (creato dal sync, senza organizzazione): gli utenti hanno `read`/`overview`, chi ha il ruolo admin `full`. Le news di studio sono **un solo ticket** in quel gruppo: se il dashboard non lo trova usa il gruppo di ripiego (`VITE_APP_ZAMMAD_FALLBACK_GROUP_ID`), che in produzione è `annunci_admin` e lo vedono solo gli admin.
+7. I ticket aperti dalla piattaforma risultano creati dall'utente che li apre (campo `created_by_id` dell'utente, non del token di servizio).
 
 ### Passo 13. Prove funzionali su un paziente di prova [TU o CLAUDE]
 Mai su pazienti reali: usare un **paziente sintetico** con una CRF di prova. Con utenti reali nei tre gruppi:
