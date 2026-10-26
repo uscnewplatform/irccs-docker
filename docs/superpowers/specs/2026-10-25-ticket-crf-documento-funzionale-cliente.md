@@ -13,6 +13,18 @@ Regola di fondo: una CRF con ticket ancora aperti **non può essere confermata**
 
 Questo documento descrive come funzionano i ticket tra i diversi gruppi di utenti e nei diversi tipi di ticket, cosa vede e cosa può fare ciascuno, e quali prove sono state eseguite.
 
+## 1.1 Architettura in breve
+
+Lo schema è in fondo al paragrafo.
+
+- **I testi dei ticket stanno solo in Zammad.** La piattaforma non ne tiene copia: tra i servizi circolano solo numero e stato dei ticket.
+- **Un solo servizio parla con Zammad** (Servizio Ticket). Verifica a ogni richiesta chi può vedere il paziente e il ticket; la dashboard non applica regole proprie.
+- **Il blocco della conferma** è nel Servizio Studio clinico, che chiede al Servizio Ticket se ci sono ticket aperti sulla CRF.
+- **Sull'archivio clinico (FHIR)** i ticket leggono paziente, centro, ciclo e questionario. L'unica risorsa clinica modificata è la compilazione del questionario: se la CRF era già confermata, aprire o riaprire un ticket la riporta «da confermare». Ogni azione sui ticket crea un evento nel registro di audit.
+- **Utenti, gruppi e permessi** vengono da Keycloak e sono allineati periodicamente a Zammad.
+
+![Architettura dei ticket sulle CRF](img/ticket-crf-architettura.png)
+
 # 2. Le tipologie di ticket
 
 | | **Ticket di CRF** | **News di studio** |

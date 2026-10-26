@@ -10,4 +10,5 @@
 * xref:e2e-gate.adoc[Gate E2E pre-PR]
 * xref:farmaci-aifa.adoc[Import Farmaci AIFA]
 * xref:librerie-crf.adoc[Librerie CRF — Gestione e Import]
+* xref:ticket-crf.adoc[Ticket sulle CRF — Funzionale e architettura]
 * xref:changelog.adoc[Changelog]
