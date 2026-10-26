@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="1000" height="640" font-family="DejaVu Sans, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#37474f"/>
+    </marker>
+    <marker id="w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c62828"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="640" fill="#ffffff"/>
+  <text x="500" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#263238">Ticket sulle CRF — architettura</text>
+
+  <!-- Dashboard -->
+  <rect x="30" y="60" width="250" height="190" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="155" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="#0d47a1">Dashboard PASCALE</text>
+  <text x="155" y="112" text-anchor="middle" font-size="12" fill="#263238">Pannello ticket nella CRF</text>
+  <text x="155" y="132" text-anchor="middle" font-size="12" fill="#263238">Nuovo ticket · I miei ticket</text>
+  <text x="155" y="152" text-anchor="middle" font-size="12" fill="#263238">Ticket da seguire (home paziente)</text>
+  <text x="155" y="172" text-anchor="middle" font-size="12" fill="#263238">News di studio</text>
+  <text x="155" y="192" text-anchor="middle" font-size="12" fill="#263238">Pulsante «Conferma CRF»</text>
+  <text x="155" y="226" text-anchor="middle" font-size="11" font-style="italic" fill="#455a64">nessuna regola nel client: decide il server</text>
+
+  <!-- Servizio ticket -->
+  <rect x="375" y="60" width="250" height="190" rx="10" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="500" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="#1b5e20">Servizio Ticket</text>
+  <text x="500" y="112" text-anchor="middle" font-size="12" fill="#263238">Verifica chi vede il paziente e il ticket</text>
+  <text x="500" y="132" text-anchor="middle" font-size="12" fill="#263238">Apre, legge, risponde, chiude, riapre</text>
+  <text x="500" y="152" text-anchor="middle" font-size="12" fill="#263238">Segno di chiusura firmato</text>
+  <text x="500" y="172" text-anchor="middle" font-size="12" fill="#263238">Gruppo = gruppi del centro del paziente</text>
+  <text x="500" y="192" text-anchor="middle" font-size="12" fill="#263238">Allegati (solo news di studio)</text>
+  <text x="500" y="226" text-anchor="middle" font-size="11" font-style="italic" fill="#455a64">unico punto di accesso a Zammad</text>
+
+  <!-- Zammad -->
+  <rect x="720" y="60" width="250" height="190" rx="10" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
+  <text x="845" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="#e65100">Zammad</text>
+  <text x="845" y="112" text-anchor="middle" font-size="12" fill="#263238">Testi e conversazioni dei ticket</text>
+  <text x="845" y="132" text-anchor="middle" font-size="12" fill="#263238">Stati, priorità, gruppi, allegati</text>
+  <text x="845" y="152" text-anchor="middle" font-size="12" fill="#263238">Riferimenti sul ticket:</text>
+  <text x="845" y="172" text-anchor="middle" font-size="12" fill="#263238">paziente · ciclo · CRF · compilazione</text>
+  <text x="845" y="226" text-anchor="middle" font-size="11" font-style="italic" fill="#455a64">i dati dei ticket restano solo qui</text>
+
+  <!-- Studio clinico -->
+  <rect x="375" y="320" width="250" height="110" rx="10" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+  <text x="500" y="348" text-anchor="middle" font-size="15" font-weight="bold" fill="#4a148c">Servizio Studio clinico</text>
+  <text x="500" y="372" text-anchor="middle" font-size="12" fill="#263238">«Conferma CRF»: se ci sono ticket</text>
+  <text x="500" y="390" text-anchor="middle" font-size="12" fill="#263238">aperti, la conferma è bloccata</text>
+  <text x="500" y="414" text-anchor="middle" font-size="11" font-style="italic" fill="#455a64">chiede solo numero e stato dei ticket</text>
+
+  <!-- Archivio FHIR -->
+  <rect x="30" y="480" width="590" height="140" rx="10" fill="#fce4ec" stroke="#ad1457" stroke-width="2"/>
+  <text x="325" y="508" text-anchor="middle" font-size="15" font-weight="bold" fill="#880e4f">Archivio clinico (FHIR)</text>
+  <text x="50" y="536" font-size="12" fill="#263238"><tspan font-weight="bold">Solo lettura:</tspan> Paziente · Centro (Organization) · Ciclo (CarePlan) · Questionario</text>
+  <text x="50" y="560" font-size="12" fill="#263238"><tspan font-weight="bold">Modificata:</tspan> Compilazione (QuestionnaireResponse) — se la CRF era confermata,</text>
+  <text x="50" y="578" font-size="12" fill="#263238">   all'apertura o riapertura di un ticket torna «da confermare» (con audit)</text>
+  <text x="50" y="602" font-size="12" fill="#263238"><tspan font-weight="bold">Creata:</tspan> registro di audit (AuditEvent) di ogni azione sui ticket</text>
+
+  <!-- Keycloak -->
+  <rect x="720" y="320" width="250" height="110" rx="10" fill="#eceff1" stroke="#455a64" stroke-width="2"/>
+  <text x="845" y="348" text-anchor="middle" font-size="15" font-weight="bold" fill="#263238">Keycloak</text>
+  <text x="845" y="372" text-anchor="middle" font-size="12" fill="#263238">Utenti, gruppi, ruoli e permessi</text>
+  <text x="845" y="390" text-anchor="middle" font-size="12" fill="#263238">(chiusura, conferma, admin del centro)</text>
+  <text x="845" y="414" text-anchor="middle" font-size="11" font-style="italic" fill="#455a64">allineati periodicamente a Zammad</text>
+
+  <!-- Frecce -->
+  <line x1="280" y1="155" x2="373" y2="155" stroke="#37474f" stroke-width="2" marker-end="url(#a)"/>
+  <text x="326" y="146" text-anchor="middle" font-size="11" fill="#37474f">1</text>
+  <line x1="625" y1="155" x2="718" y2="155" stroke="#37474f" stroke-width="2" marker-start="url(#a)" marker-end="url(#a)"/>
+  <text x="672" y="146" text-anchor="middle" font-size="11" fill="#37474f">2</text>
+
+  <!-- Dashboard -> Studio clinico (conferma) -->
+  <path d="M155,250 L155,375 L373,375" fill="none" stroke="#37474f" stroke-width="2" marker-end="url(#a)"/>
+  <text x="165" y="320" font-size="11" fill="#37474f">3  Conferma CRF</text>
+
+  <!-- Studio clinico -> Servizio ticket (blocco) -->
+  <line x1="500" y1="320" x2="500" y2="252" stroke="#c62828" stroke-width="2" marker-end="url(#w)"/>
+  <text x="510" y="292" font-size="11" fill="#c62828">4  ticket aperti?</text>
+
+  <!-- Servizio ticket -> FHIR -->
+  <path d="M440,250 L440,300 L300,300 L300,478" fill="none" stroke="#37474f" stroke-width="2" marker-end="url(#a)"/>
+  <text x="290" y="410" text-anchor="end" font-size="11" fill="#37474f">5  legge paziente e CRF,</text>
+  <text x="290" y="426" text-anchor="end" font-size="11" fill="#37474f">riporta «da confermare»,</text>
+  <text x="290" y="442" text-anchor="end" font-size="11" fill="#37474f">scrive l'audit</text>
+
+  <!-- Studio clinico -> FHIR -->
+  <line x1="480" y1="430" x2="480" y2="478" stroke="#37474f" stroke-width="2" marker-end="url(#a)"/>
+  <text x="490" y="458" font-size="11" fill="#37474f">6  conferma</text>
+
+  <!-- Keycloak -> Zammad -->
+  <line x1="845" y1="320" x2="845" y2="252" stroke="#37474f" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#a)"/>
+  <text x="855" y="292" font-size="11" fill="#37474f">7  sincronizzazione</text>
+
+  <!-- Keycloak -> servizi (permessi) -->
+  <path d="M720,375 L627,375" fill="none" stroke="#37474f" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#a)"/>
+  <text x="673" y="366" text-anchor="middle" font-size="11" fill="#37474f">8</text>
+  <text x="725" y="470" font-size="11" fill="#455a64">1 la dashboard chiama il Servizio Ticket</text>
+  <text x="725" y="488" font-size="11" fill="#455a64">2 il Servizio Ticket legge/scrive su Zammad</text>
+  <text x="725" y="506" font-size="11" fill="#455a64">3-4 la conferma controlla i ticket aperti</text>
+  <text x="725" y="524" font-size="11" fill="#455a64">5 letture e scritture sull'archivio clinico</text>
+  <text x="725" y="542" font-size="11" fill="#455a64">6 la CRF è confermata se non c'è blocco</text>
+  <text x="725" y="560" font-size="11" fill="#455a64">7 utenti e gruppi verso Zammad</text>
+  <text x="725" y="578" font-size="11" fill="#455a64">8 permessi verificati dai servizi</text>
+</svg>
