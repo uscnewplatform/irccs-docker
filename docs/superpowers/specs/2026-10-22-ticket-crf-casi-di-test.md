@@ -157,3 +157,23 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 | H10 | Contenuto dell'audit di deroga | Chi, motivo, ticket, CRF; nessun token o testo del ticket nei log | Da provare |
 | H11 | Messaggio di manutenzione in it/en/de/fr | Presente e leggibile nelle quattro lingue | Browser locale (solo en) |
 | H12 | Manutenzione di 2 ore, regola di deroga spenta e accesa | Procedura scritta applicabile da chi non ha scritto il codice | Da provare |
+
+## L. Prove su staging del 26/10/2026 (utenti Keycloak temporanei, paziente sintetico 42995, ciclo modello 42552, dati cancellati alla fine)
+
+Script versionati in `setup/test/` (`E2E_PATIENT` ed `E2E_CAREPLAN` obbligatori; `--no-restart` per non riavviare il ms Zammad).
+
+| ID | Scenario | Atteso | Esito |
+|---|---|---|---|
+| L1 | `e2e_ticket_workflow.py`: admin apre, sperimentatore risponde, l'admin chiude e conferma | Blocco 409, sperimentatore non chiude (403), conferma dopo la chiusura | 25/25 |
+| L2 | `e2e_ticket_visibility.py`: quattro utenti dello stesso centro (V1–V4) | Vede solo il gruppo destinatario, chi ha aperto, l'admin del centro | 42/42 |
+| L3 | `e2e_ticket_roles.py`: Farmacovigilanza risponde e chiude, l'admin del centro risponde e chiude (R1–R2) | Chiusura con segno firmato, conferma subito dopo | 33/33 |
+| L4 (X1) | Autore: ticket, primo messaggio e risposta | Creatore e mittente sono l'utente (`created_by_id`), non il token di servizio | OK (29/29 e 29/29) |
+| L5 (X2) | News di studio con i segnaposto `00000` della dashboard | 201, un solo ticket nel gruppo `annunci_tutti`, creato dall'admin; senza `full` sul gruppo 403 | OK |
+| L6 (X2) | Lettura e gestione della news | Lo sperimentatore la vede ed è in sola lettura (`canReply` e `canClose` falsi, 403 se risponde o chiude); chi ha `full` risponde, cambia scadenza e priorità, chiude; una news chiusa non si riapre (403) e sparisce dall'elenco | OK |
+| L7 (X3, A10) | Blocco spento con un ticket aperto | Riepilogo libero, conferma 200 | OK (flag riportato a `true`) |
+| L8 (X3) | Blocco acceso con un ticket aperto | Riepilogo BLOCKED, conferma 409 `CRF_OPEN_TICKETS` | OK |
+| L9 (X4, C1) | Zammad non raggiungibile (`--down`: si ferma il container Rails) | 503 `CRF_TICKET_STATE_UNVERIFIABLE`, CRF non confermata; poi Zammad torna disponibile | OK (31/31) |
+| L10 (B1–B3) | Deroga con ruolo e motivo valido/corto | 200 / 422 | *Non rieseguita il 26/10*: il gruppo Admins di staging non ha il ruolo `internal:override:ticket-gate` e l'assegnazione temporanea non è stata autorizzata. Provata il 23/10 (9/9 prove) |
+
+Note: l'esito «la news è un solo ticket» si basa sulla ricerca per titolo di Zammad, che dipende dall'indice di ricerca: in staging l'indice non era aggiornato subito (0 risultati), quindi la prova è indicativa; il conteggio per gruppo conferma comunque un solo ticket nel gruppo 74.
+
