@@ -170,8 +170,12 @@ services:
     image: nexus.infocube.it/i3/irccs/irccs-httpd-dashboard/${IRCCS_HTTPD_BRANCH:-develop}:${IRCCS_HTTPD_VERSION}
     container_name: irccs-httpd-dashboard
     restart: always
+    environment:
+      # Host del vhost Zammad (httpd-config/zammad.conf). Staging: zammad.infocube.it
+      ZAMMAD_SERVER_NAME: ${ZAMMAD_SERVER_NAME:-zammad.infocube.it}
     ports:
       - "80:80"
+      - "8989:8989"
     volumes:
       - ./httpd-config/irccs.conf:/usr/local/apache2/conf/sites/irccs.conf
       - ./httpd-config/zammad.conf:/usr/local/apache2/conf/sites/zammad.conf
