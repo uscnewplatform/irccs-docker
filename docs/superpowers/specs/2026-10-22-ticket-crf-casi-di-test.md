@@ -50,7 +50,7 @@ Colonna **Copertura**: *Unit* = test automatico nel repo; *E2E locale* = provato
 | D1 | Certificazione con ticket aperti su una qualunque CRF del paziente | 409, nessun OTP | Unit |
 | D2 | Certificazione senza ticket aperti | Procede alla sfida OTP | Unit |
 | D3 | CRF completata dal paziente con ticket aperti | Fuori ambito: nessun blocco (decisione del cliente) | Non applicabile |
-| D4 | SAE | Esclusi dal blocco | Da provare |
+| D4 | SAE | Esclusi dal *riporto da confermare* della CRF. Hanno invece il proprio blocco su abilitazione e firma (vedi L11–L15) | Staging 26/10 (L11–L15) |
 | D5 | PATCH diretta della compilazione / import | Non coperti dal blocco (limite noto) | Documentato |
 
 ## E. Pannello ticket e visibilità
@@ -173,7 +173,14 @@ Script versionati in `setup/test/` (`E2E_PATIENT` ed `E2E_CAREPLAN` obbligatori;
 | L7 (X3, A10) | Blocco spento con un ticket aperto | Riepilogo libero, conferma 200 | OK (flag riportato a `true`) |
 | L8 (X3) | Blocco acceso con un ticket aperto | Riepilogo BLOCKED, conferma 409 `CRF_OPEN_TICKETS` | OK |
 | L9 (X4, C1) | Zammad non raggiungibile (`--down`: si ferma il container Rails) | 503 `CRF_TICKET_STATE_UNVERIFIABLE`, CRF non confermata; poi Zammad torna disponibile | OK (31/31) |
-| L10 (B1–B3) | Deroga con ruolo e motivo valido/corto | 200 / 422 | *Non rieseguita il 26/10*: il gruppo Admins di staging non ha il ruolo `internal:override:ticket-gate` e l'assegnazione temporanea non è stata autorizzata. Provata il 23/10 (9/9 prove) |
+| L10 (B1–B3, D0) | Deroga sulla conferma di una CRF con ruolo e motivo valido/corto | 200 con motivo valido, 422 `CRF_OVERRIDE_REASON_INVALID` con motivo corto, 409 senza deroga | OK il 26/10 (`e2e_ticket_sae.py`, ruolo assegnato ai gruppi solo per la prova e tolto) |
+| L11 (S1) | SAE con medico indicato, salvata dall'admin | Nasce il diritto di firma già abilitato (`accepted`), il medico può firmare | OK |
+| L12 (S2) | Query aperta sulla SAE, il medico prova a firmare | 409 `CRF_OPEN_TICKETS`, nessuna email OTP; deroga senza ruolo 403, con motivo corto 422, valida: parte la sfida OTP (202); codice errato 417 | OK |
+| L13 (S3) | Query chiusa, il medico firma con l'OTP (letto da Mailpit) | Riepilogo libero, firma 200, stato `signed` | OK |
+| L14 (S4) | Query aperta dopo la firma | La SAE resta firmata (`signed`, firma corrente): il ticket blocca solo una nuova firma | OK |
+| L15 (S5) | SAE corretta dopo la firma, con la query aperta | Modifica permessa (200); firma non più corrente, nuovo diritto `requested`; abilitazione 409 `CRF_OPEN_TICKETS`, con deroga corta 422, senza il ruolo di abilitazione 403, con deroga valida 200 (`accepted`); nuova firma ancora bloccata (409); chiusa la query la firma riparte e si completa | OK |
+
+Nota: `e2e_ticket_sae.py` (35/35) assegna ai gruppi Admins e Sperimentatori i ruoli di deroga e di abilitazione SAE solo per la durata della prova, li toglie sempre alla fine (anche in caso di errore) e cancella i dati creati (anche Provenance, Task e l'appartenenza del medico di prova al gruppo dei medici). Le email vanno su Mailpit.
 
 Note: l'esito «la news è un solo ticket» si basa sulla ricerca per titolo di Zammad, che dipende dall'indice di ricerca: in staging l'indice non era aggiornato subito (0 risultati), quindi la prova è indicativa; il conteggio per gruppo conferma comunque un solo ticket nel gruppo 74.
 
