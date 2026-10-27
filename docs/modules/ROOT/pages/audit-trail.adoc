@@ -412,9 +412,19 @@ organizzative e ridondanti:
 
 === Consultazione: ruoli abilitati
 
-`GET /fhir/auth/audit-events` è consentito ai gruppi Keycloak `/admin` **e** `/auditor`
-(quest'ultimo dedicato a DPO / auditor: sola lettura sull'audit trail, nessun altro
-privilegio amministrativo). Ogni consultazione genera comunque un meta-audit.
+`GET /fhir/auth/audit-events` è consentito, senza limiti di query, al gruppo Keycloak `/admin` e
+a chi ha il permesso di menu **Audit Trail** (`internal:ui:audittrail`, spunta nel form
+"Gruppi utenti"). Il gruppo `/auditor` non è più usato. Ogni consultazione genera comunque un meta-audit.
+
+Secondo caso, configurabile dalla dashboard: il ruolo di gruppo `internal:read:audit-trail`
+(form "Gruppi utenti" -> "Cronologia attività"). Chi ha **solo** questo ruolo può interrogare
+l'endpoint soltanto per la cronologia di **un singolo paziente**
+(`entity-identifier=urn:internal|Patient/{id}` più `_sort/_count/_offset/_total`) e solo se quel
+paziente è visibile al suo gruppo/centro (stessa regola di overlap dei `group_ids` della lettura
+del Patient); ogni altra query risponde 403 e il rifiuto è a sua volta tracciato. Lato dashboard
+il ruolo abilita il bottone "Cronologia" nella home paziente; la pagina trasversale `/audit-trail`
+è visibile a superadmin e a chi ha il permesso di menu Audit Trail. Ruolo e policy Keycloak si creano con
+`keycloak-config/add-audit-trail-role.py` (idempotente, `--dry-run`).
 
 Esecuzione manuale una-tantum (dall'host, HAPI audit su `127.0.0.1:8081`):
 
@@ -435,7 +445,7 @@ partizione `AUDIT` non è quindi consultabile direttamente.
 La dashboard consulta gli AuditEvent tramite l'endpoint mediato
 **`GET /auth/audit-events`** del microservizio `auth` (`useAuditTrail.ts`):
 
-* richiede autenticazione + gruppo `/admin` (403 altrimenti);
+* richiede autenticazione + gruppo `/admin` o permesso di menu `internal:ui:audittrail`, oppure il ruolo `internal:read:audit-trail` limitato a un paziente visibile (403 altrimenti);
 * inoltra i search param FHIR (`entity-identifier`, `_sort`, `_count`, …) a HAPI;
 * **ogni consultazione è a sua volta tracciata** con un AuditEvent
   (`entity.what = urn:internal|AuditEvent/query`, meta-audit).
