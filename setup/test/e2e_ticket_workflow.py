@@ -95,12 +95,16 @@ def sh(cmd):
     return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout.strip()
 
 
-KC = "http://localhost:9445"
-KC_HOST = {"Host": "irccs-keycloak:8080"}
-HTTPD = "http://localhost"
-HAPI = "http://localhost:8080/fhir"
-ZIP = sh("docker inspect zammad-ticketing_zammad-nginx_1 --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' | cut -d' ' -f1")
-ZAMMAD_TOKEN = open(HOME + "/ticket-crf-align/.zammad-token").read().strip()
+# Indirizzi di default = staging (server locale). In altri ambienti si impostano E2E_HTTPD, E2E_KC (con il percorso relativo,
+# es. https://host/backoffice), E2E_KC_HOST (intestazione Host; vuota = nessuna) ed E2E_ZAMMAD_NGINX (nome del container nginx di Zammad).
+KC = os.environ.get("E2E_KC", "http://localhost:9445")
+KC_HOST = ({"Host": os.environ["E2E_KC_HOST"]} if os.environ.get("E2E_KC_HOST") else {}) if "E2E_KC_HOST" in os.environ else {"Host": "irccs-keycloak:8080"}
+HTTPD = os.environ.get("E2E_HTTPD", "http://localhost")
+HAPI = os.environ.get("E2E_HAPI", "http://localhost:8080/fhir")
+_NGINX = os.environ.get("E2E_ZAMMAD_NGINX") or sh("docker ps --format '{{.Names}}' | grep -E 'zammad[-_]nginx' | head -1")
+ZIP = sh("docker inspect %s --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' | cut -d' ' -f1" % _NGINX)
+_TOKEN_FILE = HOME + "/ticket-crf-align/.zammad-token"
+ZAMMAD_TOKEN = open(_TOKEN_FILE).read().strip() if os.path.exists(_TOKEN_FILE) else ENV.get("ZAMMAD_TOKEN_SERVICE", "")
 
 
 def kc_admin_token():
@@ -205,8 +209,10 @@ def create_fhir_crf():
     c, q = hapi("POST", "Questionnaire", {"resourceType": "Questionnaire", "status": "active", "title": "ZZ-E2E ticket %s" % RUN,
                                           "item": [{"linkId": "a", "text": "Valore", "type": "string"}]})
     CREATED["fhir"].append("Questionnaire/" + q["id"])
+    # in ambienti con autorizzazione per gruppi la compilazione deve essere dei gruppi che la usano nella prova (come le compilazioni vere)
     c, r = hapi("POST", "QuestionnaireResponse", {
         "resourceType": "QuestionnaireResponse", "status": "in-progress", "questionnaire": "Questionnaire/" + q["id"],
+        "extension": [{"url": "group_ids", "valueString": GROUP_ADMIN}, {"url": "group_ids", "valueString": GROUP_SPER}],
         "subject": {"reference": "Patient/" + PATIENT}, "basedOn": [{"reference": "CarePlan/" + CAREPLAN}],
         "item": [{"linkId": "a", "answer": [{"valueString": "valore iniziale"}]}]})
     CREATED["fhir"].append("QuestionnaireResponse/" + r["id"])

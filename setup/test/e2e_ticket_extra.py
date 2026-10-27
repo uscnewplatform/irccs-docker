@@ -146,14 +146,17 @@ def scenario():
             "pending_time": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
             "crfdisplay": "00000", "careplan": "00000", "careplandisplay": "00000", "patient": "", "patientdisplay": "00000",
             "patientjourneydisplay": "E2E studio", "directlink": "https://example.org/e2e", "article": {"body": "News di prova automatica."}}
-    c, t = api(admin, "POST", "/zammad/tickets", news)
-    check("X2. chi non ha 'full' su annunci_tutti non pubblica (403): lo hanno solo gli utenti col ruolo admin", c == 403, c)
-    # l'admin di prova riceve 'full' sul gruppo direttamente in Zammad (come lo darebbe il sync a chi ha il ruolo admin)
+    # l'admin del centro (ruolo internal:manage:center-tickets) riceve 'full' su annunci_tutti dal sync: pubblica senza interventi
     c, t = zammad("GET", "/users/%s" % zids["admin"])
-    gids = dict((js(t) or {}).get("group_ids") or {})
-    gids[str(gid)] = ["full"]
-    c, t = zammad("PUT", "/users/%s" % zids["admin"], {"group_ids": gids})
-    check("preparazione: l'admin di prova ha full su annunci_tutti", c == 200, c)
+    perms = ((js(t) or {}).get("group_ids") or {}).get(str(gid)) or []
+    if not check("X2. il sync da' full su annunci_tutti all'admin del centro", "full" in perms, perms):
+        # ripiego per ambienti con il sync precedente: full dato direttamente in Zammad, solo per questa prova
+        gids = dict((js(t) or {}).get("group_ids") or {})
+        gids[str(gid)] = ["full"]
+        c, t = zammad("PUT", "/users/%s" % zids["admin"], {"group_ids": gids})
+        check("preparazione: l'admin di prova ha full su annunci_tutti (ripiego)", c == 200, c)
+    c, t = api(sper, "POST", "/zammad/tickets", dict(news, customer_id=zids["sper"]))
+    check("X2. chi non e' admin non pubblica (403 su annunci_tutti)", c == 403, c)
     c, t = api(admin, "POST", "/zammad/tickets", news)
     nid = (js(t) or {}).get("id")
     if nid:
