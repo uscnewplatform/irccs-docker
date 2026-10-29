@@ -285,6 +285,20 @@ Il paziente compila tramite autocomplete con ricerca live su HAPI `$expand`.
 }
 ----
 
+== Dati del farmaco per le condizioni dei CRF
+
+Quando in un CRF si sceglie un farmaco con il ValueSet AIFA (l'url contiene `aifa`), il dashboard legge con un solo `CodeSystem/$lookup` le property `forma` e `atc` del codice AIC e le rende disponibili alle condizioni FHIRPath del designer (_Hidden field_, _Read-only_, _Required_) come item annidati temporanei della risposta del farmaco:
+
+[cols="2,4", options="header"]
+|===
+| linkId | Contenuto
+
+| `<linkId del farmaco>-forma` | formulazione AIFA (testo, es. «Compressa rivestita con film»)
+| `<linkId del farmaco>-atc` | codice ATC completo (es. `A10AB01`)
+|===
+
+Non servono terminologie né script aggiuntivi: i dati sono già nelle property del CodeSystem importato (vedi _Risorse FHIR create_). Gli item sono *transitori*: non vengono salvati nel QuestionnaireResponse. Esempi di espressioni e indicazioni per configurare un campo _Unità di misura_ diverso per compresse, gocce o insuline sono nel manuale del dashboard (Designer Studio, paragrafo 6.9.6).
+
 == Fonti dati
 
 I dati sono pubblicati da AIFA sotto licenza https://creativecommons.org/licenses/by/3.0/it/[CC BY 3.0 IT].
