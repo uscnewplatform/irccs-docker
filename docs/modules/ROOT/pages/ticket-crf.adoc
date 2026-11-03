@@ -294,6 +294,10 @@ Tutti sotto `/fhir/zammad/tickets`.
 | GET
 | Tutti i ticket di CRF dell'utente loggato, con stato, studio, paziente, CRF e collegamento diretto (massimo 300), più `mine` (aperto da lui) e `assignedToMe` (assegnato a lui come proprietario). Pagina *I miei ticket*.
 
+| `/news-history`
+| GET
+| News di studio chiuse leggibili dall'utente loggato (ticket di ambito STUDIO), dalla chiusa più di recente: id, numero, titolo, studio, date di apertura e chiusura. Mai il testo: si legge con la conversazione del ticket (`/{id}/articles`), allegati compresi. Alimenta la scheda «Storico news» di «I miei ticket»; il filtro per gli studi dell'utente lo applica la dashboard.
+
 | `/crf-summary?patient=&careplan=&questionnaire=`
 | GET
 | Esito del blocco e ticket bloccanti (solo id e stato, mai testo).
