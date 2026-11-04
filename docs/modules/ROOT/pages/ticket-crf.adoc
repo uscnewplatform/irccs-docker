@@ -49,7 +49,12 @@ Questa pagina descrive cosa vede e può fare ciascun utente, le regole, e come �
 | Solo i gruppi con la capability `internal:close:ticket`. Chi apre un ticket, o ci risponde, non può chiuderlo da solo.
 
 | Gruppo destinatario
-| Un ticket di CRF si assegna a *un solo gruppo*, scelto tra i gruppi del *centro del paziente* (e sottogruppi) in cui l'utente può aprire ticket (`GET tickets/groups-for-patient`). Per coinvolgere due gruppi si aprono due ticket.
+a| Un ticket di CRF si indirizza a *uno o più gruppi*, con *una sola conversazione* che tutti i gruppi coinvolti leggono. Chi apre li sceglie nel dialogo «Nuovo ticket» (`GET tickets/ticket-targets`):
+
+* *apre il promotore dello studio* (un gruppo dell'organizzazione indicata come sponsor): uno, più o tutti i gruppi del *centro del paziente*;
+* *apre un centro che non è il promotore*: uno o più gruppi del proprio centro e/o uno o più gruppi del promotore.
+
+Almeno un gruppo. I gruppi restano quelli scelti all'apertura: per cambiarli si chiude il ticket e se ne apre un altro. «Tutti i gruppi del centro» è una fotografia al momento dell'apertura. Il promotore è quello dello *studio del ticket* (`ResearchStudy.sponsor`, legame paziente-studio `ResearchSubject`); se non si ricava, i gruppi del promotore non compaiono e il ticket vale come aperto da un centro. In Zammad il ticket ha un solo `group_id` (il primo gruppo scelto, prima i gruppi del centro): i gruppi coinvolti sono nell'attributo `targetgroups` (`|12|34|`) e la visibilità è decisa dal microservizio: lo vedono i gruppi coinvolti **e il gruppo di chi ha aperto** (attributo `opengroup`, per esempio il promotore che scrive al centro deve poterlo seguire e chiudere). Per aprire serve un gruppo attivo univoco: il superadmin senza gruppo selezionato non apre ticket a più gruppi. Chiusura: capability `internal:close:ticket` e visibilità del ticket; se l'ha aperto il promotore (`openedby = SPONSOR`) deve chiuderlo il promotore (attributo `sponsororg`). I ticket esistenti, senza questi attributi, restano a un gruppo solo.
 
 | Priorità
 | Alta, normale (default) o bassa, scelta *solo da chi apre* il ticket. Compare come etichetta nel pannello, in «I miei ticket» e nel popup delle news.
@@ -293,6 +298,10 @@ Tutti sotto `/fhir/zammad/tickets`.
 | `/mine?all=`
 | GET
 | Tutti i ticket di CRF dell'utente loggato, con stato, studio, paziente, CRF e collegamento diretto (massimo 300), più `mine` (aperto da lui) e `assignedToMe` (assegnato a lui come proprietario). Pagina *I miei ticket*.
+
+| `/ticket-targets?patient=&study=`
+| GET
+| Gruppi destinatari selezionabili per un nuovo ticket di CRF: `{ openedBy, centre: [...], sponsor: [...] }` (id, nome, etichetta). `openedBy` = `SPONSOR` se chi chiama appartiene al promotore dello studio, altrimenti `CENTRE`; `sponsor` è vuoto per il promotore e quando il promotore non si ricava. Il paziente deve essere visibile al chiamante. `study` è l'id del `ResearchStudy` del percorso. In creazione (`POST /tickets`) il client manda `study` e `target_group_ids` al posto di `group_id`; il server rifiuta con 403 qualunque gruppo fuori da questo elenco e con 422 una scelta vuota.
 
 | `/news-history`
 | GET

@@ -2,7 +2,8 @@
 # Crea su Zammad gli attributi personalizzati (Object Manager) usati dalla piattaforma.
 #
 #   Ticket: crf, crfdisplay, careplan, careplandisplay, patient, patientdisplay,
-#           patientjourneydisplay, directlink, crfscope, qrid, crfclosure
+#           patientjourneydisplay, directlink, crfscope, qrid, crfclosure,
+#           targetgroups, openedby, opengroup, sponsororg   (ticket a piu' gruppi)
 #   Group : organization, keycloak_ref   (e keycloak_ref su User e Organization: collegamento con Keycloak)
 #
 # Senza questi attributi Zammad SCARTA IN SILENZIO i campi inviati dalla dashboard alla
@@ -97,6 +98,16 @@ crea_attributo Ticket qrid                  "QuestionnaireResponse (id)"   input
 # Chiusura convalidata dalla piattaforma: "<utente>|<data ISO>" scritto alla chiusura dal pannello (o alla convalida).
 # Un ticket chiuso SENZA questo segno (chiuso direttamente in Zammad) continua a bloccare la conferma della CRF.
 crea_attributo Ticket crfclosure            "Chiusura convalidata"         input    255  "$KEY_SCREENS"
+
+# Ticket a piu' gruppi (promotore e centri): scritti SOLO dal ms Zammad alla creazione, mai dal client ne' dall'operatore
+# (campi nascosti anche in modifica). targetgroups = gruppi Zammad coinvolti come "|12|34|" (barre ai due estremi, cosi'
+# "|12|" non e' contenuto in "|112|"); openedby = SPONSOR (aperto dal promotore) o CENTRE; opengroup = gruppo Zammad di chi
+# ha aperto; sponsororg = organizzazione promotore dello studio (gruppo radice Keycloak), serve alla regola di chiusura.
+# Opzionali per i ticket esistenti: senza, il ticket resta a un gruppo solo.
+crea_attributo Ticket targetgroups          "Gruppi coinvolti"             input    500  "$KEY_SCREENS"
+crea_attributo Ticket openedby              "Aperto da (SPONSOR/CENTRE)"   input    20   "$KEY_SCREENS"
+crea_attributo Ticket opengroup             "Gruppo di chi ha aperto (id)" input    20   "$KEY_SCREENS"
+crea_attributo Ticket sponsororg            "Organizzazione promotore"     input    40   "$KEY_SCREENS"
 
 # Nasconde in modifica i campi chiave anche dove esistevano gia' (installazioni precedenti). Zammad accetta
 # l'aggiornamento solo con il corpo completo dell'attributo (con i soli "screens" risponde 500).
