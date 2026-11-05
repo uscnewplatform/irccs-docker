@@ -45,6 +45,11 @@ x-shared:
       ZAMMAD_WEB_CONCURRENCY:
       ZAMMAD_PROCESS_SESSIONS_JOBS_WORKERS:
       ZAMMAD_PROCESS_SCHEDULED_JOBS_WORKERS:
+      # Le email (notifiche ticket, risposte) le invia Zammad, NON i nostri microservizi (EmailService/i3-mail).
+      # Partono come delayed job in background, con retry/backoff se l'SMTP rifiuta.
+      # Per limitare le raffiche verso il relay SMTP: impostare qui 1 per serializzare gli invii
+      # (default dell'immagine non verificato). Il canale SMTP in uscita e' nel DB di Zammad
+      # (Admin > Channels > Email > Outbound), non in questo repo.
       ZAMMAD_PROCESS_DELAYED_JOBS_WORKERS:
       # ZAMMAD_SESSION_JOBS_CONCURRENT is deprecated, please use ZAMMAD_PROCESS_SESSIONS_JOBS_WORKERS instead.
       ZAMMAD_SESSION_JOBS_CONCURRENT:
