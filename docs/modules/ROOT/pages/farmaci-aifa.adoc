@@ -285,6 +285,28 @@ Il paziente compila tramite autocomplete con ricerca live su HAPI `$expand`.
 }
 ----
 
+== Dati del farmaco per le condizioni dei CRF
+
+Quando in un CRF si sceglie un farmaco con il ValueSet AIFA (l'url contiene `aifa`), il dashboard legge con un solo `CodeSystem/$lookup` le property `forma` e `atc` del codice AIC e le rende disponibili alle condizioni FHIRPath del designer (_Hidden field_, _Read-only_, _Required_) come item annidati temporanei della risposta del farmaco:
+
+[cols="2,4", options="header"]
+|===
+| linkId | Contenuto
+
+| `<linkId del farmaco>-forma` | formulazione AIFA (testo, es. «Compressa rivestita con film»)
+| `<linkId del farmaco>-atc` | codice ATC completo (es. `A10AB01`)
+|===
+
+Non servono terminologie né script aggiuntivi: i dati sono già nelle property del CodeSystem importato (vedi _Risorse FHIR create_). Gli item sono *transitori*: non vengono salvati nel QuestionnaireResponse. Esempi di espressioni e indicazioni per configurare un campo _Unità di misura_ diverso per compresse, gocce o insuline sono nel manuale del dashboard (Designer Studio, paragrafo 6.9.6).
+
+*Requisiti.* Perché il meccanismo funzioni per una domanda:
+
+* il ValueSet della domanda deve avere `aifa` nell'URL (es. `https://aifa.gov.it/fhir/ValueSet/farmaci-confezioni-atc-np`): il riconoscimento è nella funzione `isAifaValueSet` del dashboard (`src/utils/aifaForma.ts`). Con un altro URL il campo si comporta come una normale domanda a scelta, senza errori;
+* i concetti del CodeSystem devono avere le property `forma` (colonna FORMA) e `atc` (colonna CODICE_ATC): le scrive lo script `import-confezioni-atc`;
+* `CodeSystem/$lookup` deve rispondere per quel sistema.
+
+Se il `$lookup` fallisce, sotto il farmaco compare il messaggio _Impossibile leggere formulazione e classe ATC del farmaco_ e le condizioni che dipendono dai dati non scattano.
+
 == Fonti dati
 
 I dati sono pubblicati da AIFA sotto licenza https://creativecommons.org/licenses/by/3.0/it/[CC BY 3.0 IT].
