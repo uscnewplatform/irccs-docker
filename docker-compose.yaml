@@ -186,6 +186,8 @@ services:
       - ./httpd-config/manuale-cliente:/usr/local/apache2/htdocs/manuale-cliente #documentazione antora
       - ./httpd-config/maintenance.html:/usr/local/apache2/htdocs/maintenance.html:ro
       - ./httpd-config/.maintenance-flag:/usr/local/apache2/htdocs/.maintenance-flag #vuoto=sito attivo, non vuoto=manutenzione
+      - /home/savioadmin/cert-pasc-2026-fullchain.crt:/usr/local/apache2/conf/ssl/cert-pasc-2026.crt:ro
+      - /home/savioadmin/cert-pasc-2026.key:/usr/local/apache2/conf/ssl/cert-pasc-2026.key:ro
     networks:
       - irccs
   postgres-keycloak:
@@ -233,6 +235,8 @@ services:
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_RELATIVE_PATH: /backoffice
+      KC_HTTP_MANAGEMENT_RELATIVE_PATH: /
       #production settings
       #KC_HTTP_RELATIVE_PATH: /backoffice
       #KC_HTTP_MANAGEMENT_RELATIVE_PATH: /
@@ -244,10 +248,10 @@ services:
       [
         "/bin/sh",
         "-c",
-        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname ${KC_HOSTNAME} --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+        "/opt/keycloak/bin/kc.sh build --db postgres && /opt/keycloak/bin/kc.sh start --hostname ${KC_HOSTNAME} --http-relative-path /backoffice --hostname-backchannel-dynamic true --import-realm -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       ]
     ports:
-      - "9445:8080"
+      - "127.0.0.1:9445:8080"
     volumes:
       - ./keycloak-config/keycloak.conf:/opt/keycloak/conf/keycloak.conf
       - ./keycloak-config/realm-export:/opt/keycloak/data/import
@@ -554,3 +558,4 @@ volumes:
   redis_data:
   elasticsearch_data:
   audit_integrity_state:
+
