@@ -528,7 +528,7 @@ Con tag sulla Query, scritti *dopo* l'invio: `mail-apertura`, `mail-chiusura` e 
 
 | `ZAMMAD_NOTIFICATIONS_POLL_INTERVAL`
 | `30m`
-| Ogni quanto il controllo periodico ricontrolla tutte le Query ad alta priorità. È solo una rete di sicurezza: gli eventi arrivano dal webhook di Zammad.
+| Ogni quanto il controllo periodico ricontrolla tutte le Query ad alta priorità. È solo una rete di sicurezza: gli eventi arrivano dal webhook di Zammad e il job orario di Zammad richiama il webhook per le Query aperte (apertura e sollecito si recuperano da soli entro un'ora). Il controllo periodico serve in più a recuperare una mail di chiusura o di riapertura persa durante un'interruzione. *In produzione è impostato a `24h`*: una volta al giorno basta; il valore parte dall'avvio del microservizio, quindi un riavvio lo azzera.
 
 | `ZAMMAD_NOTIFICATIONS_WEBHOOK_SECRET`
 | _(vuoto)_
