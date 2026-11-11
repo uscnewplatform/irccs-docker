@@ -530,9 +530,6 @@ Con tag sulla Query, scritti *dopo* l'invio: `mail-apertura`, `mail-chiusura` e 
 | `5m`
 | Ogni quanto si controllano le Query ad alta priorità.
 
-| `ZAMMAD_NOTIFICATIONS_TICKET_URL`
-| _(vuoto)_
-| Modello del collegamento alla Query (`{id}` = id della Query), *obbligatorio per avere il pulsante nelle email*. Il `directlink` della Query si usa solo se è dello stesso sito del modello; altrimenti vale il modello. Senza modello le email non hanno il pulsante.
 
 | `ZAMMAD_NOTIFICATIONS_EXCLUDE_EMAILS`
 | _(vuoto)_
@@ -540,7 +537,7 @@ Con tag sulla Query, scritti *dopo* l'invio: `mail-apertura`, `mail-chiusura` e 
 
 | `app.mail.platform-url`
 | _(vuoto)_
-| Indirizzo della piattaforma (es. `https://pj.istitutotumori.na.it`) per il collegamento del logo e del piede. È la stessa proprietà delle altre email della piattaforma, già presente nel `.env`; senza, logo e piede non hanno collegamento.
+| Indirizzo della piattaforma (es. `https://pj.istitutotumori.na.it`): collegamento del logo e del piede, e base dei collegamenti «Apri la Query». Il collegamento di ogni Query è il suo `directlink` (la pagina della CRF nella piattaforma, salvato dalla dashboard alla creazione) se è dello stesso sito; altrimenti la pagina «Le mie Query» (`/my-tickets`). Mai un indirizzo di Zammad né di altri siti. Senza questa proprietà email senza collegamenti. È la stessa proprietà delle altre email della piattaforma, già presente nel `.env`; senza, logo e piede non hanno collegamento.
 
 | `ZAMMAD_NOTIFICATIONS_TIMEOUT`
 | `10s`
