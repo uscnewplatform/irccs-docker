@@ -164,6 +164,12 @@ services:
   zammad-scheduler:
     <<: *zammad-service
     command: ["zammad-scheduler"]
+    # Esegue i webhook di Zammad: deve raggiungere il microservizio Zammad (email delle Query) sulla rete irccs
+    networks:
+      default: {}
+      irccs:
+        aliases:
+          - irccs-zammad-scheduler
 
   zammad-websocket:
     <<: *zammad-service

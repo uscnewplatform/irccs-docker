@@ -480,7 +480,7 @@ Le email delle Query le decide il microservizio Zammad (destinatari, tempi, tag)
 | Ogni membro del gruppo (utente attivo, con email e permesso `full` sul gruppo, cioè gli «agenti del gruppo» come nei trigger di Zammad; un messaggio email nella Query per ogni membro, così ognuno riceve la sua mail e non vede gli altri). Una Query a più gruppi compare nel report di ciascuno.
 
 | Apertura (solo alta priorità)
-| Il giro di controllo (ogni 5 minuti) trova una Query di CRF ad alta priorità senza il tag `mail-apertura`.
+| Zammad avvisa il microservizio (webhook) quando una Query di CRF ad alta priorità viene creata o cambia, e la mail parte entro pochi secondi. Un controllo periodico (ogni 30 minuti) recupera gli eventi persi e i tentativi falliti. Vale per la Query senza il tag `mail-apertura`.
 | I gruppi a cui è stata aperta la Query.
 
 | Chiusura (solo alta priorità)
@@ -527,8 +527,12 @@ Con tag sulla Query, scritti *dopo* l'invio: `mail-apertura`, `mail-chiusura` e 
 | Fermo dopo il quale parte il sollecito.
 
 | `ZAMMAD_NOTIFICATIONS_POLL_INTERVAL`
-| `5m`
-| Ogni quanto si controllano le Query ad alta priorità.
+| `30m`
+| Ogni quanto il controllo periodico ricontrolla tutte le Query ad alta priorità. È solo una rete di sicurezza: gli eventi arrivano dal webhook di Zammad.
+
+| `ZAMMAD_NOTIFICATIONS_WEBHOOK_SECRET`
+| _(vuoto)_
+| Segreto condiviso con il webhook di Zammad (firma `X-Hub-Signature`, HMAC-SHA1 del corpo). Vuoto = il webhook risponde `503` e non si accetta nulla. È lo stesso valore del webhook creato in Zammad dallo script `install_zammad_email_webhook.sh`.
 
 
 | `ZAMMAD_NOTIFICATIONS_EXCLUDE_EMAILS`
@@ -555,7 +559,10 @@ Il nome del mittente (il «Da:») lo decide l'impostazione *Formato del mittente
 === Attivazione
 
 . Deploy del microservizio con `ZAMMAD_NOTIFICATIONS_ENABLED=false`: deve partire e non fare nulla.
-. Impostare `ZAMMAD_NOTIFICATIONS_START_FROM` all'ora dell'attivazione e `ZAMMAD_NOTIFICATIONS_ENABLED=true`; riavviare il microservizio.
+. Impostare nel `.env` `ZAMMAD_NOTIFICATIONS_START_FROM` all'ora dell'attivazione, `ZAMMAD_NOTIFICATIONS_ENABLED=true` e `ZAMMAD_NOTIFICATIONS_WEBHOOK_SECRET` (un segreto casuale, per esempio `openssl rand -hex 24`); riavviare il microservizio.
+. Il percorso `/fhir/zammad/notifications/webhook` deve essere escluso dal controllo dei permessi in `microservice-config-zammad/application.properties` (`quarkus.keycloak.policy-enforcer.paths.7`, già presente nel repo): Zammad non ha un token di Keycloak e la chiamata si autentica con la firma.
+. Il container `zammad-scheduler` di Zammad, che esegue i webhook, deve essere sulla rete `irccs` (alias `irccs-zammad-scheduler`, vedi `zammad-ticketing/docker-compose.yaml`): ricrearlo dopo aver aggiornato il compose.
+. Creare in Zammad webhook, trigger e job: `ZAMMAD_TOKEN=<token admin> WEBHOOK_SECRET=<stesso segreto> ./setup/install/install_zammad_email_webhook.sh <ZAMMAD_URL>` (senza `--apply` elenca soltanto), poi con `--apply`. Crea «IRCCS Query - email» (webhook), «IRCCS Query - email (priorità alta)» (trigger a ogni creazione o modifica di una Query di CRF ad alta priorità) e «IRCCS Query - sollecito (ogni ora)» (job che richiama il webhook per le Query ad alta priorità non chiuse; il microservizio decide se è ora del sollecito).
 . Solo dopo, disattivare i trigger e i job nativi di Zammad: `ZAMMAD_TOKEN=<token admin> ./setup/install/disable_zammad_native_emails.sh <ZAMMAD_URL>` (senza `--apply` elenca soltanto), poi con `--apply`. Il trigger «presa in carico alla risposta» non si tocca.
 . Verificare il *Formato del mittente* (vedi sopra) e che ogni gruppo attivo abbia un indirizzo email.
 . Rollback: `ZAMMAD_NOTIFICATIONS_ENABLED=false` e riavvio; per riavere le email di Zammad riattivare trigger e job da Admin.
