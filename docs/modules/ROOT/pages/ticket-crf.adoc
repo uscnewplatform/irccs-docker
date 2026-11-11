@@ -492,11 +492,13 @@ Le email delle Query le decide il microservizio Zammad (destinatari, tempi, tag)
 | I gruppi a cui è stata aperta la Query.
 
 | Sollecito (solo alta priorità)
-| La Query non chiusa è fermo da 3 giorni (ultimo messaggio, ultima email e creazione tutti più vecchi di 3 giorni); poi si ripete ogni 3 giorni di fermo.
+| La Query non chiusa è ferma da 3 giorni (ultimo messaggio, ultima email e creazione tutti più vecchi di 3 giorni); poi si ripete ogni 3 giorni di fermo.
 | Entrambe le parti: i gruppi destinatari e il gruppo di chi ha aperto (o, senza, il cliente della Query).
 |===
 
-Le news di studio e le Query a priorità normale non mandano mai email. L'aspetto riprende i colori di Zammad (blu `#337ab7`, rosso `#a94442` su `#f2dede`, grigio `#f5f5f5`) ed è in italiano e inglese.
+Le news di studio e le Query a priorità normale non mandano mai email. L'aspetto è quello *standard delle email della piattaforma* (lo stesso di `indexEmail` in `irccs-common`): barra colorata blu scuro, blu e arancio in testa, logo del Pascale, titolo blu `#1d4165`, riquadro dei dettagli e piede con «Istituto Nazionale Tumori IRCCS Fondazione G. Pascale». Il testo è in *italiano e inglese*, uno dopo l'altro; francese e tedesco non sono gestiti (vedi _Limiti_).
+
+Zammad *ripulisce l'HTML* dei messaggi: toglie le immagini con indirizzo esterno e gli stili su titoli, paragrafi e link, e conserva solo colore, dimensione del testo, sfondo, bordo e allineamento su tabelle e celle. Per questo il layout usa solo tabelle e celle, il maiuscolo dei titoli è scritto nel testo e il *logo è incorporato nel messaggio* (Zammad lo spedisce come allegato in linea, circa 50 KB). I link non si possono colorare: «Apri la Query» è un link nel colore standard del client, e nelle email ad alta priorità sta in un pulsante chiaro con bordo blu.
 
 === Come ricorda cosa ha già mandato
 
@@ -536,6 +538,14 @@ Con tag sulla Query, scritti *dopo* l'invio: `mail-apertura`, `mail-chiusura` e 
 | _(vuoto)_
 | Indirizzi (separati da virgola) che non ricevono mai le email.
 
+| `app.mail.platform-url`
+| _(vuoto)_
+| Indirizzo della piattaforma (es. `https://pj.istitutotumori.na.it`) per il collegamento del logo e del piede. È la stessa proprietà delle altre email della piattaforma, già presente nel `.env`; senza, logo e piede non hanno collegamento.
+
+| `ZAMMAD_NOTIFICATIONS_TIMEOUT`
+| `10s`
+| Attesa massima del microservizio verso Zammad per queste operazioni.
+
 | `ZAMMAD_NOTIFICATIONS_CLOSE_LOOKBACK`
 | `7d`
 | Le Query chiuse da più tempo non ricevono l'email di chiusura.
@@ -543,17 +553,21 @@ Con tag sulla Query, scritti *dopo* l'invio: `mail-apertura`, `mail-chiusura` e 
 
 Mittente e relay SMTP sono quelli del canale email di Zammad (indirizzo del gruppo, es. `noreply-pj@istitutotumori.na.it`): *ogni gruppo deve avere un indirizzo email assegnato in Zammad*, altrimenti l'invio fallisce (e si riprova al giro dopo). Il token di servizio deve poter scrivere sui gruppi (`change`/`full`).
 
+Il nome del mittente (il «Da:») lo decide l'impostazione *Formato del mittente* di Zammad (`ticket_define_email_from`, in *Admin → Canali → Email → Impostazioni*, `Email::Base`). Con il valore di default, `AgentNameSystemAddressName`, Zammad scrive «_nome del proprietario del token_ via _nome dell'indirizzo_» e ai destinatari comparirebbe il nome di chi ha creato il token (un `from` scritto nel messaggio viene ignorato). Va impostata su **`SystemAddressName`** («Nome visualizzato dell'indirizzo di sistema»): il mittente diventa solo il nome dell'indirizzo del gruppo, per esempio «INSPIRE - Ticket». L'impostazione vale per tutte le email in uscita da Zammad. Non c'entra con *Mittente Notifiche* (`notification_sender`), che riguarda le notifiche automatiche.
+
 === Attivazione
 
 . Deploy del microservizio con `ZAMMAD_NOTIFICATIONS_ENABLED=false`: deve partire e non fare nulla.
 . Impostare `ZAMMAD_NOTIFICATIONS_START_FROM` all'ora dell'attivazione e `ZAMMAD_NOTIFICATIONS_ENABLED=true`; riavviare il microservizio.
 . Solo dopo, disattivare i trigger e i job nativi di Zammad: `ZAMMAD_TOKEN=<token admin> ./setup/install/disable_zammad_native_emails.sh <ZAMMAD_URL>` (senza `--apply` elenca soltanto), poi con `--apply`. Il trigger «presa in carico alla risposta» non si tocca.
+. Verificare il *Formato del mittente* (vedi sopra) e che ogni gruppo attivo abbia un indirizzo email.
 . Rollback: `ZAMMAD_NOTIFICATIONS_ENABLED=false` e riavvio; per riavere le email di Zammad riattivare trigger e job da Admin.
 
 === Limiti
 
 * Ogni email compare come messaggio nella Query (uno per destinatario); i report stanno nella Query tecnica chiusa «Report settimanale Query aperte», uno per gruppo, creato al primo invio.
 * Le Query broadcast (news di studio) restano come oggi: non mandano email né compaiono nel report.
+* Le email sono solo in *italiano e inglese*, insieme nello stesso messaggio. Una sola lingua per persona (con francese e tedesco) richiederebbe di salvare la lingua scelta nella dashboard nel profilo Zammad dell'utente: è un lavoro rimandato. Oggi in Zammad quasi tutti gli utenti hanno `en-us`, che è il valore di default e non una scelta.
 * Una sola istanza del microservizio: con due istanze i giri partirebbero due volte (l'invio in doppio è possibile fino alla scrittura dei tag).
 * Se il servizio è fermo alle 08:00 di lunedì il report di quella settimana si salta.
 * Una email partita e un tag non scritto (Zammad cade subito dopo l'invio) può ripetere quella email al giro successivo.
