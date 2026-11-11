@@ -562,7 +562,7 @@ Il nome del mittente (il «Da:») lo decide l'impostazione *Formato del mittente
 
 === Limiti
 
-* Ogni email compare come messaggio nella Query (uno per destinatario); i report stanno nella Query tecnica chiusa «Report settimanale Query aperte», uno per gruppo, creato al primo invio.
+* Ogni email compare come messaggio nella Query in Zammad (uno per destinatario), ma la conversazione mostrata nella dashboard (pannello della CRF, anteprima di «Le mie Query», news) *li nasconde*: il microservizio li riconosce dal tipo (email) e dall'oggetto, che è sempre uno di quelli generati dalle notifiche. Restano visibili le note degli utenti e le risposte vere arrivate per email con un altro oggetto; i report stanno nella Query tecnica chiusa «Report settimanale Query aperte», uno per gruppo, creato al primo invio.
 * Le Query broadcast (news di studio) restano come oggi: non mandano email né compaiono nel report.
 * Le email sono solo in *italiano e inglese*, insieme nello stesso messaggio. Una sola lingua per persona (con francese e tedesco) richiederebbe di salvare la lingua scelta nella dashboard nel profilo Zammad dell'utente: è un lavoro rimandato. Oggi in Zammad quasi tutti gli utenti hanno `en-us`, che è il valore di default e non una scelta.
 * Una sola istanza del microservizio: con due istanze i giri partirebbero due volte (l'invio in doppio è possibile fino alla scrittura dei tag).
