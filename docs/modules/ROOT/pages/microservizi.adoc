@@ -151,7 +151,7 @@ Gestisce le **immagini diagnostiche DICOM** (TAC, risonanze, ecc.). I file DICOM
 |Config |`microservice-config-zammad/application.properties`
 |===
 
-Microservizio di integrazione con il sistema di **ticketing Zammad**. Gestisce la creazione e il polling dei ticket di supporto. Configurabile tramite le variabili:
+Microservizio di integrazione con il sistema di **ticketing Zammad**. Gestisce la creazione e il polling delle Query di supporto. Configurabile tramite le variabili:
 
 * `ZAMMAD_TOKEN_SERVICE` — token di accesso API Zammad
 * `ZAMMAD_BASE_URL` — URL dell'istanza Zammad

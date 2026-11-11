@@ -232,7 +232,7 @@ window.APP_CONFIG = {
 
 [TIP]
 ====
-Per disabilitare il sistema di ticketing, rimuovere o commentare la riga `VITE_APP_ZAMMAD_HOST`. Questo nasconderà tutti i controlli UI relativi ai ticket.
+Per disabilitare il sistema di ticketing, rimuovere o commentare la riga `VITE_APP_ZAMMAD_HOST`. Questo nasconderà tutti i controlli UI relativi alle Query.
 ====
 
 === Virtual Host Apache

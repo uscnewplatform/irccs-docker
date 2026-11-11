@@ -282,4 +282,4 @@ In ambiente di test può essere necessario aggiungere l'hostname di Keycloak in 
 
 == Disabilitazione del sistema di ticketing
 
-Per disabilitare il modulo Zammad, commentare o rimuovere la variabile `VITE_APP_ZAMMAD_HOST` nel file `httpd-config/config-prod.js`. Questo nasconderà i pulsanti di gestione ticket e bloccherà le chiamate di polling.
+Per disabilitare il modulo Zammad, commentare o rimuovere la variabile `VITE_APP_ZAMMAD_HOST` nel file `httpd-config/config-prod.js`. Questo nasconderà i pulsanti di gestione delle Query e bloccherà le chiamate di polling.
