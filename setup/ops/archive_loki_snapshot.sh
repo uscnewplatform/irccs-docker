@@ -3,7 +3,7 @@
 # cancelli i chunk oltre retention_period (3 mesi, vedi monitoring-config/loki-config.yml).
 #
 # Non seleziona i soli log "in scadenza": copia l'intero storage ad ogni run,
-# compresso. Pensato per girare da cron ~mensile (vedi setup/install/install_loki_archive_cron.sh
+# compresso. Pensato per girare da cron ~mensile (vedi setup/60-monitoraggio/install_loki_archive_cron.sh
 # per l'installazione automatica, non piu' a mano), in modo che ogni finestra di
 # retention abbia almeno uno snapshot prima che i dati corrispondenti vengano cancellati
 # da Loki.

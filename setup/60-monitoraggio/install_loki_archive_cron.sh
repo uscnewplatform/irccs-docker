@@ -13,7 +13,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ARCHIVE_SCRIPT="$(cd "${SCRIPT_DIR}/../maintenance" && pwd)/archive_loki_snapshot.sh"
+ARCHIVE_SCRIPT="$(cd "${SCRIPT_DIR}/../ops" && pwd)/archive_loki_snapshot.sh"
 ARCHIVE_DIR="${1:-/var/backup/loki-archive}"
 KEEP_MONTHS="${2:-12}"
 

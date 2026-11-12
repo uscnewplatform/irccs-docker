@@ -10,16 +10,14 @@
 /data-import/farmaci-aifa/import-confezioni-atc/codesystem-confezioni-atc.json
 __pycache__/
 *.pyc
-# checkpoint migrazione AuditEvent
-/setup/upgrade/.migrate_auditevents.state
 # stato/output verifica integrità hash-chain (eseguita manualmente dall'host)
-/setup/validate/.audit_integrity_checkpoint.json
-/setup/maintenance/audit_integrity_checkpoint.json
-/setup/maintenance/audit-integrity-last-report.json
-/setup/maintenance/audit_integrity.prom
+/setup/ops/.audit_integrity_checkpoint.json
+/setup/ops/audit_integrity_checkpoint.json
+/setup/ops/audit-integrity-last-report.json
+/setup/ops/audit_integrity.prom
 /setup/audit-trail-e2e-report.txt
 # stato/output riconciliazione orfani (eseguita manualmente dall'host)
-/setup/validate/.audit_coverage_checkpoint.json
-/setup/maintenance/audit_coverage_checkpoint.json
-/setup/maintenance/audit-coverage-last-report.json
-/setup/maintenance/audit_coverage.prom
+/setup/ops/.audit_coverage_checkpoint.json
+/setup/ops/audit_coverage_checkpoint.json
+/setup/ops/audit-coverage-last-report.json
+/setup/ops/audit_coverage.prom

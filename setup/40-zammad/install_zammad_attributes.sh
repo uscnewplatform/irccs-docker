@@ -12,10 +12,10 @@
 # Il MS irccs-microservice-zammad verifica la presenza degli attributi all'avvio.
 #
 # Uso:
-#   ZAMMAD_TOKEN=<token admin> ./setup/install/install_zammad_attributes.sh <ZAMMAD_URL>
+#   ZAMMAD_TOKEN=<token admin> ./setup/40-zammad/install_zammad_attributes.sh <ZAMMAD_URL>
 #
 # Esempio:
-#   ZAMMAD_TOKEN=xxxx ./setup/install/install_zammad_attributes.sh https://zammad.infocube.it
+#   ZAMMAD_TOKEN=xxxx ./setup/40-zammad/install_zammad_attributes.sh https://zammad.infocube.it
 #
 # Il token e' letto dall'ambiente (non da argomento) per non lasciarlo nella history/ps.
 # Il token deve essere di un utente con permesso admin.object (Admin -> Oggetti).

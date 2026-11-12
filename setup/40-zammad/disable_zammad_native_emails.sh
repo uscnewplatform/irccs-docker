@@ -8,8 +8,8 @@
 #   NON tocca: "Ticket - presa in carico alla risposta".
 #
 # Uso:
-#   ZAMMAD_TOKEN=<token admin> ./setup/install/disable_zammad_native_emails.sh <ZAMMAD_URL>           # solo elenco
-#   ZAMMAD_TOKEN=<token admin> ./setup/install/disable_zammad_native_emails.sh <ZAMMAD_URL> --apply   # disattiva
+#   ZAMMAD_TOKEN=<token admin> ./setup/40-zammad/disable_zammad_native_emails.sh <ZAMMAD_URL>           # solo elenco
+#   ZAMMAD_TOKEN=<token admin> ./setup/40-zammad/disable_zammad_native_emails.sh <ZAMMAD_URL> --apply   # disattiva
 #
 # Idempotente: gli elementi gia' disattivi si saltano. Si ferma al primo errore HTTP.
 # Il token e' letto dall'ambiente (non da argomento) e non compare mai in output.

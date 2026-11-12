@@ -324,7 +324,7 @@ Tutti sotto `/fhir/zammad/tickets`.
 | Query non chiuse di una CRF (o di tutto il paziente), solo id e stato. Chiamata tra servizi: raggiungibile solo dal service account (non ha una risorsa propria, è coperta dalla sola "Admin Resource").
 |===
 
-Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create dallo script `keycloak-config/add-zammad-authz.py`.
+Le autorizzazioni di ciascun percorso sono risorse del client Keycloak, create dallo script `setup/10-keycloak/add-zammad-authz.py`.
 
 == Sicurezza e privacy
 
@@ -460,12 +460,12 @@ Limiti noti:
 == Installazione e attivazione
 
 . Rilasciare `irccs-common` e aggiornare la versione nei microservizi; deploy di microservizi, dashboard e httpd con le procedure standard.
-. Allineare l'ambiente con `setup/install/align_ticket_crf.sh` (ruoli e risorse Keycloak, attributi Zammad, controllo della configurazione e della ricerca a condizioni).
+. Allineare l'ambiente con `ADMIN_PASS=... ZAMMAD_TOKEN=... WEBHOOK_SECRET=... ./setup/install.sh --zammad-url <URL> --from 10 --skip 20,30` (ruoli e risorse Keycloak, attributi e trigger Zammad, controllo con `setup/40-zammad/verify_zammad.sh`).
 . Assegnare le capability ai gruppi e far rifare il login.
 . Provare con il *blocco spento*; poi accendere `crf.confirm.require-closed-tickets=true`.
 . Rollback: rimettere il flag a `false` e riavviare; non c'è nessun dato da ripulire.
 
-La procedura dettagliata è in `docs/superpowers/specs/` (guida di installazione) e nel file `setup/install/align_ticket_crf.sh`.
+La procedura dettagliata è in `docs/superpowers/specs/` (guida di installazione); gli script sono in `setup/40-zammad/` e `setup/10-keycloak/`.
 
 == Email delle Query
 
@@ -562,8 +562,8 @@ Il nome del mittente (il «Da:») lo decide l'impostazione *Formato del mittente
 . Impostare nel `.env` `ZAMMAD_NOTIFICATIONS_START_FROM` all'ora dell'attivazione, `ZAMMAD_NOTIFICATIONS_ENABLED=true` e `ZAMMAD_NOTIFICATIONS_WEBHOOK_SECRET` (un segreto casuale, per esempio `openssl rand -hex 24`); riavviare il microservizio.
 . Il percorso `/fhir/zammad/notifications/webhook` deve essere escluso dal controllo dei permessi in `microservice-config-zammad/application.properties` (`quarkus.keycloak.policy-enforcer.paths.7`, già presente nel repo): Zammad non ha un token di Keycloak e la chiamata si autentica con la firma.
 . Il container `zammad-scheduler` di Zammad, che esegue i webhook, deve essere sulla rete `irccs` (alias `irccs-zammad-scheduler`, vedi `zammad-ticketing/docker-compose.yaml`): ricrearlo dopo aver aggiornato il compose.
-. Creare in Zammad webhook, trigger e job: `ZAMMAD_TOKEN=<token admin> WEBHOOK_SECRET=<stesso segreto> ./setup/install/install_zammad_email_webhook.sh <ZAMMAD_URL>` (senza `--apply` elenca soltanto), poi con `--apply`. Crea «IRCCS Query - email» (webhook), «IRCCS Query - email (priorità alta)» (trigger a ogni creazione o modifica di una Query di CRF ad alta priorità) e «IRCCS Query - sollecito (ogni ora)» (job che richiama il webhook per le Query ad alta priorità non chiuse; il microservizio decide se è ora del sollecito); crea anche «IRCCS News - email» (trigger a ogni creazione o modifica di una news di studio). Prima di pubblicare news con email, eseguire `install_zammad_attributes.sh` (attributo `studyid`).
-. Solo dopo, disattivare i trigger e i job nativi di Zammad: `ZAMMAD_TOKEN=<token admin> ./setup/install/disable_zammad_native_emails.sh <ZAMMAD_URL>` (senza `--apply` elenca soltanto), poi con `--apply`. Il trigger «presa in carico alla risposta» non si tocca.
+. Creare in Zammad webhook, trigger e job: `ZAMMAD_TOKEN=<token admin> WEBHOOK_SECRET=<stesso segreto> ./setup/40-zammad/install_zammad_email_webhook.sh <ZAMMAD_URL>` (senza `--apply` elenca soltanto), poi con `--apply`. Crea «IRCCS Query - email» (webhook), «IRCCS Query - email (priorità alta)» (trigger a ogni creazione o modifica di una Query di CRF ad alta priorità) e «IRCCS Query - sollecito (ogni ora)» (job che richiama il webhook per le Query ad alta priorità non chiuse; il microservizio decide se è ora del sollecito); crea anche «IRCCS News - email» (trigger a ogni creazione o modifica di una news di studio). Prima di pubblicare news con email, eseguire `install_zammad_attributes.sh` (attributo `studyid`).
+. Solo dopo, disattivare i trigger e i job nativi di Zammad: `ZAMMAD_TOKEN=<token admin> ./setup/40-zammad/disable_zammad_native_emails.sh <ZAMMAD_URL>` (senza `--apply` elenca soltanto), poi con `--apply`. Il trigger «presa in carico alla risposta» non si tocca.
 . Verificare il *Formato del mittente* (vedi sopra) e che ogni gruppo attivo abbia un indirizzo email.
 . Rollback: `ZAMMAD_NOTIFICATIONS_ENABLED=false` e riavvio; per riavere le email di Zammad riattivare trigger e job da Admin.
 
@@ -578,7 +578,7 @@ Il nome del mittente (il «Da:») lo decide l'impostazione *Formato del mittente
 
 == Test E2E su staging
 
-Script in `setup/test/` (Python standard library, girano sul server con utenti Keycloak temporanei; richiedono `E2E_PATIENT` ed `E2E_CAREPLAN`):
+Script in `setup/dev/` (Python standard library, girano sul server con utenti Keycloak temporanei; richiedono `E2E_PATIENT` ed `E2E_CAREPLAN`):
 
 * `e2e_ticket_workflow.py` — admin apre, sperimentatore risponde, admin chiude e conferma la CRF (25 controlli).
 * `e2e_ticket_visibility.py [--keep]` — visibilità per gruppo con admin, due sperimentatori e Farmacovigilanza, più admin del centro (42 controlli).

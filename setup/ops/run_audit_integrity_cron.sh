@@ -13,7 +13,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PYTHON_SCRIPT="$(cd "${SCRIPT_DIR}/../validate" && pwd)/verify_audit_hash_chain.py"
+PYTHON_SCRIPT="${SCRIPT_DIR}/verify_audit_hash_chain.py"
 
 AUDIT_FHIR_URL="${IRCCS_AUDIT_FHIR_URL:-http://127.0.0.1:8081/fhir}"
 STATE_FILE="${IRCCS_AUDIT_CHECKPOINT_FILE:-${SCRIPT_DIR}/.audit_integrity_checkpoint.json}"

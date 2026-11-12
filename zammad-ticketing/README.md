@@ -103,7 +103,7 @@ Gli attributi usati dalla dashboard (Ticket: `crf`, `crfdisplay`, `careplan`, `c
 `patient`, `patientdisplay`, `patientjourneydisplay`, `directlink`; Group: `organization`) si creano con:
 
 ```bash
-ZAMMAD_TOKEN=<token admin> ./setup/install/install_zammad_attributes.sh https://<zammad>
+ZAMMAD_TOKEN=<token admin> ./setup/40-zammad/install_zammad_attributes.sh https://<zammad>
 ```
 
 Idempotente. Senza questi attributi Zammad scarta in silenzio i campi del ticket e il contatore

@@ -25,7 +25,7 @@ Uso:
   KC_URL=http://localhost:9445 REALM=pascale ADMIN_USER=admin ADMIN_PASS=*** \
   python3 sync-fhir-authz.py --check                 # solo report, exit 2 se manca qualcosa
   python3 sync-fhir-authz.py                         # crea il mancante
-  python3 sync-fhir-authz.py --types ImagingStudy --from-httpd ../httpd-config/irccs.conf
+  python3 sync-fhir-authz.py --types ImagingStudy --from-httpd ../../httpd-config/irccs.conf
 
 Variabili: KC_URL (default http://localhost:9445), REALM (pascale), CLIENT_ID (irccs),
 ADMIN_USER/ADMIN_PASS, ADMIN_REALM (master). Richiede solo Python 3 (stdlib).

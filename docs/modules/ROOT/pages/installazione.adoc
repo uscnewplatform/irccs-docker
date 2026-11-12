@@ -136,39 +136,33 @@ docker compose up -d
 
 Verificare che l'utente di servizio `service-account-irccs` nel realm `pascale` abbia il ruolo `/admin` (necessario per le operazioni di signup).
 
-=== B. Step automatici (dati FHIR) — un solo comando
+=== B. Step automatici — un solo comando
 
-Tutto ciò che segue (Search Parameters, Patient Journey J-LI, tipi di
-consenso, librerie CRF, farmaci AIFA) è eseguito in sequenza da un unico
-script, che stampa cosa sta facendo passo per passo:
+Dopo l'avvio dello stack, tutto ciò che si può automatizzare è lanciato in ordine da un unico installer a fasi. Stampa cosa fa, chiede conferma prima di ogni fase (`--yes` per saltare) ed è riprendibile (`--from N`, `--only N`, `--skip N`). La guida con l'elenco completo degli script è in `setup/README.md`.
 
 [source,bash]
 ----
 cd irccs-docker
-./setup/install/install-all.sh http://irccs-hapi-fhir:8080/fhir
+ADMIN_PASS=<password admin Keycloak> ./setup/install.sh --hapi-url http://localhost:8080/fhir --kc-url http://localhost:9445
+# con Zammad, audit e monitoraggio:
+ADMIN_PASS=... ZAMMAD_TOKEN=... WEBHOOK_SECRET=... \
+  ./setup/install.sh --zammad-url https://<zammad> --with-audit --with-ops
+./setup/install.sh --dry-run        # mostra i comandi senza eseguirli
 ----
 
-Sostituire l'URL con quello del container HAPI FHIR raggiungibile dall'host
-che esegue lo script (dallo host stesso: `http://localhost:8080/fhir`).
-
-Idempotente nel suo complesso: rieseguirlo dopo un'interruzione (Ctrl+C,
-errore di rete) non duplica nulla, ogni script sottostante lo è già
-singolarmente. Alla fine stampa un promemoria degli step che restano
-manuali (LOINC, vedi sotto).
-
-Dettaglio di cosa fa ciascuno dei 6 step (per debug o esecuzione singola):
-
-[cols="1,3,2"]
+[cols="1,2,3"]
 |===
-|Step |Cosa fa |Script
+|Fase |Cartella |Cosa fa
 
-|1 |Search Parameters FHIR custom (richiesti dai microservizi) |`setup/install/install_searchparameters.sh`
-|2 |Patient Journey J-LI di esempio |`setup/install/install_jli.sh`
-|3 |Registry tipi di consenso (9 tipi base, terminologia HL7) |`setup/install/install_consent_types.sh`
-|4 |Librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE, EORTC, EuroQol, USC PROFFIT) |`data-import/crf-libraries/*/install-*.sh`
-|5 |Farmaci AIFA per classe A/H + equivalenti |`data-import/farmaci-aifa/import-aifa-per-classi/import-aifa-farmaci.py`
-|6 |Farmaci AIFA per confezione + ATC (159k concept, a lotti) |`data-import/farmaci-aifa/import-confezioni-atc/import-confezioni-atc-batch.py`
+|10 |`setup/10-keycloak/` |Ruoli e autorizzazioni che il realm-export non contiene (audit, DocumentReference, farmacovigilanza, blocco ticket CRF, Zammad, tipi FHIR instradati)
+|20 |`setup/20-fhir/` |SearchParameter custom, Patient Journey J-LI, registry dei tipi di consenso
+|30 |`setup/30-terminologie/` |Librerie CRF (CTCAE v4/v5/v6, PRO-CTCAE, EORTC, EuroQol, USC PROFFIT) e farmaci AIFA (dati in `data-import/`)
+|40 |`setup/40-zammad/` |Solo con `--zammad-url`: attributi dei ticket, webhook e trigger delle email, spegnimento delle email native, controlli
+|50 |`setup/50-audit/` |Solo con `--with-audit`: partizione AUDIT, SearchParameter, trigger di immodificabilità, pgaudit
+|60 |`setup/60-monitoraggio/` |Solo con `--with-ops`: cron di archiviazione Loki e backup DB (richiede sudo)
 |===
+
+Ogni script è idempotente: rieseguire l'installer dopo un'interruzione non duplica nulla. I segreti (`ADMIN_PASS`, `ZAMMAD_TOKEN`, `WEBHOOK_SECRET`) si passano solo dall'ambiente, mai come argomento.
 
 I tipi di consenso sono un *registry dinamico* persistito come `CodeSystem` FHIR (`urn:irccs:consent-type`) — necessario per far comparire i tipi nel designer studi e per garantire che il tipo `privacy` esista. Successivamente sono gestibili a runtime dalla dashboard (Back-office → Tipi di consenso, solo SuperAdmin).
 
@@ -176,12 +170,12 @@ Per i dettagli sulle librerie CRF vedere xref:librerie-crf.adoc[Librerie CRF —
 
 === B2. Attributi personalizzati Zammad (ticketing)
 
-Se il modulo ticketing (Zammad) è attivo, su ogni istanza Zammad nuova vanno creati gli *attributi personalizzati* (Object Manager) usati dalla dashboard. Non fa parte di `install-all.sh` perché agisce su Zammad, non su HAPI, e richiede un token admin Zammad.
+Se il modulo ticketing (Zammad) è attivo, su ogni istanza Zammad nuova vanno creati gli *attributi personalizzati* (Object Manager) usati dalla dashboard. È la fase 40 di `setup/install.sh` (con `--zammad-url`); si può lanciare anche da solo. Agisce su Zammad, non su HAPI, e richiede un token admin Zammad.
 
 [source,bash]
 ----
 cd irccs-docker
-ZAMMAD_TOKEN=<token admin Zammad> ./setup/install/install_zammad_attributes.sh https://<zammad>
+ZAMMAD_TOKEN=<token admin Zammad> ./setup/40-zammad/install_zammad_attributes.sh https://<zammad>
 ----
 
 * Il token va passato come variabile d'ambiente (non come argomento, per non lasciarlo in history/`ps`) e deve appartenere a un utente con permesso `admin.object`.

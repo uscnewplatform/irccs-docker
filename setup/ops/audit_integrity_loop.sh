@@ -23,8 +23,8 @@
 # ==============================================================================
 set -u
 
-SCRIPT="${AUDIT_INTEGRITY_SCRIPT:-/setup/validate/verify_audit_hash_chain.py}"
-COVERAGE_SCRIPT="${AUDIT_COVERAGE_SCRIPT:-/setup/validate/verify_audit_coverage.py}"
+SCRIPT="${AUDIT_INTEGRITY_SCRIPT:-/setup/ops/verify_audit_hash_chain.py}"
+COVERAGE_SCRIPT="${AUDIT_COVERAGE_SCRIPT:-/setup/ops/verify_audit_coverage.py}"
 AUDIT_FHIR="${IRCCS_AUDIT_FHIR_URL:-http://irccs-hapi-audit:8080/fhir}"
 CLINICAL_FHIR="${IRCCS_CLINICAL_FHIR_URL:-http://irccs-hapi-fhir:8080/fhir}"
 STATE_DIR="${AUDIT_INTEGRITY_STATE_DIR:-/state}"

@@ -473,7 +473,7 @@ curl -s -X POST "http://$HOSTNAME_PORT/fhir/SearchParameter" \
 # Identifier logico (non una Reference vera - vedi FhirClient.createAuditEvent), e HAPI
 # v8.0.0 NON auto-indicizza il .identifier dei search param di tipo reference: il
 # modificatore standard `entity:identifier=` torna sempre 0. Serve questo SearchParameter
-# token esplicito. Per gli AuditEvent gia' esistenti: reindex.sh una-tantum.
+# token esplicito. Per gli AuditEvent già esistenti serve un reindex una-tantum di HAPI.
 JSON_BODY=$(cat <<EOF
 {
   "resourceType": "SearchParameter",

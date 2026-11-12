@@ -67,7 +67,7 @@ Da eseguire **una volta** dopo `docker-compose up -d`, con lo stack sano
 > Gli step manuali (1-3) vanno fatti a mano da UI Keycloak, vedi sotto.
 > Gli step automatici (4-9) sono un unico comando:
 > ```bash
-> ./setup/install/install-all.sh http://irccs-hapi-fhir:8080/fhir
+> ADMIN_PASS=<password admin Keycloak> ./setup/install.sh --hapi-url http://localhost:8080/fhir --kc-url http://localhost:9445
 > ```
 > Guida completa passo-passo, con dettaglio di cosa fa ciascuno step e cosa resta manuale (LOINC): `docs/modules/ROOT/pages/installazione.adoc`.
 > Tutti gli step sono **idempotenti** (PUT/POST conditional): ri-lanciabili senza duplicati.
@@ -108,10 +108,10 @@ Clicca su Themes e poi su Custom Theme e selezionare il provider customizzato pa
 
 ## Installazione dati FHIR (SearchParameters, J-LI, consensi, librerie CRF, farmaci AIFA)
 
-Un solo comando esegue tutti gli step di import dati (idempotenti, rilanciabili senza duplicati):
+Un solo comando esegue tutte le fasi automatiche (Keycloak, FHIR, terminologie, Zammad, audit, monitoraggio: idempotenti, rilanciabili senza duplicati). Indice completo degli script in `setup/README.md`:
 
 ```bash
-./setup/install/install-all.sh http://irccs-hapi-fhir:8080/fhir
+ADMIN_PASS=<password admin Keycloak> ./setup/install.sh --hapi-url http://localhost:8080/fhir --kc-url http://localhost:9445
 ```
 
 Lo script richiede il modulo Python `requests` per gli step farmaci AIFA (su host con Python
@@ -198,7 +198,7 @@ di retention. Installazione automatica (idempotente, sostituisce il vecchio
 effettivamente eseguito):
 
 ```bash
-./setup/install/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
+./setup/60-monitoraggio/install_loki_archive_cron.sh [directory_archivio] [mesi_da_conservare]
 # default: /var/backup/loki-archive, 12 mesi
 ```
 

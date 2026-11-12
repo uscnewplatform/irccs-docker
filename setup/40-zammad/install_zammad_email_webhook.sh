@@ -9,7 +9,7 @@
 #             manda l'email di apertura ai gruppi che vedono lo studio
 #
 # Uso:
-#   ZAMMAD_TOKEN=<token admin> WEBHOOK_SECRET=<segreto> ./setup/install/install_zammad_email_webhook.sh <ZAMMAD_URL> [--apply]
+#   ZAMMAD_TOKEN=<token admin> WEBHOOK_SECRET=<segreto> ./setup/40-zammad/install_zammad_email_webhook.sh <ZAMMAD_URL> [--apply]
 #
 # Variabili:
 #   ZAMMAD_TOKEN     token di un utente con permesso admin (letto dall'ambiente, mai da argomento)
@@ -64,10 +64,10 @@ import sys, json
 print(json.dumps([str(s["id"]) for s in json.load(sys.stdin) if s.get("state_type_id") in (5, 6)]))')"
 
 if [ "$APPLY" != "yes" ]; then
-  echo "webhook : ${WH_ID:+già presente (id $WH_ID)}${WH_ID:-da creare} -> $WEBHOOK_URL"
-  echo "trigger : ${TR_ID:+già presente (id $TR_ID)}${TR_ID:-da creare}"
-  echo "job     : ${JOB_ID:+già presente (id $JOB_ID)}${JOB_ID:-da creare}"
-  echo "news    : ${TN_ID:+già presente (id $TN_ID)}${TN_ID:-da creare}"
+  echo "webhook : $(if [ -n "$WH_ID" ]; then echo "già presente (id $WH_ID)"; else echo "da creare"; fi) -> $WEBHOOK_URL"
+  echo "trigger : $(if [ -n "$TR_ID" ]; then echo "già presente (id $TR_ID)"; else echo "da creare"; fi)"
+  echo "job     : $(if [ -n "$JOB_ID" ]; then echo "già presente (id $JOB_ID)"; else echo "da creare"; fi)"
+  echo "news    : $(if [ -n "$TN_ID" ]; then echo "già presente (id $TN_ID)"; else echo "da creare"; fi)"
   echo "Nessuna modifica fatta: aggiungere --apply per creare."
   exit 0
 fi
