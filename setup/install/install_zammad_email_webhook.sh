@@ -5,6 +5,8 @@
 #   Webhook : "IRCCS Query - email"            -> POST <WEBHOOK_URL> con {"ticket_id": "N"}, firmato (X-Hub-Signature)
 #   Trigger : "IRCCS Query - email (priorità alta)" a ogni creazione/modifica di una Query di CRF ad alta priorità
 #   Job     : "IRCCS Query - sollecito (ogni ora)"   ogni ora, per le Query ad alta priorità non chiuse
+#   Trigger : "IRCCS News - email" a ogni creazione/modifica di una news di studio (crfscope STUDY): il microservizio
+#             manda l'email di apertura ai gruppi che vedono lo studio
 #
 # Uso:
 #   ZAMMAD_TOKEN=<token admin> WEBHOOK_SECRET=<segreto> ./setup/install/install_zammad_email_webhook.sh <ZAMMAD_URL> [--apply]
@@ -37,6 +39,7 @@ AUTH="Authorization: Bearer ${ZAMMAD_TOKEN}"
 WH_NAME="IRCCS Query - email"
 TR_NAME="IRCCS Query - email (priorità alta)"
 JOB_NAME="IRCCS Query - sollecito (ogni ora)"
+TN_NAME="IRCCS News - email"
 
 get() { curl -sf -H "$AUTH" "$API/$1" || { echo "ERRORE: lettura di $1 non riuscita" >&2; exit 2; }; }
 find_id() { # $1 = elenco, $2 = nome
@@ -53,6 +56,7 @@ send() { # $1 = metodo, $2 = percorso, $3 = corpo (stdin)
 WH_ID="$(get webhooks | find_id x "$WH_NAME")"
 TR_ID="$(get triggers | find_id x "$TR_NAME")"
 JOB_ID="$(get jobs | find_id x "$JOB_NAME")"
+TN_ID="$(get triggers | find_id x "$TN_NAME")"
 
 # stati chiusi e uniti (tipo closed e merged)
 CLOSED_IDS="$(get ticket_states | python3 -I -c '
@@ -63,6 +67,7 @@ if [ "$APPLY" != "yes" ]; then
   echo "webhook : ${WH_ID:+già presente (id $WH_ID)}${WH_ID:-da creare} -> $WEBHOOK_URL"
   echo "trigger : ${TR_ID:+già presente (id $TR_ID)}${TR_ID:-da creare}"
   echo "job     : ${JOB_ID:+già presente (id $JOB_ID)}${JOB_ID:-da creare}"
+  echo "news    : ${TN_ID:+già presente (id $TN_ID)}${TN_ID:-da creare}"
   echo "Nessuna modifica fatta: aggiungere --apply per creare."
   exit 0
 fi
@@ -102,4 +107,15 @@ print(json.dumps({"name": os.environ["JOB_NAME"], "object": "Ticket", "active": 
   echo "job creato (id $JOB_ID)"
 else
   echo "job già presente (id $JOB_ID): non modificato"
+fi
+
+if [ -z "$TN_ID" ]; then
+  TN_ID="$(TN_NAME="$TN_NAME" WH_ID="$WH_ID" python3 -I -c '
+import json, os
+print(json.dumps({"name": os.environ["TN_NAME"], "activator": "action", "execution_condition_mode": "always", "active": True,
+  "condition": {"ticket.crfscope": {"operator": "is", "value": "STUDY"}},
+  "perform": {"notification.webhook": {"webhook_id": os.environ["WH_ID"]}}}))' | send POST triggers | python3 -I -c 'import sys,json; print(json.load(sys.stdin)["id"])')"
+  echo "trigger news creato (id $TN_ID)"
+else
+  echo "trigger news già presente (id $TN_ID): non modificato"
 fi

@@ -95,6 +95,9 @@ crea_attributo Ticket directlink            "Link diretto"                 texta
 # QuestionnaireResponse. Nomi vincolati da Zammad: "scope" e' riservato e i nomi non possono finire per _id.
 crea_attributo Ticket crfscope              "Ambito (CRF/STUDY)"           input    50   "$TICKET_SCREENS"
 crea_attributo Ticket qrid                  "QuestionnaireResponse (id)"   input    50   "$TICKET_SCREENS"
+# Id del ResearchStudy a cui si riferisce una news di studio (solo crfscope STUDY): scritto dalla dashboard alla pubblicazione,
+# serve alle email delle news per trovare i gruppi che vedono lo studio (centri associati e promotore).
+crea_attributo Ticket studyid               "Studio (id)"                  input    50   "$KEY_SCREENS"
 # Chiusura convalidata dalla piattaforma: "<utente>|<data ISO>" scritto alla chiusura dal pannello (o alla convalida).
 # Un ticket chiuso SENZA questo segno (chiuso direttamente in Zammad) continua a bloccare la conferma della CRF.
 crea_attributo Ticket crfclosure            "Chiusura convalidata"         input    255  "$KEY_SCREENS"
