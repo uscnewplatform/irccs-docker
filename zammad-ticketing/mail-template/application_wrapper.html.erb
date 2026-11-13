@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html dir="auto">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <style type="text/css">
+      body {
+        ###html_email_css_font###
+      }
+      img {
+        outline: none;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic;
+      }
+      a img {
+        border: none;
+      }
+      h1,
+      h2,
+      h3 {
+        margin-top: 8px;
+        margin-bottom: 4px;
+      }
+      p {
+        margin: 8px 0;
+        min-height: 1.25rem;
+      }
+      blockquote {
+        padding: 1px 12px;
+        border-left: 5px solid #eee;
+      }
+      code {
+        padding: 1px 3px;
+        border-radius: 6px;
+        background-color: hsla(0, 0%, 0%, 0.1);
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+      }
+      pre {
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 6px;
+        border: 0;
+        background-color: hsla(0, 0%, 0%, 0.1);
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      pre code {
+        padding: 0;
+        background: transparent;
+      }
+      table {
+        border-collapse: collapse;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        border: none;
+        table-layout: auto;
+        display: block;
+        width: 100%;
+        overflow: auto;
+        word-break: keep-all;
+        margin: 0 0 16px;
+      }
+      table td {
+        border-collapse: collapse;
+      }
+      td, th {
+        padding: 7px 12px;
+      }
+      th {
+        font-weight: bold;
+        text-align: center;
+      }
+      col {
+        width: auto;
+      }
+      table.zammad-table {
+        max-width: 100%;
+        border: 2px solid hsl(0, 0%, 69%);
+        table-layout: fixed;
+        display: table;
+        margin: 8px 0;
+        overflow: hidden;
+      }
+      table.zammad-table td,
+      table.zammad-table th {
+        min-width: 1em;
+        border: 1px solid hsl(0, 0%, 69%);
+        vertical-align: top;
+        position: relative;
+        padding: 3px 5px;
+        box-sizing: border-box;
+      }
+      table.zammad-table td > *,
+      table.zammad-table th > * {
+        margin: 0;
+      }
+      table.zammad-table th {
+        text-align: unset;
+        background-color: hsla(0, 0%, 0%, 0.1);
+      }
+      hr {
+        margin: 8px 0;
+        height: 1px;
+        background-color: hsla(0, 0%, 0%, 0.1);
+        font-size: 0;
+        border: 0;
+      }
+
+      /*
+       * IRCCS Pascale: stili aggiunti per le email strutturate dal microservizio zammad (MailLayout.java).
+       * Il sanitizer di Zammad toglie <style>, media query e max-width dal corpo dell'articolo, ma questo template non e'
+       * sanitizzato: qui si riparte dai selettori sugli attributi che il sanitizer conserva (bgcolor, align, style).
+       * Le regole toccano solo le nostre mail: pagina bgcolor #f0f4f8, scheda bgcolor #ffffff, caselle align="left".
+       */
+      table[bgcolor="#f0f4f8"] {
+        display: table;
+        width: 100%;
+        margin: 0;
+        overflow: visible;
+      }
+      table[bgcolor="#f0f4f8"] > tbody > tr > td[style*="width:600px"] {
+        width: auto !important;
+        padding: 12px 8px !important;
+      }
+      table[bgcolor="#ffffff"] {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      table[align="left"][style*="margin:0"] td {
+        text-align: left !important;
+        width: auto !important;
+      }
+      @media only screen and (max-width: 480px) {
+        table[align="left"][style*="margin:0"] {
+          float: none !important;
+          width: 100% !important;
+        }
+      }
+    </style>
+  </head>
+  <body style="###html_email_css_font###;">###html###</body>
+</html>

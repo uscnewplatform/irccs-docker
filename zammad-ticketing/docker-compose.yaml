@@ -69,6 +69,9 @@ x-shared:
     logging: *default-logging
     volumes:
       - zammad-storage:/opt/zammad/storage
+      # Template delle email in uscita con gli stili per le mail del microservizio zammad (vedi mail-template/README.md).
+      # Va su tutti i servizi: lo legge chi spedisce (scheduler/railsserver) al momento dell'invio.
+      - ./mail-template/application_wrapper.html.erb:/opt/zammad/app/views/mailer/application_wrapper.html.erb:ro
     depends_on:
       - zammad-memcached
       - zammad-postgresql
