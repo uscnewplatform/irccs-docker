@@ -10,11 +10,6 @@ scheda `bgcolor="#ffffff"`, caselle `align="left"`. Effetto: scheda centrata e l
 affiancate su desktop e impilate a tutta larghezza su telefono (media query a 480px). Le mail scritte a mano dagli agenti
 non cambiano.
 
-## Versione
-Il template e' quello di Zammad **7.2.2**: la versione in produzione (il default `VERSION` di questo compose e' piu' vecchio
-e viene sovrascritto da `.env`). Con una versione diversa il template montato non corrisponde all'originale e cambierebbe
-l'aspetto di tutte le mail: prima di cambiare `VERSION` seguire "Aggiornare Zammad".
-
 ## Aggiornare Zammad
 A ogni cambio di `VERSION`: estrarre il template nuovo e riapplicare il blocco CSS.
 
@@ -26,3 +21,7 @@ Se il diff e' vuoto basta aggiornare il nome del file; altrimenti riportare le n
 ## Provarlo
 Dopo `docker compose up -d`, mandare una mail di prova (Query ad alta priorita') e controllarla in Gmail su PC e telefono.
 Il file e' letto a ogni invio: dopo una modifica basta ricreare i container (`docker compose up -d --force-recreate zammad-scheduler zammad-railsserver`).
+
+
+Nota: nel `<style>` del template non mettere commenti con `<`, `>` o virgolette (come il testo "<style>"): Gmail puo' leggerli
+come markup e scartare le regole che seguono. Usare solo selettori semplici (`[attr="valore"]`, niente `[attr*=]`).
