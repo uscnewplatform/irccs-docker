@@ -1,0 +1,16 @@
+{
+  "_commento": "Stati ticket oltre a quelli standard di Zammad (new, open, pending reminder, closed, merged, pending close). 'annuncio' e' lo stato delle news di studio (broadcast): tipo 'pending action' (id 4) con scadenza (pending_time); alla scadenza passa a 'closed'. La dashboard lo usa come state_id delle news (VITE_APP_ZAMMAD_TICKET_ANNUNCE_STATE_ID): se l'id dell'istanza e' diverso da 7, aggiornare quella variabile.",
+  "states": [
+    {
+      "name": "annuncio",
+      "state_type_id": 4,
+      "state_type_nome": "pending action",
+      "next_state": "closed",
+      "ignore_escalation": false,
+      "default_create": false,
+      "default_follow_up": false,
+      "active": true,
+      "note": "Annunci broadcast per piattaforma"
+    }
+  ]
+}

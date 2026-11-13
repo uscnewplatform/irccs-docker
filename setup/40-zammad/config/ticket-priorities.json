@@ -1,0 +1,8 @@
+{
+  "_commento": "La piattaforma usa solo due priorita': normale (2, predefinita) e alta (3). Il microservizio converte 1 in 2. In produzione '1 low' e' ancora attiva: l'opzione --disable-low-priority di apply_zammad_config.sh la disattiva (prima spostare gli eventuali ticket che la usano).",
+  "priorities": [
+    {"name": "2 normal", "active": true, "default_create": true},
+    {"name": "3 high", "active": true, "default_create": false},
+    {"name": "1 low", "active": true, "consigliato_active": false, "default_create": false}
+  ]
+}

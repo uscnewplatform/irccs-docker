@@ -7,7 +7,7 @@
 #                     blocco ticket CRF, Zammad, tipi FHIR instradati)
 #   20  FHIR          SearchParameter custom, Patient Journey J-LI, tipi di consenso
 #   30  Terminologie  librerie CRF (CTCAE, EORTC, EuroQol, PRO-CTCAE, PROFFIT) e farmaci AIFA
-#   40  Zammad        attributi dei ticket, webhook e trigger delle email, spegnimento email native   (solo con --zammad-url)
+#   40  Zammad        attributi, webhook e trigger delle email, spegnimento email native, stato "annuncio" e impostazioni (solo con --zammad-url)
 #   50  Audit trail   partizione AUDIT, SearchParameter, trigger di immodificabilità, pgaudit          (solo con --with-audit)
 #   60  Monitoraggio  cron di archiviazione Loki e sistema di backup DB (richiede sudo)                (solo con --with-ops)
 #
@@ -122,10 +122,13 @@ if selected 40; then
     need ZAMMAD_TOKEN; need WEBHOOK_SECRET
     note "Prima crea l'attributo studyid e gli altri; Zammad può riavviare rails per qualche decina di secondi dopo la creazione."
     note "WEBHOOK_SECRET deve essere lo stesso di ZAMMAD_NOTIFICATIONS_WEBHOOK_SECRET del microservizio."
+    note "Per assegnare l'indirizzo mittente ai gruppi: EMAIL_FROM=noreply@cliente.it EMAIL_FROM_NAME=\"CLIENTE - Ticket\" (poi rilanciare dopo il sync dei gruppi)."
     if confirm; then
       run bash setup/40-zammad/install_zammad_attributes.sh "$ZAMMAD_URL"
       run bash setup/40-zammad/install_zammad_email_webhook.sh "$ZAMMAD_URL" --apply
       run bash setup/40-zammad/disable_zammad_native_emails.sh "$ZAMMAD_URL" --apply
+      # stato "annuncio", trigger di presa in carico, impostazioni; con EMAIL_FROM/EMAIL_FROM_NAME anche l'indirizzo mittente sui gruppi
+      run bash setup/40-zammad/apply_zammad_config.sh "$ZAMMAD_URL" --apply
       run bash setup/40-zammad/verify_zammad.sh "$ZAMMAD_URL"
     fi
   fi

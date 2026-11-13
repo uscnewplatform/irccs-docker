@@ -2,7 +2,9 @@
 # Disattiva i trigger e i job di Zammad che mandavano email sui ticket: da quando le email dei ticket
 # (report settimanale e ticket ad alta priorita') le manda il microservizio Zammad, restano doppie.
 #
-#   Trigger: "Ticket - conferma apertura al cliente", "Ticket - cambio assegnatario (gruppo)",
+#   Trigger di fabbrica di Zammad (un cliente nuovo parte da questi): "auto reply (on new tickets)",
+#            "auto reply (on follow-up of tickets)", "customer notification (on owner change)"
+#   Trigger rinominati a mano in produzione: "Ticket - conferma apertura al cliente", "Ticket - cambio assegnatario (gruppo)",
 #            "Ticket - apertura (gruppo)", "Ticket - modifica (gruppo)", "Ticket - chiusura (gruppo)"
 #   Job:     "Ticket - sollecito dopo 2 giorni senza risposta", "Ticket - promemoria giornaliero in attesa di risposta"
 #   NON tocca: "Ticket - presa in carico alla risposta".
@@ -28,6 +30,9 @@ APPLY="no"
 AUTH="Authorization: Bearer ${ZAMMAD_TOKEN}"
 
 TRIGGERS=(
+  "auto reply (on new tickets)"
+  "auto reply (on follow-up of tickets)"
+  "customer notification (on owner change)"
   "Ticket - conferma apertura al cliente"
   "Ticket - cambio assegnatario (gruppo)"
   "Ticket - apertura (gruppo)"

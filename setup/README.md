@@ -8,7 +8,7 @@ setup/
   10-keycloak/        ruoli e autorizzazioni che il realm-export non contiene
   20-fhir/            SearchParameter, Patient Journey J-LI, tipi di consenso
   30-terminologie/    librerie CRF e farmaci AIFA (i dati stanno in ../data-import/)
-  40-zammad/          attributi, webhook/trigger delle email, spegnimento email native, verifica
+  40-zammad/          attributi, webhook/trigger delle email, spegnimento email native, configurazione salvata (config/), verifica
   50-audit/           audit trail: partizione, SearchParameter, immodificabilità, pgaudit   (opzionale)
   60-monitoraggio/    cron di archiviazione Loki                                            (opzionale)
   ops/                esercizio quotidiano: controllo integrità audit, snapshot Loki, validazioni
@@ -43,7 +43,7 @@ Tutti gli script sono **idempotenti**: si possono rilanciare. I segreti si passa
 | `10-keycloak/` | `add-audit-trail-role.py`, `add-documentreference-authz.py`, `add-farmacovigilanza-role.sh`, `add-ticket-gate-roles.py`, `add-zammad-authz.py`, `sync-fhir-authz.py` (+ `SYNC-FHIR-AUTHZ.md`) | Installazione; `sync-fhir-authz.py` anche quando si aggiunge un tipo FHIR e le rotte danno 403 ai non-admin |
 | `20-fhir/` | `install_searchparameters.sh`, `install_jli.sh`, `install_consent_types.sh` | Installazione (i SearchParameter per primi) |
 | `30-terminologie/` | `install_terminologie.sh [crf\|aifa\|tutto]` | Installazione; per aggiornare solo i farmaci o solo le librerie |
-| `40-zammad/` | `install_zammad_attributes.sh`, `install_zammad_email_webhook.sh`, `disable_zammad_native_emails.sh`, `verify_zammad.sh` | Installazione Zammad; `verify_zammad.sh` dopo ogni deploy |
+| `40-zammad/` | `install_zammad_attributes.sh`, `install_zammad_email_webhook.sh`, `disable_zammad_native_emails.sh`, `apply_zammad_config.sh` (+ `config/`, vedi il suo README), `verify_zammad.sh` | Installazione Zammad; `verify_zammad.sh` dopo ogni deploy |
 | `50-audit/` | `setup_audit_partition.sh`, `install_audit_searchparameter.sh`, `install_audit_db_protection.sh`, `install_audit_pgaudit.sh` | Installazione con audit acceso; da rieseguire se si ricrea il volume dello store audit |
 | `60-monitoraggio/` | `install_loki_archive_cron.sh` | Installazione (insieme al backup di `backup/scripts/install.sh`) |
 | `ops/` | `audit_integrity_loop.sh`, `run_audit_integrity_cron.sh`, `verify_audit_*.py`, `validate_*.sh`, `archive_loki_snapshot.sh` | Esercizio: girano da container o da cron, non vanno lanciati a mano per installare |

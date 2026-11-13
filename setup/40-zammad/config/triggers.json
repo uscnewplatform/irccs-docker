@@ -1,0 +1,73 @@
+{
+  "_commento": "Trigger e job. 'custom' = creati a mano e NON presenti negli script: li crea apply_zammad_config.sh. Gli id nelle condizioni sono gli id standard di Zammad: stato 1 new, 2 open, 3 pending reminder, 4 closed; mittente articolo 3 = System; tipo articolo 1 email, 5 web, 10 note, 11 telefono.",
+  "custom": [
+    {
+      "name": "Ticket - presa in carico alla risposta",
+      "activator": "action",
+      "execution_condition_mode": "selective",
+      "condition": {
+        "ticket.action": {
+          "operator": "is",
+          "value": "update"
+        },
+        "ticket.state_id": {
+          "operator": "is",
+          "value": [
+            "1",
+            "3"
+          ]
+        },
+        "ticket.customer_id": {
+          "operator": "is not",
+          "pre_condition": "current_user.id",
+          "value": "",
+          "value_completion": ""
+        },
+        "article.sender_id": {
+          "operator": "is not",
+          "value": [
+            "3"
+          ]
+        },
+        "article.type_id": {
+          "operator": "is",
+          "value": [
+            "1",
+            "5",
+            "10",
+            "11"
+          ]
+        }
+      },
+      "perform": {
+        "ticket.state_id": {
+          "value": "2"
+        }
+      },
+      "disable_notification": true,
+      "note": "Alla prima risposta di chi non ha aperto il ticket: new / pending reminder -> open. Esclusi gli articoli di sistema (notifiche).",
+      "active": true
+    }
+  ],
+  "coperti_dagli_script": {
+    "install_zammad_email_webhook.sh": [
+      "webhook 'IRCCS Query - email'",
+      "trigger 'IRCCS Query - email (priorità alta)'",
+      "job 'IRCCS Query - sollecito (ogni ora)'",
+      "trigger 'IRCCS News - email'"
+    ],
+    "disable_zammad_native_emails.sh (disattivati)": [
+      "auto reply (on new tickets)  [di fabbrica]",
+      "auto reply (on follow-up of tickets)  [di fabbrica]",
+      "customer notification (on owner change)  [di fabbrica]",
+      "Ticket - conferma apertura al cliente  [nome usato in produzione]",
+      "Ticket - cambio assegnatario (gruppo)",
+      "Ticket - apertura (gruppo)",
+      "Ticket - modifica (gruppo)",
+      "Ticket - chiusura (gruppo)",
+      "job: Ticket - sollecito dopo 2 giorni senza risposta",
+      "job: Ticket - promemoria giornaliero in attesa di risposta"
+    ]
+  },
+  "nota": "In produzione i trigger di fabbrica sono stati rinominati ('Ticket - ...'); un Zammad nuovo ha i nomi di fabbrica ('auto reply (on new tickets)', 'auto reply (on follow-up of tickets)', 'customer notification (on owner change)'): disable_zammad_native_emails.sh spegne entrambe le serie. Il trigger 'presa in carico alla risposta' e' una scelta di processo: si puo' omettere con --no-takeover-trigger."
+}

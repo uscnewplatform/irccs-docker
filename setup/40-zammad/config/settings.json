@@ -1,0 +1,30 @@
+{
+  "_commento": "Impostazioni di Zammad (Admin -> Sistema). 'applica' le scrive apply_zammad_config.sh. 'per_cliente' dipendono dall'installazione: si impostano a mano o con le variabili indicate. 'sso' richiede segreti: solo a mano.",
+  "applica": {
+    "timezone_default": "Europe/Rome",
+    "ticket_define_email_from": "SystemAddressName",
+    "user_create_account": false
+  },
+  "per_cliente": {
+    "fqdn": "<host Zammad, es. ticket.cliente.it>",
+    "http_type": "https",
+    "organization": "<nome organizzazione>",
+    "notification_sender": "\"<NOME> - Ticket\" <noreply@cliente.it>   (lo scrive apply_zammad_config.sh con EMAIL_FROM e EMAIL_FROM_NAME)"
+  },
+  "sso": {
+    "_commento": "Login con Keycloak (OpenID Connect). Valori non segreti usati in produzione; client_id e client_secret sono quelli del client Keycloak dedicato e NON stanno nel repo. Con SSO attivo il login con password e' spento.",
+    "auth_openid_connect": true,
+    "auth_third_party_auto_link_at_inital_login": true,
+    "user_show_password_login": false,
+    "user_lost_password": false,
+    "auth_openid_connect_credentials": {
+      "display_name": "Login INSPIRE",
+      "identifier": "<client_id del client Keycloak>",
+      "client_secret": "<segreto del client Keycloak>",
+      "issuer": "https://<host Keycloak>/backoffice/realms/<realm>",
+      "uid_field": "",
+      "scope": "openid email profile",
+      "pkce": "true"
+    }
+  }
+}

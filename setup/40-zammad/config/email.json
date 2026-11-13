@@ -1,0 +1,20 @@
+{
+  "_commento": "Mittente delle email. Zammad rifiuta (422 'no email address configured') di spedire un messaggio da un ticket il cui gruppo non ha un indirizzo email: tutti i gruppi devono avere lo stesso indirizzo mittente. Va rieseguito apply_zammad_config.sh dopo che il sync del microservizio ha creato i gruppi nuovi (ogni centro porta i suoi). Il canale di invio SMTP contiene credenziali e host del cliente: si configura a mano (Admin -> Canali -> Email -> Notifiche).",
+  "indirizzo_mittente": {
+    "name": "<NOME> - Ticket",
+    "email": "<noreply@cliente.it>",
+    "active": true,
+    "assegnato_a": "tutti i gruppi attivi"
+  },
+  "canale_notifiche": {
+    "area": "Email::Notification",
+    "adapter": "smtp",
+    "host": "<host SMTP del cliente>",
+    "port": 25,
+    "ssl": false,
+    "ssl_verify": false,
+    "enable_starttls_auto": false,
+    "domain": "<dominio del server Zammad>",
+    "nota": "In produzione: relay interno senza autenticazione. Il canale 'sendmail' installato di default resta disattivo."
+  }
+}

@@ -197,7 +197,7 @@ Senza questi attributi Zammad *scarta in silenzio* i campi inviati alla creazion
 
 Il microservizio Zammad verifica la presenza degli attributi Ticket all'avvio (log `ERROR` con l'elenco di quelli mancanti) e rifiuta con *HTTP 422* la creazione di un ticket che usa un attributo assente. Il token del microservizio deve avere il permesso `admin.object` perché la verifica funzioni; senza, la verifica viene saltata con un warning.
 
-Dopo lo script restano manuali: la creazione dello stato ticket "annuncio" e la valorizzazione di `organization` sui gruppi `annunci_*` (vedi la documentazione del microservizio Zammad).
+Lo stato ticket "annuncio", il trigger «presa in carico alla risposta», le impostazioni e l'indirizzo mittente sui gruppi li applica `setup/40-zammad/apply_zammad_config.sh` dalla configurazione salvata in `setup/40-zammad/config/` (fotografia ripulita di produzione; vedi il README di quella cartella). Dopo gli script restano manuali: il canale SMTP, il login SSO e la valorizzazione di `organization` sui gruppi `annunci_*` (vedi la documentazione del microservizio Zammad).
 
 === C. Import terminologia LOINC (opzionale, MANUALE)
 
